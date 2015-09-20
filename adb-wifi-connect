@@ -1,0 +1,26 @@
+#!/bin/bash
+
+ADB=~/opt/android/sdk/platform-tools/adb
+LAST=".adb-wifi-connect.last"
+
+# instruct device to listen on tcpip
+$ADB tcpip 5555
+
+# give device time to aquire port
+sleep 2
+
+# get net configuration
+NETCONFIG=$($ADB shell netcfg)
+
+# match for line starting with ip for wlan0
+if [[ $NETCONFIG =~ wlan0[[:alpha:]|[:space:]]*([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).* ]]; then
+  IP="${BASH_REMATCH[1]}"
+  echo "current device on $IP"
+  echo "$IP" > "$LAST"
+else
+  IP=$(<"$LAST")
+  echo "last device on $IP"
+fi
+
+# connect to device
+$ADB connect $IP

@@ -1,0 +1,7 @@
+<svenmeier.coxswain.view.ValueView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/values_value"
+    android:layout_height="80dp"
+    android:layout_width="match_parent"
+    android:padding="5dp"
+/>

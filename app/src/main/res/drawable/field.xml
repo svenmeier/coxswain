@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:coxswain="http://schemas.android.com/apk/res-auto"
+    >
+    <item coxswain:field_low="true">
+        <inset android:insetRight="-8dp">
+            <shape>
+                <stroke
+                    android:color="#FFAA0000"
+                    android:width="2dp"
+                    />
+                <solid android:color="#80AA0000"
+                    />
+                <corners
+                    android:topLeftRadius="8dp"
+                    android:bottomLeftRadius="8dp"
+                    />
+            </shape>
+        </inset>
+    </item>
+    <item coxswain:field_high="true">
+        <inset android:insetRight="-8dp">
+            <shape>
+                <stroke
+                    android:color="#FF28AA00"
+                    android:width="2dp"
+                    />
+                <solid android:color="#8028FF00"
+                    />
+                <corners
+                    android:topLeftRadius="8dp"
+                    android:bottomLeftRadius="8dp"
+                    />
+            </shape>
+        </inset>
+    </item>
+    <item coxswain:field_target="true">
+        <inset android:insetLeft="-8dp">
+            <shape>
+                <stroke
+                    android:color="#FFAAAAAA"
+                    android:width="2dp"
+                    />
+                <solid android:color="#80AAAAAA"
+                    />
+                <corners
+                    android:topRightRadius="8dp"
+                    android:bottomRightRadius="8dp"
+                    />
+            </shape>
+        </inset>
+    </item>
+</selector>

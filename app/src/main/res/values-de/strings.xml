@@ -1,0 +1,31 @@
+<resources>
+
+    <string name="action_mock">Mock</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_rename">Umbenennen</string>
+    <string name="action_ok">OK</string>
+    <string name="action_edit">Bearbeiten</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_insert_before">Einfügen davor</string>
+    <string name="action_insert_after">Einfügen hinter</string>
+    <string name="action_new">Neu</string>
+
+    <string name="gym_notification_ready">Auf die Plätze</string>
+
+    <string name="distance_meters">%s Meter</string>
+    <string name="duration_minutes">%s Minuten</string>
+    <string name="strokes_count">%s Züge</string>
+    <string name="strokeRate_strokesPerMinute">%s Züge pro Minute</string>
+    <string name="pulse_beatsPerMinute">%s Schläge pro Minute</string>
+    <string name="speed_metersPerSecond">%s Meter pro Sekunde</string>
+    <string name="gym_finished">fertig</string>
+
+    <string name="target_distance">DISTANZ</string>
+    <string name="target_duration">DAUER</string>
+    <string name="target_strokes">SCHLÄGE</string>
+    <string name="limit_speed">TEMPO</string>
+    <string name="limit_pulse">PULS</string>
+    <string name="limit_strokeRate">SCHLAGZAHL</string>
+    <string name="limit_none">KEINE</string>
+
+</resources>

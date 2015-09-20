@@ -1,0 +1,9 @@
+include ':app'
+include ':propoid-core'
+include ':propoid-db'
+include ':propoid-validation'
+include ':propoid-ui'
+project(':propoid-core').projectDir = new File('/home/sven/projects/propoid/propoid-core')
+project(':propoid-db').projectDir = new File('/home/sven/projects/propoid/propoid-db')
+project(':propoid-validation').projectDir = new File('/home/sven/projects/propoid/propoid-validation')
+project(':propoid-ui').projectDir = new File('/home/sven/projects/propoid/propoid-ui')

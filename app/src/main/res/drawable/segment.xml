@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item android:maxLevel="0">
+        <color android:color="#FFCCFF00" />
+    </item>
+    <item android:maxLevel="1">
+        <color android:color="#FFFFFF00" />
+    </item>
+    <item android:maxLevel="2">
+        <color android:color="#FFFFCC00" />
+    </item>
+</level-list>

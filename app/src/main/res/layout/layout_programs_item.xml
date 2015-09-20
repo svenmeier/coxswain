@@ -1,0 +1,64 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:coxswain="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="4dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <ImageButton
+                android:id="@+id/program_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_more_vert_black_24dp"
+                style="@style/MenuButton"
+                />
+            <ImageButton
+                android:id="@+id/program_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_stop_black_24dp"
+                style="@style/MenuButton"
+                />
+
+            <TextView
+                android:id="@+id/program_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="32dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/program_duration"
+                android:textSize="16dp"
+                />
+        </LinearLayout>
+
+        <svenmeier.coxswain.view.SegmentsView
+            android:id="@+id/program_segments"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            coxswain:drawable="@drawable/segment"
+            coxswain:orientation="horizontal"
+            />
+
+    </LinearLayout>
+</LinearLayout>

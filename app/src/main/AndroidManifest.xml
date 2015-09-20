@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="svenmeier.coxswain" >
+
+    <uses-feature android:name="android.hardware.usb.host" />
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ProgramActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"
+            >
+        </activity>
+
+        <activity
+            android:name=".WorkoutActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="sensorLandscape"
+            android:launchMode="singleTop"
+            android:parentActivityName=".view.ProgramsFragment"
+            >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".view.ProgramsFragment" />
+        </activity>
+
+        <receiver
+            android:name=".IntentDispatcher"
+            android:enabled="true"
+            android:exported="true" >
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="svenmeier.coxswain.ROWING_STARTED" />
+                <action android:name="svenmeier.coxswain.ROWING_ENDED" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </receiver>
+
+        <service
+            android:name=".GymService"
+            android:enabled="true" >
+        </service>
+
+    </application>
+
+</manifest>

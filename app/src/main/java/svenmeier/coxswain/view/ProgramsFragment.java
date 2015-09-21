@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import propoid.ui.Index;
 import propoid.ui.list.GenericAdapter;
+import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
@@ -34,6 +37,8 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
 
     private ListView programsView;
 
+    private ProgramsAdapter programsAdapter;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -47,6 +52,8 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
         View root = inflater.inflate(R.layout.layout_programs, container, false);
 
         programsView = (ListView) root.findViewById(R.id.programs);
+        programsAdapter = new ProgramsAdapter();
+        programsAdapter.install(programsView);
 
         return root;
     }
@@ -55,7 +62,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
     public void onResume() {
         super.onResume();
 
-        initProgramsAdapter();
+        programsAdapter.load(getActivity());
     }
 
     @Override
@@ -69,14 +76,10 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
         program.name.set(name);
         Gym.instance(getActivity()).mergeProgram(program);
 
-        initProgramsAdapter();
+        programsAdapter.load(getActivity());
     }
 
-    private void initProgramsAdapter() {
-        new ProgramsAdapter().install(programsView);
-    }
-
-    private class ProgramsAdapter extends GenericAdapter<Program> {
+    private class ProgramsAdapter extends MatchAdapter<Program> {
 
         public ProgramsAdapter() {
             super(R.layout.layout_programs_item, gym.getPrograms());
@@ -85,19 +88,21 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
         @Override
         protected void bind(final int position, View view, final Program program) {
 
-            TextView nameTextView = (TextView) view.findViewById(R.id.program_name);
+            Index index = Index.get(view);
+
+            TextView nameTextView = index.get(R.id.program_name);
             nameTextView.setText(program.name.get());
 
-            TextView durationTextView = (TextView) view.findViewById(R.id.program_duration);
+            TextView durationTextView = index.get(R.id.program_duration);
             int duration = program.asDuration();
             durationTextView.setText(String.format("%d:%02d", SECONDS.toHours(duration), SECONDS.toMinutes(duration) % 60));
 
-            SegmentsView progressView = (SegmentsView) view.findViewById(R.id.program_segments);
+            SegmentsView progressView = index.get(R.id.program_segments);
             progressView.setData(new SegmentsData(program));
 
-            final ImageButton stopButton = (ImageButton)view.findViewById(R.id.program_stop);
+            final ImageButton stopButton = index.get(R.id.program_stop);
             stopButton.setFocusable(false);
-            final ImageButton menuButton = (ImageButton)view.findViewById(R.id.program_menu);
+            final ImageButton menuButton = index.get(R.id.program_menu);
             menuButton.setFocusable(false);
 
             if (gym.isSelected(program)) {
@@ -106,7 +111,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
                     public void onClick(View v) {
                         gym.select(null);
 
-                        initProgramsAdapter();
+                        load(getActivity());
                     }
                 });
                 stopButton.setVisibility(View.VISIBLE);
@@ -126,7 +131,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
                                     case R.id.action_new:
                                         Gym.instance(getActivity()).mergeProgram(new Program("Program"));
 
-                                        initProgramsAdapter();
+                                        load(getActivity());
 
                                         return true;
                                     case R.id.action_rename:
@@ -138,7 +143,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
                                     case R.id.action_delete:
                                         Gym.instance(getActivity()).deleteProgram(program);
 
-                                        initProgramsAdapter();
+                                        load(getActivity());
 
                                         return true;
                                     default:

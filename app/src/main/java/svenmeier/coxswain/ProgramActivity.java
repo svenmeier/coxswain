@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import propoid.db.Reference;
+import propoid.ui.Index;
 import propoid.ui.list.GenericAdapter;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
@@ -83,8 +84,10 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
 
         @Override
         protected void bind(final int position, View view, final Segment segment) {
-            ValueView targetView = (ValueView) view.findViewById(R.id.segments_target);
-            final LabelView targetLabelView = (LabelView) view.findViewById(R.id.segments_target_label);
+            Index index = Index.get(view);
+
+            ValueView targetView = index.get(R.id.segments_target);
+            final LabelView targetLabelView = index.get(R.id.segments_target_label);
             if (segment.duration.get() > 0) {
                 targetView.setPattern(getString(R.string.duration_short_pattern));
                 targetView.setValue(segment.duration.get());
@@ -107,8 +110,8 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
                 }
             });
 
-            ValueView limitView = (ValueView) view.findViewById(R.id.segments_limit);
-            LabelView limitLabelView = (LabelView) view.findViewById(R.id.segments_limit_label);
+            ValueView limitView = (ValueView) index.get(R.id.segments_limit);
+            LabelView limitLabelView = (LabelView) index.get(R.id.segments_limit_label);
             if (segment.speed.get() > 0) {
                 limitView.setPattern(getString(R.string.speed_pattern));
                 limitView.setValue(segment.speed.get());
@@ -134,7 +137,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
                 }
             });
 
-            LevelView difficultyView = (LevelView) view.findViewById(R.id.segments_difficulty);
+            LevelView difficultyView = (LevelView) index.get(R.id.segments_difficulty);
             difficultyView.setLevel(segment.difficulty.get().ordinal());
             difficultyView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -147,7 +150,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
                 }
             });
 
-            final ImageButton menuButton = (ImageButton) view.findViewById(R.id.segment_menu);
+            final ImageButton menuButton = (ImageButton) index.get(R.id.segment_menu);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

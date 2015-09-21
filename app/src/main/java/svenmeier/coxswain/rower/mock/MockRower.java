@@ -49,7 +49,7 @@ public class MockRower implements Rower {
             memory.distance = (short)(distance / 8);
 
             strokes++;
-            memory.strokes = (short)(strokes / 15);
+            memory.strokes = (short)(strokes / 18);
 
             memory.speed = (short)(250 +  (Math.random() * 100));
 

@@ -37,14 +37,15 @@ public class Gym {
 
         repository = new Repository(context, "gym");
         ((DefaultCascading)repository.cascading).setCascaded(new Program().segments);
-    }
 
-    public List<Program> getPrograms() {
         Match<Program> query = repository.query(new Program());
-        if (query.count() == 0) {
+        if (query.first() == null) {
             repository.insert(new Program("Beginner"));
         }
-        return query.list();
+    }
+
+    public Match<Program> getPrograms() {
+        return  repository.query(new Program());
     }
 
     public Program getProgram(Reference<Program> reference) {
@@ -59,8 +60,8 @@ public class Gym {
         repository.delete(program);
     }
 
-    public List<Workout> getWorkouts() {
-        return repository.query(new Workout()).list();
+    public Match<Workout> getWorkouts() {
+        return repository.query(new Workout());
     }
 
     public void addWorkout(Workout workout) {

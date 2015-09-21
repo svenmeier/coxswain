@@ -59,8 +59,8 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
         programsAdapter.load(getActivity());
     }

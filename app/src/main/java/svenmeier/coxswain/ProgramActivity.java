@@ -32,6 +32,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
     private Gym gym;
 
     private ListView segmentsView;
+    private SegmentsAdapter segmentsAdapter;
 
     private Program program;
 
@@ -55,7 +56,8 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
         if (program == null) {
             finish();
         } else {
-            initSegmentsAdapter();
+            segmentsAdapter = new SegmentsAdapter();
+            segmentsAdapter.install(segmentsView);
 
             setTitle(program.name.get());
         }
@@ -77,6 +79,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
         public SegmentsAdapter() {
             super(R.layout.layout_segments_item, program.getSegments());
         }
+
         @Override
         public boolean isEnabled(int position) {
             return false;
@@ -104,6 +107,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    boolean was = segmentsView.isItemChecked(position);
                     segmentsView.setItemChecked(position, true);
 
                     new TargetDialogFragment().show(getSupportFragmentManager(), "value");
@@ -146,7 +150,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
 
                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                    initSegmentsAdapter();
+                    notifyChanged();
                 }
             });
 
@@ -165,21 +169,21 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    initSegmentsAdapter();
+                                    notifyChanged();
                                     return true;
                                 case R.id.action_insert_before:
                                     program.createSegmentBefore(segment);
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    initSegmentsAdapter();
+                                    notifyChanged();
                                     return true;
                                 case R.id.action_insert_after:
                                     program.createSegmentAfter(segment);
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    initSegmentsAdapter();
+                                    notifyChanged();
                                     return true;
                                 default:
                                     return false;
@@ -193,10 +197,6 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
         }
     }
 
-    private void initSegmentsAdapter() {
-        new SegmentsAdapter().install(segmentsView);
-    }
-
     @Override
     public Segment getSegment() {
         return (Segment) segmentsView.getAdapter().getItem(segmentsView.getCheckedItemPosition());
@@ -205,7 +205,7 @@ public class ProgramActivity extends ActionBarActivity implements AbstractValueF
     public void setSegment(Segment segment) {
         Gym.instance(this).mergeProgram(program);
 
-        initSegmentsAdapter();
+        segmentsAdapter.notifyChanged();
     }
 
     public static Intent createIntent(Context context, Program program) {

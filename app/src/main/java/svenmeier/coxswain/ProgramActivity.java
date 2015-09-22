@@ -8,8 +8,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -23,11 +21,10 @@ import svenmeier.coxswain.view.LabelView;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.LimitDialogFragment;
 import svenmeier.coxswain.view.TargetDialogFragment;
-import svenmeier.coxswain.view.Utils;
 import svenmeier.coxswain.view.ValueView;
 
 
-public class ProgramActivity extends ActionBarActivity implements AbstractValueFragment.SegmentHolder{
+public class ProgramActivity extends ActionBarActivity implements AbstractValueFragment.Callback {
 
     private Gym gym;
 

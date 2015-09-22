@@ -165,8 +165,8 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
     }
 
-    private SegmentHolder getHolder() {
-        return Utils.getParent(this, SegmentHolder.class);
+    private Callback getHolder() {
+        return Utils.getParent(this, Callback.class);
     }
 
     public interface Tab {
@@ -183,7 +183,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
         int segmentToIndex(Segment segment);
     }
 
-    public interface SegmentHolder {
+    public interface Callback {
         public Segment getSegment();
 
         public void setSegment(Segment segment);

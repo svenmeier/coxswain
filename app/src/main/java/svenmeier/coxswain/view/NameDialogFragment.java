@@ -8,18 +8,23 @@ import android.support.v7.app.AlertDialog;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import propoid.core.Propoid;
+import propoid.db.Reference;
+import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Program;
 
 
 /**
  */
 public class NameDialogFragment extends DialogFragment {
 
-    private EditText editText;
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        editText = new EditText(getActivity());
+        final Program program = Gym.instance(getActivity()).getProgram(Reference.<Program>from(getArguments()));
+
+        final EditText editText = new EditText(getActivity());
+        editText.setText(program.name.get());
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_rename)
@@ -27,7 +32,9 @@ public class NameDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.action_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                Utils.getParent(NameDialogFragment.this, NameHolder.class).setName(editText.getText().toString());
+                                program.name.set(editText.getText().toString());
+
+                                Utils.getParent(NameDialogFragment.this, Callback.class).changed(program);
 
                                 dismiss();
                             }
@@ -39,16 +46,15 @@ public class NameDialogFragment extends DialogFragment {
         return alertDialog;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public static NameDialogFragment create(Program program) {
+        NameDialogFragment fragment = new NameDialogFragment();
 
-        editText.setText(Utils.getParent(this, NameHolder.class).getName());
+        fragment.setArguments(new Reference<>(program).set(new Bundle()));
+
+        return fragment;
     }
 
-    public static interface NameHolder {
-        public String getName();
-
-        public void setName(String name);
+    public static interface Callback {
+        public void changed(Program program);
     }
 }

@@ -22,8 +22,7 @@ import svenmeier.coxswain.view.ValueView;
  */
 public class WorkoutActivity extends FragmentActivity {
 
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
+    public static final int DELAY_MILLIS = 500;
     private Gym gym;
 
     private SegmentsView segmentsView;
@@ -90,7 +89,7 @@ public class WorkoutActivity extends FragmentActivity {
 
             updateValues();
 
-            handler.postDelayed(this, 1000);
+            handler.postDelayed(this, DELAY_MILLIS);
         }
     };
 

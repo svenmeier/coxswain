@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.List;
-
 import propoid.ui.Index;
-import propoid.ui.list.GenericAdapter;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
@@ -31,7 +25,7 @@ import svenmeier.coxswain.gym.Program;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 
-public class ProgramsFragment extends Fragment implements NameDialogFragment.NameHolder {
+public class ProgramsFragment extends Fragment implements NameDialogFragment.Callback {
 
     private Gym gym;
 
@@ -66,14 +60,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
     }
 
     @Override
-    public String getName() {
-        return ((Program) programsView.getAdapter().getItem(programsView.getCheckedItemPosition())).name.get();
-    }
-
-    @Override
-    public void setName(String name) {
-        Program program = (Program) programsView.getAdapter().getItem(programsView.getCheckedItemPosition());
-        program.name.set(name);
+    public void changed(Program program) {
         Gym.instance(getActivity()).mergeProgram(program);
 
         programsAdapter.load(getActivity());
@@ -135,7 +122,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Nam
 
                                         return true;
                                     case R.id.action_rename:
-                                        new NameDialogFragment().show(getChildFragmentManager(), "name");
+                                        NameDialogFragment.create(program).show(getChildFragmentManager(), "name");
                                         return true;
                                     case R.id.action_edit:
                                         startActivity(ProgramActivity.createIntent(getActivity(), program));

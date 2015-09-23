@@ -56,14 +56,14 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
     public void onStart() {
         super.onStart();
 
-        programsAdapter.load(getActivity());
+        programsAdapter.loadAsync(getActivity());
     }
 
     @Override
     public void changed(Program program) {
         Gym.instance(getActivity()).mergeProgram(program);
 
-        programsAdapter.load(getActivity());
+        programsAdapter.loadAsync(getActivity());
     }
 
     private class ProgramsAdapter extends MatchAdapter<Program> {
@@ -98,7 +98,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                     public void onClick(View v) {
                         gym.select(null);
 
-                        load(getActivity());
+                        loadAsync(getActivity());
                     }
                 });
                 stopButton.setVisibility(View.VISIBLE);
@@ -110,15 +110,13 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                         PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                         popup.getMenuInflater().inflate(R.menu.menu_programs_item, popup.getMenu());
 
-                        programsView.setItemChecked(position, true);
-
                         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
                                     case R.id.action_new:
                                         Gym.instance(getActivity()).mergeProgram(new Program("Program"));
 
-                                        load(getActivity());
+                                        loadAsync(getActivity());
 
                                         return true;
                                     case R.id.action_rename:
@@ -130,7 +128,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                                     case R.id.action_delete:
                                         Gym.instance(getActivity()).deleteProgram(program);
 
-                                        load(getActivity());
+                                        loadAsync(getActivity());
 
                                         return true;
                                     default:

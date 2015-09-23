@@ -4,32 +4,21 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import propoid.ui.Index;
-import propoid.ui.list.GenericAdapter;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 
 public class WorkoutsFragment extends Fragment {
@@ -63,7 +52,7 @@ public class WorkoutsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        adapter.load(getActivity());
+        adapter.loadAsync(getActivity());
     }
 
     private class WorkoutsAdapter extends MatchAdapter<Workout> {

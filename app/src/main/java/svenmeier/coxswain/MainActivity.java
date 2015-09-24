@@ -1,5 +1,6 @@
 package svenmeier.coxswain;
 
+import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_programs, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if (BuildConfig.DEBUG == false) {
+            menu.findItem(R.id.action_mock).setVisible(false);
+        }
+
         return true;
     }
 

@@ -10,6 +10,7 @@ import android.widget.EditText;
 
 import propoid.core.Propoid;
 import propoid.db.Reference;
+import propoid.ui.bind.TextBinding;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Program;
@@ -24,7 +25,8 @@ public class NameDialogFragment extends DialogFragment {
         final Program program = Gym.instance(getActivity()).getProgram(Reference.<Program>from(getArguments()));
 
         final EditText editText = new EditText(getActivity());
-        editText.setText(program.name.get());
+
+        TextBinding.string(program.name, editText);
 
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.action_rename)
@@ -32,8 +34,6 @@ public class NameDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.action_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                program.name.set(editText.getText().toString());
-
                                 Utils.getParent(NameDialogFragment.this, Callback.class).changed(program);
 
                                 dismiss();

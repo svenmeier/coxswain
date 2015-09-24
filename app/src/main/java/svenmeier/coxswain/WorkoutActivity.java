@@ -41,13 +41,11 @@ public class WorkoutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
         gym = Gym.instance(this);
 
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.layout_workout);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -63,6 +61,8 @@ public class WorkoutActivity extends AppCompatActivity {
         speedView = (ValueView) findViewById(R.id.target_speed);
         strokeRateView = (ValueView) findViewById(R.id.target_strokeRate);
         pulseView = (ValueView) findViewById(R.id.target_pulse);
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override

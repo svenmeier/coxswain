@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,7 @@ import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueView;
 
 
-public class ProgramActivity extends ActionBarActivity implements AbstractValueFragment.Callback {
+public class ProgramActivity extends AppCompatActivity implements AbstractValueFragment.Callback {
 
     private Gym gym;
 

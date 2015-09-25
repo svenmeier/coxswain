@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Event;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
@@ -33,6 +34,10 @@ public class Motivator implements TextToSpeech.OnInitListener, AudioManager.OnAu
 
     private AudioManager audio;
 
+    private final Preference<Boolean> whistlePreference;
+
+    private final Preference<Boolean> vibratePreference;
+
     private boolean initialized;
 
     private Event pending;
@@ -48,6 +53,9 @@ public class Motivator implements TextToSpeech.OnInitListener, AudioManager.OnAu
         audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
+
+        whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
+        vibratePreference = Preference.getBoolean(context, R.string.preference_motivator_vibrate);
     }
 
     public void onEvent(final Event event) {
@@ -79,19 +87,25 @@ public class Motivator implements TextToSpeech.OnInitListener, AudioManager.OnAu
                     speak(target);
                     pause();
                     speak(limit);
-                    vibrator.vibrate(500);
+                    vibrate(500);
                 }
                 break;
             case PROGRAM_FINISHED:
                 toast(context.getString(R.string.gym_finished));
 
-                whistle();
-                pause();
-                whistle();
-                pause();
-                whistle();
-                vibrator.vibrate(1000);
+                for (int i = 0; i < 3; i++) {
+                    if (whistle()) {
+                        pause();
+                    }
+                }
+                vibrate(1000);
                 break;
+        }
+    }
+
+    private void vibrate(int milliseconds) {
+        if (vibratePreference.get()) {
+            vibrator.vibrate(milliseconds);
         }
     }
 
@@ -114,8 +128,12 @@ public class Motivator implements TextToSpeech.OnInitListener, AudioManager.OnAu
         speech.playSilence(500, TextToSpeech.QUEUE_ADD, null);
     }
 
-    private void whistle() {
-        speech.playEarcon(WHISTLE, TextToSpeech.QUEUE_ADD, null);
+    private boolean whistle() {
+        if (whistlePreference.get()) {
+            speech.playEarcon(WHISTLE, TextToSpeech.QUEUE_ADD, null);
+            return true;
+        }
+        return false;
     }
 
     public void destroy() {

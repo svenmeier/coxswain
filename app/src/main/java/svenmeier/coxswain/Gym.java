@@ -1,6 +1,7 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,8 @@ public class Gym {
         if (query.first() == null) {
             repository.insert(new Program("Beginner"));
         }
+
+        PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
     }
 
     public Match<Program> getPrograms() {

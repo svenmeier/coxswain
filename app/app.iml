@@ -99,5 +99,6 @@
     <orderEntry type="module" module-name="propoid-db" exported="" />
     <orderEntry type="module" module-name="propoid-core" exported="" />
     <orderEntry type="module" module-name="propoid-ui" exported="" />
+    <orderEntry type="module" module-name="propoid-util" exported="" />
   </component>
 </module>

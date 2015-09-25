@@ -29,4 +29,5 @@ dependencies {
     compile project(':propoid-core')
     compile project(':propoid-db')
     compile project(':propoid-ui')
+    compile project(':propoid-util')
 }

@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
             GymService.start(this, null);
 
             return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(SettingsActivity.createIntent(this));
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

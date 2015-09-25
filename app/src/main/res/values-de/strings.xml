@@ -28,4 +28,11 @@
     <string name="limit_strokeRate">SCHLAGZAHL</string>
     <string name="limit_none">KEINE</string>
 
+    <string name="preference_motivator_title">Motivator</string>
+
+    <string name="preference_motivator_whistle_title">Pfeifsignal</string>
+    <string name="preference_motivator_whistle_summary">Verwende ein Pfeifensignal bei Segment-Wechsel</string>
+
+    <string name="preference_motivator_vibrate_title">Vibrieren</string>
+    <string name="preference_motivator_vibrate_summary">Vibrieren bei Segment-Wechsel</string>
 </resources>

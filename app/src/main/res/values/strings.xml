@@ -41,4 +41,14 @@
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>
 
+
+    <string name="preference_motivator_title">Motivator</string>
+
+    <string name="preference_motivator_whistle">preference_motivator_whistle</string>
+    <string name="preference_motivator_whistle_title">Whistle</string>
+    <string name="preference_motivator_whistle_summary">Whistle to signal segment changes</string>
+
+    <string name="preference_motivator_vibrate">preference_motivator_vibrate</string>
+    <string name="preference_motivator_vibrate_title">Vibrate</string>
+    <string name="preference_motivator_vibrate_summary">Vibrate to signal segment changes</string>
 </resources>

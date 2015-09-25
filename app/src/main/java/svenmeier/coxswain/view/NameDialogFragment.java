@@ -49,7 +49,7 @@ public class NameDialogFragment extends DialogFragment {
     public static NameDialogFragment create(Program program) {
         NameDialogFragment fragment = new NameDialogFragment();
 
-        fragment.setArguments(new Reference<>(program).set(new Bundle()));
+        fragment.setArguments(new Reference<>(program).to(new Bundle()));
 
         return fragment;
     }

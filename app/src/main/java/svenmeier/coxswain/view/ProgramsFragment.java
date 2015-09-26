@@ -69,7 +69,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
     public void onStart() {
         super.onStart();
 
-        programsAdapter.loadAsync(getActivity());
+        programsAdapter.loadAsync(this);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class WorkoutsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        adapter.loadAsync(this);
+        adapter.restart(0, this);
     }
 
     private class WorkoutsAdapter extends MatchAdapter<Workout> {

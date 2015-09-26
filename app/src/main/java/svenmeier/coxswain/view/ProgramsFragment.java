@@ -69,14 +69,14 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
     public void onStart() {
         super.onStart();
 
-        programsAdapter.loadAsync(this);
+        programsAdapter.restart(0, this);
     }
 
     @Override
     public void changed(Program program) {
         Gym.instance(getActivity()).mergeProgram(program);
 
-        programsAdapter.loadAsync(getActivity());
+        programsAdapter.restart(0, getActivity());
     }
 
     private class ProgramsAdapter extends MatchAdapter<Program> {
@@ -111,7 +111,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                     public void onClick(View v) {
                         gym.select(null);
 
-                        loadAsync(getActivity());
+                        restart(0, getActivity());
                     }
                 });
                 stopButton.setVisibility(View.VISIBLE);
@@ -129,7 +129,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                                     case R.id.action_new:
                                         Gym.instance(getActivity()).mergeProgram(new Program("Program"));
 
-                                        loadAsync(getActivity());
+                                        restart(0, getActivity());
 
                                         return true;
                                     case R.id.action_rename:
@@ -141,7 +141,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                                     case R.id.action_delete:
                                         Gym.instance(getActivity()).deleteProgram(program);
 
-                                        loadAsync(getActivity());
+                                        restart(0, getActivity());
 
                                         return true;
                                     default:

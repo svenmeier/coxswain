@@ -45,7 +45,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
 
     private ListView programsView;
 
-    private ProgramsAdapter programsAdapter;
+    private ProgramsAdapter adapter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -59,8 +59,8 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
         View root = inflater.inflate(R.layout.layout_programs, container, false);
 
         programsView = (ListView) root.findViewById(R.id.programs);
-        programsAdapter = new ProgramsAdapter();
-        programsAdapter.install(programsView);
+        adapter = new ProgramsAdapter();
+        adapter.install(programsView);
 
         return root;
     }
@@ -69,14 +69,21 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
     public void onStart() {
         super.onStart();
 
-        programsAdapter.restart(0, this);
+        adapter.restart(0, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        adapter.destroy(0, this);
     }
 
     @Override
     public void changed(Program program) {
         Gym.instance(getActivity()).mergeProgram(program);
 
-        programsAdapter.restart(0, getActivity());
+        adapter.restart(0, getActivity());
     }
 
     private class ProgramsAdapter extends MatchAdapter<Program> {

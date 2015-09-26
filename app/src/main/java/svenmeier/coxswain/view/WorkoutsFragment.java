@@ -68,6 +68,13 @@ public class WorkoutsFragment extends Fragment {
         adapter.restart(0, this);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        adapter.destroy(0, this);
+    }
+
     private class WorkoutsAdapter extends MatchAdapter<Workout> {
 
         private DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);

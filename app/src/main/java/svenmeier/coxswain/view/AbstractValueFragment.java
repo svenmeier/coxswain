@@ -16,10 +16,8 @@
 package svenmeier.coxswain.view;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -43,7 +41,6 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
     private ViewPager pager;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.layout_tabs, container, false);
@@ -86,7 +83,6 @@ public abstract class AbstractValueFragment extends DialogFragment {
         AbstractValueFragment.this.dismiss();
     }
 
-    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);

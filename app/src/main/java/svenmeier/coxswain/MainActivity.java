@@ -15,15 +15,13 @@
  */
 package svenmeier.coxswain;
 
-import android.content.pm.ApplicationInfo;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -31,7 +29,7 @@ import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     public static String TAG = "coxswain";
 
@@ -46,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.layout_main);
 
         pager = (ViewPager) findViewById(R.id.main_pager);
-        pager.setAdapter(new MainAdapter(getSupportFragmentManager()));
+        pager.setAdapter(new MainAdapter(getFragmentManager()));
     }
 
     @Override

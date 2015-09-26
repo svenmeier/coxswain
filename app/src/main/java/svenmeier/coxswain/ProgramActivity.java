@@ -15,17 +15,16 @@
  */
 package svenmeier.coxswain;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 
 import propoid.db.Reference;
 import propoid.ui.Index;
@@ -40,7 +39,7 @@ import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueView;
 
 
-public class ProgramActivity extends AppCompatActivity implements AbstractValueFragment.Callback {
+public class ProgramActivity extends Activity implements AbstractValueFragment.Callback {
 
     private Gym gym;
 
@@ -57,7 +56,7 @@ public class ProgramActivity extends AppCompatActivity implements AbstractValueF
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.layout_program);
 
@@ -123,7 +122,7 @@ public class ProgramActivity extends AppCompatActivity implements AbstractValueF
                     boolean was = segmentsView.isItemChecked(position);
                     segmentsView.setItemChecked(position, true);
 
-                    new TargetDialogFragment().show(getSupportFragmentManager(), "value");
+                    new TargetDialogFragment().show(getFragmentManager(), "value");
                 }
             });
 
@@ -150,7 +149,7 @@ public class ProgramActivity extends AppCompatActivity implements AbstractValueF
                 public void onClick(View v) {
                     segmentsView.setItemChecked(position, true);
 
-                    new LimitDialogFragment().show(getSupportFragmentManager(), "value");
+                    new LimitDialogFragment().show(getFragmentManager(), "value");
                 }
             });
 

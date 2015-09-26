@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
-        minSdkVersion 14
+        minSdkVersion 17
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -23,8 +23,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:support-v13:22.0.+'
     testCompile 'junit:junit:4.12'
     compile project(':propoid-core')
     compile project(':propoid-db')

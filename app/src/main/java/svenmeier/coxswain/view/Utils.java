@@ -15,14 +15,10 @@
  */
 package svenmeier.coxswain.view;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-
-import java.util.Map;
 
 /**
  * Created by sven on 19.08.15.
@@ -37,12 +33,18 @@ public class Utils {
 
     @SuppressWarnings("unchecked")
     public static <T> T getParent(Fragment fragment, Class<T> t) {
-        Fragment parentFragment = fragment.getParentFragment();
-        if (parentFragment != null && t.isInstance(parentFragment)) {
-            return (T) parentFragment;
+        while (true) {
+            if (t.isInstance(fragment)) {
+                return (T) fragment;
+            }
+            Fragment parentFragment = fragment.getParentFragment();
+            if (parentFragment == null) {
+                break;
+            }
+            fragment = parentFragment;
         }
 
-        FragmentActivity activity = fragment.getActivity();
+        Activity activity = fragment.getActivity();
         if (activity != null && t.isInstance(activity)) {
             return (T) activity;
         }

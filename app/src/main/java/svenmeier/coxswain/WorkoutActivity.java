@@ -15,13 +15,12 @@
  */
 package svenmeier.coxswain;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -36,7 +35,7 @@ import svenmeier.coxswain.view.ValueView;
 
 /**
  */
-public class WorkoutActivity extends AppCompatActivity {
+public class WorkoutActivity extends Activity {
 
     public static final int DELAY_MILLIS = 500;
     private Gym gym;

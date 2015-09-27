@@ -82,8 +82,8 @@ public class Gym {
         return repository.query(new Workout());
     }
 
-    public void addWorkout(Workout workout) {
-        repository.insert(workout);
+    public void mergeWorkout(Workout workout) {
+        repository.merge(workout);
     }
 
     public void select(Program program) {

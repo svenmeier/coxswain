@@ -225,7 +225,7 @@ public class GymService extends Service {
                             }
 
                             Event event = gym.addSnapshot(snapshot);
-                            if (event == Event.SNAPPED || event == Event.PROGRAM_FINISHED) {
+                            if (event != Event.REJECTED) {
                                 gym.mergeWorkout(gym.workout);
                             }
 

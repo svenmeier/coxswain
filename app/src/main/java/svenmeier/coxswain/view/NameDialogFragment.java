@@ -48,7 +48,7 @@ public class NameDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.action_ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                Utils.getParent(NameDialogFragment.this, Callback.class).changed(program);
+                                Gym.instance(getActivity()).mergeProgram(program);
 
                                 dismiss();
                             }
@@ -66,9 +66,5 @@ public class NameDialogFragment extends DialogFragment {
         fragment.setArguments(new Reference<>(program).to(new Bundle()));
 
         return fragment;
-    }
-
-    public static interface Callback {
-        public void changed(Program program);
     }
 }

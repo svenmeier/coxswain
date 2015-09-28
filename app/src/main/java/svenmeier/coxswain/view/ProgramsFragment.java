@@ -38,8 +38,7 @@ import svenmeier.coxswain.gym.Program;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-
-public class ProgramsFragment extends Fragment implements NameDialogFragment.Callback {
+public class ProgramsFragment extends Fragment {
 
     private Gym gym;
 
@@ -69,7 +68,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
     public void onStart() {
         super.onStart();
 
-        adapter.init(0, this);
+        adapter.initLoader(0, this);
     }
 
     @Override
@@ -77,13 +76,6 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
         super.onStop();
 
         adapter.destroy(0, this);
-    }
-
-    @Override
-    public void changed(Program program) {
-        Gym.instance(getActivity()).mergeProgram(program);
-
-        adapter.restart(0, getActivity());
     }
 
     private class ProgramsAdapter extends MatchAdapter<Program> {
@@ -118,7 +110,7 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                     public void onClick(View v) {
                         gym.select(null);
 
-                        restart(0, getActivity());
+                        notifyChanged();
                     }
                 });
                 stopButton.setVisibility(View.VISIBLE);
@@ -136,8 +128,6 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                                     case R.id.action_new:
                                         Gym.instance(getActivity()).mergeProgram(new Program("Program"));
 
-                                        restart(0, getActivity());
-
                                         return true;
                                     case R.id.action_rename:
                                         NameDialogFragment.create(program).show(getChildFragmentManager(), "name");
@@ -147,8 +137,6 @@ public class ProgramsFragment extends Fragment implements NameDialogFragment.Cal
                                         return true;
                                     case R.id.action_delete:
                                         Gym.instance(getActivity()).deleteProgram(program);
-
-                                        restart(0, getActivity());
 
                                         return true;
                                     default:

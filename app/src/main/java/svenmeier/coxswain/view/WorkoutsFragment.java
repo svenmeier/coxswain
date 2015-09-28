@@ -65,7 +65,7 @@ public class WorkoutsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        adapter.restart(0, this);
+        adapter.init(0, this);
     }
 
     @Override

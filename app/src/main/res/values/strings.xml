@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Coxswain</string>
+    <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
     <string name="action_settings">Settings</string>
@@ -21,7 +21,6 @@
     <string name="pulse_beatsPerMinute">%s beats per minute</string>
     <string name="speed_metersPerSecond">%s meters per second</string>
 
-    <string name="target">TARGET</string>
     <string name="target_distance">DISTANCE</string>
     <string name="target_duration">DURATION</string>
     <string name="target_strokes">STROKES</string>
@@ -31,24 +30,24 @@
     <string name="limit_strokeRate">STROKERATE</string>
     <string name="limit_none">NONE</string>
 
-    <string name="distance_pattern">00000</string>
-    <string name="duration_pattern">0:60:60</string>
-    <string name="duration_short_pattern">60:60</string>
-    <string name="strokes_pattern">0000</string>
-    <string name="speed_pattern">-0.00</string>
-    <string name="pulse_pattern">-000</string>
-    <string name="strokeRate_pattern">-00</string>
+    <string name="distance_pattern" translatable="false">00000</string>
+    <string name="duration_pattern" translatable="false">0:60:60</string>
+    <string name="duration_short_pattern" translatable="false">60:60</string>
+    <string name="strokes_pattern" translatable="false">0000</string>
+    <string name="speed_pattern" translatable="false">-0.00</string>
+    <string name="pulse_pattern" translatable="false">-000</string>
+    <string name="strokeRate_pattern" translatable="false">-00</string>
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>
 
 
     <string name="preference_motivator_title">Motivator</string>
 
-    <string name="preference_motivator_whistle">preference_motivator_whistle</string>
+    <string name="preference_motivator_whistle" translatable="false">preference_motivator_whistle</string>
     <string name="preference_motivator_whistle_title">Whistle</string>
     <string name="preference_motivator_whistle_summary">Whistle to signal segment changes</string>
 
-    <string name="preference_motivator_vibrate">preference_motivator_vibrate</string>
+    <string name="preference_motivator_vibrate" translatable="false">preference_motivator_vibrate</string>
     <string name="preference_motivator_vibrate_title">Vibrate</string>
     <string name="preference_motivator_vibrate_summary">Vibrate to signal segment changes</string>
 </resources>

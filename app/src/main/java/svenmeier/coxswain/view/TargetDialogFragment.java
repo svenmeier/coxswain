@@ -123,8 +123,4 @@ public class TargetDialogFragment extends AbstractValueFragment {
             }
         });
     }
-
-    public String getTitle() {
-        return getString(R.string.target);
-    }
 }

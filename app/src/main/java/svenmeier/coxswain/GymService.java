@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.mock.MockRower;
@@ -58,7 +59,7 @@ public class GymService extends Service {
 
     @Override
     public void onCreate() {
-        motivator = new Motivator(this);
+        motivator = new DefaultMotivator(this);
 
         gym = Gym.instance(this);
     }

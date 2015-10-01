@@ -182,6 +182,20 @@ public class Gym {
             return 0;
         }
 
+        public boolean inLimit() {
+            Snapshot lastSnapshot = getLastSnapshot();
+
+            if (snapshot.speed < current.segment.speed.get()) {
+                return false;
+            } else if (snapshot.pulse < current.segment.pulse.get()) {
+                return false;
+            } else if (snapshot.strokeRate < current.segment.strokeRate.get()) {
+                return false;
+            }
+
+            return true;
+        }
+
         public String describeTarget() {
             StringBuilder description = new StringBuilder();
 

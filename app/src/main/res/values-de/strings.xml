@@ -22,7 +22,7 @@
 
     <string name="target_distance">DISTANZ</string>
     <string name="target_duration">DAUER</string>
-    <string name="target_strokes">SCHLÄGE</string>
+    <string name="target_strokes">SCHLAEGE</string>
     <string name="limit_speed">TEMPO</string>
     <string name="limit_pulse">PULS</string>
     <string name="limit_strokeRate">SCHLAGZAHL</string>

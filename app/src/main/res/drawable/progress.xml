@@ -3,5 +3,5 @@
     android:clipOrientation="horizontal"
     android:gravity="left"
     >
-    <color android:color="#A00000FF" />
+    <color android:color="#900000FF" />
 </clip>

@@ -29,55 +29,39 @@
             />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="4dp"
+    <svenmeier.coxswain.view.ValueContainer
+        style="@style/ValueContainer"
         >
-        <svenmeier.coxswain.view.ValueContainer
-            style="@style/ValueContainer"
-            >
 
-            <svenmeier.coxswain.view.ValueView
-                android:id="@+id/segments_target"
-                style="@style/ValueView"
-                coxswain:pattern="0:00:00"
-                />
+        <svenmeier.coxswain.view.ValueView
+            android:id="@+id/segments_target"
+            style="@style/ValueView"
+            coxswain:pattern="0:00:00"
+            />
 
-            <svenmeier.coxswain.view.LabelView
-                android:id="@+id/segments_target_label"
-                style="@style/LabelView"
-                coxswain:text="DURATION"
-                />
+        <svenmeier.coxswain.view.LabelView
+            android:id="@+id/segments_target_label"
+            style="@style/LabelView"
+            coxswain:text="DURATION"
+            />
 
-        </svenmeier.coxswain.view.ValueContainer>
-    </LinearLayout>
+    </svenmeier.coxswain.view.ValueContainer>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:padding="4dp"
+    <svenmeier.coxswain.view.ValueContainer
+        style="@style/ValueContainer"
         >
-        <svenmeier.coxswain.view.ValueContainer
-            style="@style/ValueContainer"
-            >
 
-            <svenmeier.coxswain.view.ValueView
-                android:id="@+id/segments_limit"
-                style="@style/ValueView"
-                coxswain:pattern="0.00"
-                />
+        <svenmeier.coxswain.view.ValueView
+            android:id="@+id/segments_limit"
+            style="@style/ValueView"
+            coxswain:pattern="0.00"
+            />
 
-            <svenmeier.coxswain.view.LabelView
-                android:id="@+id/segments_limit_label"
-                style="@style/LabelView"
-                coxswain:text="SPEED"
-                />
+        <svenmeier.coxswain.view.LabelView
+            android:id="@+id/segments_limit_label"
+            style="@style/LabelView"
+            coxswain:text="SPEED"
+            />
 
-        </svenmeier.coxswain.view.ValueContainer>
-    </LinearLayout>
+    </svenmeier.coxswain.view.ValueContainer>
 </LinearLayout>

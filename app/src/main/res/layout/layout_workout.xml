@@ -12,7 +12,9 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="horizontal"
-        android:padding="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="3dp"
         >
 
         <svenmeier.coxswain.view.ValueContainer
@@ -48,7 +50,9 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="horizontal"
-        android:padding="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="3dp"
         >
 
         <svenmeier.coxswain.view.ValueContainer
@@ -83,7 +87,9 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="horizontal"
-        android:padding="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="3dp"
         >
 
         <svenmeier.coxswain.view.ValueContainer

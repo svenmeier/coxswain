@@ -43,7 +43,7 @@ public class Gym {
 
     public Workout workout;
 
-    public List<Snapshot> snapshots = new ArrayList<>();
+    public Snapshot snapshot;
 
     public Current current;
 
@@ -89,7 +89,7 @@ public class Gym {
     public void select(Program program) {
         this.program = program;
 
-        snapshots.clear();
+        snapshot = new Snapshot();
 
         if (program == null) {
             workout = null;
@@ -98,9 +98,7 @@ public class Gym {
         } else {
             workout = new Workout(program);
 
-            Snapshot first = new Snapshot();
-            snapshots.add(first);
-            current = new Current(program.getSegment(0), 0, first);
+            current = new Current(program.getSegment(0), 0, snapshot);
         }
     }
 
@@ -109,12 +107,12 @@ public class Gym {
     }
 
     public Event addSnapshot(Snapshot snapshot) {
+        this.snapshot = snapshot;
+
         Event event = Event.REJECTED;
 
         if (current != null) {
             event = Event.SNAPPED;
-
-            snapshots.add(snapshot);
 
             if (workout.duration.get() == 0) {
                 event = Event.PROGRAM_START;
@@ -140,7 +138,7 @@ public class Gym {
     }
 
     public Snapshot getLastSnapshot() {
-        return snapshots.get(snapshots.size() - 1);
+        return snapshot;
     }
 
     public class Current {

@@ -37,7 +37,8 @@ import svenmeier.coxswain.view.ValueView;
  */
 public class WorkoutActivity extends Activity {
 
-    public static final int DELAY_MILLIS = 500;
+    public static final int DELAY_MILLIS = 250;
+
     private Gym gym;
 
     private SegmentsView segmentsView;

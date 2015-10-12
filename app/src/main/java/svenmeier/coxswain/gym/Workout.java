@@ -47,7 +47,10 @@ public class Workout extends Propoid {
     }
 
     public void onSnapshot(Snapshot snapshot) {
-        this.duration.set(this.duration.get() + 1);
+        int duration = (int) ((System.currentTimeMillis() - start.get()) / 1000);
+
+        this.duration.set(duration);
+
         this.distance.set((int)snapshot.distance);
         this.strokes.set((int)snapshot.strokes);
     }

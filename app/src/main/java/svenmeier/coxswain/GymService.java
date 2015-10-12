@@ -172,14 +172,6 @@ public class GymService extends Service {
 
         private final Rower rower;
 
-        public int averageSpeed;
-
-        public int averagePulse;
-
-        public int averageStrokeRate;
-
-        private int averageCount;
-
         public Beats(Rower rower) {
             this.rower = rower;
 
@@ -187,60 +179,40 @@ public class GymService extends Service {
         }
 
         public void run() {
-            long next = System.currentTimeMillis();
-
             while (rower.row()) {
-                averageSpeed += memory.speed;
-                averagePulse += memory.pulse;
-                averageStrokeRate += memory.strokeRate;
-                averageCount++;
+                final Snapshot snapshot = new Snapshot();
+                snapshot.distance = (short) memory.distance;
+                snapshot.strokes = (short) memory.strokes;
+                snapshot.speed = (short) memory.speed;
+                snapshot.pulse = (short) memory.pulse;
+                snapshot.strokeRate = (short) memory.strokeRate;
 
-                if (System.currentTimeMillis() > next) {
-                    averageSpeed /= averageCount;
-                    averageStrokeRate /= averageCount;
-                    averagePulse /= averageCount;
-
-                    final Snapshot snapshot = new Snapshot();
-                    snapshot.distance = (short) memory.distance;
-                    snapshot.strokes = (short) memory.strokes;
-                    snapshot.speed = (short) averageSpeed;
-                    snapshot.pulse = (short) averagePulse;
-                    snapshot.strokeRate = (short) averageStrokeRate;
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (gym.current == null) {
-                                showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
-                                return;
-                            }
-                            showNotification(gym.program.name.get(), WorkoutActivity.class);
-
-                            if (gym.workout.duration.get() == 0) {
-                                rower.reset();
-                                snapshot.distance = 0;
-                                snapshot.strokes = 0;
-                                snapshot.speed = 0;
-                                snapshot.strokeRate = 0;
-                                snapshot.pulse = 0;
-                            }
-
-                            Event event = gym.addSnapshot(snapshot);
-                            if (event != Event.REJECTED) {
-                                gym.mergeWorkout(gym.workout);
-                            }
-
-                            motivator.onEvent(event);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (gym.current == null) {
+                            showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
+                            return;
                         }
-                    });
+                        showNotification(gym.program.name.get(), WorkoutActivity.class);
 
-                    averageSpeed = 0;
-                    averagePulse = 0;
-                    averageStrokeRate = 0;
-                    averageCount = 0;
+                        if (gym.workout.duration.get() == 0) {
+                            rower.reset();
+                            snapshot.distance = 0;
+                            snapshot.strokes = 0;
+                            snapshot.speed = 0;
+                            snapshot.strokeRate = 0;
+                            snapshot.pulse = 0;
+                        }
 
-                    next += 1000; // second
-                }
+                        Event event = gym.addSnapshot(snapshot);
+                        if (event != Event.REJECTED) {
+                            gym.mergeWorkout(gym.workout);
+                        }
+
+                        motivator.onEvent(event);
+                    }
+                });
             }
         }
     }

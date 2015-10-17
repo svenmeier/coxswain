@@ -94,7 +94,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 break;
             case SNAPPED:
                 if (current != null) {
-                    snapped(gym.current);
+                    snapped(current);
                 }
                 break;
             case PROGRAM_FINISHED:

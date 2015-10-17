@@ -89,7 +89,7 @@ public class Gym {
     public void select(Program program) {
         this.program = program;
 
-        snapshot = new Snapshot();
+        this.snapshot = null;
 
         if (program == null) {
             workout = null;
@@ -98,7 +98,7 @@ public class Gym {
         } else {
             workout = new Workout(program);
 
-            current = new Current(program.getSegment(0), 0, snapshot);
+            current = new Current(program.getSegment(0), 0, new Snapshot());
         }
     }
 
@@ -107,16 +107,17 @@ public class Gym {
     }
 
     public Event addSnapshot(Snapshot snapshot) {
-        this.snapshot = snapshot;
-
         Event event = Event.REJECTED;
 
         if (current != null) {
             event = Event.SNAPPED;
 
-            if (workout.duration.get() == 0) {
+            if (this.snapshot == null) {
+                // first snapshot -> start of program
                 event = Event.PROGRAM_START;
             }
+            this.snapshot = snapshot;
+
             workout.onSnapshot(snapshot);
 
             if (current.completion() == 1.0f) {
@@ -165,8 +166,11 @@ public class Gym {
         public int achieved() {
             int lastDuration = workout.duration.get();
             Snapshot lastSnapshot = getLastSnapshot();
+            if (lastSnapshot == null) {
+                return 0;
+            }
 
-            return achieved(lastSnapshot, lastDuration) - achieved(current.snapshot, current.duration);
+            return achieved(lastSnapshot, lastDuration) - achieved(snapshot, duration);
         }
 
         private int achieved(Snapshot snapshot, int duration) {
@@ -183,11 +187,11 @@ public class Gym {
         public boolean inLimit() {
             Snapshot lastSnapshot = getLastSnapshot();
 
-            if (snapshot.speed < current.segment.speed.get()) {
+            if (lastSnapshot.speed < current.segment.speed.get()) {
                 return false;
-            } else if (snapshot.pulse < current.segment.pulse.get()) {
+            } else if (lastSnapshot.pulse < current.segment.pulse.get()) {
                 return false;
-            } else if (snapshot.strokeRate < current.segment.strokeRate.get()) {
+            } else if (lastSnapshot.strokeRate < current.segment.strokeRate.get()) {
                 return false;
             }
 

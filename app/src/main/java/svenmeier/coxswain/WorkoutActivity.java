@@ -110,15 +110,19 @@ public class WorkoutActivity extends Activity {
     };
 
     private void updateValues() {
-        Snapshot snapshot = gym.getLastSnapshot();
-
         int achieved = 0;
+
         int duration = 0;
         int distance = 0;
         int strokes = 0;
         int speed = 0;
         int strokeRate = 0;
         int pulse = 0;
+
+        Snapshot snapshot = gym.getLastSnapshot();
+        if (snapshot == null) {
+            snapshot = new Snapshot();
+        }
 
         if (gym.current != null) {
             Segment segment = gym.current.segment;

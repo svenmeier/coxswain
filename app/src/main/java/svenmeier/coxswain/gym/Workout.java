@@ -47,7 +47,7 @@ public class Workout extends Propoid {
     }
 
     public void onSnapshot(Snapshot snapshot) {
-        int duration = (int) ((System.currentTimeMillis() - start.get()) / 1000);
+        int duration = Math.round((float)(System.currentTimeMillis() - start.get()) / 1000f);
 
         this.duration.set(duration);
 

@@ -190,27 +190,31 @@ public class GymService extends Service {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (gym.current == null) {
-                            showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
-                            return;
-                        }
-                        showNotification(gym.program.name.get(), WorkoutActivity.class);
+                        if (rower.isOpen()) {
+                            // still rowing
 
-                        if (gym.workout.duration.get() == 0) {
-                            rower.reset();
-                            snapshot.distance = 0;
-                            snapshot.strokes = 0;
-                            snapshot.speed = 0;
-                            snapshot.strokeRate = 0;
-                            snapshot.pulse = 0;
-                        }
+                            if (gym.current == null) {
+                                showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
+                                return;
+                            }
+                            showNotification(gym.program.name.get(), WorkoutActivity.class);
 
-                        Event event = gym.addSnapshot(snapshot);
-                        if (event != Event.REJECTED) {
-                            gym.mergeWorkout(gym.workout);
-                        }
+                            if (gym.workout.duration.get() == 0) {
+                                rower.reset();
+                                snapshot.distance = 0;
+                                snapshot.strokes = 0;
+                                snapshot.speed = 0;
+                                snapshot.strokeRate = 0;
+                                snapshot.pulse = 0;
+                            }
 
-                        motivator.onEvent(event);
+                            Event event = gym.addSnapshot(snapshot);
+                            if (event != Event.REJECTED) {
+                                gym.mergeWorkout(gym.workout);
+                            }
+
+                            motivator.onEvent(event);
+                        }
                     }
                 });
             }

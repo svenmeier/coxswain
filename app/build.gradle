@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+if (project.hasProperty("coxswain-signing") && new File(project.property("coxswain-signing")).exists()) {
+    apply from: project.property("coxswain-signing")
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.0 rc2"

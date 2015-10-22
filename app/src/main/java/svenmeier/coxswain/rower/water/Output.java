@@ -17,7 +17,6 @@ package svenmeier.coxswain.rower.water;
 
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
-import android.util.Log;
 
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.view.ProgramsFragment;
@@ -47,10 +46,6 @@ public class Output {
     }
 
     public void write(String message) {
-        // must be synchronized for wait below
-
-        Log.d(MainActivity.TAG, String.format("writing %s", message));
-
         int length = message.length();
         if (length > buffer.length - 2) {
             throw new IllegalArgumentException("max length exceeded " + buffer.length);

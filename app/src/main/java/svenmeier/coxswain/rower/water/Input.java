@@ -17,7 +17,6 @@ package svenmeier.coxswain.rower.water;
 
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
-import android.util.Log;
 
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.view.ProgramsFragment;
@@ -61,7 +60,6 @@ public class Input {
             // acquire new data
             start = 0;
             end = connection.bulkTransfer(endpoint, buffer, buffer.length, TIMEOUT);
-            Log.d(MainActivity.TAG, String.format("acquired %s", end));
         }
 
         while (start < end) {
@@ -75,7 +73,6 @@ public class Input {
             start++;
         }
 
-        Log.d(MainActivity.TAG, String.format("reading %s", read));
         return read;
     }
 }

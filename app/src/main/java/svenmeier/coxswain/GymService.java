@@ -180,18 +180,11 @@ public class GymService extends Service {
 
         public void run() {
             while (rower.row()) {
-                final Snapshot snapshot = new Snapshot();
-                snapshot.distance = (short) memory.distance;
-                snapshot.strokes = (short) memory.strokes;
-                snapshot.speed = (short) memory.speed;
-                snapshot.pulse = (short) memory.pulse;
-                snapshot.strokeRate = (short) memory.strokeRate;
-
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (rower.isOpen()) {
-                            // still rowing
+                        if (rower == GymService.this.rower) {
+                            // still current rower
 
                             if (gym.current == null) {
                                 showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
@@ -199,18 +192,9 @@ public class GymService extends Service {
                             }
                             showNotification(gym.program.name.get(), WorkoutActivity.class);
 
-                            if (gym.workout.duration.get() == 0) {
+                            Event event = gym.addSnapshot(new Snapshot(memory));
+                            if (event == Event.PROGRAM_START) {
                                 rower.reset();
-                                snapshot.distance = 0;
-                                snapshot.strokes = 0;
-                                snapshot.speed = 0;
-                                snapshot.strokeRate = 0;
-                                snapshot.pulse = 0;
-                            }
-
-                            Event event = gym.addSnapshot(snapshot);
-                            if (event != Event.REJECTED) {
-                                gym.mergeWorkout(gym.workout);
                             }
 
                             motivator.onEvent(event);

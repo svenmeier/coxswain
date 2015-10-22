@@ -139,6 +139,12 @@ public class Gym {
             if (this.snapshot == null) {
                 // first snapshot -> start of program
                 event = Event.PROGRAM_START;
+
+                snapshot.distance = 0;
+                snapshot.strokes = 0;
+                snapshot.speed = 0;
+                snapshot.strokeRate = 0;
+                snapshot.pulse = 0;
             }
             this.snapshot = snapshot;
 
@@ -156,6 +162,8 @@ public class Gym {
 
                     event = Event.SEGMENT_CHANGED;
                 }
+
+                mergeWorkout(workout);
             }
         }
 

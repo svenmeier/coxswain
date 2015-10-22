@@ -94,7 +94,7 @@ public class WaterRower implements Rower {
                             }
                         }
                     } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                        UsbDevice device = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if (device != null) {
                             onEnd();
                         }
@@ -107,13 +107,13 @@ public class WaterRower implements Rower {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         context.registerReceiver(receiver, filter);
 
-        UsbManager manager = (UsbManager) context.getSystemService(context.USB_SERVICE);
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         manager.requestPermission(device, PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0));
     }
 
     private void connect() {
-        UsbManager manager = (UsbManager) context.getSystemService(context.USB_SERVICE);
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         connection = manager.openDevice(device);
         if (connection == null) {
@@ -170,8 +170,6 @@ public class WaterRower implements Rower {
 
     @Override
     public synchronized boolean row() {
-        Log.d(MainActivity.TAG, "processing");
-
         if (isOpen() == false) {
             return false;
         }

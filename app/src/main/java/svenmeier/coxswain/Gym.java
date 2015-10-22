@@ -26,6 +26,7 @@ import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.aspect.Row;
 import propoid.db.cascading.DefaultCascading;
+import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
@@ -55,15 +56,38 @@ public class Gym {
         ((DefaultCascading)repository.cascading).setCascaded(new Program().segments);
 
         Match<Program> query = repository.query(new Program());
-        if (query.first() == null) {
-            repository.insert(new Program("Beginner"));
+        if (query.count() == 0) {
+            defaultPrograms();
         }
 
         PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
     }
 
+    private void defaultPrograms() {
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 5000), 5000));
+
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 30), 30));
+
+        Program program = new Program(context.getString(R.string.segments));
+        program.getSegment(0).setDistance(1000);
+        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+        repository.insert(program);
+    }
+
     public Match<Program> getPrograms() {
-        return  repository.query(new Program());
+        return repository.query(new Program());
     }
 
     public Program getProgram(Reference<Program> reference) {

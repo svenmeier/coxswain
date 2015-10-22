@@ -87,39 +87,51 @@ public class Segment extends Propoid {
         this.pulse.set(0);
     }
 
-    public void setDuration(int duration) {
+    public Segment setDuration(int duration) {
         this.duration.set(duration);
         this.distance.set(0);
         this.strokes.set(0);
+
+        return this;
     }
 
-    public void setDistance(int distance) {
+    public Segment setDistance(int distance) {
         this.duration.set(0);
         this.distance.set(distance);
         this.strokes.set(0);
+
+        return this;
     }
 
-    public void setStrokes(int strokes) {
+    public Segment setStrokes(int strokes) {
         this.duration.set(0);
         this.distance.set(0);
         this.strokes.set(strokes);
+
+        return this;
     }
 
-    public void setSpeed(int speed) {
+    public Segment setSpeed(int speed) {
         this.speed.set(speed);
         this.strokeRate.set(0);
         this.pulse.set(0);
+
+        return this;
     }
 
-    public void setStrokeRate(int strokeRate) {
+    public Segment setStrokeRate(int strokeRate) {
         this.speed.set(0);
         this.strokeRate.set(strokeRate);
         this.pulse.set(0);
+
+        return this;
     }
 
-    public void setPulse(int pulse) {
+    public Segment setPulse(int pulse) {
         this.speed.set(0);
         this.strokeRate.set(0);
         this.pulse.set(pulse);
+
+        return this;
     }
 }

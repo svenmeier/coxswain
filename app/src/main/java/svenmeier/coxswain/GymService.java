@@ -184,7 +184,7 @@ public class GymService extends Service {
         public void run() {
             while (true) {
                 if (gym.program != program) {
-                    // program change
+                    // program changed
                     memory.clear();
                     rower.reset();
                     program = gym.program;
@@ -197,18 +197,24 @@ public class GymService extends Service {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (rower == GymService.this.rower) {
-                            // still current rower
-
-                            if (gym.current == null) {
-                                showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
-                                return;
-                            }
-                            showNotification(gym.program.name.get(), WorkoutActivity.class);
-
-                            Event event = gym.addSnapshot(new Snapshot(memory));
-                            motivator.onEvent(event);
+                        if (rower != GymService.this.rower) {
+                            // no longer current rower
+                            return;
                         }
+
+                        if (gym.program != program) {
+                            // program changed
+                            return;
+                        }
+
+                        if (gym.current == null) {
+                            showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
+                            return;
+                        }
+                        showNotification(gym.program.name.get(), WorkoutActivity.class);
+
+                        Event event = gym.addSnapshot(new Snapshot(memory));
+                        motivator.onEvent(event);
                     }
                 });
             }

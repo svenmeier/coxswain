@@ -80,7 +80,9 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     @Override
     public void onEvent(Event event) {
         if (initialized == false) {
-            this.pending = event;
+            if (this.pending == null || event != Event.SNAPPED) {
+                this.pending = event;
+            }
             return;
         }
 

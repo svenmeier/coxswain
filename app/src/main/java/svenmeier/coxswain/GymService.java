@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
@@ -43,6 +44,8 @@ public class GymService extends Service {
     public static final String ACTION_ROWING_ENDED = "svenmeier.coxswain.ROWING_ENDED";
 
     private Gym gym;
+
+    private Program program;
 
     private Handler handler = new Handler();
 
@@ -179,7 +182,18 @@ public class GymService extends Service {
         }
 
         public void run() {
-            while (rower.row()) {
+            while (true) {
+                if (gym.program != program) {
+                    // program change
+                    memory.clear();
+                    rower.reset();
+                    program = gym.program;
+                }
+
+                if (rower.row() == false) {
+                    break;
+                }
+
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -193,10 +207,6 @@ public class GymService extends Service {
                             showNotification(gym.program.name.get(), WorkoutActivity.class);
 
                             Event event = gym.addSnapshot(new Snapshot(memory));
-                            if (event == Event.PROGRAM_START) {
-                                rower.reset();
-                            }
-
                             motivator.onEvent(event);
                         }
                     }

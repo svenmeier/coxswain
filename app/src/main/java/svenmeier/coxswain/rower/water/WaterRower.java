@@ -130,7 +130,6 @@ public class WaterRower implements Rower {
         connection.controlTransfer(0x40, 0x03, 0x001A, 0, null, 0, 0);
 
         requests.add(Mapper.INIT);
-        requests.add(Mapper.RESET);
         requests.add(Mapper.VERSION);
 
         onStart();
@@ -164,7 +163,7 @@ public class WaterRower implements Rower {
     }
 
     @Override
-    public void reset() {
+    public synchronized void reset() {
         requests.add(Mapper.RESET);
     }
 

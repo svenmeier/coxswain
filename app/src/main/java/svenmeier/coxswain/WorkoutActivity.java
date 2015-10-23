@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -35,9 +36,16 @@ import svenmeier.coxswain.view.ValueView;
 
 /**
  */
-public class WorkoutActivity extends Activity {
+public class WorkoutActivity extends Activity implements View.OnSystemUiVisibilityChangeListener {
 
-    public static final int DELAY_MILLIS = 250;
+    private static final int DELAY_MILLIS = 250;
+
+    private static final int LEAN_BACK =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_FULLSCREEN |
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 
     private Gym gym;
 
@@ -57,6 +65,7 @@ public class WorkoutActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         super.onCreate(savedInstanceState);
 
         gym = Gym.instance(this);
@@ -64,6 +73,8 @@ public class WorkoutActivity extends Activity {
         setContentView(R.layout.layout_workout);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
@@ -93,6 +104,20 @@ public class WorkoutActivity extends Activity {
         super.onPause();
 
         handler = null;
+    }
+
+    @Override
+    public void onSystemUiVisibilityChange(int visibility) {
+        if (handler == null) {
+            return;
+        }
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
+            }
+        }, 3000);
     }
 
     private Runnable valueUpdate = new Runnable() {

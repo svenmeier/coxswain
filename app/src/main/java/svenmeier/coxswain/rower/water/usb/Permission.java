@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.water.usb;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,18 +9,18 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
 /**
- * Fetch permission to use an {@link UsbDevice}.
+ * Request permission to use a {@link UsbDevice}.
  * <p>
- * Not used currently, since we start an activity USB_DEVICE_ATTACHED and
+ * Not used currently, since we start an activity for intent USB_DEVICE_ATTACHED and
  * Android will ask the user for permissions automatically.
  */
-public class PermissionFetcher extends BroadcastReceiver {
+public class Permission extends BroadcastReceiver {
 
 	private static final String ACTION_USB_PERMISSION = "svenmeier.coxswain.USB_PERMISSION";
 
 	private Context context;
 
-	public PermissionFetcher(Context context) {
+	public Permission(Context context) {
 		this.context = context;
 
 		IntentFilter filter = new IntentFilter();
@@ -34,7 +34,7 @@ public class PermissionFetcher extends BroadcastReceiver {
 		context = null;
 	}
 
-	public void fetch(UsbDevice device) {
+	public void request(UsbDevice device) {
 		UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
 		manager.requestPermission(device, PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0));
@@ -44,10 +44,10 @@ public class PermissionFetcher extends BroadcastReceiver {
 		String action = intent.getAction();
 
 		if (ACTION_USB_PERMISSION.equals(action)) {
-			onFetched(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false));
+			onRequested(intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false));
 		}
 	}
 
-	protected void onFetched(boolean granted) {
+	protected void onRequested(boolean granted) {
 	}
 }

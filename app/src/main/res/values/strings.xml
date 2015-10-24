@@ -50,4 +50,14 @@
     <string name="preference_motivator_vibrate" translatable="false">preference_motivator_vibrate</string>
     <string name="preference_motivator_vibrate_title">Vibrate</string>
     <string name="preference_motivator_vibrate_summary">Vibrate to signal segment changes</string>
+
+    <string name="preference_general_title">General</string>
+
+    <string name="preference_devices" translatable="false">preference_devices</string>
+    <string name="preference_devices_title">Devices</string>
+    <string name="preference_devices_summary">List all attached USB devices</string>
+
+    <string name="preference_devices_none_title">No devices</string>
+    <string name="preference_devices_none_summary">No USB devices are attached</string>
+
 </resources>

@@ -28,6 +28,10 @@
     <string name="limit_strokeRate">SCHLAGZAHL</string>
     <string name="limit_none">KEINE</string>
 
+    <string name="programs">Programme</string>
+    <string name="workouts">Trainings</string>
+    <string name="segments">Segmente</string>
+
     <string name="preference_motivator_title">Motivator</string>
 
     <string name="preference_motivator_whistle_title">Pfeifsignal</string>
@@ -36,7 +40,11 @@
     <string name="preference_motivator_vibrate_title">Vibrieren</string>
     <string name="preference_motivator_vibrate_summary">Vibrieren bei Segment-Wechsel</string>
 
-    <string name="programs">Programme</string>
-    <string name="workouts">Trainings</string>
-    <string name="segments">Segmente</string>
+    <string name="preference_general_title">Generell</string>
+
+    <string name="preference_devices_title">Geräte</string>
+    <string name="preference_devices_summary">Liste aller angeschlossenen USB Geräte</string>
+
+    <string name="preference_devices_none_title">Keine Geräte</string>
+    <string name="preference_devices_none_summary">Es sind keinen Geröte angeschlossen</string>
 </resources>

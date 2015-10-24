@@ -15,7 +15,6 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +31,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import svenmeier.coxswain.MainActivity;
-import svenmeier.coxswain.view.ProgramsFragment;
+import svenmeier.coxswain.rower.water.usb.Input;
+import svenmeier.coxswain.rower.water.usb.Output;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 

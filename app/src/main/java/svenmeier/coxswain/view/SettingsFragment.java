@@ -15,7 +15,9 @@
  */
 package svenmeier.coxswain.view;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import svenmeier.coxswain.R;
@@ -27,5 +29,18 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference preference = findPreference(getString(R.string.preference_devices));
+        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(android.R.id.content, new DevicesFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                return true;
+            }
+        });
     }
 }

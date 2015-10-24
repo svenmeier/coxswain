@@ -18,8 +18,12 @@ package svenmeier.coxswain;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -45,6 +49,25 @@ public class MainActivity extends Activity {
 
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
+
+        checkUsbDevice(getIntent());
+    }
+
+    /**
+     * Check whether the intent contains a {@link UsbDevice}, and pass it to {@link GymService}.
+     *
+     * @param intent
+     */
+    private void checkUsbDevice(Intent intent) {
+        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+        if (device != null) {
+            GymService.start(this, device);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        checkUsbDevice(intent);
     }
 
     @Override

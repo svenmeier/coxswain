@@ -41,8 +41,6 @@ import svenmeier.coxswain.rower.Rower;
  */
 public class WaterRower implements Rower {
 
-    private static final String ACTION_USB_PERMISSION = "svenmeier.coxswain.USB_PERMISSION";
-
     private static final int TIMEOUT = 0; // milliseconds
 
     private final Context context;
@@ -85,15 +83,7 @@ public class WaterRower implements Rower {
                 String action = intent.getAction();
 
                 if (isOpen()) {
-                    if (ACTION_USB_PERMISSION.equals(action)) {
-                        synchronized (this) {
-                            if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                                connect();
-                            } else {
-                                onFailed("No permission granted");
-                            }
-                        }
-                    } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                    if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                         if (device != null) {
                             onEnd();
@@ -103,13 +93,10 @@ public class WaterRower implements Rower {
             }
         };
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         context.registerReceiver(receiver, filter);
 
-        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-
-        manager.requestPermission(device, PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0));
+        connect();
     }
 
     private void connect() {

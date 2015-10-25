@@ -28,14 +28,6 @@
                 android:src="@drawable/ic_more_vert_black_24dp"
                 style="@style/MenuButton"
                 />
-            <ImageButton
-                android:id="@+id/program_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_stop_black_24dp"
-                style="@style/MenuButton"
-                />
 
             <TextView
                 android:id="@+id/program_name"

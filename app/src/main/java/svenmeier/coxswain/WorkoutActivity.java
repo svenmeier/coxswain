@@ -126,6 +126,11 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
                 return;
             }
 
+            if (gym.program == null) {
+                finish();
+                return;
+            }
+
             updateLevel();
 
             updateValues();

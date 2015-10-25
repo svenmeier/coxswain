@@ -35,15 +35,20 @@ public class MockRower implements Rower {
     }
 
     @Override
-    public synchronized void open() {
+    public synchronized boolean open() {
         open = true;
 
-        onStart();
+        return true;
     }
 
     @Override
     public synchronized boolean isOpen() {
         return open;
+    }
+
+    @Override
+    public String getName() {
+        return "Mockrower";
     }
 
     @Override
@@ -76,14 +81,6 @@ public class MockRower implements Rower {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void onStart() {
-    }
-
-    @Override
-    public void onEnd() {
     }
 
     @Override

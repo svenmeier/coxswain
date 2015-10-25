@@ -15,11 +15,14 @@
  */
 package svenmeier.coxswain;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
@@ -34,14 +37,11 @@ import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.mock.MockRower;
 import svenmeier.coxswain.rower.water.WaterRower;
 
-import static android.widget.Toast.LENGTH_SHORT;
-import static android.widget.Toast.makeText;
-
 public class GymService extends Service {
 
-    public static final String ACTION_ROWING_STARTED = "svenmeier.coxswain.ROWING_STARTED";
+    public static final String ACTION_STOP = "svenmeier.coxswain.GYM_STOP";
 
-    public static final String ACTION_ROWING_ENDED = "svenmeier.coxswain.ROWING_ENDED";
+    private BroadcastReceiver receiver;
 
     private Gym gym;
 
@@ -65,6 +65,27 @@ public class GymService extends Service {
         motivator = new DefaultMotivator(this);
 
         gym = Gym.instance(this);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                    if (rower != null) {
+                        endRowing();
+                    }
+                } else if (ACTION_STOP.equals(action)) {
+                    Gym.instance(GymService.this).select(null);
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        filter.addAction(ACTION_STOP);
+        registerReceiver(receiver, filter);
     }
 
     @Override
@@ -75,6 +96,9 @@ public class GymService extends Service {
 
         motivator.destroy();
         motivator = null;
+
+        unregisterReceiver(receiver);
+        receiver = null;
     }
 
     @Override
@@ -96,42 +120,31 @@ public class GymService extends Service {
 
     private void startRowing(UsbDevice device) {
 
-        broadcast(ACTION_ROWING_STARTED);
-
-        showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
-
         if (device == null) {
-            rower = new MockRower(memory) {
-                @Override
-                public void onStart() {
-                    new Beats(this);
-                }
-            };
+            rower = new MockRower(memory);
         } else {
-            rower = new WaterRower(this, memory, device) {
-                @Override
-                protected void onFailed(String message) {
-                    makeText(GymService.this, message, LENGTH_SHORT).show();
-
-                    endRowing();
-                }
-
-                @Override
-                public void onStart() {
-                    new Beats(this);
-                }
-
-                @Override
-                public void onEnd() {
-                    endRowing();
-                }
-            };
+            rower = new WaterRower(this, memory, device);
         }
 
-        rower.open();
+        if (rower.open()) {
+            new Beats(rower);
+
+            notifyConnected();
+        } else {
+            endRowing();
+        }
     }
 
-    private void showNotification(String text, Class<?> activity) {
+    private void notifyConnected() {
+        showNotification(String.format(getString(R.string.gym_notification_connected), rower.getName()), MainActivity.class, null);
+    }
+
+    private void notifyRowing() {
+        showNotification(String.format(getString(R.string.gym_notification_rowing), gym.program.name.get()), WorkoutActivity.class, ACTION_STOP);
+    }
+
+    @SuppressLint("NewApi")
+    private void showNotification(String text, Class<?> activity, String action) {
         if (text == null) {
             stopForeground(true);
         } else {
@@ -141,12 +154,20 @@ public class GymService extends Service {
 
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), 0);
 
-            Notification notification = new Notification.Builder(this)
+            Notification.Builder builder = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.app_name))
                     .setContentText(text)
-                    .setContentIntent(pendingIntent).getNotification();
-            startForeground(1, notification);
+                    .setContentIntent(pendingIntent);
+
+            if (action != null) {
+                try {
+                    builder.addAction(R.drawable.ic_stop_black_24dp, "Stop", PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
+                } catch (NoSuchMethodError minorApi) {
+                }
+            }
+
+            startForeground(1, builder.getNotification());
         }
 
         this.text = text;
@@ -157,9 +178,7 @@ public class GymService extends Service {
         this.rower.close();
         this.rower = null;
 
-        broadcast(ACTION_ROWING_ENDED);
-
-        showNotification(null, null);
+        showNotification(null, null, null);
     }
 
     private void broadcast(String action) {
@@ -202,16 +221,17 @@ public class GymService extends Service {
                             return;
                         }
 
+                        if (gym.current == null) {
+                            notifyConnected();
+                            return;
+                        }
+
                         if (gym.program != program) {
                             // program changed
                             return;
                         }
 
-                        if (gym.current == null) {
-                            showNotification(getString(R.string.gym_notification_ready), MainActivity.class);
-                            return;
-                        }
-                        showNotification(gym.program.name.get(), WorkoutActivity.class);
+                        notifyRowing();
 
                         Event event = gym.addSnapshot(new Snapshot(memory));
                         motivator.onEvent(event);

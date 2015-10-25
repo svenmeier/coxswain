@@ -17,8 +17,6 @@ package svenmeier.coxswain.rower.water;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -31,10 +29,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import svenmeier.coxswain.MainActivity;
-import svenmeier.coxswain.rower.water.usb.Input;
-import svenmeier.coxswain.rower.water.usb.Output;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.rower.water.usb.Input;
+import svenmeier.coxswain.rower.water.usb.Output;
 
 /**
  * https://github.com/jamesnesfield/node-waterrower/blob/develop/Waterrower/index.js
@@ -68,49 +66,20 @@ public class WaterRower implements Rower {
     }
 
     @Override
-    public synchronized void open() {
+    public synchronized boolean open() {
         if (isOpen()) {
-            return;
+            return true;
         }
 
-        if (this.device == null) {
-            onFailed("No device");
-            return;
-        }
-
-        receiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if (isOpen()) {
-                    if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                        if (device != null) {
-                            onEnd();
-                        }
-                    }
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        context.registerReceiver(receiver, filter);
-
-        connect();
-    }
-
-    private void connect() {
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
 
         connection = manager.openDevice(device);
         if (connection == null) {
-            onFailed("No open");
-            return;
+            return false;
         }
 
         if (initEndpoints() == false) {
-            onFailed("No endpoints found");
-            return;
+            return false;
         }
 
         // set data request, baud rate, 115200,
@@ -119,7 +88,12 @@ public class WaterRower implements Rower {
         requests.add(Mapper.INIT);
         requests.add(Mapper.VERSION);
 
-        onStart();
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return "Waterrower";
     }
 
     @Override
@@ -185,15 +159,15 @@ public class WaterRower implements Rower {
 
     private boolean initEndpoints() {
         for (int i = 0; i < device.getInterfaceCount(); i++) {
-            UsbInterface intf = device.getInterface(i);
+            UsbInterface anInterface = device.getInterface(i);
 
             Log.d(MainActivity.TAG, String.format("interface %s", i));
 
             UsbEndpoint out = null;
             UsbEndpoint in = null;
 
-            for (int e = 0; e < intf.getEndpointCount(); e++) {
-                UsbEndpoint endpoint = intf.getEndpoint(e);
+            for (int e = 0; e < anInterface.getEndpointCount(); e++) {
+                UsbEndpoint endpoint = anInterface.getEndpoint(e);
 
                 Log.d(MainActivity.TAG, String.format("endpoint %s: type=%s direction=%s", e, endpoint.getType(), endpoint.getDirection()));
 
@@ -207,7 +181,7 @@ public class WaterRower implements Rower {
             }
 
             if (out != null && in != null) {
-                if (connection.claimInterface(intf, true)) {
+                if (connection.claimInterface(anInterface, true)) {
                     input = new Input(connection, in);
                     output = new Output(connection, out, this);
                     return true;
@@ -216,17 +190,8 @@ public class WaterRower implements Rower {
                 }
             }
         }
+
+        Log.d(MainActivity.TAG, "No endpoints found");
         return false;
-    }
-
-    protected void onFailed(String message) {
-    }
-
-    @Override
-    public void onStart() {
-    }
-
-    @Override
-    public void onEnd() {
     }
 }

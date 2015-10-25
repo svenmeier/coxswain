@@ -24,14 +24,9 @@ public interface Rower {
      *
      * @see #onStart()
      */
-    void open();
+    boolean open();
 
     boolean isOpen();
-
-    /**
-     * Beats starts.
-     */
-    void onStart();
 
     void reset();
 
@@ -43,12 +38,9 @@ public interface Rower {
     boolean row();
 
     /**
-     * Beats ends.
-     */
-    void onEnd();
-
-    /**
      * Close the rower.
      */
     void close();
+
+    String getName();
 }

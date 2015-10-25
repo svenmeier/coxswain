@@ -11,7 +11,8 @@
     <string name="action_insert_after">Insert after</string>
     <string name="action_new">New</string>
 
-    <string name="gym_notification_ready">On your marks</string>
+    <string name="gym_notification_connected">Connected to %s</string>
+    <string name="gym_notification_rowing">Rowing "%s"</string>
     <string name="gym_finished">finished</string>
 
     <string name="distance_meters">%s meters</string>
@@ -55,9 +56,9 @@
 
     <string name="preference_devices" translatable="false">preference_devices</string>
     <string name="preference_devices_title">Devices</string>
-    <string name="preference_devices_summary">List all attached USB devices</string>
+    <string name="preference_devices_summary">List all connected USB devices</string>
 
     <string name="preference_devices_none_title">No devices</string>
-    <string name="preference_devices_none_summary">No USB devices are attached</string>
+    <string name="preference_devices_none_summary">No USB devices are connected</string>
 
 </resources>

@@ -10,7 +10,9 @@
     <string name="action_insert_after">Einfügen hinter</string>
     <string name="action_new">Neu</string>
 
-    <string name="gym_notification_ready">Auf die Plätze</string>
+    <string name="gym_notification_connected">Verbunden mit %s</string>
+    <string name="gym_notification_rowing">Rudere "%s"</string>
+    <string name="gym_finished">fertig</string>
 
     <string name="distance_meters">%s Meter</string>
     <string name="duration_minutes">%s Minuten</string>
@@ -18,7 +20,6 @@
     <string name="strokeRate_strokesPerMinute">%s Züge pro Minute</string>
     <string name="pulse_beatsPerMinute">%s Schläge pro Minute</string>
     <string name="speed_metersPerSecond">%s Meter pro Sekunde</string>
-    <string name="gym_finished">fertig</string>
 
     <string name="target_distance">DISTANZ</string>
     <string name="target_duration">DAUER</string>
@@ -43,8 +44,8 @@
     <string name="preference_general_title">Generell</string>
 
     <string name="preference_devices_title">Geräte</string>
-    <string name="preference_devices_summary">Liste aller angeschlossenen USB Geräte</string>
+    <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>
 
     <string name="preference_devices_none_title">Keine Geräte</string>
-    <string name="preference_devices_none_summary">Es sind keinen Geröte angeschlossen</string>
+    <string name="preference_devices_none_summary">Es sind keinen Geröte verbunden</string>
 </resources>

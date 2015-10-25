@@ -99,59 +99,42 @@ public class ProgramsFragment extends Fragment {
             SegmentsView progressView = index.get(R.id.program_segments);
             progressView.setData(new SegmentsData(program));
 
-            final ImageButton stopButton = index.get(R.id.program_stop);
-            stopButton.setFocusable(false);
             final ImageButton menuButton = index.get(R.id.program_menu);
             menuButton.setFocusable(false);
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    gym.select(null);
 
-            if (gym.isSelected(program)) {
-                stopButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        gym.select(null);
+                    PopupMenu popup = new PopupMenu(getActivity(), menuButton);
+                    popup.getMenuInflater().inflate(R.menu.menu_programs_item, popup.getMenu());
 
-                        notifyChanged();
-                    }
-                });
-                stopButton.setVisibility(View.VISIBLE);
-                menuButton.setVisibility(View.GONE);
-            } else {
-                menuButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PopupMenu popup = new PopupMenu(getActivity(), menuButton);
-                        popup.getMenuInflater().inflate(R.menu.menu_programs_item, popup.getMenu());
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.action_new:
+                                    Gym.instance(getActivity()).mergeProgram(new Program("Program"));
 
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.action_new:
-                                        Gym.instance(getActivity()).mergeProgram(new Program("Program"));
+                                    return true;
+                                case R.id.action_rename:
+                                    NameDialogFragment.create(program).show(getFragmentManager(), "name");
+                                    return true;
+                                case R.id.action_edit:
+                                    startActivity(ProgramActivity.createIntent(getActivity(), program));
+                                    return true;
+                                case R.id.action_delete:
+                                    Gym.instance(getActivity()).deleteProgram(program);
 
-                                        return true;
-                                    case R.id.action_rename:
-                                        NameDialogFragment.create(program).show(getChildFragmentManager(), "name");
-                                        return true;
-                                    case R.id.action_edit:
-                                        startActivity(ProgramActivity.createIntent(getActivity(), program));
-                                        return true;
-                                    case R.id.action_delete:
-                                        Gym.instance(getActivity()).deleteProgram(program);
-
-                                        return true;
-                                    default:
-                                        return false;
-                                }
+                                    return true;
+                                default:
+                                    return false;
                             }
-                        });
+                        }
+                    });
 
-                        popup.show();
-                    }
-                });
-                menuButton.setVisibility(View.VISIBLE);
-                stopButton.setVisibility(View.GONE);
-            }
-            stopButton.setFocusable(false);
+                    popup.show();
+                }
+            });
         }
 
         @Override

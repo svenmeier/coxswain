@@ -160,13 +160,18 @@ public class GymService extends Service {
                     .setContentText(text)
                     .setContentIntent(pendingIntent);
 
+            Notification.Action test = null;
+
             if (action != null) {
                 try {
-                    builder.addAction(R.drawable.ic_stop_black_24dp, "Stop", PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
-                } catch (NoSuchMethodError minorApi) {
+                    builder.addAction(R.drawable.ic_stop_black_24dp,
+                            getString(R.string.gym_notification_rowing_stop),
+                            PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
+                } catch (NoSuchMethodError notApi14) {
                 }
             }
 
+            // notApi14
             startForeground(1, builder.getNotification());
         }
 

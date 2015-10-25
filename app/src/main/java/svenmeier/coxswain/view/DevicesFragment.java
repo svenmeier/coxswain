@@ -68,7 +68,7 @@ public class DevicesFragment extends PreferenceFragment {
         String title = device.getDeviceName();
         try {
             title = device.getProductName();
-        } catch (NoSuchMethodError lowerVersion) {
+        } catch (NoSuchMethodError notApi14) {
         }
         return title;
     }

@@ -54,8 +54,6 @@ public class WaterRower implements Rower {
 
     private Mapper mapper = new Mapper();
 
-    private BroadcastReceiver receiver;
-
     private Queue<String> requests = new LinkedList<>();
 
     public WaterRower(Context context, Snapshot memory, UsbDevice device) {
@@ -71,19 +69,9 @@ public class WaterRower implements Rower {
             return true;
         }
 
-        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-
-        connection = manager.openDevice(device);
-        if (connection == null) {
+        if (initConnection() == false) {
             return false;
         }
-
-        if (initEndpoints() == false) {
-            return false;
-        }
-
-        // set data request, baud rate, 115200,
-        connection.controlTransfer(0x40, 0x03, 0x001A, 0, null, 0, 0);
 
         requests.add(Mapper.INIT);
         requests.add(Mapper.VERSION);
@@ -98,7 +86,7 @@ public class WaterRower implements Rower {
 
     @Override
     public synchronized boolean isOpen() {
-        return this.receiver != null;
+        return this.connection != null;
     }
 
     @Override
@@ -109,9 +97,6 @@ public class WaterRower implements Rower {
 
         this.requests.clear();
 
-        context.unregisterReceiver(receiver);
-        this.receiver = null;
-
         this.input = null;
         this.output = null;
 
@@ -119,8 +104,6 @@ public class WaterRower implements Rower {
             this.connection.close();
             this.connection = null;
         }
-
-        Log.d(MainActivity.TAG, "closed");
     }
 
     @Override
@@ -157,19 +140,26 @@ public class WaterRower implements Rower {
         return true;
     }
 
-    private boolean initEndpoints() {
+    private boolean initConnection() {
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+
+        this.connection = manager.openDevice(device);
+        if (this.connection == null) {
+            Log.d(MainActivity.TAG, String.format("no connection", device.getDeviceName()));
+            return false;
+        }
+
+        // set data request, baud rate, 115200,
+        this.connection.controlTransfer(0x40, 0x03, 0x001A, 0, null, 0, 0);
+
         for (int i = 0; i < device.getInterfaceCount(); i++) {
             UsbInterface anInterface = device.getInterface(i);
-
-            Log.d(MainActivity.TAG, String.format("interface %s", i));
 
             UsbEndpoint out = null;
             UsbEndpoint in = null;
 
             for (int e = 0; e < anInterface.getEndpointCount(); e++) {
                 UsbEndpoint endpoint = anInterface.getEndpoint(e);
-
-                Log.d(MainActivity.TAG, String.format("endpoint %s: type=%s direction=%s", e, endpoint.getType(), endpoint.getDirection()));
 
                 if (endpoint.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
                     if (endpoint.getDirection() == UsbConstants.USB_DIR_OUT) {
@@ -181,17 +171,21 @@ public class WaterRower implements Rower {
             }
 
             if (out != null && in != null) {
-                if (connection.claimInterface(anInterface, true)) {
-                    input = new Input(connection, in);
-                    output = new Output(connection, out, this);
+                if (this.connection.claimInterface(anInterface, true)) {
+                    input = new Input(this.connection, in);
+                    output = new Output(this.connection, out, this);
                     return true;
                 } else {
-                    Log.d(MainActivity.TAG, "cannot claim");
+                    Log.d(MainActivity.TAG, String.format("can not claim interface %s", anInterface.getId()));
                 }
+            } else {
+                Log.d(MainActivity.TAG, String.format("no suitable endpoints %s", anInterface.getId()));
             }
         }
 
-        Log.d(MainActivity.TAG, "No endpoints found");
+        Log.d(MainActivity.TAG, String.format("no suitable interface", device.getDeviceName()));
+        this.connection.close();
+        this.connection = null;
         return false;
     }
 }

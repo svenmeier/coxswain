@@ -21,8 +21,6 @@ public interface Rower {
 
     /**
      * Open the rower.
-     *
-     * @see #onStart()
      */
     boolean open();
 

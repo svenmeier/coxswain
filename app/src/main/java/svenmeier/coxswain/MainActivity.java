@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -23,12 +24,15 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
@@ -50,7 +54,45 @@ public class MainActivity extends Activity {
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
 
+        final ViewGroup currentView = (ViewGroup) findViewById(R.id.main_current);
+
+        final View currentNameView = findViewById(R.id.main_current_name);
+        currentNameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WorkoutActivity.start(MainActivity.this);
+            }
+        });
+        findViewById(R.id.main_current_stop).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gym.instance(MainActivity.this).select(null);
+
+                currentNameView.setEnabled(false);
+
+                ((ViewGroup)currentView.getParent()).setLayoutTransition(new LayoutTransition());
+
+                currentView.setVisibility(View.GONE);
+            }
+        });
+
         checkUsbDevice(getIntent());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Program program = Gym.instance(this).program;
+        if (program == null) {
+            findViewById(R.id.main_current).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.main_current).setVisibility(View.VISIBLE);
+
+            TextView currentNameView = (TextView) findViewById(R.id.main_current_name);
+            currentNameView.setText(program.name.get());
+            currentNameView.setEnabled(true);
+        }
     }
 
     /**

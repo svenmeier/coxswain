@@ -53,6 +53,16 @@
     <string name="preference_motivator_vibrate_title">Vibrate</string>
     <string name="preference_motivator_vibrate_summary">Vibrate to signal segment changes</string>
 
+    <string name="preference_integration_title">Integration</string>
+
+    <string name="preference_integration_intent" translatable="false">preference_integration_intent</string>
+    <string name="preference_integration_intent_title">Intent</string>
+    <string name="preference_integration_intent_summary">Open intent when starting rowing</string>
+
+    <string name="preference_integration_intent_uri" translatable="false">preference_integration_intent_uri</string>
+    <string name="preference_integration_intent_uri_title">URI</string>
+    <string name="preference_integration_intent_uri_summary">URI for intent</string>
+
     <string name="preference_general_title">General</string>
 
     <string name="preference_devices" translatable="false">preference_devices</string>

@@ -18,6 +18,7 @@ package svenmeier.coxswain.view;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
@@ -46,11 +48,17 @@ public class ProgramsFragment extends Fragment {
 
     private ProgramsAdapter adapter;
 
+    private Preference<Boolean> intentPreference;
+    private Preference<String> intentUriPreference;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         gym = Gym.instance(activity);
+
+        intentPreference = Preference.getBoolean(getActivity(), R.string.preference_integration_intent);
+        intentUriPreference = Preference.getString(getActivity(), R.string.preference_integration_intent_uri);
     }
 
     @Override
@@ -141,6 +149,17 @@ public class ProgramsFragment extends Fragment {
         protected void onItem(Program program, int position) {
             if (gym.isSelected(program) == false) {
                 gym.select(program);
+            }
+
+            if (intentPreference.get()) {
+                String uri = intentUriPreference.get();
+
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                    startActivity(intent);
+                    return;
+                } catch (Exception ex) {
+                }
             }
 
             startActivity(new Intent(getActivity(), WorkoutActivity.class));

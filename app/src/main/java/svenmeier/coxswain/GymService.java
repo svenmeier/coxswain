@@ -172,8 +172,9 @@ public class GymService extends Service {
                     .setContentIntent(pendingIntent);
 
             if (action != null) {
-                builder.setDefaults(Notification.DEFAULT_VIBRATE);
-                builder.setPriority(Notification.PRIORITY_MAX);
+                // uncomment for heads-up notification
+                // builder.setDefaults(Notification.DEFAULT_VIBRATE);
+                // builder.setPriority(Notification.PRIORITY_MAX);
 
                 try {
                     builder.addAction(R.drawable.ic_stop_black_24dp,

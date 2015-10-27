@@ -72,21 +72,12 @@ public class GymService extends Service {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
 
-                if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
-                    if (rower != null) {
-                        endRowing();
-                    }
-                } else if (ACTION_STOP.equals(action)) {
+                if (ACTION_STOP.equals(action)) {
                     Gym.instance(GymService.this).select(null);
                 }
             }
         };
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        filter.addAction(ACTION_STOP);
-        registerReceiver(receiver, filter);
+        registerReceiver(receiver, new IntentFilter(ACTION_STOP));
     }
 
     @Override
@@ -124,7 +115,12 @@ public class GymService extends Service {
         if (device == null) {
             rower = new MockRower(memory);
         } else {
-            rower = new WaterRower(this, memory, device);
+            rower = new WaterRower(this, memory, device) {
+                @Override
+                protected void onDetached() {
+                    endRowing();
+                }
+            };
         }
 
         if (rower.open()) {
@@ -172,8 +168,9 @@ public class GymService extends Service {
                     .setContentIntent(pendingIntent);
 
             if (action != null) {
+                builder.setDefaults(Notification.DEFAULT_VIBRATE);
+
                 // uncomment for heads-up notification
-                // builder.setDefaults(Notification.DEFAULT_VIBRATE);
                 // builder.setPriority(Notification.PRIORITY_MAX);
 
                 try {

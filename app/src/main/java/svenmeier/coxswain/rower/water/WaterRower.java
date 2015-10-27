@@ -17,6 +17,8 @@ package svenmeier.coxswain.rower.water;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -28,6 +30,7 @@ import android.util.Log;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
@@ -52,6 +55,8 @@ public class WaterRower implements Rower {
     private Input input;
     private Output output;
 
+    private BroadcastReceiver receiver;
+
     private Mapper mapper = new Mapper();
 
     private Queue<String> requests = new LinkedList<>();
@@ -73,10 +78,32 @@ public class WaterRower implements Rower {
             return false;
         }
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                    UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                    if (device == WaterRower.this.device) {
+                        onDetached();
+                    }
+                }
+            }
+        };
+        context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
+
         requests.add(Mapper.INIT);
         requests.add(Mapper.VERSION);
 
         return true;
+    }
+
+    /**
+     * Hook method called when device was detached.
+     */
+    protected void onDetached() {
     }
 
     @Override
@@ -96,6 +123,9 @@ public class WaterRower implements Rower {
         }
 
         this.requests.clear();
+
+        context.unregisterReceiver(receiver);
+        receiver = null;
 
         this.input = null;
         this.output = null;

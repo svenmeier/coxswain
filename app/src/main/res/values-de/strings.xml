@@ -1,5 +1,4 @@
 <resources>
-
     <string name="action_mock">Mock</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
@@ -11,8 +10,9 @@
     <string name="action_new">Neu</string>
 
     <string name="gym_notification_connected">Verbunden mit %s</string>
-    <string name="gym_notification_rowing">Rudere "%s"</string>
-    <string name="gym_notification_rowing_stop">Stopp</string>
+    <string name="gym_notification_target">Rudere %s</string>
+    <string name="gym_notification_target_limit">Rudere %1$s bei %2$s</string>
+    <string name="gym_notification_stop">Stopp</string>
     <string name="gym_finished">fertig</string>
 
     <string name="distance_meters">%s Meter</string>
@@ -38,9 +38,6 @@
 
     <string name="preference_motivator_whistle_title">Pfeifsignal</string>
     <string name="preference_motivator_whistle_summary">Verwende ein Pfeifensignal bei Segment-Wechsel</string>
-
-    <string name="preference_motivator_vibrate_title">Vibrieren</string>
-    <string name="preference_motivator_vibrate_summary">Vibrieren bei Segment-Wechsel</string>
 
     <string name="preference_integration_title">Integration</string>
 

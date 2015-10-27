@@ -27,6 +27,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v4.content.LocalBroadcastManager;
 
 import svenmeier.coxswain.gym.Program;
@@ -140,7 +141,17 @@ public class GymService extends Service {
     }
 
     private void notifyRowing() {
-        showNotification(String.format(getString(R.string.gym_notification_rowing), gym.program.name.get()), WorkoutActivity.class, ACTION_STOP);
+        Gym.Current current = gym.current;
+        if (current == null) {
+            notifyConnected();
+        } else {
+            String target = gym.current.describeTarget();
+            String limit = gym.current.describeLimit();
+
+            int id = limit.isEmpty() ? R.string.gym_notification_target : R.string.gym_notification_target_limit;
+
+            showNotification(String.format(getString(id), target, limit), WorkoutActivity.class, ACTION_STOP);
+        }
     }
 
     @SuppressLint("NewApi")
@@ -160,12 +171,13 @@ public class GymService extends Service {
                     .setContentText(text)
                     .setContentIntent(pendingIntent);
 
-            Notification.Action test = null;
-
             if (action != null) {
+                builder.setDefaults(Notification.DEFAULT_VIBRATE);
+                builder.setPriority(Notification.PRIORITY_MAX);
+
                 try {
                     builder.addAction(R.drawable.ic_stop_black_24dp,
-                            getString(R.string.gym_notification_rowing_stop),
+                            getString(R.string.gym_notification_stop),
                             PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
                 } catch (NoSuchMethodError notApi14) {
                 }
@@ -240,6 +252,10 @@ public class GymService extends Service {
 
                         Event event = gym.addSnapshot(new Snapshot(memory));
                         motivator.onEvent(event);
+
+                        if (event == Event.PROGRAM_FINISHED) {
+                            gym.select(null);
+                        }
                     }
                 });
             }

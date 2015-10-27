@@ -19,9 +19,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
-import android.view.Gravity;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -29,9 +26,6 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.Event;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
-
-import static android.widget.Toast.LENGTH_SHORT;
-import static android.widget.Toast.makeText;
 
 /**
  */
@@ -53,8 +47,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private final Preference<Boolean> whistlePreference;
 
-    private final Preference<Boolean> vibratePreference;
-
     private boolean initialized;
 
     private long underLimitSince = -1;
@@ -74,7 +66,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
 
         whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
-        vibratePreference = Preference.getBoolean(context, R.string.preference_motivator_vibrate);
     }
 
     @Override
@@ -100,14 +91,11 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 }
                 break;
             case PROGRAM_FINISHED:
-                toast(context.getString(R.string.gym_finished));
-
                 for (int i = 0; i < 3; i++) {
                     if (whistle()) {
                         pause();
                     }
                 }
-                vibrate(1000);
                 break;
         }
     }
@@ -124,7 +112,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 String limit = current.describeLimit();
                 if (limit.isEmpty() == false) {
                     speak(limit);
-                    toast(limit);
                 }
 
                 underLimitSince = now;
@@ -141,7 +128,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             text.append('\n');
             text.append(limit);
         }
-        toast(text.toString());
 
         int ordinal = current.segment.difficulty.get().ordinal();
         for (int o = 0; o <= ordinal; o++) {
@@ -151,26 +137,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         speak(target);
         pause();
         speak(limit);
-        vibrate(500);
 
         underLimitSince = -1;
-    }
-
-    private void vibrate(int milliseconds) {
-        if (vibratePreference.get()) {
-            vibrator.vibrate(milliseconds);
-        }
-    }
-
-    private void toast(String text) {
-        Toast toast = makeText(context, text, LENGTH_SHORT);
-
-        TextView view = (TextView) toast.getView().findViewById(android.R.id.message);
-        if(view != null) {
-            view.setGravity(Gravity.CENTER);
-        }
-
-        toast.show();
     }
 
     private void speak(String text) {

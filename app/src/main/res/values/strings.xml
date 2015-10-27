@@ -12,8 +12,9 @@
     <string name="action_new">New</string>
 
     <string name="gym_notification_connected">Connected to %s</string>
-    <string name="gym_notification_rowing">Rowing "%s"</string>
-    <string name="gym_notification_rowing_stop">Stop</string>
+    <string name="gym_notification_target">Row %s</string>
+    <string name="gym_notification_target_limit">Row %1$s at %2$s</string>
+    <string name="gym_notification_stop">Stop</string>
     <string name="gym_finished">finished</string>
 
     <string name="distance_meters">%s meters</string>
@@ -48,10 +49,6 @@
     <string name="preference_motivator_whistle" translatable="false">preference_motivator_whistle</string>
     <string name="preference_motivator_whistle_title">Whistle</string>
     <string name="preference_motivator_whistle_summary">Whistle to signal segment changes</string>
-
-    <string name="preference_motivator_vibrate" translatable="false">preference_motivator_vibrate</string>
-    <string name="preference_motivator_vibrate_title">Vibrate</string>
-    <string name="preference_motivator_vibrate_summary">Vibrate to signal segment changes</string>
 
     <string name="preference_integration_title">Integration</string>
 

@@ -151,7 +151,6 @@ public class Gym {
                 if (next == null) {
                     current = null;
 
-
                     event = Event.PROGRAM_FINISHED;
                 } else {
                     current = new Current(next, workout.duration.get(), snapshot);

@@ -43,6 +43,10 @@ public class MainActivity extends Activity {
 
     private ViewPager pager;
 
+    private ViewGroup currentView;
+
+    private TextView currentNameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +58,10 @@ public class MainActivity extends Activity {
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
 
-        final ViewGroup currentView = (ViewGroup) findViewById(R.id.main_current);
+        currentView = (ViewGroup) findViewById(R.id.main_current);
+        ((ViewGroup) currentView.getParent()).setLayoutTransition(new LayoutTransition());
 
-        final View currentNameView = findViewById(R.id.main_current_name);
+        currentNameView = (TextView) findViewById(R.id.main_current_name);
         currentNameView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,11 +73,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Gym.instance(MainActivity.this).select(null);
 
-                currentNameView.setEnabled(false);
-
-                ((ViewGroup)currentView.getParent()).setLayoutTransition(new LayoutTransition());
-
-                currentView.setVisibility(View.GONE);
+                updateCurrent();
             }
         });
 
@@ -83,13 +84,18 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+        updateCurrent();
+    }
+
+    private void updateCurrent() {
         Program program = Gym.instance(this).program;
         if (program == null) {
-            findViewById(R.id.main_current).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.main_current).setVisibility(View.VISIBLE);
+            currentView.setVisibility(View.GONE);
 
-            TextView currentNameView = (TextView) findViewById(R.id.main_current_name);
+            currentNameView.setEnabled(false);
+        } else {
+            currentView.setVisibility(View.VISIBLE);
+
             currentNameView.setText(program.name.get());
             currentNameView.setEnabled(true);
         }

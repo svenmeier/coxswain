@@ -141,12 +141,13 @@ public class GymService extends Service {
         if (current == null) {
             notifyConnected();
         } else {
+            String name = gym.program.name.get();
             String target = gym.current.describeTarget();
             String limit = gym.current.describeLimit();
 
             int id = limit.isEmpty() ? R.string.gym_notification_target : R.string.gym_notification_target_limit;
 
-            showNotification(String.format(getString(id), target, limit), WorkoutActivity.class, ACTION_STOP);
+            showNotification(String.format(getString(id), name, target, limit), WorkoutActivity.class, ACTION_STOP);
         }
     }
 

@@ -47,6 +47,8 @@ public class MainActivity extends Activity {
 
     private TextView currentNameView;
 
+    private Gym.Listener listener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +74,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Gym.instance(MainActivity.this).select(null);
-
-                updateCurrent();
             }
         });
 
@@ -84,7 +84,21 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        updateCurrent();
+        listener = new Gym.Listener() {
+            @Override
+            public void changed() {
+                updateCurrent();
+            }
+        };
+        listener.changed();
+        Gym.instance(this).addListener(listener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Gym.instance(this).removeListener(listener);
     }
 
     private void updateCurrent() {

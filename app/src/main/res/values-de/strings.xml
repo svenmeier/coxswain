@@ -10,8 +10,8 @@
     <string name="action_new">Neu</string>
 
     <string name="gym_notification_connected">Verbunden mit %s</string>
-    <string name="gym_notification_target">Rudere %s</string>
-    <string name="gym_notification_target_limit">Rudere %1$s bei %2$s</string>
+    <string name="gym_notification_target">%1$s: Rudere %2$s</string>
+    <string name="gym_notification_target_limit">%1$s: Rudere %2$s bei %3$s</string>
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_finished">fertig</string>
 
@@ -47,7 +47,7 @@
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
-    <string name="preference_general_title">Generell</string>
+    <string name="preference_hardware_title">Hardware</string>
 
     <string name="preference_devices_title">Geräte</string>
     <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>

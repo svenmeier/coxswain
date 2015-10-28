@@ -36,10 +36,10 @@
         <inset>
             <shape>
                 <stroke
-                    android:color="#FFAAAAAA"
+                    android:color="#803567ed"
                     android:width="2dp"
                     />
-                <solid android:color="#80AAAAAA"
+                <solid android:color="#403567ed"
                     />
                 <corners
                     android:radius="8dp"

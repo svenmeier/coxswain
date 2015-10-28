@@ -50,6 +50,8 @@ public class Gym {
 
     public Current current;
 
+    private List<Listener> listeners = new ArrayList<>();
+
     private Gym(Context context) {
 
         this.context = context;
@@ -86,6 +88,14 @@ public class Gym {
         program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
         program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
         repository.insert(program);
+    }
+
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(Listener listener) {
+        listeners.add(listener);
     }
 
     public Match<Program> getPrograms() {
@@ -126,6 +136,8 @@ public class Gym {
 
             current = new Current(program.getSegment(0), 0, new Snapshot());
         }
+
+        fireChanged();
     }
 
     public boolean isSelected(Program program) {
@@ -161,6 +173,8 @@ public class Gym {
                 mergeWorkout(workout);
             }
         }
+
+        fireChanged();
 
         return event;
     }
@@ -253,6 +267,12 @@ public class Gym {
         }
     }
 
+    private void fireChanged() {
+        for (Listener listener : listeners) {
+            listener.changed();
+        }
+    }
+
     public static Gym instance(Context context) {
         if (instance == null) {
             instance = new Gym(context.getApplicationContext());
@@ -261,4 +281,7 @@ public class Gym {
         return instance;
     }
 
+    public static interface Listener {
+        public void changed();
+    }
 }

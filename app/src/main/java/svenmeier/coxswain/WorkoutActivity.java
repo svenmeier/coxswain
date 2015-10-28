@@ -60,7 +60,7 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     private ValueView strokeRateView;
     private ValueView pulseView;
 
-    private Handler handler;
+    private Gym.Listener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,49 +95,39 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     public void onResume() {
         super.onResume();
 
-        handler = new Handler();
-        valueUpdate.run();
+        listener = new Gym.Listener() {
+            @Override
+            public void changed() {
+                if (gym.program == null) {
+                    finish();
+                    return;
+                }
+
+                updateLevel();
+                updateValues();
+            }
+        };
+        listener.changed();
+        gym.addListener(listener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        handler = null;
+        gym.removeListener(listener);
+        listener = null;
     }
 
     @Override
     public void onSystemUiVisibilityChange(int visibility) {
-        if (handler == null) {
-            return;
-        }
-
-        handler.postDelayed(new Runnable() {
+        getWindow().getDecorView().postDelayed(new Runnable() {
             @Override
             public void run() {
                 getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
             }
         }, 3000);
     }
-
-    private Runnable valueUpdate = new Runnable() {
-        public void run() {
-            if (handler == null) {
-                return;
-            }
-
-            if (gym.program == null) {
-                finish();
-                return;
-            }
-
-            updateLevel();
-
-            updateValues();
-
-            handler.postDelayed(this, DELAY_MILLIS);
-        }
-    };
 
     private void updateValues() {
         int achieved = 0;

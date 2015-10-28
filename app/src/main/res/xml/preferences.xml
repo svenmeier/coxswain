@@ -35,7 +35,7 @@
 
 
     <PreferenceCategory
-        android:title="@string/preference_general_title"
+        android:title="@string/preference_hardware_title"
         >
 
         <Preference

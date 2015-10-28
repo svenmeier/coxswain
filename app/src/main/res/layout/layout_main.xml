@@ -26,6 +26,7 @@
         android:layout_weight="0"
         android:orientation="horizontal"
         android:padding="4dp"
+        android:background="#FF3567ed"
         >
 
         <TextView
@@ -34,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="32dp"
+            android:textColor="#FFFFFFFF"
             />
 
         <ImageButton
@@ -41,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/ic_stop_black_24dp"
+            android:src="@drawable/ic_stop_white_36dp"
             style="@style/MenuButton"
             />
     </LinearLayout>

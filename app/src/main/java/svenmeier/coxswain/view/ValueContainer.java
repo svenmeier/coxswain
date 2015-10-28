@@ -40,12 +40,16 @@ public class ValueContainer extends LinearLayout {
         this.state[0] = 0;
 
         refreshDrawableState();
+
+        invalidate();
     }
 
     public void setState(int state) {
         this.state[0] = state;
 
         refreshDrawableState();
+
+        invalidate();
     }
 
     @Override

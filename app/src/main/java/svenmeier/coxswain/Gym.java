@@ -95,7 +95,7 @@ public class Gym {
     }
 
     public void removeListener(Listener listener) {
-        listeners.add(listener);
+        listeners.remove(listener);
     }
 
     public Match<Program> getPrograms() {

@@ -47,6 +47,8 @@ public class MainActivity extends Activity {
 
     private TextView currentNameView;
 
+    private TextView currentTargetView;
+
     private Gym.Listener listener;
 
     @Override
@@ -61,15 +63,16 @@ public class MainActivity extends Activity {
         pager.setAdapter(new MainAdapter(getFragmentManager()));
 
         currentView = (ViewGroup) findViewById(R.id.main_current);
-        ((ViewGroup) currentView.getParent()).setLayoutTransition(new LayoutTransition());
-
-        currentNameView = (TextView) findViewById(R.id.main_current_name);
-        currentNameView.setOnClickListener(new View.OnClickListener() {
+        currentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WorkoutActivity.start(MainActivity.this);
             }
         });
+
+        currentNameView = (TextView) findViewById(R.id.main_current_name);
+        currentTargetView = (TextView) findViewById(R.id.main_current_target);
+
         findViewById(R.id.main_current_stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,16 +105,18 @@ public class MainActivity extends Activity {
     }
 
     private void updateCurrent() {
-        Program program = Gym.instance(this).program;
-        if (program == null) {
-            currentView.setVisibility(View.GONE);
+        Gym gym = Gym.instance(this);
 
-            currentNameView.setEnabled(false);
+        Gym.Current current = gym.current;
+        if (current == null) {
+            currentView.setVisibility(View.GONE);
+            currentView.setEnabled(false);
         } else {
             currentView.setVisibility(View.VISIBLE);
+            currentView.setEnabled(true);
 
-            currentNameView.setText(program.name.get());
-            currentNameView.setEnabled(true);
+            currentNameView.setText(gym.program.name.get());
+            currentTargetView.setText(current.describeTarget());
         }
     }
 

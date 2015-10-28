@@ -10,8 +10,6 @@
     <string name="action_new">Neu</string>
 
     <string name="gym_notification_connected">Verbunden mit %s</string>
-    <string name="gym_notification_target">%1$s: Rudere %2$s</string>
-    <string name="gym_notification_target_limit">%1$s: Rudere %2$s bei %3$s</string>
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_finished">fertig</string>
 

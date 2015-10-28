@@ -265,6 +265,20 @@ public class Gym {
 
             return description.toString();
         }
+
+        public String describe() {
+            StringBuilder description = new StringBuilder();
+
+            description.append(describeTarget());
+
+            String limit = describeLimit();
+            if (limit.isEmpty() == false) {
+                description.append(", ");
+                description.append(limit);
+            }
+
+            return description.toString();
+        }
     }
 
     private void fireChanged() {

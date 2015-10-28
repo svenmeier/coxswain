@@ -116,7 +116,10 @@ public class MainActivity extends Activity {
             currentView.setEnabled(true);
 
             currentNameView.setText(gym.program.name.get());
-            currentTargetView.setText(current.describeTarget());
+
+            String description = gym.current.describe();
+
+            currentTargetView.setText(description);
         }
     }
 

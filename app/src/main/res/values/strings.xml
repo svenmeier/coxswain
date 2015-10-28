@@ -12,8 +12,6 @@
     <string name="action_new">New</string>
 
     <string name="gym_notification_connected">Connected to %s</string>
-    <string name="gym_notification_target">%1$s: Row %2$s</string>
-    <string name="gym_notification_target_limit">%1$s: Row %2$s at %3$s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_finished">finished</string>
 

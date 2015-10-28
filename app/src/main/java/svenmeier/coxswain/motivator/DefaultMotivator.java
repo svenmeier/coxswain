@@ -123,12 +123,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         String target = current.describeTarget();
         String limit = current.describeLimit();
 
-        StringBuilder text = new StringBuilder(target);
-        if (limit.isEmpty() == false) {
-            text.append('\n');
-            text.append(limit);
-        }
-
         int ordinal = current.segment.difficulty.get().ordinal();
         for (int o = 0; o <= ordinal; o++) {
             whistle();

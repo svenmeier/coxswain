@@ -23,7 +23,7 @@
             android:defaultValue="false"
             />
 
-        <EditTextPreference
+        <svenmeier.coxswain.view.preference.EditTextPreference
             android:key="@string/preference_integration_intent_uri"
             android:title="@string/preference_integration_intent_uri_title"
             android:summary="@string/preference_integration_intent_uri_summary"

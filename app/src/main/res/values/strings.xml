@@ -58,7 +58,7 @@
 
     <string name="preference_integration_intent_uri" translatable="false">preference_integration_intent_uri</string>
     <string name="preference_integration_intent_uri_title">URI</string>
-    <string name="preference_integration_intent_uri_summary">URI for intent</string>
+    <string name="preference_integration_intent_uri_summary">%s</string>
 
     <string name="preference_general_title">General</string>
 

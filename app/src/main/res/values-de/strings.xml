@@ -45,7 +45,7 @@
     <string name="preference_integration_intent_summary">Bei Start des Ruderns Intent ausführen</string>
 
     <string name="preference_integration_intent_uri_title">URI</string>
-    <string name="preference_integration_intent_uri_summary">URI für den Intent</string>
+    <string name="preference_integration_intent_uri_summary">%s</string>
 
     <string name="preference_general_title">Generell</string>
 

@@ -86,7 +86,7 @@ public class WaterRower implements Rower {
                 if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                     UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-                    if (device == WaterRower.this.device) {
+                    if (device.equals(WaterRower.this.device)) {
                         onDetached();
                     }
                 }

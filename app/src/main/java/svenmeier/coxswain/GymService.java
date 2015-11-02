@@ -157,7 +157,7 @@ public class GymService extends Service {
                 return;
             }
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification.Builder builder = new Notification.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)

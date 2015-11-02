@@ -54,14 +54,10 @@ public class ValueContainer extends LinearLayout {
 
     @Override
     protected int[] onCreateDrawableState(int extraSpace) {
-        if (state[0] == 0) {
-            return super.onCreateDrawableState(extraSpace);
-        } else {
-            final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
+        final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
 
-            mergeDrawableStates(drawableState, state);
+        mergeDrawableStates(drawableState, state);
 
-            return drawableState;
-        }
+        return drawableState;
     }
 }

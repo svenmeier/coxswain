@@ -22,9 +22,9 @@ import svenmeier.coxswain.rower.Rower;
  */
 public class MockRower implements Rower {
 
-    private static long distance;
+    private static double distance;
 
-    private static long strokes;
+    private static double strokes;
 
     private final Snapshot memory;
 
@@ -65,11 +65,11 @@ public class MockRower implements Rower {
         }
 
         if (open) {
-            distance += (int) (Math.random() * 3);
-            memory.distance = (short)(distance / 8);
+            distance += Math.random() * 0.5;
+            memory.distance = (short)(distance);
 
-            strokes++;
-            memory.strokes = (short)(strokes / 18);
+            strokes += Math.random() * 0.15;
+            memory.strokes = (short)(strokes);
 
             memory.speed = (short)(250 +  (Math.random() * 100));
 

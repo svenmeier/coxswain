@@ -66,7 +66,12 @@ public class ValueView extends LabelView {
     }
 
     public void setPattern(String pattern) {
+        if (this.pattern.equals(pattern)) {
+            return;
+        }
+
         this.pattern = pattern;
+        setText("");
 
         value = Integer.MAX_VALUE;
     }

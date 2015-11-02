@@ -10,6 +10,13 @@
             android:summary="@string/preference_motivator_whistle_summary"
             android:defaultValue="true"
             />
+
+        <CheckBoxPreference
+            android:key="@string/preference_motivator_speak"
+            android:title="@string/preference_motivator_speak_title"
+            android:summary="@string/preference_motivator_speak_summary"
+            android:defaultValue="true"
+            />
     </PreferenceCategory>
 
     <PreferenceCategory

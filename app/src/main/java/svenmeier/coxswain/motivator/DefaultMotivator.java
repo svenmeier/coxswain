@@ -47,6 +47,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private final Preference<Boolean> whistlePreference;
 
+    private final Preference<Boolean> speakPreference;
+
     private boolean initialized;
 
     private long underLimitSince = -1;
@@ -66,6 +68,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
 
         whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
+        speakPreference = Preference.getBoolean(context, R.string.preference_motivator_speak);
     }
 
     @Override
@@ -92,9 +95,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 break;
             case PROGRAM_FINISHED:
                 for (int i = 0; i < 3; i++) {
-                    if (whistle()) {
-                        pause();
-                    }
+                    boolean pause = whistle();
+                    pause(pause);
                 }
                 break;
         }
@@ -123,31 +125,46 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         String target = current.describeTarget();
         String limit = current.describeLimit();
 
+        boolean pause = false;
         int ordinal = current.segment.difficulty.get().ordinal();
         for (int o = 0; o <= ordinal; o++) {
-            whistle();
+            pause |= whistle();
         }
-        pause();
-        speak(target);
-        pause();
-        speak(limit);
+        pause(pause);
+        pause = speak(target);
+        pause(pause);
+        pause = speak(limit);
 
         underLimitSince = -1;
     }
 
-    private void speak(String text) {
-        speech.speak(text, TextToSpeech.QUEUE_ADD, null);
+    private boolean speak(String text) {
+        if (speakPreference.get()) {
+            speech.speak(text, TextToSpeech.QUEUE_ADD, null);
+
+            return true;
+        }
+
+        return false;
     }
 
     private void pause() {
-        speech.playSilence(500, TextToSpeech.QUEUE_ADD, null);
+        pause(true);
+    }
+
+    private void pause(boolean required) {
+        if (required) {
+            speech.playSilence(500, TextToSpeech.QUEUE_ADD, null);
+        }
     }
 
     private boolean whistle() {
         if (whistlePreference.get()) {
             speech.playEarcon(WHISTLE, TextToSpeech.QUEUE_ADD, null);
+
             return true;
         }
+
         return false;
     }
 

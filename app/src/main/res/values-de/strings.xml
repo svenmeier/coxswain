@@ -35,7 +35,10 @@
     <string name="preference_motivator_title">Motivator</string>
 
     <string name="preference_motivator_whistle_title">Pfeifsignal</string>
-    <string name="preference_motivator_whistle_summary">Verwende ein Pfeifensignal bei Segment-Wechsel</string>
+    <string name="preference_motivator_whistle_summary">Verwende ein Pfeifensignal für Segmente</string>
+
+    <string name="preference_motivator_speak_title">Sprechen</string>
+    <string name="preference_motivator_speak_summary">Anweisungen sprechen für Segmente</string>
 
     <string name="preference_integration_title">Integration</string>
 

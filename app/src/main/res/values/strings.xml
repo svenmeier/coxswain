@@ -46,7 +46,11 @@
 
     <string name="preference_motivator_whistle" translatable="false">preference_motivator_whistle</string>
     <string name="preference_motivator_whistle_title">Whistle</string>
-    <string name="preference_motivator_whistle_summary">Whistle to signal segment changes</string>
+    <string name="preference_motivator_whistle_summary">Whistle to signal segments</string>
+
+    <string name="preference_motivator_speak" translatable="false">preference_motivator_speak</string>
+    <string name="preference_motivator_speak_title">Speak</string>
+    <string name="preference_motivator_speak_summary">Speak instructions for segments</string>
 
     <string name="preference_integration_title">Integration</string>
 

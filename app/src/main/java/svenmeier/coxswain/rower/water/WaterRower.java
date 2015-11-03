@@ -30,7 +30,6 @@ import android.util.Log;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
@@ -148,7 +147,7 @@ public class WaterRower implements Rower {
         }
 
         if (requests.isEmpty()) {
-            output.write(mapper.cycle().request);
+            output.write(mapper.nextRequest());
         } else {
             output.write(requests.remove());
         }
@@ -159,12 +158,12 @@ public class WaterRower implements Rower {
         }
 
         while (true) {
-            String read = input.read();
-            if (read == null) {
+            String message = input.read();
+            if (message == null) {
                 break;
             }
 
-            mapper.map(read, memory);
+            mapper.map(message, memory);
         }
 
         return true;

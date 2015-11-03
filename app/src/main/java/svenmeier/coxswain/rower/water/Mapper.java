@@ -42,35 +42,49 @@ public class Mapper {
     private List<Field> fields = new ArrayList<>();
 
     public Mapper() {
-        fields.add(new Field(0x140, Field.DOUBLE, Field.HEX) {
+        fields.add(new Field(null, "S") {
+            @Override
+            protected void onUpdate(String message, Snapshot memory) {
+                switch (message.charAt(1)) {
+                    case 'S':
+                        memory.pull = true;
+                        break;
+                    case 'E':
+                        memory.pull = false;
+                        break;
+                }
+            }
+        });
+
+        fields.add(new NumberField(0x140, NumberField.DOUBLE) {
             @Override
             protected void onUpdate(short value, Snapshot memory) {
                 memory.strokes = value;
             }
         });
 
-        fields.add(new Field(0x057, Field.DOUBLE, Field.HEX) {
+        fields.add(new NumberField(0x057, NumberField.DOUBLE) {
             @Override
             protected void onUpdate(short value, Snapshot memory) {
                 memory.distance = value;
             }
         });
 
-        fields.add(new Field(0x14A, Field.DOUBLE, Field.HEX) {
+        fields.add(new NumberField(0x14A, NumberField.DOUBLE) {
             @Override
             protected void onUpdate(short value, Snapshot memory) {
                 memory.speed = value;
             }
         });
 
-        fields.add(new Field(0x1A9, Field.SINGLE, Field.HEX) {
+        fields.add(new NumberField(0x1A9, NumberField.SINGLE) {
             @Override
             protected void onUpdate(short value, Snapshot memory) {
                 memory.strokeRate = value;
             }
         });
 
-        fields.add(new Field(0x1A0, Field.SINGLE, Field.HEX) {
+        fields.add(new NumberField(0x1A0, NumberField.SINGLE) {
             @Override
             protected void onUpdate(short value, Snapshot memory) {
                 memory.pulse = value;
@@ -78,17 +92,22 @@ public class Mapper {
         });
     }
 
-    public Field cycle() {
-        Field field = fields.get(cycle);
+    public String nextRequest() {
+        while (true) {
+            Field field = fields.get(cycle);
 
-        cycle = (cycle + 1) % fields.size();
+            cycle = (cycle + 1) % fields.size();
 
-        return field;
+            if (field.request != null) {
+                return field.request;
+            }
+        }
     }
 
     public void map(String message, Snapshot memory) {
-        for (Field field : fields) {
-            field.update(message, memory);
+        // don't use iterator, this method is called rapidly
+        for (int f = 0; f < fields.size(); f++) {
+            fields.get(f).update(message, memory);
         }
     }
 }

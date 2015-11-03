@@ -19,6 +19,8 @@ package svenmeier.coxswain.gym;
  */
 public class Snapshot {
 
+    public boolean pull;
+
     public short distance;
 
     public short strokes;

@@ -77,6 +77,8 @@ public class MockRower implements Rower {
 
             memory.pulse = (short)(80 +  (Math.random() * 10));
 
+            memory.pull = (strokes % 1.0) < 0.5;
+
             return true;
         } else {
             return false;

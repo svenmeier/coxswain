@@ -23,6 +23,7 @@
     </declare-styleable>
 
     <declare-styleable name="ValueContainer">
+        <attr name="field_normal" format="boolean"/>
         <attr name="field_low" format="boolean"/>
         <attr name="field_high" format="boolean"/>
         <attr name="field_target" format="boolean"/>

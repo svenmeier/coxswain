@@ -37,7 +37,7 @@ public class ValueContainer extends LinearLayout {
     }
 
     public void clearState() {
-        this.state[0] = 0;
+        this.state[0] = R.attr.field_normal;
 
         refreshDrawableState();
 

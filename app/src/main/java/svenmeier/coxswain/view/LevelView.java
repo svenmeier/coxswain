@@ -51,11 +51,6 @@ public class LevelView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        int left = getPaddingLeft();
-        int right = getWidth() - getPaddingRight();
-        int top = getPaddingTop();
-        int bottom = getHeight() - getPaddingBottom();
-
         Drawable background = getBackground();
         if (background != null) {
             background.setLevel(level);

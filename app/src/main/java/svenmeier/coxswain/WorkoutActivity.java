@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -49,9 +48,13 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
 
     private Gym gym;
 
+    private Phase pull = new Phase();
+
+    private Phase release = new Phase();
+
     private SegmentsView segmentsView;
 
-    private LevelView levelView;
+    private LevelView strokeView;
 
     private ValueView durationView;
     private ValueView distanceView;
@@ -59,6 +62,8 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     private ValueView speedView;
     private ValueView strokeRateView;
     private ValueView pulseView;
+
+    private LevelView levelView;
 
     private Gym.Listener listener;
 
@@ -79,7 +84,7 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        levelView = (LevelView) findViewById(R.id.workout_progress);
+        strokeView = (LevelView) findViewById(R.id.workout_stroke);
 
         durationView = (ValueView) findViewById(R.id.target_duration);
         distanceView = (ValueView) findViewById(R.id.target_distance);
@@ -87,6 +92,8 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         speedView = (ValueView) findViewById(R.id.target_speed);
         strokeRateView = (ValueView) findViewById(R.id.target_strokeRate);
         pulseView = (ValueView) findViewById(R.id.target_pulse);
+
+        levelView = (LevelView) findViewById(R.id.workout_progress);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
@@ -103,8 +110,9 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
                     return;
                 }
 
-                updateLevel();
+                updateStroke();
                 updateValues();
+                updateLevel();
             }
         };
         listener.changed();
@@ -215,6 +223,45 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
             value = total;
         }
         levelView.setLevel(Math.round(value * 10000 / total));
+    }
+
+    private void updateStroke() {
+        Snapshot snapshot = gym.getLastSnapshot();
+        if (snapshot == null) {
+            snapshot = new Snapshot();
+        }
+
+        pull.update(snapshot.pull, true);
+        release.update(snapshot.pull, false);
+
+        int level = 0;
+        if (release.duration > 0) {
+            level = Math.round(pull.duration * 10000f / (pull.duration + release.duration));
+        }
+
+        strokeView.setLevel(level);
+    }
+
+    private class Phase {
+
+        private long start;
+
+        public long duration;
+
+        private void update(boolean current, boolean expected) {
+            long now = System.currentTimeMillis();
+
+            if (current == expected) {
+                if (start == 0) {
+                    start = now;
+                }
+            } else {
+                if (start > 0) {
+                    duration = now - start;
+                    start = 0;
+                }
+            }
+        }
     }
 
     public static void start(Context context) {

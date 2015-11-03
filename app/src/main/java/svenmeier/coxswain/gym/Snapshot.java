@@ -35,6 +35,7 @@ public class Snapshot {
     }
 
     public Snapshot(Snapshot snapshot) {
+        this.pull = snapshot.pull;
         this.distance = snapshot.distance;
         this.strokes = snapshot.strokes;
         this.speed = snapshot.speed;

@@ -50,6 +50,9 @@
 
     <string name="preference_hardware_title">Hardware</string>
 
+    <string name="preference_drive_delay_title">Drive Verzögerung</string>
+    <string name="preference_drive_delay_summary">S4 verzögert die Drive-Erkennung um %s Millisekunden</string>
+
     <string name="preference_devices_title">Geräte</string>
     <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>
 

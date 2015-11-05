@@ -146,11 +146,13 @@ public class WaterRower implements Rower {
             return false;
         }
 
+        String request;
         if (requests.isEmpty()) {
-            output.write(mapper.nextRequest());
+            request = mapper.nextRequest();
         } else {
-            output.write(requests.remove());
+            request = requests.remove();
         }
+        output.write(request);
 
         // could be closed while #write() was waiting
         if (isOpen() == false) {

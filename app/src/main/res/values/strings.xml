@@ -64,6 +64,10 @@
 
     <string name="preference_hardware_title">Hardware</string>
 
+    <string name="preference_drive_delay" translatable="false">preference_drive_delay</string>
+    <string name="preference_drive_delay_title">Drive delay</string>
+    <string name="preference_drive_delay_summary">S4 delays drive detection by %s milliseconds</string>
+
     <string name="preference_devices" translatable="false">preference_devices</string>
     <string name="preference_devices_title">Devices</string>
     <string name="preference_devices_summary">List all connected USB devices</string>

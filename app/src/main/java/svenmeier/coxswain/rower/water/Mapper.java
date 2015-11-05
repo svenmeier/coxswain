@@ -15,9 +15,12 @@
  */
 package svenmeier.coxswain.rower.water;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 
 /**
@@ -42,17 +45,19 @@ public class Mapper {
     private List<Field> fields = new ArrayList<>();
 
     public Mapper() {
-        fields.add(new Field(null, "S") {
+        fields.add(new Field(null, "SS") {
             @Override
             protected void onUpdate(String message, Snapshot memory) {
-                switch (message.charAt(1)) {
-                    case 'S':
-                        memory.pull = true;
-                        break;
-                    case 'E':
-                        memory.pull = false;
-                        break;
-                }
+                Log.i(MainActivity.TAG, message + System.currentTimeMillis());
+                memory.drive = true;
+            }
+        });
+
+        fields.add(new Field(null, "SE") {
+            @Override
+            protected void onUpdate(String message, Snapshot memory) {
+                Log.i(MainActivity.TAG, message + System.currentTimeMillis());
+                memory.drive = false;
             }
         });
 

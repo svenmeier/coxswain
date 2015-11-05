@@ -19,7 +19,7 @@ package svenmeier.coxswain.gym;
  */
 public class Snapshot {
 
-    public boolean pull;
+    public boolean drive;
 
     public short distance;
 
@@ -35,7 +35,7 @@ public class Snapshot {
     }
 
     public Snapshot(Snapshot snapshot) {
-        this.pull = snapshot.pull;
+        this.drive = snapshot.drive;
         this.distance = snapshot.distance;
         this.strokes = snapshot.strokes;
         this.speed = snapshot.speed;

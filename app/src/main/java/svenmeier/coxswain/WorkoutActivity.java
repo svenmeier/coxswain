@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.LevelView;
@@ -48,9 +49,11 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
 
     private Gym gym;
 
-    private Phase pull = new Phase();
+    private Phase drive = new Phase();
 
-    private Phase release = new Phase();
+    private Phase recovery = new Phase();
+
+    private Preference<Integer> driveDelay;
 
     private SegmentsView segmentsView;
 
@@ -96,6 +99,8 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         levelView = (LevelView) findViewById(R.id.workout_progress);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        driveDelay = Preference.getInt(this, R.string.preference_drive_delay);
     }
 
     @Override
@@ -231,12 +236,12 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
             snapshot = new Snapshot();
         }
 
-        pull.update(snapshot.pull, true);
-        release.update(snapshot.pull, false);
+        drive.update(snapshot.drive == true);
+        recovery.update(snapshot.drive == false);
 
         int level = 0;
-        if (release.duration > 0) {
-            level = Math.round(pull.duration * 10000f / (pull.duration + release.duration));
+        if (recovery.duration > 0) {
+            level = (drive.duration + driveDelay.get()) * 10000 / (drive.duration + recovery.duration);
         }
 
         strokeView.setLevel(level);
@@ -244,21 +249,23 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
 
     private class Phase {
 
-        private long start;
+        private long start = -1;
 
-        public long duration;
+        public int duration;
 
-        private void update(boolean current, boolean expected) {
+        private void update(boolean current) {
             long now = System.currentTimeMillis();
 
-            if (current == expected) {
-                if (start == 0) {
+            if (current) {
+                if (start == -1) {
+                    // phase started
                     start = now;
                 }
             } else {
-                if (start > 0) {
-                    duration = now - start;
-                    start = 0;
+                if (start != -1) {
+                    // phase ended, measure duration
+                    duration = (int)(now - start);
+                    start = -1;
                 }
             }
         }

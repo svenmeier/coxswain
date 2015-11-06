@@ -20,7 +20,11 @@ import android.media.AudioManager;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 
+import junit.framework.Test;
+
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Event;
@@ -36,6 +40,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     private static final String WHISTLE = "[whistle]";
 
     private static final String TICK = "[tick]";
+
+    private static final String SPOKEN = "[spoken]";
 
     private final Context context;
 
@@ -57,6 +63,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private boolean initialized;
 
+    private boolean speaking;
+
     private Event pending;
 
     private Ratio ratio = new Ratio();
@@ -69,6 +77,12 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         this.gym = Gym.instance(context);
 
         speech = new TextToSpeech(context, this);
+        speech.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
+            @Override
+            public void onUtteranceCompleted(String utteranceId) {
+                speaking = false;
+            }
+        });
 
         audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
@@ -119,8 +133,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     private void changed(Gym.Current current) {
-        String target = current.describeTarget();
-        String limit = current.describeLimit();
+        String describe = current.describe();
 
         boolean pause = false;
         int ordinal = current.segment.difficulty.get().ordinal();
@@ -128,9 +141,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             pause |= whistle();
         }
         pause(pause);
-        pause = speak(target);
-        pause(pause);
-        pause = speak(limit);
+        speak(describe);
 
         this.limit.reset();
         this.ratio.reset();
@@ -138,7 +149,12 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private boolean speak(String text) {
         if (speakPreference.get()) {
-            speech.speak(text, TextToSpeech.QUEUE_ADD, null);
+            speaking = true;
+
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, SPOKEN);
+
+            speech.speak(text, TextToSpeech.QUEUE_ADD, parameters);
 
             return true;
         }
@@ -167,7 +183,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     private boolean tick() {
-        if (ratioTickPreference.get()) {
+        if (ratioTickPreference.get() && speaking == false) {
             speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
 
             return true;

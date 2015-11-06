@@ -17,6 +17,23 @@
             android:summary="@string/preference_motivator_speak_summary"
             android:defaultValue="true"
             />
+
+        <CheckBoxPreference
+            android:key="@string/preference_motivator_ratio_tick"
+            android:title="@string/preference_motivator_ratio_tick_title"
+            android:summary="@string/preference_motivator_ratio_tick_summary"
+            android:defaultValue="false"
+            />
+
+        <svenmeier.coxswain.view.preference.EditTextPreference
+            android:key="@string/preference_motivator_ratio"
+            android:title="@string/preference_motivator_ratio_title"
+            android:summary="@string/preference_motivator_ratio_summary"
+            android:numeric="decimal"
+            android:defaultValue="1.5"
+            android:dependency="@string/preference_motivator_ratio_tick"
+            />
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -34,8 +51,8 @@
             android:key="@string/preference_integration_intent_uri"
             android:title="@string/preference_integration_intent_uri_title"
             android:summary="@string/preference_integration_intent_uri_summary"
-            android:dependency="@string/preference_integration_intent"
             android:defaultValue="https://www.youtube.com/playlist?list=WL&amp;playnext=1"
+            android:dependency="@string/preference_integration_intent"
             />
     </PreferenceCategory>
 
@@ -44,14 +61,6 @@
     <PreferenceCategory
         android:title="@string/preference_hardware_title"
         >
-
-        <svenmeier.coxswain.view.preference.EditTextPreference
-            android:key="@string/preference_drive_delay"
-            android:title="@string/preference_drive_delay_title"
-            android:summary="@string/preference_drive_delay_summary"
-            android:numeric="integer"
-            android:defaultValue="500"
-            />
 
         <Preference
             android:key="@string/preference_devices"

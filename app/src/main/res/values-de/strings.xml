@@ -34,11 +34,17 @@
 
     <string name="preference_motivator_title">Motivator</string>
 
-    <string name="preference_motivator_whistle_title">Pfeifsignal</string>
-    <string name="preference_motivator_whistle_summary">Verwende ein Pfeifsignal für Segmentwechsel</string>
+    <string name="preference_motivator_whistle_title">Segment Signal</string>
+    <string name="preference_motivator_whistle_summary">Signalisiere Segmentwechsel mit einem Pfiff</string>
 
-    <string name="preference_motivator_speak_title">Sprechen</string>
-    <string name="preference_motivator_speak_summary">Für Segmente Anweisungen sprechen</string>
+    <string name="preference_motivator_speak_title">Segment Anweisung</string>
+    <string name="preference_motivator_speak_summary">Anweisungen für Segmente sprechen</string>
+
+    <string name="preference_motivator_ratio_tick_title">Schlag Hinweis</string>
+    <string name="preference_motivator_ratio_tick_summary">Auf Schlag-Verhältnis hinweisen</string>
+
+    <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
+    <string name="preference_motivator_ratio_summary">Schlag-Verhältnis 1:%s</string>
 
     <string name="preference_integration_title">Integration</string>
 
@@ -49,9 +55,6 @@
     <string name="preference_integration_intent_uri_summary">%s</string>
 
     <string name="preference_hardware_title">Hardware</string>
-
-    <string name="preference_drive_delay_title">Drive Verzögerung</string>
-    <string name="preference_drive_delay_summary">S4 verzögert die Drive-Erkennung um %s Millisekunden</string>
 
     <string name="preference_devices_title">Geräte</string>
     <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>

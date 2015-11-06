@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.LevelView;
@@ -49,15 +48,7 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
 
     private Gym gym;
 
-    private Phase drive = new Phase();
-
-    private Phase recovery = new Phase();
-
-    private Preference<Integer> driveDelay;
-
     private SegmentsView segmentsView;
-
-    private LevelView strokeView;
 
     private ValueView durationView;
     private ValueView distanceView;
@@ -87,8 +78,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        strokeView = (LevelView) findViewById(R.id.workout_stroke);
-
         durationView = (ValueView) findViewById(R.id.target_duration);
         distanceView = (ValueView) findViewById(R.id.target_distance);
         strokesView = (ValueView) findViewById(R.id.target_strokes);
@@ -99,8 +88,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         levelView = (LevelView) findViewById(R.id.workout_progress);
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        driveDelay = Preference.getInt(this, R.string.preference_drive_delay);
     }
 
     @Override
@@ -115,7 +102,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
                     return;
                 }
 
-                updateStroke();
                 updateValues();
                 updateLevel();
             }
@@ -228,47 +214,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
             value = total;
         }
         levelView.setLevel(Math.round(value * 10000 / total));
-    }
-
-    private void updateStroke() {
-        Snapshot snapshot = gym.getLastSnapshot();
-        if (snapshot == null) {
-            snapshot = new Snapshot();
-        }
-
-        drive.update(snapshot.drive == true);
-        recovery.update(snapshot.drive == false);
-
-        int level = 0;
-        if (recovery.duration > 0) {
-            level = (drive.duration + driveDelay.get()) * 10000 / (drive.duration + recovery.duration);
-        }
-
-        strokeView.setLevel(level);
-    }
-
-    private class Phase {
-
-        private long start = -1;
-
-        public int duration;
-
-        private void update(boolean current) {
-            long now = System.currentTimeMillis();
-
-            if (current) {
-                if (start == -1) {
-                    // phase started
-                    start = now;
-                }
-            } else {
-                if (start != -1) {
-                    // phase ended, measure duration
-                    duration = (int)(now - start);
-                    start = -1;
-                }
-            }
-        }
     }
 
     public static void start(Context context) {

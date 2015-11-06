@@ -111,14 +111,6 @@
 
     </LinearLayout>
 
-    <svenmeier.coxswain.view.LevelView
-        android:id="@+id/workout_stroke"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_marginBottom="1dp"
-        android:background="@drawable/progress"
-        />
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

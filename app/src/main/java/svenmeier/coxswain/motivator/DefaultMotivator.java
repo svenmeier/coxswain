@@ -35,6 +35,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private static final String WHISTLE = "[whistle]";
 
+    private static final String TICK = "[tick]";
+
     private final Context context;
 
     private Gym gym;
@@ -49,11 +51,17 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private final Preference<Boolean> speakPreference;
 
+    private final Preference<Boolean> ratioTickPreference;
+
+    private final Preference<Float> ratioPreference;
+
     private boolean initialized;
 
-    private long underLimitSince = -1;
-
     private Event pending;
+
+    private Ratio ratio = new Ratio();
+
+    private Limit limit = new Limit();
 
     public DefaultMotivator(Context context) {
         this.context = context;
@@ -69,6 +77,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
         speakPreference = Preference.getBoolean(context, R.string.preference_motivator_speak);
+        ratioTickPreference = Preference.getBoolean(context, R.string.preference_motivator_ratio_tick);
+        ratioPreference = Preference.getFloat(context, R.string.preference_motivator_ratio).range(1f, 3f);
     }
 
     @Override
@@ -103,22 +113,9 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     private void snapped(Gym.Current current) {
-        if (current.inLimit()) {
-            underLimitSince = -1;
-        } else {
-            long now = System.currentTimeMillis();
+        ratio.analyse(current);
 
-            if (underLimitSince == -1) {
-                underLimitSince = now;
-            } else if ((now - underLimitSince) > LIMIT_LATENCY) {
-                String limit = current.describeLimit();
-                if (limit.isEmpty() == false) {
-                    speak(limit);
-                }
-
-                underLimitSince = now;
-            }
-        }
+        limit.analyse(current);
     }
 
     private void changed(Gym.Current current) {
@@ -135,7 +132,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         pause(pause);
         pause = speak(limit);
 
-        underLimitSince = -1;
+        this.limit.reset();
+        this.ratio.reset();
     }
 
     private boolean speak(String text) {
@@ -192,6 +190,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         if (status == 0) {
             speech.setLanguage(Locale.getDefault());
             speech.addEarcon(WHISTLE, context.getPackageName(), R.raw.whistle);
+            speech.addEarcon(TICK, context.getPackageName(), R.raw.tick);
 
             initialized = true;
 
@@ -199,6 +198,77 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 onEvent(pending);
                 pending = null;
             }
+        }
+    }
+
+    private class Limit {
+
+        private long underLimitSince = -1;
+
+        public void analyse(Gym.Current current) {
+            if (current.inLimit()) {
+                underLimitSince = -1;
+            } else {
+                long now = System.currentTimeMillis();
+
+                if (underLimitSince == -1) {
+                    underLimitSince = now;
+                } else if ((now - underLimitSince) > LIMIT_LATENCY) {
+                    String limit = current.describeLimit();
+                    if (limit.isEmpty() == false) {
+                        speak(limit);
+                    }
+
+                    underLimitSince = now;
+                }
+            }
+
+        }
+
+        public void reset() {
+            underLimitSince = -1;
+        }
+    }
+
+    private class Ratio {
+
+        private boolean drive;
+
+        private long drawTime = -1;
+
+        private long catchTime = -1;
+
+        private long duration = -1;
+
+        public void analyse(Gym.Current current) {
+            long now = System.currentTimeMillis();
+
+            if (gym.snapshot.drive == false && this.drive == true) {
+                if (drawTime != -1) {
+                    duration = now - drawTime;
+                }
+
+                drawTime = now;
+
+                float ratio = ratioPreference.get();
+                catchTime = now + Math.round(duration / (1 + ratio) * ratio);
+
+                speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+            }
+
+            this.drive = gym.snapshot.drive;
+
+            if (catchTime != -1 && now > catchTime) {
+                catchTime = -1;
+
+                speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+            }
+        }
+
+        public void reset() {
+            drawTime = -1;
+            catchTime = -1;
+            duration = -1;
         }
     }
 }

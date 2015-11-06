@@ -54,7 +54,7 @@
 
     <string name="preference_motivator_ratio_tick" translatable="false">preference_motivator_ratio_tick</string>
     <string name="preference_motivator_ratio_tick_title">Stroke hint</string>
-    <string name="preference_motivator_ratio_tick_summary">Give hint for stroke ratio</string>
+    <string name="preference_motivator_ratio_tick_summary">Hint ending of recovery phase with a tick</string>
 
     <string name="preference_motivator_ratio" translatable="false">preference_motivator_ratio</string>
     <string name="preference_motivator_ratio_title">Stroke Ratio</string>

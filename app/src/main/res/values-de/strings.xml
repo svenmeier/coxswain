@@ -41,7 +41,7 @@
     <string name="preference_motivator_speak_summary">Anweisungen für Segmente sprechen</string>
 
     <string name="preference_motivator_ratio_tick_title">Schlag Hinweis</string>
-    <string name="preference_motivator_ratio_tick_summary">Auf Schlag-Verhältnis hinweisen</string>
+    <string name="preference_motivator_ratio_tick_summary">Weise auf Ende der Erholungsphase mit Schlag hin</string>
 
     <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
     <string name="preference_motivator_ratio_summary">Schlag-Verhältnis 1:%s</string>

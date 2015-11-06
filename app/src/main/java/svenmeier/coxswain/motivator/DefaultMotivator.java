@@ -20,11 +20,8 @@ import android.media.AudioManager;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 
-import junit.framework.Test;
-
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Event;
@@ -36,6 +33,11 @@ import svenmeier.coxswain.R;
 public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
 
     public static final int LIMIT_LATENCY = 20000;
+
+    /**
+     * Factor to apply
+     */
+    public static final float RATIO_RECOVER_FACTOR = 0.8f;
 
     private static final String WHISTLE = "[whistle]";
 
@@ -274,12 +276,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                     duration = now - drawTime;
 
                     float ratio = ratioPreference.get();
-                    catchTime = now + Math.round(duration / (1 + ratio) * ratio);
+                    catchTime = now + Math.round(duration * ratio / (1 + ratio) * RATIO_RECOVER_FACTOR);
                 }
 
                 drawTime = now;
-
-                tick();
             }
 
             this.drive = gym.snapshot.drive;

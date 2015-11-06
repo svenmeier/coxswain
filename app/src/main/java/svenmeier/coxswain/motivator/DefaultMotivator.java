@@ -166,6 +166,16 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         return false;
     }
 
+    private boolean tick() {
+        if (ratioTickPreference.get()) {
+            speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void destroy() {
         speech.shutdown();
@@ -246,14 +256,14 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             if (gym.snapshot.drive == false && this.drive == true) {
                 if (drawTime != -1) {
                     duration = now - drawTime;
+
+                    float ratio = ratioPreference.get();
+                    catchTime = now + Math.round(duration / (1 + ratio) * ratio);
                 }
 
                 drawTime = now;
 
-                float ratio = ratioPreference.get();
-                catchTime = now + Math.round(duration / (1 + ratio) * ratio);
-
-                speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+                tick();
             }
 
             this.drive = gym.snapshot.drive;
@@ -261,7 +271,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             if (catchTime != -1 && now > catchTime) {
                 catchTime = -1;
 
-                speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+                tick();
             }
         }
 

@@ -17,7 +17,6 @@ package svenmeier.coxswain.motivator;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 
 import java.util.HashMap;
@@ -49,8 +48,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     private final Context context;
 
     private Gym gym;
-
-    private final Vibrator vibrator;
 
     private TextToSpeech speech;
 
@@ -89,8 +86,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-
-        vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
 
         whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
         speakPreference = Preference.getBoolean(context, R.string.preference_motivator_speak);

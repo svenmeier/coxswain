@@ -35,7 +35,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     public static final int LIMIT_LATENCY = 20000;
 
     /**
-     * Factor to apply
+     * Factor to apply to recover phase, to cater for use response time and
+     * Waterrower signalling the drive phase too late.
      */
     public static final float RATIO_RECOVER_FACTOR = 0.8f;
 
@@ -271,20 +272,31 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         public void analyse(Gym.Current current) {
             long now = System.currentTimeMillis();
 
-            if (gym.snapshot.drive == false && this.drive == true) {
-                if (drawTime != -1) {
-                    duration = now - drawTime;
+            if (gym.snapshot.drive != this.drive) {
+                if (this.drive) {
+                    // drive phase ended in draw
 
-                    float ratio = ratioPreference.get();
-                    catchTime = now + Math.round(duration * ratio / (1 + ratio) * RATIO_RECOVER_FACTOR);
+                    if (drawTime != -1) {
+                        // full stroke
+
+                        duration = now - drawTime;
+
+                        float ratio = ratioPreference.get();
+                        catchTime = now + Math.round(duration * ratio / (1 + ratio) * RATIO_RECOVER_FACTOR);
+                    }
+
+                    drawTime = now;
+                } else {
+                    // drive phase started from catch, no need to hint
+                    catchTime = -1;
                 }
 
-                drawTime = now;
+                this.drive = gym.snapshot.drive;
             }
 
-            this.drive = gym.snapshot.drive;
-
             if (catchTime != -1 && now > catchTime) {
+                // catch is due, hint start of drive phase
+
                 catchTime = -1;
 
                 tick();

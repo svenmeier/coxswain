@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import svenmeier.coxswain.gym.Program;
@@ -59,6 +60,13 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.layout_main);
 
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+        checkUsbDevice(getIntent());
+
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
 
@@ -79,8 +87,6 @@ public class MainActivity extends Activity {
                 Gym.instance(MainActivity.this).select(null);
             }
         });
-
-        checkUsbDevice(getIntent());
     }
 
     @Override

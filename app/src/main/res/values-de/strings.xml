@@ -32,16 +32,28 @@
     <string name="workouts">Trainings</string>
     <string name="segments">Segmente</string>
 
-    <string name="preference_motivator_title">Motivator</string>
+    <string name="preference_audio_title">Audio</string>
 
-    <string name="preference_motivator_whistle_title">Segment Signal</string>
-    <string name="preference_motivator_whistle_summary">Signalisiere Segmentwechsel mit einem Pfiff</string>
+    <string name="preference_audio_ringtone_easy_title">Start eines einfachen Segments</string>
+    <string name="preference_audio_ringtone_easy_summary">Klang abspielen wenn ein einfaches Segment beginnt</string>
 
-    <string name="preference_motivator_speak_title">Segment Anweisung</string>
-    <string name="preference_motivator_speak_summary">Anweisungen für Segmente sprechen</string>
+    <string name="preference_audio_ringtone_medium_title">Start eines medium Segments</string>
+    <string name="preference_audio_ringtone_medium_summary">Klang abspielen wenn ein medium Segment beginnt</string>
 
-    <string name="preference_motivator_ratio_tick_title">Schlag Hinweis</string>
-    <string name="preference_motivator_ratio_tick_summary">Weise auf Ende der Erholungsphase mit Schlag hin</string>
+    <string name="preference_audio_ringtone_hard_title">Start eines harten Segments</string>
+    <string name="preference_audio_ringtone_hard_summary">Klang abspielen wenn ein hartes Segment beginnt</string>
+
+    <string name="preference_audio_ringtone_finish_title">Program fertig</string>
+    <string name="preference_audio_ringtone_finish_summary">Klang abspielen wenn ein Programm abgeschlossen wurde</string>
+
+    <string name="preference_audio_speak_segment_title">Segment Anweisungen</string>
+    <string name="preference_audio_speak_segment_summary">Anweisungen für Segment sprechen</string>
+
+    <string name="preference_audio_speak_limit_title">Segment Anforderung</string>
+    <string name="preference_audio_speak_limit_summary">Anforderung wiederholen wenn nicht erfüllt</string>
+
+    <string name="preference_audio_ringtone_catch_title">Catch</string>
+    <string name="preference_audio_ringtone_catch_summary">Klang abspielen wenn die Catch Position erreicht sein muss</string>
 
     <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
     <string name="preference_motivator_ratio_summary">Schlag-Verhältnis 1:%s</string>

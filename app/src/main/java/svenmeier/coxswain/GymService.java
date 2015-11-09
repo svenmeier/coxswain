@@ -63,8 +63,6 @@ public class GymService extends Service {
 
     @Override
     public void onCreate() {
-        motivator = new DefaultMotivator(this);
-
         gym = Gym.instance(this);
 
         receiver = new BroadcastReceiver() {
@@ -85,9 +83,6 @@ public class GymService extends Service {
         if (this.rower != null) {
             endRowing();
         }
-
-        motivator.destroy();
-        motivator = null;
 
         unregisterReceiver(receiver);
         receiver = null;
@@ -111,6 +106,8 @@ public class GymService extends Service {
     }
 
     private void startRowing(UsbDevice device) {
+
+        motivator = new DefaultMotivator(this);
 
         if (device == null) {
             rower = new MockRower(memory);
@@ -192,6 +189,9 @@ public class GymService extends Service {
         this.rower = null;
 
         showNotification(null, null, null);
+
+        motivator.destroy();
+        motivator = null;
     }
 
     private void broadcast(String action) {

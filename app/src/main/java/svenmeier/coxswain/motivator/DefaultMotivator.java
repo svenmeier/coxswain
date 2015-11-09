@@ -17,15 +17,19 @@ package svenmeier.coxswain.motivator;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Event;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Difficulty;
 
 /**
  */
@@ -39,10 +43,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
      */
     public static final float RATIO_RECOVER_FACTOR = 0.8f;
 
-    private static final String WHISTLE = "[whistle]";
-
-    private static final String TICK = "[tick]";
-
     private static final String SPOKEN = "[spoken]";
 
     private final Context context;
@@ -53,23 +53,13 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private AudioManager audio;
 
-    private final Preference<Boolean> whistlePreference;
-
-    private final Preference<Boolean> speakPreference;
-
-    private final Preference<Boolean> ratioTickPreference;
-
-    private final Preference<Float> ratioPreference;
-
     private boolean initialized;
 
     private boolean speaking;
 
     private Event pending;
 
-    private Ratio ratio = new Ratio();
-
-    private Limit limit = new Limit();
+    private List<Analyser> analysers = new ArrayList<>();
 
     public DefaultMotivator(Context context) {
         this.context = context;
@@ -87,10 +77,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
-        whistlePreference = Preference.getBoolean(context, R.string.preference_motivator_whistle);
-        speakPreference = Preference.getBoolean(context, R.string.preference_motivator_speak);
-        ratioTickPreference = Preference.getBoolean(context, R.string.preference_motivator_ratio_tick);
-        ratioPreference = Preference.getFloat(context, R.string.preference_motivator_ratio).range(1f, 3f);
+        analysers.add(new Finish());
+        analysers.add(new Change());
+        analysers.add(new Limit());
+        analysers.add(new Ratio());
     }
 
     @Override
@@ -103,91 +93,26 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
 
         Gym.Current current = gym.current;
-        switch (event) {
-            case PROGRAM_START:
-            case SEGMENT_CHANGED:
-                if (current != null) {
-                    changed(current);
-                }
-                break;
-            case SNAPPED:
-                if (current != null) {
-                    snapped(current);
-                }
-                break;
-            case PROGRAM_FINISHED:
-                for (int i = 0; i < 3; i++) {
-                    boolean pause = whistle();
-                    pause(pause);
-                }
-                break;
+        for (int a = 0; a < analysers.size(); a++) {
+            analysers.get(a).analyse(event, current);
         }
     }
 
-    private void snapped(Gym.Current current) {
-        ratio.analyse(current);
+    private void speak(String text) {
+        speaking = true;
 
-        limit.analyse(current);
-    }
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, SPOKEN);
 
-    private void changed(Gym.Current current) {
-        String describe = current.describe();
-
-        boolean pause = false;
-        int ordinal = current.segment.difficulty.get().ordinal();
-        for (int o = 0; o <= ordinal; o++) {
-            pause |= whistle();
-        }
-        pause(pause);
-        speak(describe);
-
-        this.limit.reset();
-        this.ratio.reset();
-    }
-
-    private boolean speak(String text) {
-        if (speakPreference.get()) {
-            speaking = true;
-
-            HashMap<String, String> parameters = new HashMap<>();
-            parameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, SPOKEN);
-
-            speech.speak(text, TextToSpeech.QUEUE_ADD, parameters);
-
-            return true;
-        }
-
-        return false;
+        speech.speak(text, TextToSpeech.QUEUE_ADD, parameters);
     }
 
     private void pause() {
-        pause(true);
+        speech.playSilence(50, TextToSpeech.QUEUE_ADD, null);
     }
 
-    private void pause(boolean required) {
-        if (required) {
-            speech.playSilence(500, TextToSpeech.QUEUE_ADD, null);
-        }
-    }
-
-    private boolean whistle() {
-        if (whistlePreference.get()) {
-            speech.playEarcon(WHISTLE, TextToSpeech.QUEUE_ADD, null);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean tick() {
-        if (ratioTickPreference.get() && speaking == false) {
-            speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
-
-            return true;
-        }
-
-        return false;
+    private void ringtone(String name) {
+        speech.playEarcon(name, TextToSpeech.QUEUE_ADD, null);
     }
 
     @Override
@@ -213,8 +138,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     public void onInit(int status) {
         if (status == 0) {
             speech.setLanguage(Locale.getDefault());
-            speech.addEarcon(WHISTLE, context.getPackageName(), R.raw.whistle);
-            speech.addEarcon(TICK, context.getPackageName(), R.raw.tick);
+
+            for (Analyser analyser : analysers) {
+                analyser.init();
+            }
 
             initialized = true;
 
@@ -225,11 +152,111 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
     }
 
-    private class Limit {
+    private void addRingtone(Preference<String> preference, String key, int defaultResource) {
+        String ringtone = preference.get();
+        if (ringtone != null && ringtone.length() > 0) {
+            if (ringtone.equals(Settings.System.DEFAULT_NOTIFICATION_URI.toString()) && defaultResource != -1) {
+                speech.addEarcon(key, context.getPackageName(), defaultResource);
+            } else {
+                speech.addEarcon(key, ringtone);
+            }
+        }
+    }
+
+    private abstract class Analyser {
+        public abstract void analyse(Event event, Gym.Current current);
+        public abstract void reset();
+        public abstract void init();
+    }
+
+    /**
+     * Analyse segment change.
+     */
+    private class Change extends Analyser {
+
+        private Preference<String> ringtoneEasyPreference = Preference.getString(context, R.string.preference_audio_ringtone_easy);
+        private Preference<String> ringtoneMediumPreference = Preference.getString(context, R.string.preference_audio_ringtone_medium);
+        private Preference<String> ringtoneHardPreference = Preference.getString(context, R.string.preference_audio_ringtone_hard);
+
+        private Preference<Boolean> speakSegmentPreference = Preference.getBoolean(context, R.string.preference_audio_speak_segment);
+
+        @Override
+        public void init() {
+            addRingtone(ringtoneEasyPreference, key(Difficulty.EASY), R.raw.whistle);
+            addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM), R.raw.whistle);
+            addRingtone(ringtoneHardPreference, key(Difficulty.HARD), R.raw.whistle);
+        }
+
+        private String key(Difficulty difficulty) {
+            return "[" + difficulty.toString() + "]";
+        }
+
+        public void analyse(Event event, Gym.Current current) {
+            if (event == Event.PROGRAM_START || event == Event.SEGMENT_CHANGED) {
+                if (current != null) {
+                    ringtone(key(current.segment.difficulty.get()));
+
+                    if (speakSegmentPreference.get()) {
+                        String describe = current.describe();
+                        pause();
+                        speak(describe);
+                    }
+
+                    for (Analyser analyser : analysers) {
+                        analyser.reset();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void reset() {
+        }
+    }
+
+    /**
+     * Analyse program finish.
+     */
+    private class Finish extends Analyser {
+
+        private static final String KEY = "[FINISHED]";
+
+        private Preference<String> ringtoneFinishPreference = Preference.getString(context, R.string.preference_audio_ringtone_finish);
+
+        @Override
+        public void init() {
+            addRingtone(ringtoneFinishPreference, KEY, R.raw.whistle);
+        }
+
+        public void analyse(Event event, Gym.Current current) {
+            if (event == Event.PROGRAM_FINISHED) {
+                ringtone(KEY);
+            }
+        }
+
+        @Override
+        public void reset() {
+        }
+    }
+
+    /**
+     * Analyse segment limit.
+     */
+    private class Limit extends Analyser {
+
+        private Preference<Boolean> speakLimitPreference = Preference.getBoolean(context, R.string.preference_audio_speak_limit);
 
         private long underLimitSince = -1;
 
-        public void analyse(Gym.Current current) {
+        @Override
+        public void init() {
+        }
+
+        public void analyse(Event event, Gym.Current current) {
+            if (event != Event.SNAPPED || speakLimitPreference.get() == false) {
+                return;
+            }
+
             if (current.inLimit()) {
                 underLimitSince = -1;
             } else {
@@ -254,7 +281,15 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
     }
 
-    private class Ratio {
+    /**
+     * Analyse stroke ratio.
+     */
+    private class Ratio extends Analyser {
+
+        private static final String TICK = "[TICK]";
+
+        private Preference<String> ringtoneDrivePreference = Preference.getString(context, R.string.preference_audio_ringtone_catch);
+        private Preference<Float> ratioPreference = Preference.getFloat(context, R.string.preference_motivator_ratio).range(1f, 3f);
 
         private boolean drive;
 
@@ -264,12 +299,21 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         private long duration = -1;
 
-        public void analyse(Gym.Current current) {
+        @Override
+        public void init() {
+            addRingtone(ringtoneDrivePreference, TICK, R.raw.tick);
+        }
+
+        public void analyse(Event event, Gym.Current current) {
+            if (event != Event.SNAPPED) {
+                return;
+            }
+
             long now = System.currentTimeMillis();
 
             if (gym.snapshot.drive != this.drive) {
                 if (this.drive) {
-                    // drive phase ended in draw
+                    // drive phase ends
 
                     if (drawTime != -1) {
                         // full stroke
@@ -282,7 +326,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
                     drawTime = now;
                 } else {
-                    // drive phase started from catch, no need to hint
+                    // drive phase starts, no need to give hint anymore
                     catchTime = -1;
                 }
 
@@ -290,11 +334,14 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             }
 
             if (catchTime != -1 && now > catchTime) {
-                // catch is due, hint start of drive phase
+                // hint start of drive phase
 
                 catchTime = -1;
 
-                tick();
+
+                if (speaking == false) {
+                    speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
+                }
             }
         }
 

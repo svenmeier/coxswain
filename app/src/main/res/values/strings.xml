@@ -46,19 +46,19 @@
 
     <string name="preference_audio_ringtone_easy" translatable="false">preference_motivator_ringtone_easy</string>
     <string name="preference_audio_ringtone_easy_title">Easy segment</string>
-    <string name="preference_audio_ringtone_easy_summary">Sound to play on start of an easy segment: %s</string>
+    <string name="preference_audio_ringtone_easy_summary">Sound to play on start of an easy segment:  %s</string>
 
     <string name="preference_audio_ringtone_medium" translatable="false">preference_motivator_ringtone_medium</string>
     <string name="preference_audio_ringtone_medium_title">Medium segment</string>
-    <string name="preference_audio_ringtone_medium_summary">Sound to play on start of a medium segment: %s</string>
+    <string name="preference_audio_ringtone_medium_summary">Sound to play on start of a medium segment:  %s</string>
 
     <string name="preference_audio_ringtone_hard" translatable="false">preference_motivator_ringtone_hard</string>
     <string name="preference_audio_ringtone_hard_title">Hard segment</string>
-    <string name="preference_audio_ringtone_hard_summary">Sound to play on start of a hard segment: %s</string>
+    <string name="preference_audio_ringtone_hard_summary">Sound to play on start of a hard segment:  %s</string>
 
     <string name="preference_audio_ringtone_finish" translatable="false">preference_motivator_ringtone_finish</string>
     <string name="preference_audio_ringtone_finish_title">Program</string>
-    <string name="preference_audio_ringtone_finish_summary">Sound to play when program finished: %s</string>
+    <string name="preference_audio_ringtone_finish_summary">Sound to play when program finished:  %s</string>
 
     <string name="preference_audio_speak_segment" translatable="false">preference_motivator_speak_segment</string>
     <string name="preference_audio_speak_segment_title">Segment instructions</string>
@@ -70,7 +70,7 @@
 
     <string name="preference_audio_ringtone_catch" translatable="false">preference_motivator_ringtone_drive</string>
     <string name="preference_audio_ringtone_catch_title">Catch</string>
-    <string name="preference_audio_ringtone_catch_summary">Sound to play when catch position is due: %s</string>
+    <string name="preference_audio_ringtone_catch_summary">Sound to play when catch position is due:  %s</string>
 
     <string name="preference_motivator_ratio" translatable="false">preference_motivator_ratio</string>
     <string name="preference_motivator_ratio_title">Stroke Ratio</string>

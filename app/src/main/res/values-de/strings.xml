@@ -35,16 +35,16 @@
     <string name="preference_audio_title">Audio</string>
 
     <string name="preference_audio_ringtone_easy_title">Einfaches Segment</string>
-    <string name="preference_audio_ringtone_easy_summary">Klang abspielen bei Beginn eines einfachen Segments: %s</string>
+    <string name="preference_audio_ringtone_easy_summary">Klang abspielen bei Beginn eines einfachen Segments:  %s</string>
 
     <string name="preference_audio_ringtone_medium_title">Mittelschweres Segment</string>
-    <string name="preference_audio_ringtone_medium_summary">Klang abspielen bei Beginn eines mittelschweren Segments: %s</string>
+    <string name="preference_audio_ringtone_medium_summary">Klang abspielen bei Beginn eines mittelschweren Segments:  %s</string>
 
     <string name="preference_audio_ringtone_hard_title">Schweres Segment</string>
-    <string name="preference_audio_ringtone_hard_summary">Klang abspielen bei Beginn eines schweren Segments: %s</string>
+    <string name="preference_audio_ringtone_hard_summary">Klang abspielen bei Beginn eines schweren Segments:  %s</string>
 
     <string name="preference_audio_ringtone_finish_title">Programm</string>
-    <string name="preference_audio_ringtone_finish_summary">Klang abspielen wenn ein Programm abgeschlossen wurde: %s</string>
+    <string name="preference_audio_ringtone_finish_summary">Klang abspielen wenn ein Programm abgeschlossen wurde:  %s</string>
 
     <string name="preference_audio_speak_segment_title">Segment Anweisungen</string>
     <string name="preference_audio_speak_segment_summary">Anweisungen für Segment sprechen</string>
@@ -53,7 +53,7 @@
     <string name="preference_audio_speak_limit_summary">Anforderung für Semgent wiederholen wenn nicht erfüllt</string>
 
     <string name="preference_audio_ringtone_catch_title">Catch</string>
-    <string name="preference_audio_ringtone_catch_summary">Klang abspielen wenn die Catch Position fällig ist: %s</string>
+    <string name="preference_audio_ringtone_catch_summary">Klang abspielen wenn die Catch Position fällig ist:  %s</string>
 
     <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
     <string name="preference_motivator_ratio_summary">Schlag-Verhältnis 1:%s</string>

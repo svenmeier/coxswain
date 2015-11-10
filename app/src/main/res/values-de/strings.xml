@@ -37,10 +37,10 @@
     <string name="preference_audio_ringtone_easy_title">Einfaches Segment</string>
     <string name="preference_audio_ringtone_easy_summary">Klang abspielen bei Beginn eines einfachen Segments: %s</string>
 
-    <string name="preference_audio_ringtone_medium_title">Medium Segment</string>
-    <string name="preference_audio_ringtone_medium_summary">Klang abspielen bei Beginn eines medium Segments: %s</string>
+    <string name="preference_audio_ringtone_medium_title">Mittelschweres Segment</string>
+    <string name="preference_audio_ringtone_medium_summary">Klang abspielen bei Beginn eines mittelschweren Segments: %s</string>
 
-    <string name="preference_audio_ringtone_hard_title">Hartes Segment</string>
+    <string name="preference_audio_ringtone_hard_title">Schweres Segment</string>
     <string name="preference_audio_ringtone_hard_summary">Klang abspielen bei Beginn eines schweren Segments: %s</string>
 
     <string name="preference_audio_ringtone_finish_title">Programm</string>

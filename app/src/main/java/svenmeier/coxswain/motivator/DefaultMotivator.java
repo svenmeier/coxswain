@@ -35,6 +35,11 @@ import svenmeier.coxswain.gym.Difficulty;
  */
 public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
 
+    public static final String DEFAULT_RINGTONE = "Coxswain";
+
+    /**
+     * Time before limit is repeated.
+     */
     public static final int LIMIT_LATENCY = 20000;
 
     /**
@@ -155,7 +160,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     private void addRingtone(Preference<String> preference, String key, int defaultResource) {
         String ringtone = preference.get();
         if (ringtone != null && ringtone.length() > 0) {
-            if (ringtone.equals(Settings.System.DEFAULT_NOTIFICATION_URI.toString()) && defaultResource != -1) {
+            if (DEFAULT_RINGTONE.equals(ringtone)) {
                 speech.addEarcon(key, context.getPackageName(), defaultResource);
             } else {
                 speech.addEarcon(key, ringtone);

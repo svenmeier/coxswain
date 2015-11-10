@@ -22,7 +22,7 @@
             android:key="@string/preference_audio_ringtone_easy"
             android:title="@string/preference_audio_ringtone_easy_title"
             android:summary="@string/preference_audio_ringtone_easy_summary"
-            android:defaultValue="content://settings/system/notification_sound"
+            android:defaultValue="Coxswain"
             android:ringtoneType="notification"
             />
 
@@ -30,7 +30,7 @@
             android:key="@string/preference_audio_ringtone_medium"
             android:title="@string/preference_audio_ringtone_medium_title"
             android:summary="@string/preference_audio_ringtone_medium_summary"
-            android:defaultValue="content://settings/system/notification_sound"
+            android:defaultValue="Coxswain"
             android:ringtoneType="notification"
             />
 
@@ -38,7 +38,7 @@
             android:key="@string/preference_audio_ringtone_hard"
             android:title="@string/preference_audio_ringtone_hard_title"
             android:summary="@string/preference_audio_ringtone_hard_summary"
-            android:defaultValue="content://settings/system/notification_sound"
+            android:defaultValue="Coxswain"
             android:ringtoneType="notification"
             />
 
@@ -46,7 +46,7 @@
             android:key="@string/preference_audio_ringtone_finish"
             android:title="@string/preference_audio_ringtone_finish_title"
             android:summary="@string/preference_audio_ringtone_finish_summary"
-            android:defaultValue="content://settings/system/notification_sound"
+            android:defaultValue="Coxswain"
             android:ringtoneType="notification"
             />
 
@@ -54,7 +54,7 @@
             android:key="@string/preference_audio_ringtone_catch"
             android:title="@string/preference_audio_ringtone_catch_title"
             android:summary="@string/preference_audio_ringtone_catch_summary"
-            android:defaultValue="content://settings/system/notification_sound"
+            android:defaultValue="Coxswain"
             android:ringtoneType="notification"
             />
 

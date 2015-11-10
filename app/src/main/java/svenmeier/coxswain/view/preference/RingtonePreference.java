@@ -37,7 +37,9 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 
 		if (string != null && string.isEmpty() == false) {
 			Ringtone ringtone = RingtoneManager.getRingtone(getContext(), Uri.parse(string));
-			string = ringtone.getTitle(getContext());
+			if (ringtone != null) {
+				string = ringtone.getTitle(getContext());
+			}
 		}
 
 		return String.format(summary.toString(), string);

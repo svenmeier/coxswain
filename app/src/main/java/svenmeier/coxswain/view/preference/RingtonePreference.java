@@ -7,6 +7,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.AttributeSet;
 
+import svenmeier.coxswain.R;
 import svenmeier.coxswain.SettingsActivity;
 import svenmeier.coxswain.motivator.DefaultMotivator;
 
@@ -53,7 +54,9 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 
 		String string = getPersistedString("");
 
-		if (string != null && string.isEmpty() == false) {
+		if (string == null || string.isEmpty()) {
+			string = getContext().getString(R.string.preference_audio_none);
+		} else {
 			Ringtone ringtone = RingtoneManager.getRingtone(getContext(), Uri.parse(string));
 			if (ringtone != null) {
 				string = ringtone.getTitle(getContext());

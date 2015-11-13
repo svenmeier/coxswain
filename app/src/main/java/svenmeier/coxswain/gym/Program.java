@@ -94,18 +94,20 @@ public class Program extends Propoid {
         segments.get().add(index + 1, new Segment(Difficulty.EASY));
     }
 
-    public static Program meters(String name, int meters) {
+    public static Program meters(String name, int meters, Difficulty difficulty) {
         Program program = new Program(name);
 
         program.getSegment(0).setDistance(meters);
+        program.getSegment(0).difficulty.set(difficulty);
 
         return program;
     }
 
-    public static Program minutes(String name, int minutes) {
+    public static Program minutes(String name, int minutes, Difficulty difficulty) {
         Program program = new Program(name);
 
         program.getSegment(0).setDuration(minutes * 60);
+        program.getSegment(0).difficulty.set(difficulty);
 
         return program;
     }

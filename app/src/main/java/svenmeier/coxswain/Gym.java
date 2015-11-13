@@ -63,14 +63,14 @@ public class Gym {
             return;
         }
 
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 5000), 5000));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500, Difficulty.EASY));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000, Difficulty.EASY));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000, Difficulty.MEDIUM));
+        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 5000), 5000, Difficulty.MEDIUM));
 
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5));
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10));
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 30), 30));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5, Difficulty.EASY));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.EASY));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 30), 30, Difficulty.MEDIUM));
 
         Program program = new Program(context.getString(R.string.segments));
         program.getSegment(0).setDistance(1000);

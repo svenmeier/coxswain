@@ -2,6 +2,7 @@ package svenmeier.coxswain.view.preference;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -18,6 +19,8 @@ import svenmeier.coxswain.motivator.DefaultMotivator;
  */
 public class RingtonePreference extends android.preference.RingtonePreference {
 
+	private Uri defaultRingtone;
+
 	public RingtonePreference(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 	}
@@ -31,12 +34,21 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 	}
 
 	@Override
+	protected Object onGetDefaultValue(TypedArray a, int index) {
+		Object value = super.onGetDefaultValue(a, index);
+
+		if (value != null) {
+			defaultRingtone = Uri.parse(value.toString());
+		}
+		return value;
+	}
+
+	@Override
 	protected void onPrepareRingtonePickerIntent(Intent ringtonePickerIntent) {
 		super.onPrepareRingtonePickerIntent(ringtonePickerIntent);
 
-		String defaultRingtone = getPreferenceManager().getDefaultSharedPreferences(getContext()).getString(getKey(), null);
 		if (defaultRingtone != null) {
-			ringtonePickerIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(defaultRingtone));
+			ringtonePickerIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, defaultRingtone);
 		}
 	}
 

@@ -10,6 +10,8 @@ public class Application extends android.app.Application {
 	public void onCreate() {
 		super.onCreate();
 
+		PreferenceManager.setDefaultValues(Application.this, R.xml.preferences, true);
+
 		new Initializer();
 	}
 
@@ -21,8 +23,6 @@ public class Application extends android.app.Application {
 
 		@Override
 		public void run() {
-			PreferenceManager.setDefaultValues(Application.this, R.xml.preferences, true);
-
 			Gym.instance(Application.this).defaultPrograms();
 		}
 	}

@@ -194,10 +194,6 @@ public class GymService extends Service {
         motivator = null;
     }
 
-    private void broadcast(String action) {
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(action).addCategory(Intent.CATEGORY_DEFAULT));
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import svenmeier.coxswain.R;
@@ -33,8 +34,10 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 	protected void onPrepareRingtonePickerIntent(Intent ringtonePickerIntent) {
 		super.onPrepareRingtonePickerIntent(ringtonePickerIntent);
 
-		Uri defaultRingtone = Uri.parse(DefaultMotivator.DEFAULT_RINGTONE);
-		ringtonePickerIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, defaultRingtone);
+		String defaultRingtone = getPreferenceManager().getDefaultSharedPreferences(getContext()).getString(getKey(), null);
+		if (defaultRingtone != null) {
+			ringtonePickerIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(defaultRingtone));
+		}
 	}
 
 	@Override

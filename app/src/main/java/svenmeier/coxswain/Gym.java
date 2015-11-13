@@ -16,9 +16,6 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
-import android.content.Intent;
-import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,16 +55,14 @@ public class Gym {
 
         repository = new Repository(context, "gym");
         ((DefaultCascading)repository.cascading).setCascaded(new Program().segments);
-
-        Match<Program> query = repository.query(new Program());
-        if (query.count() == 0) {
-            defaultPrograms();
-        }
-
-        PreferenceManager.setDefaultValues(context, R.xml.preferences, true);
     }
 
-    private void defaultPrograms() {
+    public void defaultPrograms() {
+        Match<Program> query = repository.query(new Program());
+        if (query.count() > 0) {
+            return;
+        }
+
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500));
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000));
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000));

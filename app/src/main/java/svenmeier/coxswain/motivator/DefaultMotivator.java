@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain.motivator;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.media.AudioManager;
 import android.provider.Settings;
@@ -34,8 +35,6 @@ import svenmeier.coxswain.gym.Difficulty;
 /**
  */
 public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
-
-    public static final String DEFAULT_RINGTONE = "Coxswain";
 
     /**
      * Time before limit is repeated.
@@ -157,14 +156,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
     }
 
-    private void addRingtone(Preference<String> preference, String key, int defaultResource) {
+    private void addRingtone(Preference<String> preference, String key) {
         String ringtone = preference.get();
         if (ringtone != null && ringtone.length() > 0) {
-            if (DEFAULT_RINGTONE.equals(ringtone)) {
-                speech.addEarcon(key, context.getPackageName(), defaultResource);
-            } else {
-                speech.addEarcon(key, ringtone);
-            }
+            speech.addEarcon(key, ringtone);
         }
     }
 
@@ -187,9 +182,9 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         @Override
         public void init() {
-            addRingtone(ringtoneEasyPreference, key(Difficulty.EASY), R.raw.whistle);
-            addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM), R.raw.whistle);
-            addRingtone(ringtoneHardPreference, key(Difficulty.HARD), R.raw.whistle);
+            addRingtone(ringtoneEasyPreference, key(Difficulty.EASY));
+            addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM));
+            addRingtone(ringtoneHardPreference, key(Difficulty.HARD));
         }
 
         private String key(Difficulty difficulty) {
@@ -230,7 +225,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         @Override
         public void init() {
-            addRingtone(ringtoneFinishPreference, KEY, R.raw.whistle);
+            addRingtone(ringtoneFinishPreference, KEY);
         }
 
         public void analyse(Event event, Gym.Current current) {
@@ -306,7 +301,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         @Override
         public void init() {
-            addRingtone(ringtoneDrivePreference, TICK, R.raw.tick);
+            addRingtone(ringtoneDrivePreference, TICK);
         }
 
         public void analyse(Event event, Gym.Current current) {

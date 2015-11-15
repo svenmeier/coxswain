@@ -53,7 +53,7 @@
     <string name="preference_audio_speak_limit_title">Segment Anforderung</string>
     <string name="preference_audio_speak_limit_summary">Anforderung für Semgent wiederholen wenn nicht erfüllt</string>
 
-    <string name="preference_audio_ringtone_catch_title">Drive-Phase</string>
+    <string name="preference_audio_ringtone_catch_title">Durchzug-Phase fällig</string>
     <string name="preference_audio_ringtone_catch_summary">%s</string>
 
     <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
@@ -62,7 +62,7 @@
     <string name="preference_integration_title">Integration</string>
 
     <string name="preference_integration_intent_title">Intent</string>
-    <string name="preference_integration_intent_summary">Bei Start des Ruderns Intent ausführen</string>
+    <string name="preference_integration_intent_summary">Intent ausführen bei Start eines Programms</string>
 
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>

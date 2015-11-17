@@ -6,11 +6,15 @@ import android.preference.PreferenceManager;
  */
 public class Application extends android.app.Application {
 
+	private Gym gym;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
 		PreferenceManager.setDefaultValues(Application.this, R.xml.preferences, true);
+
+		gym = Gym.instance(this);
 
 		new Initializer();
 	}
@@ -23,7 +27,7 @@ public class Application extends android.app.Application {
 
 		@Override
 		public void run() {
-			Gym.instance(Application.this).defaultPrograms();
+			gym.defaultPrograms();
 		}
 	}
 }

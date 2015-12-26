@@ -138,6 +138,10 @@ public class MainActivity extends Activity {
         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
         if (device != null) {
             GymService.start(this, device);
+
+            // remove device so that a successive orientation changes
+            // do not trigger repeated service starts
+            intent.removeExtra(UsbManager.EXTRA_DEVICE);
         }
     }
 

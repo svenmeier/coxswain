@@ -218,7 +218,7 @@ public class GymService extends Service {
                     program = gym.program;
                 }
 
-                if (rower.row() == false) {
+                if (rower != GymService.this.rower || rower.row() == false) {
                     break;
                 }
 

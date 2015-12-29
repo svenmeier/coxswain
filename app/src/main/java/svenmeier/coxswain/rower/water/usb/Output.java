@@ -31,16 +31,14 @@ public class Output {
 
     private final UsbDeviceConnection connection;
     private final UsbEndpoint endpoint;
-    private final Object monitor;
 
     public byte[] buffer;
 
     private long last;
 
-    public Output(UsbDeviceConnection connection, UsbEndpoint endpoint, Object monitor) {
+    public Output(UsbDeviceConnection connection, UsbEndpoint endpoint) {
         this.connection = connection;
         this.endpoint = endpoint;
-        this.monitor = monitor;
 
         this.buffer = new byte[endpoint.getMaxPacketSize()];
     }
@@ -54,7 +52,7 @@ public class Output {
         try {
             long throttle = PROCESSING_DELAY - (System.currentTimeMillis() - last);
             if (throttle > 0) {
-                monitor.wait(throttle);
+                Thread.sleep(throttle);
             }
         } catch (InterruptedException ignore) {
         }

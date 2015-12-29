@@ -41,8 +41,6 @@ import svenmeier.coxswain.rower.water.usb.Output;
  */
 public class WaterRower implements Rower {
 
-    private static final int TIMEOUT = 0; // milliseconds
-
     private final Context context;
 
     private final Snapshot memory;
@@ -53,6 +51,8 @@ public class WaterRower implements Rower {
 
     private Input input;
     private Output output;
+
+    private boolean detached;
 
     private BroadcastReceiver receiver;
 
@@ -68,7 +68,7 @@ public class WaterRower implements Rower {
     }
 
     @Override
-    public synchronized boolean open() {
+    public boolean open() {
         if (isOpen()) {
             return true;
         }
@@ -86,7 +86,7 @@ public class WaterRower implements Rower {
                     UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
                     if (device.equals(WaterRower.this.device)) {
-                        onDetached();
+                        detached = true;
                     }
                 }
             }
@@ -99,24 +99,18 @@ public class WaterRower implements Rower {
         return true;
     }
 
-    /**
-     * Hook method called when device was detached.
-     */
-    protected void onDetached() {
-    }
-
     @Override
     public String getName() {
         return "Waterrower";
     }
 
     @Override
-    public synchronized boolean isOpen() {
+    public boolean isOpen() {
         return this.connection != null;
     }
 
     @Override
-    public synchronized void close() {
+    public void close() {
         if (isOpen() == false) {
             return;
         }
@@ -136,13 +130,13 @@ public class WaterRower implements Rower {
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         requests.add(Mapper.RESET);
     }
 
     @Override
-    public synchronized boolean row() {
-        if (isOpen() == false) {
+    public boolean row() {
+        if (isOpen() == false || detached) {
             return false;
         }
 
@@ -204,7 +198,7 @@ public class WaterRower implements Rower {
             if (out != null && in != null) {
                 if (this.connection.claimInterface(anInterface, true)) {
                     input = new Input(this.connection, in);
-                    output = new Output(this.connection, out, this);
+                    output = new Output(this.connection, out);
                     return true;
                 } else {
                     Log.d(MainActivity.TAG, String.format("can not claim interface %s", anInterface.getId()));

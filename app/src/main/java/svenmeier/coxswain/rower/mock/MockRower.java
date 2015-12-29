@@ -35,14 +35,14 @@ public class MockRower implements Rower {
     }
 
     @Override
-    public synchronized boolean open() {
+    public boolean open() {
         open = true;
 
         return true;
     }
 
     @Override
-    public synchronized boolean isOpen() {
+    public boolean isOpen() {
         return open;
     }
 
@@ -52,15 +52,15 @@ public class MockRower implements Rower {
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         distance = 0;
         strokes = 0;
     }
 
     @Override
-    public synchronized boolean row() {
+    public boolean row() {
         try {
-            this.wait(100);
+            Thread.sleep(100);
         } catch (InterruptedException ignore) {
         }
 
@@ -86,7 +86,7 @@ public class MockRower implements Rower {
     }
 
     @Override
-    public synchronized void close() {
+    public void close() {
         open = false;
     }
 }

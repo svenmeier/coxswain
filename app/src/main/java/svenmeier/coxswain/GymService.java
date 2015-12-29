@@ -27,8 +27,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Vibrator;
-import android.support.v4.content.LocalBroadcastManager;
 
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
@@ -46,15 +44,11 @@ public class GymService extends Service {
 
     private Gym gym;
 
-    private Program program;
-
     private Handler handler = new Handler();
 
     private Snapshot memory = new Snapshot();
 
-    private Motivator motivator;
-
-    private Rower rower;
+    private Rowing rowing;
 
     private String text;
 
@@ -80,7 +74,7 @@ public class GymService extends Service {
 
     @Override
     public void onDestroy() {
-        if (this.rower != null) {
+        if (this.rowing != null) {
             endRowing();
         }
 
@@ -93,7 +87,7 @@ public class GymService extends Service {
 
         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-        if (this.rower != null) {
+        if (this.rowing != null) {
             endRowing();
             if (device == null) {
                 return START_NOT_STICKY;
@@ -107,42 +101,30 @@ public class GymService extends Service {
 
     private void startRowing(UsbDevice device) {
 
-        motivator = new DefaultMotivator(this);
-
+        Rower rower;
         if (device == null) {
             rower = new MockRower(memory);
         } else {
-            rower = new WaterRower(this, memory, device) {
-                @Override
-                protected void onDetached() {
-                    endRowing();
-                }
-            };
+            rower = new WaterRower(this, memory, device);
         }
 
-        if (rower.open()) {
-            new Beats(rower);
-
-            notifyConnected();
-        } else {
-            endRowing();
-        }
+        rowing = new Rowing(rower);
+        new Thread(rowing).start();
     }
 
-    private void notifyConnected() {
-        showNotification(String.format(getString(R.string.gym_notification_connected), rower.getName()), MainActivity.class, null);
+    private void endRowing() {
+        this.rowing = null;
     }
 
-    private void notifyRowing() {
-        Gym.Current current = gym.current;
-        if (current == null) {
-            notifyConnected();
-        } else {
-            String name = gym.program.name.get();
-            String description = gym.current.describe();
+    private void notifyConnected(String name) {
+        showNotification(String.format(getString(R.string.gym_notification_connected), name), MainActivity.class, null);
+    }
 
-            showNotification(name + " - " + description, WorkoutActivity.class, ACTION_STOP);
-        }
+    private void notifyRowing(Program program, Gym.Current current) {
+        String name = program.name.get();
+        String description = current.describe();
+
+        showNotification(name + " - " + description, WorkoutActivity.class, ACTION_STOP);
     }
 
     @SuppressLint("NewApi")
@@ -183,74 +165,87 @@ public class GymService extends Service {
         this.text = text;
     }
 
-
-    private void endRowing() {
-        this.rower.close();
-        this.rower = null;
-
-        showNotification(null, null, null);
-
-        motivator.destroy();
-        motivator = null;
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private class Beats implements Runnable {
+    /**
+     * Current rowing on rower.
+     */
+    private class Rowing implements Runnable {
 
         private final Rower rower;
 
-        public Beats(Rower rower) {
+        private final Motivator motivator;
+
+        private Program program;
+
+        public Rowing(Rower rower) {
             this.rower = rower;
 
-            new Thread(this).start();
+            motivator = new DefaultMotivator(GymService.this);
         }
 
         public void run() {
-            while (true) {
-                if (gym.program != program) {
-                    // program changed
-                    memory.clear();
-                    rower.reset();
-                    program = gym.program;
-                }
-
-                if (rower != GymService.this.rower || rower.row() == false) {
-                    break;
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (rower != GymService.this.rower) {
-                            // no longer current rower
-                            return;
-                        }
-
-                        if (gym.current == null) {
-                            notifyConnected();
-                            return;
-                        }
-
-                        if (gym.program != program) {
-                            // program changed
-                            return;
-                        }
-
-                        notifyRowing();
-
-                        Event event = gym.addSnapshot(new Snapshot(memory));
-                        motivator.onEvent(event);
-
-                        if (event == Event.PROGRAM_FINISHED) {
-                            gym.select(null);
-                        }
+            if (rower.open()) {
+                while (true) {
+                    if (gym.program != program) {
+                        // program changed
+                        memory.clear();
+                        rower.reset();
+                        program = gym.program;
                     }
-                });
+
+                    if (GymService.this.rowing != this|| rower.row() == false) {
+                        break;
+                    }
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (GymService.this.rowing != Rowing.this) {
+                                // no longer current
+                                return;
+                            }
+
+                            Gym.Current current = gym.current;
+                            if (current == null) {
+                                notifyConnected(rower.getName());
+                                return;
+                            }
+
+                            if (gym.program != program) {
+                                // program changed
+                                return;
+                            }
+
+                            notifyRowing(program, current);
+
+                            Event event = gym.addSnapshot(new Snapshot(memory));
+                            motivator.onEvent(event);
+
+                            if (event == Event.PROGRAM_FINISHED) {
+                                gym.select(null);
+                            }
+                        }
+                    });
+                }
+
+                rower.close();
             }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    motivator.destroy();
+
+                    if (GymService.this.rowing == Rowing.this || GymService.this.rowing == null) {
+                        // cleanup
+                        showNotification(null, null, null);
+                    }
+                }
+            });
         }
     }
 

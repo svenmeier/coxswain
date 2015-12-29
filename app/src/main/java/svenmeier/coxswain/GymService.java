@@ -50,8 +50,6 @@ public class GymService extends Service {
 
     private Rowing rowing;
 
-    private String text;
-
     public GymService() {
     }
 
@@ -116,58 +114,37 @@ public class GymService extends Service {
         this.rowing = null;
     }
 
-    private void notifyConnected(String name) {
-        showNotification(String.format(getString(R.string.gym_notification_connected), name), MainActivity.class, null);
-    }
-
-    private void notifyRowing(Program program, Gym.Current current) {
-        String name = program.name.get();
-        String description = current.describe();
-
-        showNotification(name + " - " + description, WorkoutActivity.class, ACTION_STOP);
-    }
-
-    @SuppressLint("NewApi")
-    private void showNotification(String text, Class<?> activity, String action) {
-        if (text == null) {
-            stopForeground(true);
-        } else {
-            if (text.equals(this.text)) {
-                return;
-            }
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), PendingIntent.FLAG_UPDATE_CURRENT);
-
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText(text)
-                    .setContentIntent(pendingIntent);
-
-            if (action != null) {
-                builder.setDefaults(Notification.DEFAULT_VIBRATE);
-
-                // uncomment for heads-up notification
-                // builder.setPriority(Notification.PRIORITY_MAX);
-
-                try {
-                    builder.addAction(R.drawable.ic_stop_black_24dp,
-                            getString(R.string.gym_notification_stop),
-                            PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
-                } catch (NoSuchMethodError notApi14) {
-                }
-            }
-
-            // notApi14
-            startForeground(1, builder.getNotification());
-        }
-
-        this.text = text;
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @SuppressLint("NewApi")
+    private void startForeground(String text, Class<?> activity, String action) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(text)
+                .setContentIntent(pendingIntent);
+
+        if (action != null) {
+            builder.setDefaults(Notification.DEFAULT_VIBRATE);
+
+            // uncomment for heads-up notification
+            // builder.setPriority(Notification.PRIORITY_MAX);
+
+            try {
+                builder.addAction(R.drawable.ic_stop_black_24dp,
+                        getString(R.string.gym_notification_stop),
+                        PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
+            } catch (NoSuchMethodError notApi14) {
+            }
+        }
+
+        // notApi14
+        startForeground(1, builder.getNotification());
     }
 
     /**
@@ -180,6 +157,8 @@ public class GymService extends Service {
         private final Motivator motivator;
 
         private Program program;
+
+        private String text;
 
         public Rowing(Rower rower) {
             this.rower = rower;
@@ -211,7 +190,7 @@ public class GymService extends Service {
 
                             Gym.Current current = gym.current;
                             if (current == null) {
-                                notifyConnected(rower.getName());
+                                showNotification(String.format(getString(R.string.gym_notification_connected), rower.getName()), MainActivity.class, null);
                                 return;
                             }
 
@@ -220,7 +199,9 @@ public class GymService extends Service {
                                 return;
                             }
 
-                            notifyRowing(program, current);
+                            String name = program.name.get();
+                            String description = current.describe();
+                            showNotification(name + " - " + description, WorkoutActivity.class, ACTION_STOP);
 
                             Event event = gym.addSnapshot(new Snapshot(memory));
                             motivator.onEvent(event);
@@ -240,12 +221,23 @@ public class GymService extends Service {
                 public void run() {
                     motivator.destroy();
 
-                    if (GymService.this.rowing == Rowing.this || GymService.this.rowing == null) {
-                        // cleanup
-                        showNotification(null, null, null);
-                    }
+                    showNotification(null, null, null);
                 }
             });
+        }
+
+        private void showNotification(String text, Class<?> activity, String action) {
+            if (text == null) {
+                if (this.text != null) {
+                    stopForeground(true);
+                }
+            } else {
+                if (text.equals(this.text) == false) {
+                    startForeground(text, activity, action);
+                }
+            }
+
+            this.text = text;
         }
     }
 

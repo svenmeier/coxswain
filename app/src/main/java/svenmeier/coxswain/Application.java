@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
  */
 public class Application extends android.app.Application {
 
+	public static String TAG = "coxswain";
+
 	private Gym gym;
 
 	@Override

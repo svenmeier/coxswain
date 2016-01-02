@@ -30,6 +30,7 @@ import android.util.Log;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import svenmeier.coxswain.Application;
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
@@ -40,6 +41,9 @@ import svenmeier.coxswain.rower.water.usb.Output;
  * https://github.com/jamesnesfield/node-waterrower/blob/develop/Waterrower/index.js
  */
 public class WaterRower implements Rower {
+
+    private static final int SET_DATA_REQUEST_TYPE = 0x40;
+    private static final int SET_BAUD_RATE = 0x03;
 
     private final Context context;
 
@@ -140,25 +144,20 @@ public class WaterRower implements Rower {
             return false;
         }
 
-        String request;
-        if (requests.isEmpty()) {
-            request = mapper.nextRequest();
-        } else {
-            request = requests.remove();
-        }
-        output.write(request);
-
-        // could be closed while #write() was waiting
-        if (isOpen() == false) {
-            return false;
-        }
-
-        while (true) {
-            String message = input.read();
-            if (message == null) {
-                break;
+        if (output.isReady()) {
+            String request;
+            if (requests.isEmpty()) {
+                request = mapper.nextRequest();
+            } else {
+                request = requests.remove();
             }
+            if (request != null) {
+                output.write(request);
+            }
+        }
 
+        String message = input.read();
+        if (message != null) {
             mapper.map(message, memory);
         }
 
@@ -170,12 +169,12 @@ public class WaterRower implements Rower {
 
         this.connection = manager.openDevice(device);
         if (this.connection == null) {
-            Log.d(MainActivity.TAG, String.format("no connection", device.getDeviceName()));
+            Log.d(Application.TAG, String.format("no connection", device.getDeviceName()));
             return false;
         }
 
         // set data request, baud rate, 115200,
-        this.connection.controlTransfer(0x40, 0x03, 0x001A, 0, null, 0, 0);
+            this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, 0x001A, 0, null, 0, 0);
 
         for (int i = 0; i < device.getInterfaceCount(); i++) {
             UsbInterface anInterface = device.getInterface(i);
@@ -201,14 +200,14 @@ public class WaterRower implements Rower {
                     output = new Output(this.connection, out);
                     return true;
                 } else {
-                    Log.d(MainActivity.TAG, String.format("can not claim interface %s", anInterface.getId()));
+                    Log.d(Application.TAG, String.format("can not claim interface %s", anInterface.getId()));
                 }
             } else {
-                Log.d(MainActivity.TAG, String.format("no suitable endpoints %s", anInterface.getId()));
+                Log.d(Application.TAG, String.format("no suitable endpoints %s", anInterface.getId()));
             }
         }
 
-        Log.d(MainActivity.TAG, String.format("no suitable interface", device.getDeviceName()));
+        Log.d(Application.TAG, String.format("no suitable interface", device.getDeviceName()));
         this.connection.close();
         this.connection = null;
         return false;

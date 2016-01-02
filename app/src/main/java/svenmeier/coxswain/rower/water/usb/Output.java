@@ -43,6 +43,10 @@ public class Output {
         this.buffer = new byte[endpoint.getMaxPacketSize()];
     }
 
+    public boolean isReady() {
+        return System.currentTimeMillis() - last > PROCESSING_DELAY;
+    }
+
     public void write(String message) {
         int length = message.length();
         if (length > buffer.length - 2) {

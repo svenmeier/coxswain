@@ -20,6 +20,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import svenmeier.coxswain.Application;
 import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 
@@ -48,7 +49,6 @@ public class Mapper {
         fields.add(new Field(null, "SS") {
             @Override
             protected void onUpdate(String message, Snapshot memory) {
-                Log.i(MainActivity.TAG, message + System.currentTimeMillis());
                 memory.drive = true;
             }
         });
@@ -56,7 +56,6 @@ public class Mapper {
         fields.add(new Field(null, "SE") {
             @Override
             protected void onUpdate(String message, Snapshot memory) {
-                Log.i(MainActivity.TAG, message + System.currentTimeMillis());
                 memory.drive = false;
             }
         });

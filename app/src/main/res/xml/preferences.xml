@@ -63,7 +63,7 @@
             android:key="@string/preference_audio_ringtone_catch"
             android:title="@string/preference_audio_ringtone_catch_title"
             android:summary="@string/preference_audio_ringtone_catch_summary"
-            android:defaultValue=""
+            android:defaultValue="android.resource://svenmeier.coxswain/raw/whistle_short"
             android:ringtoneType="notification"
             />
     </PreferenceCategory>

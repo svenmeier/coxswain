@@ -24,16 +24,16 @@ public abstract class NumberField extends Field {
     private static final int CODEPOINT_0 = 48;
     private static final int CODEPOINT_A = 65;
 
-    public static final int SINGLE = 1;
-    public static final int DOUBLE = 2;
-    public static final int TRIPLE = 3;
+    public static final int SINGLE_BYTE = 1;
+    public static final int DOUBLE_BYTE = 2;
+    public static final int TRIPLE_BYTE = 3;
 
     /**
      * @param address memory address
-     * @param size data size SINGLE, DOUBLE or TRIPLE
+     * @param size data size SINGLE_BYTE, DOUBLE_BYTE or TRIPLE_BYTE
      */
     NumberField(int address, int size) {
-        String ach = toAscii(address, TRIPLE, 16);
+        String ach = toAscii(address, 3, 16);
 
         switch (size) {
             case 1:
@@ -58,10 +58,10 @@ public abstract class NumberField extends Field {
         onUpdate(fromAscii(message, response.length(), 16), memory);
     }
 
-    protected abstract void onUpdate(short value, Snapshot memory);
+    protected abstract void onUpdate(int value, Snapshot memory);
 
-    private static short fromAscii(String ach, int start, int base) {
-        short total = 0;
+    private static int fromAscii(String ach, int start, int base) {
+        int total = 0;
 
         for (int c = start; c < ach.length(); c++) {
             total *= base;

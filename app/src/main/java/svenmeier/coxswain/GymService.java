@@ -171,9 +171,12 @@ public class GymService extends Service {
                 while (true) {
                     if (gym.program != program) {
                         // program changed
-                        memory.clear();
-                        rower.reset();
                         program = gym.program;
+
+                        memory.clear();
+                        if (program != null) {
+                            rower.reset();
+                        }
                     }
 
                     if (GymService.this.rowing != this|| rower.row() == false) {

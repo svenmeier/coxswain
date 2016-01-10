@@ -18,6 +18,7 @@
     <string name="distance_meters">%s meters</string>
     <string name="duration_minutes">%s minutes</string>
     <string name="strokes_count">%s strokes</string>
+    <string name="energy_calories">%s kcal</string>
     <string name="strokeRate_strokesPerMinute">%s strokes per minute</string>
     <string name="pulse_beatsPerMinute">%s beats per minute</string>
     <string name="speed_metersPerSecond">%s meters per second</string>

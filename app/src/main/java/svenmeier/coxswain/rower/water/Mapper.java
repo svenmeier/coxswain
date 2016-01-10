@@ -21,20 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import svenmeier.coxswain.Application;
-import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 
-/**
- + '14A': {'type': 'avg_distance_cmps', 'size': 'double', 'base': 16}
- + '1A9': {'type': 'stroke_rate',       'size': 'single', 'base': 16}
- + '1E1': {'type': 'display_sec',       'size': 'single', 'base': 10}
- + '1E2': {'type': 'display_min',       'size': 'single', 'base': 10}
- + '1E3': {'type': 'display_hr',        'size': 'single', 'base': 10}
- - '1E0': {'type': 'display_sec_dec',   'size': 'single', 'base': 10}
- - '055': {'type': 'total_distance_m',  'size': 'double', 'base': 16}
- - '140': {'type': 'total_strokes',     'size': 'double', 'base': 16}
- - '08A': {'type': 'total_kcal',        'size': 'triple', 'base': 16}
- */
 public class Mapper {
 
     public static final String INIT = "USB";
@@ -60,38 +48,45 @@ public class Mapper {
             }
         });
 
-        fields.add(new NumberField(0x140, NumberField.DOUBLE) {
+        fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(short value, Snapshot memory) {
-                memory.strokes = value;
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.strokes = (short)value;
             }
         });
 
-        fields.add(new NumberField(0x057, NumberField.DOUBLE) {
+        fields.add(new NumberField(0x057, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(short value, Snapshot memory) {
-                memory.distance = value;
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.distance = (short)value;
             }
         });
 
-        fields.add(new NumberField(0x14A, NumberField.DOUBLE) {
+        fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(short value, Snapshot memory) {
-                memory.speed = value;
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.speed = (short)value;
             }
         });
 
-        fields.add(new NumberField(0x1A9, NumberField.SINGLE) {
+        fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
-            protected void onUpdate(short value, Snapshot memory) {
-                memory.strokeRate = value;
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.strokeRate = (short)value;
             }
         });
 
-        fields.add(new NumberField(0x1A0, NumberField.SINGLE) {
+        fields.add(new NumberField(0x1A0, NumberField.SINGLE_BYTE) {
             @Override
-            protected void onUpdate(short value, Snapshot memory) {
-                memory.pulse = value;
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.pulse = (short)value;
+            }
+        });
+
+        fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
+            @Override
+            protected void onUpdate(int value, Snapshot memory) {
+                memory.energy = (short)Math.round(value / 1000f);
             }
         });
     }

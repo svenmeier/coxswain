@@ -15,9 +15,6 @@
  */
 package svenmeier.coxswain.gym;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import propoid.core.Property;
 import propoid.core.Propoid;
 
@@ -35,6 +32,8 @@ public class Workout extends Propoid {
 
     public final Property<Integer> strokes = property();
 
+    public final Property<Integer> energy = property();
+
     public Workout() {
     }
 
@@ -44,6 +43,7 @@ public class Workout extends Propoid {
         this.duration.set(0);
         this.distance.set(0);
         this.strokes.set(0);
+        this.energy.set(0);
     }
 
     public void onSnapshot(Snapshot snapshot) {
@@ -53,5 +53,6 @@ public class Workout extends Propoid {
 
         this.distance.set((int)snapshot.distance);
         this.strokes.set((int)snapshot.strokes);
+        this.energy.set((int) snapshot.energy);
     }
 }

@@ -31,6 +31,8 @@ public class Snapshot {
 
     public short strokeRate;
 
+    public short energy;
+
     public Snapshot() {
     }
 
@@ -41,13 +43,16 @@ public class Snapshot {
         this.speed = snapshot.speed;
         this.pulse = snapshot.pulse;
         this.strokeRate = snapshot.strokeRate;
+        this.energy = snapshot.energy;
     }
 
     public void clear() {
+        this.drive = false;
         this.distance = 0;
         this.strokes = 0;
         this.speed = 0;
         this.pulse = 0;
         this.strokeRate = 0;
+        this.energy = 0;
     }
 }

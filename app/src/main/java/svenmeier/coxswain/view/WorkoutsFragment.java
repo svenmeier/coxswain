@@ -87,19 +87,22 @@ public class WorkoutsFragment extends Fragment {
         protected void bind(int position, View view, Workout workout) {
             Index index = Index.get(view);
 
-            TextView nameView = index.get(R.id.workout_name);
-            nameView.setText(workout.name.get());
-
             TextView startView = index.get(R.id.workout_start);
             startView.setText(format.format(new Date(workout.start.get())));
+
+            TextView nameView = index.get(R.id.workout_name);
+            nameView.setText(workout.name.get());
 
             TextView countsView = index.get(R.id.workout_counts);
             String counts = TextUtils.join(", ", new String[]{
                     String.format(getString(R.string.duration_minutes), workout.duration.get() / 60),
                     String.format(getString(R.string.distance_meters), workout.distance.get()),
                     String.format(getString(R.string.strokes_count), workout.strokes.get())
-                    });
+            });
             countsView.setText(counts);
+
+            TextView caloriesView = index.get(R.id.workout_calories);
+            caloriesView.setText(String.format(getString(R.string.energy_calories), workout.energy.get()));
         }
     }
 }

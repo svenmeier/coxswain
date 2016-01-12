@@ -30,6 +30,8 @@ public class Segment extends Propoid {
 
     public final Property<Integer> strokes = property();
 
+    public final Property<Integer> energy = property();
+
     public final Property<Integer> speed = property();
 
     public final Property<Integer> strokeRate = property();
@@ -37,16 +39,20 @@ public class Segment extends Propoid {
     public final Property<Integer> pulse = property();
 
     public Segment() {
-    }
-
-    public Segment(Difficulty difficulty) {
-        this.difficulty.set(difficulty);
+        difficulty.set(Difficulty.EASY);
         distance.set(1000);
         duration.set(0);
         strokes.set(0);
+        energy.set(0);
         speed.set(0);
         strokeRate.set(0);
         pulse.set(0);
+    }
+
+    public Segment(Difficulty difficulty) {
+        this();
+
+        this.difficulty.set(difficulty);
     }
 
     public int asDuration() {
@@ -54,6 +60,8 @@ public class Segment extends Propoid {
             return distance.get() / 4;
         } else if (strokes.get() > 0) {
             return strokes.get();
+        } else if (energy.get() > 0) {
+            return energy.get() / 6;
         } else {
             return duration.get();
         }
@@ -64,6 +72,8 @@ public class Segment extends Propoid {
             return distance.get();
         } else if (strokes.get() > 0) {
             return strokes.get();
+        } else if (energy.get() > 0) {
+            return energy.get();
         } else if (duration.get() > 0) {
             return duration.get();
         }
@@ -85,12 +95,14 @@ public class Segment extends Propoid {
         this.speed.set(0);
         this.strokeRate.set(0);
         this.pulse.set(0);
+        this.energy.set(0);
     }
 
     public Segment setDuration(int duration) {
         this.duration.set(duration);
         this.distance.set(0);
         this.strokes.set(0);
+        this.energy.set(0);
 
         return this;
     }
@@ -99,6 +111,7 @@ public class Segment extends Propoid {
         this.duration.set(0);
         this.distance.set(distance);
         this.strokes.set(0);
+        this.energy.set(0);
 
         return this;
     }
@@ -107,6 +120,16 @@ public class Segment extends Propoid {
         this.duration.set(0);
         this.distance.set(0);
         this.strokes.set(strokes);
+        this.energy.set(0);
+
+        return this;
+    }
+
+    public Segment setEnergy(int energy) {
+        this.duration.set(0);
+        this.distance.set(0);
+        this.strokes.set(0);
+        this.energy.set(energy);
 
         return this;
     }

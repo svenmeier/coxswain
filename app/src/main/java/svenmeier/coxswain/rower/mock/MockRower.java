@@ -26,6 +26,8 @@ public class MockRower implements Rower {
 
     private static double strokes;
 
+    private static double energy;
+
     private final Snapshot memory;
 
     private boolean open;
@@ -70,6 +72,9 @@ public class MockRower implements Rower {
 
             strokes += 0.04;
             memory.strokes = (short)(strokes);
+
+            energy += 0.015;
+            memory.energy = (short)(energy);
 
             memory.speed = (short)(250 +  (Math.random() * 100));
 

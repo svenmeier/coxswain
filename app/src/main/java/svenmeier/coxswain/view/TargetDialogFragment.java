@@ -122,5 +122,38 @@ public class TargetDialogFragment extends AbstractValueFragment {
                 segment.setStrokes(getValue(index));
             }
         });
+
+        // energy 001[0] - 100[0]
+        addTab(new Tab() {
+            @Override
+            public CharSequence getTitle() {
+                return getString(R.string.target_energy);
+            }
+
+            @Override
+            public int getCount() {
+                return 100;
+            }
+
+            @Override
+            public String getPattern() {
+                return getString(R.string.energy_pattern);
+            }
+
+            @Override
+            public int getValue(int index) {
+                return (index + 1) * 10;
+            }
+
+            @Override
+            public int segmentToIndex(Segment segment) {
+                return segment.energy.get() / 10 - 1;
+            }
+
+            @Override
+            public void indexToSegment(Segment segment, int index) {
+                segment.setEnergy(getValue(index));
+            }
+        });
     }
 }

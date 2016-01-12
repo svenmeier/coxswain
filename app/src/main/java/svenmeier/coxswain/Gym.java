@@ -215,6 +215,8 @@ public class Gym {
                 return snapshot.distance;
             } else if (segment.strokes.get() > 0) {
                 return snapshot.strokes;
+            } else if (segment.energy.get() > 0) {
+                return snapshot.energy;
             } else if (segment.duration.get() > 0){
                 return duration;
             }

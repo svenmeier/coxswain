@@ -35,15 +35,17 @@ public class Workout extends Propoid {
     public final Property<Integer> energy = property();
 
     public Workout() {
-    }
-
-    public Workout(Program program) {
-        this.name.set(program.name.get());
-        this.start.set(System.currentTimeMillis());
         this.duration.set(0);
         this.distance.set(0);
         this.strokes.set(0);
         this.energy.set(0);
+    }
+
+    public Workout(Program program) {
+        this();
+
+        this.name.set(program.name.get());
+        this.start.set(System.currentTimeMillis());
     }
 
     public void onSnapshot(Snapshot snapshot) {

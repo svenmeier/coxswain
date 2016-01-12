@@ -115,6 +115,10 @@ public class ProgramActivity extends Activity implements AbstractValueFragment.C
                 targetView.setPattern(getString(R.string.strokes_pattern));
                 targetView.setValue(segment.strokes.get());
                 targetLabelView.setText(getString(R.string.target_strokes));
+            } else if (segment.energy.get() > 0) {
+                targetView.setPattern(getString(R.string.energy_pattern));
+                targetView.setValue(segment.energy.get());
+                targetLabelView.setText(getString(R.string.target_energy));
             }
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override

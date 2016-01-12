@@ -26,6 +26,7 @@
     <string name="target_distance">DISTANCE</string>
     <string name="target_duration">DURATION</string>
     <string name="target_strokes">STROKES</string>
+    <string name="target_energy">ENERGY</string>
     <string name="limit_speed">SPEED</string>
     <string name="limit_pulse">PULSE</string>
     <string name="limit_strokeRate">STROKERATE</string>
@@ -35,6 +36,7 @@
     <string name="duration_pattern" translatable="false">0:60:60</string>
     <string name="duration_short_pattern" translatable="false">60:60</string>
     <string name="strokes_pattern" translatable="false">0000</string>
+    <string name="energy_pattern" translatable="false">0000</string>
     <string name="speed_pattern" translatable="false">-0.00</string>
     <string name="pulse_pattern" translatable="false">-000</string>
     <string name="strokeRate_pattern" translatable="false">-00</string>

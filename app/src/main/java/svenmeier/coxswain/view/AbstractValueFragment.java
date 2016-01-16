@@ -64,7 +64,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
         super.onResume();
 
         for (Tab tab : tabs) {
-            if (tab.segmentToIndex(getHolder().getSegment()) >= 0) {
+            if (tab.segmentToIndex(getCallback().getSegment()) >= 0) {
                 pager.setCurrentItem(tabs.indexOf(tab));
                 break;
             }
@@ -72,13 +72,13 @@ public abstract class AbstractValueFragment extends DialogFragment {
     }
 
     private void changeSegment() {
-        Segment segment = getHolder().getSegment();
+        Segment segment = getCallback().getSegment();
 
         Tab tab = tabs.get(pager.getCurrentItem());
         ListView listView = (ListView) pager.findViewWithTag(tab);
         tab.indexToSegment(segment, listView.getFirstVisiblePosition());
 
-        getHolder().setSegment(segment);
+        getCallback().setSegment(segment);
 
         AbstractValueFragment.this.dismiss();
     }
@@ -155,7 +155,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
                 }
             });
 
-            Segment segment = getHolder().getSegment();
+            Segment segment = getCallback().getSegment();
             int index = tab.segmentToIndex(segment);
             if (index >= 0) {
                 listView.setSelection(index);
@@ -176,7 +176,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
     }
 
-    private Callback getHolder() {
+    private Callback getCallback() {
         return Utils.getParent(this, Callback.class);
     }
 

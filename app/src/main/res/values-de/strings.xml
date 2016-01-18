@@ -34,6 +34,15 @@
     <string name="workouts">Trainings</string>
     <string name="segments">Segmente</string>
 
+    <string name="preference_stroke_ratio_title">Schlag-Verhältnis</string>
+    <string name="preference_stroke_ratio_summary">Schlag-Verhältnis 1:%s</string>
+
+    <string name="preference_body_weight_title">Körpergewicht</string>
+    <string name="preference_body_weight_summary">Körpergewicht %s kg</string>
+
+    <string name="preference_water_level_title">Wasserstand</string>
+    <string name="preference_water_level_summary">Wasserstand %s</string>
+
     <string name="preference_audio_title">Töne</string>
     <string name="preference_audio_none">Keine</string>
 
@@ -57,9 +66,6 @@
 
     <string name="preference_audio_ringtone_catch_title">Durchzug-Phase fällig</string>
     <string name="preference_audio_ringtone_catch_summary">%s</string>
-
-    <string name="preference_motivator_ratio_title">Schlag-Verhältnis</string>
-    <string name="preference_motivator_ratio_summary">Schlag-Verhältnis 1:%s</string>
 
     <string name="preference_integration_title">Integration</string>
 

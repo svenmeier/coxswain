@@ -45,6 +45,18 @@
     <string name="workouts">Workouts</string>
     <string name="segments">Segments</string>
 
+    <string name="preference_stroke_ratio" translatable="false">preference_stroke_ratio</string>
+    <string name="preference_stroke_ratio_title">Stroke Ratio</string>
+    <string name="preference_stroke_ratio_summary">Stroke ratio 1:%s</string>
+
+    <string name="preference_body_weight" translatable="false">preference_body_weight</string>
+    <string name="preference_body_weight_title">Body weight</string>
+    <string name="preference_body_weight_summary">Weight %s kg</string>
+
+    <string name="preference_water_level" translatable="false">preference_water_level</string>
+    <string name="preference_water_level_title">Water level</string>
+    <string name="preference_water_level_summary">Water level %s</string>
+
     <string name="preference_audio_title">Sounds</string>
     <string name="preference_audio_none">None</string>
 
@@ -75,10 +87,6 @@
     <string name="preference_audio_ringtone_catch" translatable="false">preference_audio_ringtone_catch</string>
     <string name="preference_audio_ringtone_catch_title">Drive phase due</string>
     <string name="preference_audio_ringtone_catch_summary">%s</string>
-
-    <string name="preference_motivator_ratio" translatable="false">preference_motivator_ratio</string>
-    <string name="preference_motivator_ratio_title">Stroke Ratio</string>
-    <string name="preference_motivator_ratio_summary">Stroke ratio 1:%s</string>
 
     <string name="preference_integration_title">Integration</string>
 

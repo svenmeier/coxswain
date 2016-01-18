@@ -2,11 +2,27 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <svenmeier.coxswain.view.preference.EditTextPreference
-        android:key="@string/preference_motivator_ratio"
-        android:title="@string/preference_motivator_ratio_title"
-        android:summary="@string/preference_motivator_ratio_summary"
+        android:key="@string/preference_stroke_ratio"
+        android:title="@string/preference_stroke_ratio_title"
+        android:summary="@string/preference_stroke_ratio_summary"
         android:numeric="decimal"
         android:defaultValue="1.5"
+        />
+
+    <svenmeier.coxswain.view.preference.EditTextPreference
+        android:key="@string/preference_body_weight"
+        android:title="@string/preference_body_weight_title"
+        android:summary="@string/preference_body_weight_summary"
+        android:numeric="decimal"
+        android:defaultValue="80"
+        />
+
+    <svenmeier.coxswain.view.preference.EditTextPreference
+        android:key="@string/preference_water_level"
+        android:title="@string/preference_water_level_title"
+        android:summary="@string/preference_water_level_summary"
+        android:numeric="decimal"
+        android:defaultValue="17"
         />
 
     <PreferenceCategory

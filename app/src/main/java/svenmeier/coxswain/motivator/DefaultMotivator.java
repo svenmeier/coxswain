@@ -15,10 +15,8 @@
  */
 package svenmeier.coxswain.motivator;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.media.AudioManager;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 
 import java.util.ArrayList;
@@ -289,7 +287,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         private static final String TICK = "[TICK]";
 
         private Preference<String> ringtoneDrivePreference = Preference.getString(context, R.string.preference_audio_ringtone_catch);
-        private Preference<Float> ratioPreference = Preference.getFloat(context, R.string.preference_motivator_ratio).range(1f, 3f);
+        private Preference<Float> ratioPreference = Preference.getFloat(context, R.string.preference_stroke_ratio).range(1f, 3f);
 
         private boolean drive;
 

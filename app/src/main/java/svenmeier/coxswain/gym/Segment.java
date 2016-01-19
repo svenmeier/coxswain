@@ -40,10 +40,12 @@ public class Segment extends Propoid {
 
     public Segment() {
         difficulty.set(Difficulty.EASY);
+
         distance.set(1000);
         duration.set(0);
         strokes.set(0);
         energy.set(0);
+
         speed.set(0);
         strokeRate.set(0);
         pulse.set(0);
@@ -59,9 +61,9 @@ public class Segment extends Propoid {
         if (distance.get() > 0) {
             return distance.get() / 4;
         } else if (strokes.get() > 0) {
-            return strokes.get();
+            return strokes.get() * 3;
         } else if (energy.get() > 0) {
-            return energy.get() / 6;
+            return energy.get() * 6;
         } else {
             return duration.get();
         }

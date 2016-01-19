@@ -67,11 +67,13 @@ public class Gym {
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500, Difficulty.EASY));
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000, Difficulty.EASY));
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000, Difficulty.MEDIUM));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 5000), 5000, Difficulty.MEDIUM));
+
+        repository.insert(Program.calories(String.format(context.getString(R.string.energy_calories), 250), 250, Difficulty.MEDIUM));
 
         repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5, Difficulty.EASY));
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.EASY));
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 30), 30, Difficulty.MEDIUM));
+        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.MEDIUM));
+
+        repository.insert(Program.strokes(String.format(context.getString(R.string.strokes_count), 500), 500, Difficulty.MEDIUM));
 
         Program program = new Program(context.getString(R.string.segments));
         program.getSegment(0).setDistance(1000);
@@ -244,6 +246,8 @@ public class Gym {
                 description.append(String.format(context.getString(R.string.distance_meters), segment.distance.get()));
             } else if (segment.strokes.get() > 0) {
                 description.append(String.format(context.getString(R.string.strokes_count), segment.strokes.get()));
+            } else if (segment.energy.get() > 0) {
+                description.append(String.format(context.getString(R.string.energy_calories), segment.energy.get()));
             } else if (segment.duration.get() > 0) {
                 description.append(String.format(context.getString(R.string.duration_minutes), Math.round(segment.duration.get() / 60f)));
             }

@@ -94,10 +94,28 @@ public class Program extends Propoid {
         segments.get().add(index + 1, new Segment(Difficulty.EASY));
     }
 
+    public static Program calories(String name, int kcal, Difficulty difficulty) {
+        Program program = new Program(name);
+
+        program.getSegment(0).setEnergy(kcal);
+        program.getSegment(0).difficulty.set(difficulty);
+
+        return program;
+    }
+
     public static Program meters(String name, int meters, Difficulty difficulty) {
         Program program = new Program(name);
 
         program.getSegment(0).setDistance(meters);
+        program.getSegment(0).difficulty.set(difficulty);
+
+        return program;
+    }
+
+    public static Program strokes(String name, int count, Difficulty difficulty) {
+        Program program = new Program(name);
+
+        program.getSegment(0).setStrokes(count);
         program.getSegment(0).difficulty.set(difficulty);
 
         return program;

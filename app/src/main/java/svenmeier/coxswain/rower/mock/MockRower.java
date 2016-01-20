@@ -57,6 +57,7 @@ public class MockRower implements Rower {
     public void reset() {
         distance = 0;
         strokes = 0;
+        energy = 0;
     }
 
     @Override

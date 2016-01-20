@@ -68,7 +68,7 @@ public class Gym {
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000, Difficulty.EASY));
         repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000, Difficulty.MEDIUM));
 
-        repository.insert(Program.calories(String.format(context.getString(R.string.energy_calories), 250), 250, Difficulty.MEDIUM));
+        repository.insert(Program.calories(String.format(context.getString(R.string.energy_calories), 200), 200, Difficulty.MEDIUM));
 
         repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5, Difficulty.EASY));
         repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.MEDIUM));

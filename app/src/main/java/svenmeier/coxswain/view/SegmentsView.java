@@ -88,6 +88,8 @@ public class SegmentsView extends View {
 
     public void setData(Data data) {
         this.data = data;
+
+        invalidate();
     }
 
     @Override

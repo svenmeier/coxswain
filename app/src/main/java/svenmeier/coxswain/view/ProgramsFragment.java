@@ -104,8 +104,8 @@ public class ProgramsFragment extends Fragment {
             int duration = program.asDuration();
             durationTextView.setText(String.format("%d:%02d", SECONDS.toHours(duration), SECONDS.toMinutes(duration) % 60));
 
-            SegmentsView progressView = index.get(R.id.program_segments);
-            progressView.setData(new SegmentsData(program));
+            SegmentsView segmentsView = index.get(R.id.program_segments);
+            segmentsView.setData(new SegmentsData(program));
 
             final ImageButton menuButton = index.get(R.id.program_menu);
             menuButton.setFocusable(false);

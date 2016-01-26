@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.Date;
 
+import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
@@ -81,6 +82,8 @@ public class WorkoutsFragment extends Fragment {
 
         public WorkoutsAdapter() {
             super(R.layout.layout_workouts_item, Gym.instance(getActivity()).getWorkouts());
+
+            setOrder(Order.descending(getMatch().getPrototype().start));
         }
 
         @Override

@@ -43,6 +43,8 @@
 
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>
+    <string name="statistics">Statistics</string>
+
     <string name="segments">Segments</string>
 
     <string name="preference_stroke_ratio" translatable="false">preference_stroke_ratio</string>

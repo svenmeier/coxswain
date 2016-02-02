@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.view.ProgramsFragment;
+import svenmeier.coxswain.view.StatisticsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
 
@@ -191,15 +192,17 @@ public class MainActivity extends Activity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             if (position == 0) {
                 return getString(R.string.programs);
-            } else {
+            } else if (position == 1) {
                 return getString(R.string.workouts);
+            } else {
+                return getString(R.string.statistics);
             }
         }
 
@@ -207,8 +210,10 @@ public class MainActivity extends Activity {
         public Fragment getItem(int position) {
             if (position == 0) {
                 return new ProgramsFragment();
-            } else {
+            } else if (position == 1) {
                 return new WorkoutsFragment();
+            } else {
+                return new StatisticsFragment();
             }
         }
     }

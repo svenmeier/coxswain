@@ -29,6 +29,7 @@ import svenmeier.coxswain.R;
 
 /**
  */
+@Deprecated
 public class ChartView extends View {
 
     private static final int VALUES = 60;

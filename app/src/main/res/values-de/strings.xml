@@ -32,6 +32,8 @@
 
     <string name="programs">Programme</string>
     <string name="workouts">Trainings</string>
+    <string name="statistics">Statistiken</string>
+
     <string name="segments">Segmente</string>
 
     <string name="preference_stroke_ratio_title">Schlag-Verhältnis</string>

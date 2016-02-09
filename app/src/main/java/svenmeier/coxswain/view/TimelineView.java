@@ -17,10 +17,7 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -35,6 +32,8 @@ import java.util.Calendar;
 /**
  */
 public class TimelineView extends View {
+
+    public static final int DATE_FLAGS = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL;
 
     private static final long DAY = 24*60*60*1000;
 
@@ -137,7 +136,7 @@ public class TimelineView extends View {
             rect.set(border, y1 + border + textSize + border, getWidth() - border, y2 - border);
             painter.paint(unit.from(), unit.to(), canvas, rect);
 
-            String text = DateUtils.formatDateTime(getContext(), unit.from(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+            String text = unit.text();
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(0xff000000);
             canvas.drawText(text, border, y1 + border + textSize, paint);
@@ -269,6 +268,8 @@ public class TimelineView extends View {
         long from();
 
         long to();
+
+        String text();
     }
 
     private class DayUnit implements Unit {
@@ -313,6 +314,11 @@ public class TimelineView extends View {
         @Override
         public long to() {
             return to;
+        }
+
+        @Override
+        public String text() {
+            return DateUtils.formatDateTime(getContext(), from, DATE_FLAGS);
         }
     }
 
@@ -360,6 +366,11 @@ public class TimelineView extends View {
         public long to() {
             return to;
         }
+
+        @Override
+        public String text() {
+            return DateUtils.formatDateRange(getContext(), from, to, DATE_FLAGS);
+        }
     }
 
     private class MonthUnit implements Unit {
@@ -405,6 +416,11 @@ public class TimelineView extends View {
         @Override
         public long to() {
             return to;
+        }
+
+        @Override
+        public String text() {
+            return DateUtils.formatDateRange(getContext(), from, to, DATE_FLAGS);
         }
     }
 

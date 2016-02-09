@@ -17,7 +17,11 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -42,6 +46,10 @@ public class TimelineView extends View {
 
     private Interaction interaction;
 
+    private Painter painter = new NoPainter();
+
+    private RectF rect = new RectF();
+
     public TimelineView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -58,13 +66,19 @@ public class TimelineView extends View {
         interaction = new Interaction();
 
         time = getUnit(System.currentTimeMillis()).min();
+
+        float d = Utils.dpToPx(getContext(), 4);
     }
 
-    public Unit getUnit(long time) {
+    public void setPainter(Painter painter) {
+        this.painter = painter;
+    }
+
+    protected Unit getUnit(long time) {
         long windowDays = window / DAY;
         if (windowDays > 60) {
             return new MonthUnit(time);
-        } else if (windowDays > 14) {
+        } else if (windowDays > 10) {
             return new WeekUnit(time);
         } else {
             return new DayUnit(time);
@@ -107,32 +121,36 @@ public class TimelineView extends View {
 
         super.onDraw(canvas);
 
+        float textSize = Utils.dpToPx(getContext(), 20);
+
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(0xff000000);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize(Utils.dpToPx(getContext(), 20));
+        paint.setTextSize(textSize);
 
         Unit unit = getUnit(time);
         for (int i = 0; true; i++) {
             unit.next();
 
-            float y = toDisplay(time - unit.to());
-            float height = toDisplay(time - unit.from()) - y;
+            float y1 = toDisplay(time - unit.to());
+            float y2 = toDisplay(time - unit.from());
+            int border = Utils.dpToPx(getContext(), 4);
+
+            rect.set(border, y1 + border + textSize + border, getWidth() - border, y2 - border);
+            painter.paint(unit.from(), unit.to(), canvas, rect);
 
             String text = DateUtils.formatDateTime(getContext(), unit.from(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-            draw(canvas, text, y, height);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(0xff000000);
+            canvas.drawText(text, border, y1 + border + textSize, paint);
 
-            if (y > getHeight()) {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(0x80808080);
+            canvas.drawLine(0, y2, getWidth(), y2, paint);
+
+            if (y2 > getHeight()) {
                 break;
             }
         }
     }
-
-    private void draw(Canvas canvas, String text, float y, float height) {
-        canvas.drawLine(0, y, getWidth(), y, paint);
-        canvas.drawText(text, 0f, y + height - Utils.dpToPx(getContext(), 2), paint);
-    }
-
 
     private class Interaction extends GestureDetector.SimpleOnGestureListener implements OnTouchListener, ScaleGestureDetector.OnScaleGestureListener {
 
@@ -387,6 +405,18 @@ public class TimelineView extends View {
         @Override
         public long to() {
             return to;
+        }
+    }
+
+    public static interface Painter {
+
+        public void paint(long from, long to, Canvas canvas, RectF rect);
+    }
+
+    public static class NoPainter implements Painter {
+
+        @Override
+        public void paint(long from, long to, Canvas canvas, RectF rect) {
         }
     }
 }

@@ -40,7 +40,7 @@ public class TimelineView extends View {
 
     private long time;
 
-    private long window = 14 * DAY;
+    private long window = 28 * DAY;
 
     private Interaction interaction;
 

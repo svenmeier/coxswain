@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import propoid.db.Match;
+import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Where;
@@ -59,7 +60,11 @@ public class Gym {
         this.context = context;
 
         repository = new Repository(context, "gym");
+
         ((DefaultCascading)repository.cascading).setCascaded(new Program().segments);
+
+        Workout workout = new Workout();
+        repository.index(workout, false, Order.descending(workout.start));
     }
 
     public void defaultPrograms() {

@@ -29,6 +29,9 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
 import propoid.util.content.Preference;

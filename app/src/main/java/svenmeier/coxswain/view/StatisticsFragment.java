@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 
 
-public class StatisticsFragment extends Fragment {
+public class StatisticsFragment extends Fragment implements View.OnClickListener {
 
     private Gym gym;
 
@@ -41,6 +42,7 @@ public class StatisticsFragment extends Fragment {
     private Map<String, Statistic> statistics = new HashMap<>();
 
     private int highlight;
+    private TimelineView timelineView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -53,20 +55,65 @@ public class StatisticsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_statistics, container, false);
 
-        TimelineView timelineView = (TimelineView) root.findViewById(R.id.timeline);
-
+        timelineView = (TimelineView) root.findViewById(R.id.timeline);
+        timelineView.setOnClickListener(this);
         timelineView.setPainter(new TimelineView.Painter() {
 
+            private float textSize;
             private Paint paint = new Paint();
+
+            private int border;
+
+            {
+                border = Utils.dpToPx(getActivity(), 4);
+                textSize = Utils.dpToPx(getActivity(), 20);
+            }
 
             @Override
             public void paint(long from, long to, Canvas canvas, RectF rect) {
                 Statistic statistic = getStatistics(from, to);
 
-                paint(statistic.distance, max.distance, canvas, rect, 0);
-                paint(statistic.strokes, max.strokes, canvas, rect, 1);
-                paint(statistic.energy, max.energy, canvas, rect, 2);
-                paint(statistic.duration, max.duration, canvas, rect, 3);
+                rect.left += border;
+                rect.top += border;
+                rect.right -= border;
+                rect.bottom -= border;
+
+                paintHeader(from, to, canvas, rect, statistic);
+
+                rect.top += textSize + border;
+
+                paint(statistic.duration, max.duration, canvas, rect, 0);
+                paint(statistic.distance, max.distance, canvas, rect, 1);
+                paint(statistic.strokes, max.strokes, canvas, rect, 2);
+                paint(statistic.energy, max.energy, canvas, rect, 3);
+            }
+
+            private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(0xff000000);
+                paint.setTextSize(textSize);
+
+                String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                canvas.drawText(when, rect.left, rect.top + textSize, paint);
+
+                String what;
+                switch (highlight) {
+                    case 0:
+                        what = getString(R.string.duration_minutes, statistic.duration / 60);
+                        break;
+                    case 1:
+                        what = getString(R.string.distance_meters, statistic.distance);
+                        break;
+                    case 2:
+                        what = getString(R.string.strokes_count, statistic.strokes);
+                        break;
+                    case 3:
+                        what = getString(R.string.energy_calories, statistic.energy);
+                        break;
+                    default:
+                        throw new IndexOutOfBoundsException();
+                }
+                canvas.drawText(what, rect.right - paint.measureText(what), rect.top + textSize, paint);
             }
 
             private void paint(int value, int max, Canvas canvas, RectF rect, int index) {
@@ -113,6 +160,13 @@ public class StatisticsFragment extends Fragment {
         }
 
         return statistic;
+    }
+
+    @Override
+    public void onClick(View v) {
+        highlight = (highlight + 1) % 4;
+
+        timelineView.invalidate();
     }
 
     private class Statistic {

@@ -25,6 +25,7 @@ import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -184,7 +185,7 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class MainAdapter extends FragmentPagerAdapter {
+    private class MainAdapter extends FragmentStatePagerAdapter {
 
         public MainAdapter(FragmentManager fm) {
             super(fm);

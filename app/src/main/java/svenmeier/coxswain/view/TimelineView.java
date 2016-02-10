@@ -19,7 +19,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.text.format.DateUtils;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -32,8 +33,6 @@ import java.util.Calendar;
 /**
  */
 public class TimelineView extends View {
-
-    public static final int DATE_FLAGS = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL;
 
     private static final long DAY = 24*60*60*1000;
 
@@ -67,6 +66,27 @@ public class TimelineView extends View {
         time = getUnit(System.currentTimeMillis()).min();
 
         float d = Utils.dpToPx(getContext(), 4);
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+
+        SavedState state = new SavedState(super.onSaveInstanceState());
+
+        state.time = time;
+        state.window = window;
+
+        return state;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable parcelable) {
+        SavedState state = (SavedState)parcelable;
+
+        super.onRestoreInstanceState(state.getSuperState());
+
+        time = state.time;
+        window = state.window;
     }
 
     public void setPainter(Painter painter) {
@@ -120,10 +140,7 @@ public class TimelineView extends View {
 
         super.onDraw(canvas);
 
-        float textSize = Utils.dpToPx(getContext(), 20);
-
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        paint.setTextSize(textSize);
 
         Unit unit = getUnit(time);
         for (int i = 0; true; i++) {
@@ -131,19 +148,16 @@ public class TimelineView extends View {
 
             float y1 = toDisplay(time - unit.to());
             float y2 = toDisplay(time - unit.from());
-            int border = Utils.dpToPx(getContext(), 4);
-
-            rect.set(border, y1 + border + textSize + border, getWidth() - border, y2 - border);
-            painter.paint(unit.from(), unit.to(), canvas, rect);
-
-            String text = unit.text();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(0xff000000);
-            canvas.drawText(text, border, y1 + border + textSize, paint);
+            float x1 = 0;
+            float x2 = getWidth();
 
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(0x80808080);
             canvas.drawLine(0, y2, getWidth(), y2, paint);
+
+            rect.set(x1, y1, x2, y2);
+            painter.paint(unit.from(), unit.to(), canvas, rect);
+
 
             if (y2 > getHeight()) {
                 break;
@@ -158,6 +172,8 @@ public class TimelineView extends View {
         private ScaleGestureDetector scaleDetector;
 
         private Scroller scroller;
+
+        private boolean preventClick;
 
         private int lastFlingY;
 
@@ -175,22 +191,29 @@ public class TimelineView extends View {
         }
 
         /**
+         * OnTouchListener
+         */
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            detector.onTouchEvent(event);
+            scaleDetector.onTouchEvent(event);
+
+            if (preventClick && event.getAction() == MotionEvent.ACTION_UP) {
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
          * OnGestureListener
          */
         @Override
         public boolean onDown(MotionEvent e) {
             scroller.forceFinished(true);
 
-            return true;
-        }
-
-        /**
-         * OnTouchListener
-         */
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            detector.onTouchEvent(event);
-            scaleDetector.onTouchEvent(event);
+            preventClick = false;
 
             return true;
         }
@@ -202,7 +225,9 @@ public class TimelineView extends View {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             updateTime(time - toTime(distanceY));
 
-            return true;
+            preventClick = true;
+
+            return false;
         }
 
         /**
@@ -215,6 +240,8 @@ public class TimelineView extends View {
             lastFlingY = 0;
 
             postInvalidate();
+
+            preventClick = true;
 
             return false;
         }
@@ -235,6 +262,8 @@ public class TimelineView extends View {
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             unscaledWindow = window;
+
+            preventClick = true;
 
             return true;
         }
@@ -268,8 +297,6 @@ public class TimelineView extends View {
         long from();
 
         long to();
-
-        String text();
     }
 
     private class DayUnit implements Unit {
@@ -314,11 +341,6 @@ public class TimelineView extends View {
         @Override
         public long to() {
             return to;
-        }
-
-        @Override
-        public String text() {
-            return DateUtils.formatDateTime(getContext(), from, DATE_FLAGS);
         }
     }
 
@@ -366,11 +388,6 @@ public class TimelineView extends View {
         public long to() {
             return to;
         }
-
-        @Override
-        public String text() {
-            return DateUtils.formatDateRange(getContext(), from, to, DATE_FLAGS);
-        }
     }
 
     private class MonthUnit implements Unit {
@@ -417,11 +434,6 @@ public class TimelineView extends View {
         public long to() {
             return to;
         }
-
-        @Override
-        public String text() {
-            return DateUtils.formatDateRange(getContext(), from, to, DATE_FLAGS);
-        }
     }
 
     public static interface Painter {
@@ -433,6 +445,52 @@ public class TimelineView extends View {
 
         @Override
         public void paint(long from, long to, Canvas canvas, RectF rect) {
+        }
+    }
+
+    public static class SavedState extends BaseSavedState {
+
+        long time;
+        long window;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+
+            out.writeLong(time);
+            out.writeLong(window);
+        }
+
+        @Override
+        public String toString() {
+            String str = "TimelineView.SavedState{"
+                    + Integer.toHexString(System.identityHashCode(this))
+                    + " time=" + time + " window=" + window + "}";
+
+            return str;
+        }
+
+        @SuppressWarnings("hiding")
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+
+        private SavedState(Parcel in) {
+            super(in);
+
+            time = in.readLong();
+            window = in.readLong();
         }
     }
 }

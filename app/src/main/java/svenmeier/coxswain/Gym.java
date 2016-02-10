@@ -16,7 +16,6 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.List;
 import propoid.db.Match;
 import propoid.db.Reference;
 import propoid.db.Repository;
+import propoid.db.Where;
 import propoid.db.aspect.Row;
 import propoid.db.cascading.DefaultCascading;
 import svenmeier.coxswain.gym.Difficulty;
@@ -31,6 +31,10 @@ import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+
+import static propoid.db.Where.all;
+import static propoid.db.Where.greaterEqual;
+import static propoid.db.Where.lessThan;
 
 public class Gym {
 
@@ -114,6 +118,12 @@ public class Gym {
 
     public Match<Workout> getWorkouts() {
         return repository.query(new Workout());
+    }
+
+    public Match<Workout> getWorkouts(long from, long to) {
+        Workout propotype = new Workout();
+
+        return repository.query(propotype, all(greaterEqual(propotype.start, from), lessThan(propotype.start, to)));
     }
 
     public void mergeWorkout(Workout workout) {

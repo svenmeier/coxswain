@@ -26,23 +26,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import propoid.db.Match;
+import propoid.ui.list.MatchLookup;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Workout;
 
 
 public class StatisticsFragment extends Fragment implements View.OnClickListener {
 
     private Gym gym;
 
-    private Statistic max = new Statistic();
+    private List<Statistic> pendings = new ArrayList<>();
 
     private Map<String, Statistic> statistics = new HashMap<>();
 
     private int highlight;
+
     private TimelineView timelineView;
+
+    private StatisticLookup lookup;
 
     @Override
     public void onAttach(Activity activity) {
@@ -72,6 +80,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             @Override
             public void paint(long from, long to, Canvas canvas, RectF rect) {
                 Statistic statistic = getStatistics(from, to);
+                Statistic max = getMax(to - from);
 
                 rect.left += border;
                 rect.top += border;
@@ -139,24 +148,33 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         return root;
     }
 
+    private Statistic getMax(long duration) {
+        String key = "d" + duration;
+
+        Statistic statistic = this.statistics.get(key);
+        if (statistic == null) {
+            statistic = new Statistic(0, 0);
+
+            statistics.put(key, statistic);
+        }
+
+        return statistic;
+    }
+
     private Statistic getStatistics(long from, long to) {
         String key = from + ":" + to;
 
         Statistic statistic = this.statistics.get(key);
         if (statistic == null) {
-            statistic = new Statistic();
-
-            statistic.distance = (int)(6000 * (1 + Math.random()) / 2);
-            statistic.strokes = (int)(700 * (1 + Math.random()) / 2);
-            statistic.energy = (int)(300 * (1 + Math.random()) / 2);
-            statistic.duration = (int)(25 * 60 * (1 + Math.random()) / 2);
-
-            max.distance = Math.max(max.distance, statistic.distance);
-            max.strokes = Math.max(max.strokes, statistic.strokes);
-            max.energy = Math.max(max.energy, statistic.energy);
-            max.duration = Math.max(max.duration, statistic.duration);
+            statistic = new Statistic(from, to);
 
             statistics.put(key, statistic);
+            pendings.add(statistic);
+        }
+
+        if (pendings.contains(statistic) && lookup == null) {
+            lookup = new StatisticLookup(statistic);
+            lookup.restartLoader(0, this);
         }
 
         return statistic;
@@ -170,9 +188,56 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     }
 
     private class Statistic {
+
+        public long from;
+        public long to;
+
         public int duration;
         public int distance;
         public int strokes;
         public int energy;
+
+        public Statistic(long from, long to) {
+            this.from = from;
+            this.to = to;
+        }
+    }
+
+    private class StatisticLookup extends MatchLookup<Workout> {
+
+        private Statistic pending;
+
+        public StatisticLookup(Statistic pending) {
+            super(gym.getWorkouts(pending.from, pending.to));
+
+            this.pending = pending;
+        }
+
+        @Override
+        protected void onLookup(List<Workout> workouts) {
+            Statistic max = getMax(pending.to - pending.from);
+
+            for (Workout workout : workouts) {
+                pending.distance += workout.distance.get();
+                pending.strokes += workout.strokes.get();
+                pending.energy += workout.energy.get();
+                pending.duration += workout.duration.get();
+            }
+
+            max.distance = Math.max(max.distance, pending.distance);
+            max.strokes = Math.max(max.strokes, pending.strokes);
+            max.energy = Math.max(max.energy, pending.energy);
+            max.duration = Math.max(max.duration, pending.duration);
+
+            timelineView.postInvalidate();
+
+            // no longer pending
+            pendings.remove(pending);
+
+            lookup = null;
+
+            // release cursor
+            workouts.clear();
+        }
     }
 }

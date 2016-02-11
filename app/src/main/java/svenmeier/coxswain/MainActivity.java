@@ -62,11 +62,6 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.layout_main);
 
-        getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
         checkUsbDevice(getIntent());
 
         pager = (ViewPager) findViewById(R.id.main_pager);
@@ -144,6 +139,11 @@ public class MainActivity extends Activity {
             // remove device so that a successive orientation changes
             // do not trigger repeated service starts
             intent.removeExtra(UsbManager.EXTRA_DEVICE);
+
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         }
     }
 

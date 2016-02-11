@@ -44,7 +44,7 @@ public class TimelineView extends View {
 
     private Interaction interaction;
 
-    private Painter painter = new NoPainter();
+    private PeriodPainter painter = new NoPainter();
 
     private RectF rect = new RectF();
 
@@ -89,7 +89,7 @@ public class TimelineView extends View {
         window = state.window;
     }
 
-    public void setPainter(Painter painter) {
+    public void setPainter(PeriodPainter painter) {
         this.painter = painter;
     }
 
@@ -156,8 +156,7 @@ public class TimelineView extends View {
             canvas.drawLine(0, y2, getWidth(), y2, paint);
 
             rect.set(x1, y1, x2, y2);
-            painter.paint(unit.from(), unit.to(), canvas, rect);
-
+            painter.paint(unit.getClass(), unit.from(), unit.to(), canvas, rect);
 
             if (y2 > getHeight()) {
                 break;
@@ -436,15 +435,15 @@ public class TimelineView extends View {
         }
     }
 
-    public static interface Painter {
+    public static interface PeriodPainter {
 
-        public void paint(long from, long to, Canvas canvas, RectF rect);
+        public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect);
     }
 
-    public static class NoPainter implements Painter {
+    public static class NoPainter implements PeriodPainter {
 
         @Override
-        public void paint(long from, long to, Canvas canvas, RectF rect) {
+        public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
         }
     }
 

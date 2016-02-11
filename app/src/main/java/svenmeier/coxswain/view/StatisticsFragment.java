@@ -64,85 +64,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         timelineView = (TimelineView) root.findViewById(R.id.timeline);
         timelineView.setOnClickListener(this);
-        timelineView.setPainter(new TimelineView.PeriodPainter() {
-
-            private float textSize;
-            private Paint paint = new Paint();
-
-            private int border;
-
-            {
-                border = Utils.dpToPx(getActivity(), 4);
-                textSize = Utils.dpToPx(getActivity(), 20);
-            }
-
-            @Override
-            public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
-                Statistic statistic = getStatistics(unit, from, to);
-                Statistic max = getMax(unit);
-
-                rect.left += border;
-                rect.top += border;
-                rect.right -= border;
-                rect.bottom -= border;
-
-                paintHeader(from, to, canvas, rect, statistic);
-
-                rect.top += textSize + border;
-
-                paint(statistic.duration, max.duration, canvas, rect, 0);
-                paint(statistic.distance, max.distance, canvas, rect, 1);
-                paint(statistic.strokes, max.strokes, canvas, rect, 2);
-                paint(statistic.energy, max.energy, canvas, rect, 3);
-            }
-
-            private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
-                paint.setStyle(Paint.Style.FILL);
-                paint.setColor(0xff000000);
-                paint.setTextSize(textSize);
-
-                String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-                canvas.drawText(when, rect.left, rect.top + textSize, paint);
-
-                String what;
-                switch (highlight) {
-                    case 0:
-                        what = getString(R.string.duration_minutes, statistic.duration / 60);
-                        break;
-                    case 1:
-                        what = getString(R.string.distance_meters, statistic.distance);
-                        break;
-                    case 2:
-                        what = getString(R.string.strokes_count, statistic.strokes);
-                        break;
-                    case 3:
-                        what = getString(R.string.energy_calories, statistic.energy);
-                        break;
-                    default:
-                        throw new IndexOutOfBoundsException();
-                }
-                canvas.drawText(what, rect.right - paint.measureText(what), rect.top + textSize, paint);
-            }
-
-            private void paint(int value, int max, Canvas canvas, RectF rect, int index) {
-                paint.setStyle(Paint.Style.FILL);
-                if (index == highlight) {
-                    paint.setColor(0x803567ed);
-                } else {
-                    paint.setColor(0x403567ed);
-                }
-
-                float height = (rect.bottom - rect.top);
-                float width = (rect.right - rect.left);
-
-                float left = rect.left;
-                float right = rect.left + (width * value / max);
-                float top = rect.top + (index * height / 5) + (index * height / 15);
-                float bottom = rect.top + ((index + 1) * height / 5) + (index * height / 15);
-
-                canvas.drawRect(left, top, right, bottom, paint);
-            }
-        });
+        timelineView.setPainter(new StatisticPainter());
 
         return root;
     }
@@ -239,5 +161,80 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             // release cursor
             workouts.clear();
         }
+    }
+
+    private class StatisticPainter implements TimelineView.PeriodPainter {
+
+        private Paint paint = new Paint();
+
+        private float textSize = Utils.dpToPx(getActivity(), 20);
+
+        private int border = Utils.dpToPx(getActivity(), 4);
+
+        @Override
+		public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
+			Statistic statistic = getStatistics(unit, from, to);
+			Statistic max = getMax(unit);
+
+			paintHeader(from, to, canvas, rect, statistic);
+
+            rect.left += border;
+            rect.top += border + textSize + border;
+            rect.right -= border;
+            rect.bottom -= border;
+			paint(statistic.duration, max.duration, canvas, rect, 0);
+			paint(statistic.distance, max.distance, canvas, rect, 1);
+			paint(statistic.strokes, max.strokes, canvas, rect, 2);
+			paint(statistic.energy, max.energy, canvas, rect, 3);
+		}
+
+        private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+            String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+			String what;
+			switch (highlight) {
+				case 0:
+					what = getString(R.string.duration_minutes, statistic.duration / 60);
+					break;
+				case 1:
+					what = getString(R.string.distance_meters, statistic.distance);
+					break;
+				case 2:
+					what = getString(R.string.strokes_count, statistic.strokes);
+					break;
+				case 3:
+					what = getString(R.string.energy_calories, statistic.energy);
+					break;
+				default:
+					throw new IndexOutOfBoundsException();
+			}
+            float whatWidth = paint.measureText(what);
+
+            paint.setColor(0x803567ed);
+            paint.setTextSize(textSize);
+            canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
+
+            paint.setColor(0xff000000);
+            paint.setTextSize(textSize);
+            canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);
+        }
+
+        private void paint(int value, int max, Canvas canvas, RectF rect, int index) {
+			paint.setStyle(Paint.Style.FILL);
+			if (index == highlight) {
+				paint.setColor(0x803567ed);
+			} else {
+				paint.setColor(0x403567ed);
+			}
+
+			float height = (rect.bottom - rect.top);
+			float width = (rect.right - rect.left);
+
+			float left = rect.left;
+			float right = rect.left + (width * value / max);
+			float top = rect.top + (index * height / 5) + (index * height / 15);
+			float bottom = rect.top + ((index + 1) * height / 5) + (index * height / 15);
+
+			canvas.drawRect(left, top, right, bottom, paint);
+		}
     }
 }

@@ -139,6 +139,12 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         @Override
         protected void onLookup(List<Workout> workouts) {
+            // reset in case the lookup is done twice
+            pending.distance = 0;
+            pending.strokes = 0;
+            pending.energy = 0;
+            pending.duration = 0;
+
             for (Workout workout : workouts) {
                 pending.distance += workout.distance.get();
                 pending.strokes += workout.strokes.get();
@@ -209,7 +215,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 			}
             float whatWidth = paint.measureText(what);
 
-            paint.setColor(0x803567ed);
+            paint.setColor(0xff3567ed);
             paint.setTextSize(textSize);
             canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
 

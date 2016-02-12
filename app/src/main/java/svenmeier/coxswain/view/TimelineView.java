@@ -34,7 +34,7 @@ import java.util.Calendar;
  */
 public class TimelineView extends View {
 
-    private static final long DAY = 24*60*60*1000;
+    public static final long DAY = 24*60*60*1000;
 
     private Paint paint = new Paint();
 
@@ -66,6 +66,10 @@ public class TimelineView extends View {
         time = getUnit(System.currentTimeMillis()).min();
 
         float d = Utils.dpToPx(getContext(), 4);
+    }
+
+    public long getWindow() {
+        return window;
     }
 
     @Override
@@ -124,13 +128,13 @@ public class TimelineView extends View {
         postInvalidate();
     }
 
-    private void setWindow(long window) {
+    public void setWindow(long window) {
         this.window = window;
 
         this.window = Math.min(this.window, 356 * DAY);
         this.window = Math.max(this.window, DAY);
 
-        postInvalidate();;
+        updateTime(time);
     }
 
     @Override

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import propoid.ui.list.MatchLookup;
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
@@ -51,11 +52,15 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     private StatisticLookup lookup;
 
+    private Preference<Long> windowPreference;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         gym = Gym.instance(activity);
+
+        windowPreference = Preference.getLong(activity, R.string.preference_statistics_window).fallback(28 * TimelineView.DAY);
     }
 
     @Override
@@ -69,12 +74,26 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         return root;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        windowPreference.set(timelineView.getWindow());
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        timelineView.setWindow(windowPreference.get());
+    }
+
     private Statistic getMax(Class<?> unit) {
         String key = unit.getSimpleName();
 
         Statistic statistic = this.statistics.get(key);
         if (statistic == null) {
-            statistic = new Statistic(0, 0);
+            statistic = new Statistic();
 
             statistics.put(key, statistic);
         }
@@ -87,14 +106,14 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         Statistic statistic = this.statistics.get(key);
         if (statistic == null) {
-            statistic = new Statistic(from, to);
+            statistic = new Statistic();
 
             statistics.put(key, statistic);
             pendings.add(statistic);
         }
 
         if (pendings.contains(statistic) && lookup == null) {
-            lookup = new StatisticLookup(statistic, getMax(unit));
+            lookup = new StatisticLookup(from, to, statistic, getMax(unit));
             lookup.restartLoader(0, this);
         }
 
@@ -115,20 +134,12 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     private class Statistic {
 
-        public long from;
-        public long to;
-
         float animation;
 
         public int duration;
         public int distance;
         public int strokes;
         public int energy;
-
-        public Statistic(long from, long to) {
-            this.from = from;
-            this.to = to;
-        }
     }
 
     private class StatisticLookup extends MatchLookup<Workout> {
@@ -137,8 +148,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         private final Statistic max;
 
-        public StatisticLookup(Statistic pending, Statistic max) {
-            super(gym.getWorkouts(pending.from, pending.to));
+        public StatisticLookup(long from, long to, Statistic pending, Statistic max) {
+            super(gym.getWorkouts(from, to));
 
             this.pending = pending;
             this.max = max;

@@ -109,4 +109,5 @@
     <string name="preference_devices_none_title">No devices</string>
     <string name="preference_devices_none_summary">No USB devices are connected</string>
 
+    <string name="preference_statistics_window" translatable="false">preference_statistics_window</string>
 </resources>

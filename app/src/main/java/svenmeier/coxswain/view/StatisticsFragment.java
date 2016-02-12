@@ -98,6 +98,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             lookup.restartLoader(0, this);
         }
 
+        statistic.animation = Math.min(statistic.animation + 0.05f, 1.0f);
+        if (statistic.animation < 1.0f) {
+            timelineView.postInvalidate();
+        }
+
         return statistic;
     }
 
@@ -112,6 +117,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         public long from;
         public long to;
+
+        float animation;
 
         public int duration;
         public int distance;
@@ -188,10 +195,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             rect.top += border + textSize + border;
             rect.right -= border;
             rect.bottom -= border;
-			paint(statistic.duration, max.duration, canvas, rect, 0);
-			paint(statistic.distance, max.distance, canvas, rect, 1);
-			paint(statistic.strokes, max.strokes, canvas, rect, 2);
-			paint(statistic.energy, max.energy, canvas, rect, 3);
+			paint(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
+			paint(statistic.distance, max.distance, statistic.animation, canvas, rect, 1);
+			paint(statistic.strokes, max.strokes, statistic.animation, canvas, rect, 2);
+			paint(statistic.energy, max.energy, statistic.animation, canvas, rect, 3);
 		}
 
         private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
@@ -224,7 +231,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);
         }
 
-        private void paint(int value, int max, Canvas canvas, RectF rect, int index) {
+        private void paint(int value, int max, float animation, Canvas canvas, RectF rect, int index) {
 			paint.setStyle(Paint.Style.FILL);
 			if (index == highlight) {
 				paint.setColor(0x803567ed);
@@ -236,7 +243,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 			float width = (rect.right - rect.left);
 
 			float left = rect.left;
-			float right = rect.left + (width * value / max);
+			float right = rect.left + (width * value * animation / max);
 			float top = rect.top + (index * height / 5) + (index * height / 15);
 			float bottom = rect.top + ((index + 1) * height / 5) + (index * height / 15);
 

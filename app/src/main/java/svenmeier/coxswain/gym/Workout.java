@@ -53,8 +53,8 @@ public class Workout extends Propoid {
 
         this.duration.set(duration);
 
-        this.distance.set((int)snapshot.distance);
-        this.strokes.set((int)snapshot.strokes);
-        this.energy.set((int) snapshot.energy);
+        this.distance.set(snapshot.distance.get());
+        this.strokes.set(snapshot.strokes.get());
+        this.energy.set(snapshot.energy.get());
     }
 }

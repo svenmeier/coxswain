@@ -309,7 +309,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
             long now = System.currentTimeMillis();
 
-            if (gym.snapshot.drive != this.drive) {
+            if (gym.snapshot.drive.get() != this.drive) {
                 if (this.drive) {
                     // drive phase ends
 
@@ -328,7 +328,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                     catchTime = -1;
                 }
 
-                this.drive = gym.snapshot.drive;
+                this.drive = gym.snapshot.drive.get();
             }
 
             if (catchTime != -1 && now > catchTime) {

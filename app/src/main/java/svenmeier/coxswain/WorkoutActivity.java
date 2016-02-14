@@ -157,11 +157,11 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         }
 
         target(durationView, gym.workout.duration.get(), duration, achieved);
-        target(distanceView, snapshot.distance, distance, achieved);
-        target(strokesView, snapshot.strokes, strokes, achieved);
-        limit(speedView, snapshot.speed, speed);
-        limit(strokeRateView, snapshot.strokeRate, strokeRate);
-        limit(pulseView, snapshot.pulse, pulse);
+        target(distanceView, snapshot.distance.get(), distance, achieved);
+        target(strokesView, snapshot.strokes.get(), strokes, achieved);
+        limit(speedView, snapshot.speed.get(), speed);
+        limit(strokeRateView, snapshot.strokeRate.get(), strokeRate);
+        limit(pulseView, snapshot.pulse.get(), pulse);
     }
 
     private void target(ValueView view, int memory, int segment, int achieved) {

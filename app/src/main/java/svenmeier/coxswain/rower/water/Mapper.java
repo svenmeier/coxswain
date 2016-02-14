@@ -15,12 +15,9 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import svenmeier.coxswain.Application;
 import svenmeier.coxswain.gym.Snapshot;
 
 public class Mapper {
@@ -37,56 +34,56 @@ public class Mapper {
         fields.add(new Field(null, "SS") {
             @Override
             protected void onUpdate(String message, Snapshot memory) {
-                memory.drive = true;
+                memory.drive.set(true);
             }
         });
 
         fields.add(new Field(null, "SE") {
             @Override
             protected void onUpdate(String message, Snapshot memory) {
-                memory.drive = false;
+                memory.drive.set(false);
             }
         });
 
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.strokes = (short)value;
+                memory.strokes.set(value);
             }
         });
 
         fields.add(new NumberField(0x057, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.distance = (short)value;
+                memory.distance.set(value);
             }
         });
 
         fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.speed = (short)value;
+                memory.speed.set(value);
             }
         });
 
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.strokeRate = (short)value;
+                memory.strokeRate.set(value);
             }
         });
 
         fields.add(new NumberField(0x1A0, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.pulse = (short)value;
+                memory.pulse.set(value);
             }
         });
 
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
-                memory.energy = (short)Math.round(value / 1000f);
+                memory.energy.set(value / 1000);
             }
         });
     }

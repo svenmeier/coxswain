@@ -69,21 +69,21 @@ public class MockRower implements Rower {
 
         if (open) {
             distance += Math.random() * 0.5;
-            memory.distance = (short)(distance);
+            memory.distance.set((int)distance);
 
             strokes += 0.04;
-            memory.strokes = (short)(strokes);
+            memory.strokes.set((int)strokes);
 
             energy += 0.015;
-            memory.energy = (short)(energy);
+            memory.energy.set((int)energy);
 
-            memory.speed = (short)(250 +  (Math.random() * 100));
+            memory.speed.set((int)(250 +  (Math.random() * 100)));
 
-            memory.strokeRate = (short)(26 +  (Math.random() * 3));
+            memory.strokeRate.set((int)(26 +  (Math.random() * 3)));
 
-            memory.pulse = (short)(80 +  (Math.random() * 10));
+            memory.pulse.set((int)(80 +  (Math.random() * 10)));
 
-            memory.drive = (strokes % 1.0) < 0.3;
+            memory.drive.set((strokes % 1.0) < 0.3);
 
             return true;
         } else {

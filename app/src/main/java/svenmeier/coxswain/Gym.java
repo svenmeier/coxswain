@@ -229,11 +229,11 @@ public class Gym {
 
         private int achieved(Snapshot snapshot, int duration) {
             if (segment.distance.get() > 0) {
-                return snapshot.distance;
+                return snapshot.distance.get();
             } else if (segment.strokes.get() > 0) {
-                return snapshot.strokes;
+                return snapshot.strokes.get();
             } else if (segment.energy.get() > 0) {
-                return snapshot.energy;
+                return snapshot.energy.get();
             } else if (segment.duration.get() > 0){
                 return duration;
             }
@@ -243,11 +243,11 @@ public class Gym {
         public boolean inLimit() {
             Snapshot lastSnapshot = getLastSnapshot();
 
-            if (lastSnapshot.speed < current.segment.speed.get()) {
+            if (lastSnapshot.speed.get() < current.segment.speed.get()) {
                 return false;
-            } else if (lastSnapshot.pulse < current.segment.pulse.get()) {
+            } else if (lastSnapshot.pulse.get() < current.segment.pulse.get()) {
                 return false;
-            } else if (lastSnapshot.strokeRate < current.segment.strokeRate.get()) {
+            } else if (lastSnapshot.strokeRate.get() < current.segment.strokeRate.get()) {
                 return false;
             }
 

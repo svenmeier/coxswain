@@ -15,44 +15,38 @@
  */
 package svenmeier.coxswain.gym;
 
+import propoid.core.Property;
+import propoid.core.Propoid;
+
 /**
  */
-public class Snapshot {
+public class Snapshot extends Propoid {
 
-    public boolean drive;
+    public final Property<Boolean> drive = property();
 
-    public short distance;
+    public final Property<Integer> distance = property();
 
-    public short strokes;
+    public final Property<Integer> strokes = property();
 
-    public short speed;
+    public final Property<Integer> speed = property();
 
-    public short pulse;
+    public final Property<Integer> pulse = property();
 
-    public short strokeRate;
+    public final Property<Integer> strokeRate = property();
 
-    public short energy;
+    public final Property<Integer> energy = property();
 
     public Snapshot() {
-    }
-
-    public Snapshot(Snapshot snapshot) {
-        this.drive = snapshot.drive;
-        this.distance = snapshot.distance;
-        this.strokes = snapshot.strokes;
-        this.speed = snapshot.speed;
-        this.pulse = snapshot.pulse;
-        this.strokeRate = snapshot.strokeRate;
-        this.energy = snapshot.energy;
+        clear();
     }
 
     public void clear() {
-        this.drive = false;
-        this.distance = 0;
-        this.strokes = 0;
-        this.speed = 0;
-        this.pulse = 0;
-        this.strokeRate = 0;
-        this.energy = 0;
+        drive.set(false);
+        distance.set(0);
+        strokes.set(0);
+        speed.set(0);
+        pulse.set(0);
+        strokeRate.set(0);
+        energy.set(0);
     }
 }

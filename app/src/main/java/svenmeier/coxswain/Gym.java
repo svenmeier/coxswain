@@ -113,6 +113,10 @@ public class Gym {
         return repository.lookup(reference);
     }
 
+    public Workout getWorkout(Reference<Workout> reference) {
+        return repository.lookup(reference);
+    }
+
     public void mergeProgram(Program program) {
         repository.merge(program);
     }
@@ -169,11 +173,20 @@ public class Gym {
             }
             this.snapshot = snapshot;
 
-            workout.onSnapshot(snapshot);
+            if (workout.onSnapshot(snapshot)) {
+                mergeWorkout(workout);
+
+                snapshot.workout.set(workout);
+                repository.insert(snapshot);
+                Row.setID(snapshot, Row.TRANSIENT);
+                snapshot.workout.set(null);
+            }
 
             if (current.completion() == 1.0f) {
                 Segment next = program.getNextSegment(current.segment);
                 if (next == null) {
+                    mergeWorkout(workout);
+
                     current = null;
 
                     event = Event.PROGRAM_FINISHED;
@@ -182,8 +195,6 @@ public class Gym {
 
                     event = Event.SEGMENT_CHANGED;
                 }
-
-                mergeWorkout(workout);
             }
         }
 

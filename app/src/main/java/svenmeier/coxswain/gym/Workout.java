@@ -48,13 +48,19 @@ public class Workout extends Propoid {
         this.start.set(System.currentTimeMillis());
     }
 
-    public void onSnapshot(Snapshot snapshot) {
-        int duration = Math.round((float)(System.currentTimeMillis() - start.get()) / 1000f);
-
-        this.duration.set(duration);
-
+    public boolean onSnapshot(Snapshot snapshot) {
         this.distance.set(snapshot.distance.get());
         this.strokes.set(snapshot.strokes.get());
         this.energy.set(snapshot.energy.get());
+
+        int duration = Math.round((float)(System.currentTimeMillis() - start.get()) / 1000f);
+
+        if (duration != this.duration.get()) {
+            this.duration.set(duration);
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -19,20 +19,19 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.gym.Workout;
 
 
@@ -78,8 +77,6 @@ public class WorkoutsFragment extends Fragment {
 
     private class WorkoutsAdapter extends MatchAdapter<Workout> {
 
-        private DateFormat format = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
-
         public WorkoutsAdapter() {
             super(R.layout.layout_workouts_item, Gym.instance(getActivity()).getWorkouts());
 
@@ -91,7 +88,7 @@ public class WorkoutsFragment extends Fragment {
             Index index = Index.get(view);
 
             TextView startView = index.get(R.id.workout_start);
-            startView.setText(format.format(new Date(workout.start.get())));
+            startView.setText(DateUtils.formatDateTime(getActivity(), workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
 
             TextView nameView = index.get(R.id.workout_name);
             nameView.setText(workout.name.get());
@@ -106,6 +103,11 @@ public class WorkoutsFragment extends Fragment {
 
             TextView caloriesView = index.get(R.id.workout_calories);
             caloriesView.setText(String.format(getString(R.string.energy_calories), workout.energy.get()));
+        }
+
+        @Override
+        protected void onItem(Workout workout, int position) {
+            startActivity(SnapshotsActivity.createIntent(getActivity(), workout));
         }
     }
 }

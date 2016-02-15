@@ -67,9 +67,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_statistics, container, false);
 
-        timelineView = (TimelineView) root.findViewById(R.id.timeline);
+        timelineView = (TimelineView) root.findViewById(R.id.statistics_timeline);
+        timelineView.setPeriods(new StatisticPeriods());
+        timelineView.setWindow(24 * TimelineView.DAY);
         timelineView.setOnClickListener(this);
-        timelineView.setPainter(new StatisticPainter());
 
         return root;
     }
@@ -187,13 +188,40 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private class StatisticPainter implements TimelineView.PeriodPainter {
+    private class StatisticPeriods implements TimelineView.Periods {
 
         private Paint paint = new Paint();
 
         private float textSize = Utils.dpToPx(getActivity(), 20);
 
         private int border = Utils.dpToPx(getActivity(), 4);
+
+        @Override
+        public long max() {
+            return System.currentTimeMillis();
+        }
+
+        @Override
+        public long minWindow() {
+            return TimelineView.DAY;
+        }
+
+        @Override
+        public long maxWindow() {
+            return 356 * TimelineView.DAY;
+        }
+
+        @Override
+        public TimelineView.Unit unit(long time, long window) {
+            long windowDays = window / TimelineView.DAY;
+            if (windowDays > 60) {
+                return new TimelineView.MonthUnit(time);
+            } else if (windowDays > 10) {
+                return new TimelineView.WeekUnit(time);
+            } else {
+                return new TimelineView.DayUnit(time);
+            }
+        }
 
         @Override
 		public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {

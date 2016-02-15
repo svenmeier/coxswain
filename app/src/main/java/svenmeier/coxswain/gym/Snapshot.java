@@ -22,6 +22,8 @@ import propoid.core.Propoid;
  */
 public class Snapshot extends Propoid {
 
+    public final Property<Workout> workout = property();
+
     public final Property<Boolean> drive = property();
 
     public final Property<Integer> distance = property();

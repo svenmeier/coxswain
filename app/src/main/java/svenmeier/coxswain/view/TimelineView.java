@@ -34,17 +34,21 @@ import java.util.Calendar;
  */
 public class TimelineView extends View {
 
-    public static final long DAY = 24*60*60*1000;
+    public static final long MINUTE = 60 * 1000;
+
+    public static final long HOUR = 60 * MINUTE;
+
+    public static final long DAY = 24 * HOUR;
 
     private Paint paint = new Paint();
 
     private long time;
 
-    private long window = 28 * DAY;
+    private long window = DAY;
 
     private Interaction interaction;
 
-    private PeriodPainter painter = new NoPainter();
+    private Periods periods;
 
     private RectF rect = new RectF();
 
@@ -63,9 +67,7 @@ public class TimelineView extends View {
     private void init() {
         interaction = new Interaction();
 
-        time = getUnit(System.currentTimeMillis()).min();
-
-        float d = Utils.dpToPx(getContext(), 4);
+        setPeriods(new DefaultPeriods());
     }
 
     public long getWindow() {
@@ -93,19 +95,12 @@ public class TimelineView extends View {
         window = state.window;
     }
 
-    public void setPainter(PeriodPainter painter) {
-        this.painter = painter;
-    }
+    public void setPeriods(Periods periods) {
+        this.periods = periods;
 
-    protected Unit getUnit(long time) {
-        long windowDays = window / DAY;
-        if (windowDays > 60) {
-            return new MonthUnit(time);
-        } else if (windowDays > 10) {
-            return new WeekUnit(time);
-        } else {
-            return new DayUnit(time);
-        }
+        time = periods.unit(periods.max(), window).max();
+
+        postInvalidate();
     }
 
     private long toTime(float display) {
@@ -122,8 +117,10 @@ public class TimelineView extends View {
         return time * height / window;
     }
 
-    private void updateTime(long time) {
-        this.time = Math.min(time, getUnit(System.currentTimeMillis()).min());
+    public void setTime(long time) {
+        long max = periods.max();
+
+        this.time = Math.min(time, periods.unit(max, window).max());
 
         postInvalidate();
     }
@@ -131,10 +128,10 @@ public class TimelineView extends View {
     public void setWindow(long window) {
         this.window = window;
 
-        this.window = Math.min(this.window, 356 * DAY);
-        this.window = Math.max(this.window, DAY);
+        this.window = Math.min(this.window, periods.maxWindow());
+        this.window = Math.max(this.window, periods.minWindow());
 
-        updateTime(time);
+        setTime(time);
     }
 
     @Override
@@ -146,7 +143,7 @@ public class TimelineView extends View {
 
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
-        Unit unit = getUnit(time);
+        Unit unit = periods.unit(time, window);
         for (int i = 0; true; i++) {
             unit.next();
 
@@ -160,7 +157,7 @@ public class TimelineView extends View {
             canvas.drawLine(0, y2, getWidth(), y2, paint);
 
             rect.set(x1, y1, x2, y2);
-            painter.paint(unit.getClass(), unit.from(), unit.to(), canvas, rect);
+            periods.paint(unit.getClass(), unit.from(), unit.to(), canvas, rect);
 
             if (y2 > getHeight()) {
                 break;
@@ -202,11 +199,13 @@ public class TimelineView extends View {
             detector.onTouchEvent(event);
             scaleDetector.onTouchEvent(event);
 
-            if (preventClick && event.getAction() == MotionEvent.ACTION_UP) {
-                return true;
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (preventClick == false) {
+                    performClick();
+                }
             }
 
-            return false;
+            return true;
         }
 
         /**
@@ -226,7 +225,7 @@ public class TimelineView extends View {
          */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            updateTime(time - toTime(distanceY));
+            setTime(time - toTime(distanceY));
 
             preventClick = true;
 
@@ -253,7 +252,7 @@ public class TimelineView extends View {
             if (scroller.computeScrollOffset()) {
                 int flingY = scroller.getCurrY();
 
-                updateTime(time + toTime(flingY - lastFlingY));
+                setTime(time + toTime(flingY - lastFlingY));
 
                 lastFlingY = flingY;
             }
@@ -291,20 +290,125 @@ public class TimelineView extends View {
         }
     }
 
-    private interface Unit {
-
-        Unit next();
+    public interface Unit {
 
         long min();
+
+        long max();
+
+        void next();
 
         long from();
 
         long to();
     }
 
-    private class DayUnit implements Unit {
+    public static class MinuteUnit implements Unit {
 
         private Calendar calendar;
+
+        private long max;
+
+        private long from;
+
+        private long to;
+
+        public MinuteUnit(long time) {
+            calendar = Calendar.getInstance();
+
+            calendar.setTimeInMillis(time);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            calendar.add(Calendar.MINUTE, 1);
+
+            max = calendar.getTimeInMillis();
+        }
+
+        @Override
+        public long min() {
+            return 0;
+        }
+
+        @Override
+        public long max() {
+            return max;
+        }
+
+        @Override
+        public void next() {
+            to = calendar.getTimeInMillis();
+            calendar.add(Calendar.MINUTE, -1);
+            from = calendar.getTimeInMillis();
+        }
+
+        @Override
+        public long from() {
+            return from;
+        }
+
+        @Override
+        public long to() {
+            return to;
+        }
+    }
+
+    public static class HourUnit implements Unit {
+
+        private Calendar calendar;
+
+        private long max;
+
+        private long from;
+
+        private long to;
+
+        public HourUnit(long time) {
+            calendar = Calendar.getInstance();
+
+            calendar.setTimeInMillis(time);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            calendar.add(Calendar.HOUR, 1);
+
+            max = calendar.getTimeInMillis();
+        }
+
+        @Override
+        public long min() {
+            return 0;
+        }
+
+        @Override
+        public long max() {
+            return max;
+        }
+
+        @Override
+        public void next() {
+            to = calendar.getTimeInMillis();
+            calendar.add(Calendar.HOUR, -1);
+            from = calendar.getTimeInMillis();
+        }
+
+        @Override
+        public long from() {
+            return from;
+        }
+
+        @Override
+        public long to() {
+            return to;
+        }
+    }
+
+    public static class DayUnit implements Unit {
+
+        private Calendar calendar;
+
+        private long max;
 
         private long from;
 
@@ -320,20 +424,24 @@ public class TimelineView extends View {
             calendar.set(Calendar.MILLISECOND, 0);
 
             calendar.add(Calendar.DATE, 1);
-        }
+
+            max = calendar.getTimeInMillis();        }
 
         @Override
         public long min() {
-            return calendar.getTimeInMillis();
+            return 0;
         }
 
         @Override
-        public Unit next() {
+        public long max() {
+            return max;
+        }
+
+        @Override
+        public void next() {
             to = calendar.getTimeInMillis();
             calendar.add(Calendar.DATE, -1);
             from = calendar.getTimeInMillis();
-
-            return this;
         }
 
         @Override
@@ -347,9 +455,11 @@ public class TimelineView extends View {
         }
     }
 
-    private class WeekUnit implements Unit {
+    public static class WeekUnit implements Unit {
 
         private Calendar calendar;
+
+        private long max;
 
         private long from;
 
@@ -366,20 +476,25 @@ public class TimelineView extends View {
             calendar.set(Calendar.MILLISECOND, 0);
 
             calendar.add(Calendar.DATE, 7);
+
+            max = calendar.getTimeInMillis();
         }
 
         @Override
         public long min() {
-            return calendar.getTimeInMillis();
+            return 0;
         }
 
         @Override
-        public Unit next() {
+        public long max() {
+            return max;
+        }
+
+        @Override
+        public void next() {
             to = calendar.getTimeInMillis();
             calendar.add(Calendar.DATE, -7);
             from = calendar.getTimeInMillis();
-
-            return this;
         }
 
         @Override
@@ -393,9 +508,11 @@ public class TimelineView extends View {
         }
     }
 
-    private class MonthUnit implements Unit {
+    public static class MonthUnit implements Unit {
 
         private Calendar calendar;
+
+        private long max;
 
         private long from;
 
@@ -412,20 +529,25 @@ public class TimelineView extends View {
             calendar.set(Calendar.MILLISECOND, 0);
 
             calendar.add(Calendar.MONTH, 1);
+
+            max = calendar.getTimeInMillis();
         }
 
         @Override
         public long min() {
-            return calendar.getTimeInMillis();
+            return 0;
         }
 
         @Override
-        public Unit next() {
+        public long max() {
+            return max;
+        }
+
+        @Override
+        public void next() {
             to = calendar.getTimeInMillis();
             calendar.add(Calendar.MONTH, -1);
             from = calendar.getTimeInMillis();
-
-            return this;
         }
 
         @Override
@@ -439,12 +561,40 @@ public class TimelineView extends View {
         }
     }
 
-    public static interface PeriodPainter {
+    public static interface Periods {
+
+        public long max();
+
+        public Unit unit(long time, long window);
 
         public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect);
+
+        public long minWindow();
+
+        public long maxWindow();
     }
 
-    public static class NoPainter implements PeriodPainter {
+    public class DefaultPeriods implements Periods {
+
+        @Override
+        public long max() {
+            return System.currentTimeMillis();
+        }
+
+        @Override
+        public long minWindow() {
+            return DAY;
+        }
+
+        @Override
+        public long maxWindow() {
+            return 356 * DAY;
+        }
+
+        @Override
+        public Unit unit(long time, long window) {
+            return new DayUnit(time);
+        }
 
         @Override
         public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {

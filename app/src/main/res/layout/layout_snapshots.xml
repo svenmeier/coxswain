@@ -7,7 +7,7 @@
     >
 
         <svenmeier.coxswain.view.TimelineView
-            android:id="@+id/statistics_timeline"
+            android:id="@+id/snapshots_timeline"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 </LinearLayout>

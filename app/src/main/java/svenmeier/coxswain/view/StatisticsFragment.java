@@ -137,6 +137,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         float animation;
 
+        public boolean found;
+
         public int duration;
         public int distance;
         public int strokes;
@@ -163,12 +165,14 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             pending.strokes = 0;
             pending.energy = 0;
             pending.duration = 0;
+            pending.found = false;
 
             for (Workout workout : workouts) {
                 pending.distance += workout.distance.get();
                 pending.strokes += workout.strokes.get();
                 pending.energy += workout.energy.get();
                 pending.duration += workout.duration.get();
+                pending.found = true;
             }
 
             max.distance = Math.max(max.distance, pending.distance);
@@ -246,30 +250,32 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 		}
 
         private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+            if (statistic.found) {
+                String what;
+                switch (highlight) {
+                    case 0:
+                        what = getString(R.string.duration_minutes, statistic.duration / 60);
+                        break;
+                    case 1:
+                        what = getString(R.string.distance_meters, statistic.distance);
+                        break;
+                    case 2:
+                        what = getString(R.string.strokes_count, statistic.strokes);
+                        break;
+                    case 3:
+                        what = getString(R.string.energy_calories, statistic.energy);
+                        break;
+                    default:
+                        throw new IndexOutOfBoundsException();
+                }
+                float whatWidth = paint.measureText(what);
+
+                paint.setColor(0xff3567ed);
+                paint.setTextSize(textSize);
+                canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
+            }
+
             String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-			String what;
-			switch (highlight) {
-				case 0:
-					what = getString(R.string.duration_minutes, statistic.duration / 60);
-					break;
-				case 1:
-					what = getString(R.string.distance_meters, statistic.distance);
-					break;
-				case 2:
-					what = getString(R.string.strokes_count, statistic.strokes);
-					break;
-				case 3:
-					what = getString(R.string.energy_calories, statistic.energy);
-					break;
-				default:
-					throw new IndexOutOfBoundsException();
-			}
-            float whatWidth = paint.measureText(what);
-
-            paint.setColor(0xff3567ed);
-            paint.setTextSize(textSize);
-            canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
-
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);
             canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);

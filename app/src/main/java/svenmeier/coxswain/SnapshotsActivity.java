@@ -45,6 +45,14 @@ public class SnapshotsActivity extends Activity {
 
         gym = Gym.instance(this);
 
+        Reference<Workout> reference = Reference.from(getIntent());
+        workout = gym.getWorkout(reference);
+        if (workout == null) {
+            finish();
+        } else {
+            setTitle(DateUtils.formatDateTime(this, workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+        }
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.layout_snapshots);
@@ -52,15 +60,6 @@ public class SnapshotsActivity extends Activity {
         timelineView = (TimelineView) findViewById(R.id.snapshots_timeline);
         timelineView.setPeriods(new SnapshotPeriods());
         timelineView.setWindow(TimelineView.MINUTE * 10);
-
-        Reference<Workout> reference = Reference.from(getIntent());
-
-        workout = gym.getWorkout(reference);
-        if (workout == null) {
-            finish();
-        } else {
-            setTitle(DateUtils.formatDateTime(this, workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
-        }
     }
 
     @Override
@@ -81,8 +80,13 @@ public class SnapshotsActivity extends Activity {
         private float textSize = Utils.dpToPx(SnapshotsActivity.this, 20);
 
         @Override
+        public long min() {
+            return 0;
+        }
+
+        @Override
         public long max() {
-            return System.currentTimeMillis();
+            return workout.duration.get() * 1000;
         }
 
         @Override
@@ -107,7 +111,7 @@ public class SnapshotsActivity extends Activity {
         }
 
         private void paintHeader(long from, long to, Canvas canvas, RectF rect) {
-            String when = DateUtils.formatDateTime(SnapshotsActivity.this, from, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_ALL);
+            String when = DateUtils.formatDateTime(SnapshotsActivity.this, from, DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_UTC);
 
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);

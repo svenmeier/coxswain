@@ -98,7 +98,7 @@ public class TimelineView extends View {
     public void setPeriods(Periods periods) {
         this.periods = periods;
 
-        time = periods.unit(periods.max(), window).max();
+        time = periods.unit(periods.max(), window).ceiling();
 
         postInvalidate();
     }
@@ -119,8 +119,10 @@ public class TimelineView extends View {
 
     public void setTime(long time) {
         long max = periods.max();
+        long min = periods.min();
 
-        this.time = Math.min(time, periods.unit(max, window).max());
+        this.time = Math.min(time, periods.unit(max, window).ceiling());
+        this.time = Math.max(this.time, periods.unit(min, window).floor() + window);
 
         postInvalidate();
     }
@@ -290,11 +292,58 @@ public class TimelineView extends View {
         }
     }
 
-    public interface Unit {
+    public interface Periods {
 
         long min();
 
         long max();
+
+        Unit unit(long time, long window);
+
+        void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect);
+
+        long minWindow();
+
+        long maxWindow();
+    }
+
+    public class DefaultPeriods implements Periods {
+
+        @Override
+        public long min() {
+            return 0;
+        }
+
+        @Override
+        public long max() {
+            return System.currentTimeMillis();
+        }
+
+        @Override
+        public long minWindow() {
+            return DAY;
+        }
+
+        @Override
+        public long maxWindow() {
+            return 356 * DAY;
+        }
+
+        @Override
+        public Unit unit(long time, long window) {
+            return new DayUnit(time);
+        }
+
+        @Override
+        public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
+        }
+    }
+
+    public interface Unit {
+
+        long floor();
+
+        long ceiling();
 
         void next();
 
@@ -307,7 +356,9 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
-        private long max;
+        private long floor;
+
+        private long ceiling;
 
         private long from;
 
@@ -320,19 +371,19 @@ public class TimelineView extends View {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
+            floor = calendar.getTimeInMillis();
             calendar.add(Calendar.MINUTE, 1);
-
-            max = calendar.getTimeInMillis();
+            ceiling = calendar.getTimeInMillis();
         }
 
         @Override
-        public long min() {
-            return 0;
+        public long floor() {
+            return floor;
         }
 
         @Override
-        public long max() {
-            return max;
+        public long ceiling() {
+            return ceiling;
         }
 
         @Override
@@ -357,7 +408,9 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
-        private long max;
+        private long floor;
+
+        private long ceiling;
 
         private long from;
 
@@ -371,19 +424,19 @@ public class TimelineView extends View {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
+            floor = calendar.getTimeInMillis();
             calendar.add(Calendar.HOUR, 1);
-
-            max = calendar.getTimeInMillis();
+            ceiling = calendar.getTimeInMillis();
         }
 
         @Override
-        public long min() {
-            return 0;
+        public long floor() {
+            return floor;
         }
 
         @Override
-        public long max() {
-            return max;
+        public long ceiling() {
+            return ceiling;
         }
 
         @Override
@@ -408,7 +461,9 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
-        private long max;
+        private long floor;
+
+        private long ceiling;
 
         private long from;
 
@@ -423,18 +478,19 @@ public class TimelineView extends View {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
+            floor = calendar.getTimeInMillis();
             calendar.add(Calendar.DATE, 1);
-
-            max = calendar.getTimeInMillis();        }
-
-        @Override
-        public long min() {
-            return 0;
+            ceiling = calendar.getTimeInMillis();
         }
 
         @Override
-        public long max() {
-            return max;
+        public long floor() {
+            return floor;
+        }
+
+        @Override
+        public long ceiling() {
+            return ceiling;
         }
 
         @Override
@@ -459,7 +515,9 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
-        private long max;
+        private long floor;
+
+        private long ceiling;
 
         private long from;
 
@@ -475,19 +533,19 @@ public class TimelineView extends View {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
+            floor = calendar.getTimeInMillis();
             calendar.add(Calendar.DATE, 7);
-
-            max = calendar.getTimeInMillis();
+            ceiling = calendar.getTimeInMillis();
         }
 
         @Override
-        public long min() {
-            return 0;
+        public long floor() {
+            return floor;
         }
 
         @Override
-        public long max() {
-            return max;
+        public long ceiling() {
+            return ceiling;
         }
 
         @Override
@@ -512,7 +570,9 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
-        private long max;
+        private long floor;
+
+        private long ceiling;
 
         private long from;
 
@@ -528,19 +588,19 @@ public class TimelineView extends View {
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
+            floor = calendar.getTimeInMillis();
             calendar.add(Calendar.MONTH, 1);
-
-            max = calendar.getTimeInMillis();
+            ceiling = calendar.getTimeInMillis();
         }
 
         @Override
-        public long min() {
-            return 0;
+        public long floor() {
+            return floor;
         }
 
         @Override
-        public long max() {
-            return max;
+        public long ceiling() {
+            return ceiling;
         }
 
         @Override
@@ -558,46 +618,6 @@ public class TimelineView extends View {
         @Override
         public long to() {
             return to;
-        }
-    }
-
-    public static interface Periods {
-
-        public long max();
-
-        public Unit unit(long time, long window);
-
-        public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect);
-
-        public long minWindow();
-
-        public long maxWindow();
-    }
-
-    public class DefaultPeriods implements Periods {
-
-        @Override
-        public long max() {
-            return System.currentTimeMillis();
-        }
-
-        @Override
-        public long minWindow() {
-            return DAY;
-        }
-
-        @Override
-        public long maxWindow() {
-            return 356 * DAY;
-        }
-
-        @Override
-        public Unit unit(long time, long window) {
-            return new DayUnit(time);
-        }
-
-        @Override
-        public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
         }
     }
 

@@ -197,6 +197,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         private int border = Utils.dpToPx(getActivity(), 4);
 
         @Override
+        public long min() {
+            return 0;
+        }
+
+        @Override
         public long max() {
             return System.currentTimeMillis();
         }

@@ -25,7 +25,12 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import propoid.db.Order;
 import propoid.db.Reference;
+import propoid.ui.list.MatchLookup;
+import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
@@ -36,6 +41,8 @@ public class SnapshotsActivity extends Activity {
     private Gym gym;
 
     private Workout workout;
+
+    private List<Snapshot> snapshots;
 
     private TimelineView timelineView;
 
@@ -60,6 +67,8 @@ public class SnapshotsActivity extends Activity {
         timelineView = (TimelineView) findViewById(R.id.snapshots_timeline);
         timelineView.setPeriods(new SnapshotPeriods());
         timelineView.setWindow(TimelineView.MINUTE * 10);
+
+        new SnapshotLookup().initLoader(0, this);
     }
 
     @Override
@@ -102,6 +111,9 @@ public class SnapshotsActivity extends Activity {
 
         @Override
         public TimelineView.Unit unit(long time, long window) {
+            if (window > 20 * TimelineView.MINUTE) {
+                return new TimelineView.MinuteUnit(time, 5);
+            }
             return new TimelineView.MinuteUnit(time);
         }
 
@@ -116,6 +128,22 @@ public class SnapshotsActivity extends Activity {
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);
             canvas.drawText(when, rect.left, rect.top + textSize, paint);
+        }
+    }
+
+    private class SnapshotLookup extends MatchLookup<Snapshot> {
+
+        public SnapshotLookup() {
+            super(gym.getSnapshots(workout));
+
+            setOrder(Order.ascendingByInsert());
+        }
+
+        @Override
+        protected void onLookup(List<Snapshot> snapshots) {
+            SnapshotsActivity.this.snapshots = snapshots;
+
+            timelineView.postInvalidate();
         }
     }
 

@@ -207,6 +207,12 @@ public class Gym {
         return snapshot;
     }
 
+    public Match<Snapshot> getSnapshots(Workout workout) {
+        Snapshot prototype = new Snapshot();
+
+        return repository.query(prototype, Where.equal(prototype.workout, workout));
+    }
+
     public class Current {
 
         public final Segment segment;

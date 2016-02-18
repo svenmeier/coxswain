@@ -356,6 +356,8 @@ public class TimelineView extends View {
 
         private Calendar calendar;
 
+        private int mod;
+
         private long floor;
 
         private long ceiling;
@@ -365,14 +367,22 @@ public class TimelineView extends View {
         private long to;
 
         public MinuteUnit(long time) {
+            this(time, 1);
+        }
+
+        public MinuteUnit(long time, int mod) {
+            this.mod = mod;
+
             calendar = Calendar.getInstance();
 
             calendar.setTimeInMillis(time);
+            int minute = calendar.get(Calendar.MINUTE);
+            calendar.set(Calendar.MINUTE, minute - (minute % mod));
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
 
             floor = calendar.getTimeInMillis();
-            calendar.add(Calendar.MINUTE, 1);
+            calendar.add(Calendar.MINUTE, mod);
             ceiling = calendar.getTimeInMillis();
         }
 
@@ -389,7 +399,7 @@ public class TimelineView extends View {
         @Override
         public void next() {
             to = calendar.getTimeInMillis();
-            calendar.add(Calendar.MINUTE, -1);
+            calendar.add(Calendar.MINUTE, -mod);
             from = calendar.getTimeInMillis();
         }
 

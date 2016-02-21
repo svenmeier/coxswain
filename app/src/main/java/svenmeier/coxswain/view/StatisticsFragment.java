@@ -243,10 +243,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             rect.top += border + textSize + border;
             rect.right -= border;
             rect.bottom -= border;
-			paint(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
-			paint(statistic.distance, max.distance, statistic.animation, canvas, rect, 1);
-			paint(statistic.strokes, max.strokes, statistic.animation, canvas, rect, 2);
-			paint(statistic.energy, max.energy, statistic.animation, canvas, rect, 3);
+			paintBar(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
+			paintBar(statistic.distance, max.distance, statistic.animation, canvas, rect, 1);
+			paintBar(statistic.strokes, max.strokes, statistic.animation, canvas, rect, 2);
+			paintBar(statistic.energy, max.energy, statistic.animation, canvas, rect, 3);
 		}
 
         private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
@@ -281,7 +281,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
             canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);
         }
 
-        private void paint(int value, int max, float animation, Canvas canvas, RectF rect, int index) {
+        private void paintBar(int value, int max, float animation, Canvas canvas, RectF rect, int index) {
 			paint.setStyle(Paint.Style.FILL);
 			if (index == highlight) {
 				paint.setColor(0x803567ed);

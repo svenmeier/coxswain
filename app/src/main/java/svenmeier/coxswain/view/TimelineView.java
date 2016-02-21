@@ -98,7 +98,7 @@ public class TimelineView extends View {
     public void setPeriods(Periods periods) {
         this.periods = periods;
 
-        time = periods.unit(periods.max(), window).ceiling();
+        time = periods.unit(periods.max(), window).ceiling;
 
         postInvalidate();
     }
@@ -121,8 +121,8 @@ public class TimelineView extends View {
         long max = periods.max();
         long min = periods.min();
 
-        this.time = Math.min(time, periods.unit(max, window).ceiling());
-        this.time = Math.max(this.time, periods.unit(min, window).floor() + window);
+        this.time = Math.min(time, periods.unit(max, window).ceiling);
+        this.time = Math.max(this.time, periods.unit(min, window).floor + window);
 
         postInvalidate();
     }
@@ -149,8 +149,8 @@ public class TimelineView extends View {
         for (int i = 0; true; i++) {
             unit.next();
 
-            float y1 = toDisplay(time - unit.to());
-            float y2 = toDisplay(time - unit.from());
+            float y1 = toDisplay(time - unit.to);
+            float y2 = toDisplay(time - unit.from);
             float x1 = 0;
             float x2 = getWidth();
 
@@ -159,7 +159,7 @@ public class TimelineView extends View {
             canvas.drawLine(0, y2, getWidth(), y2, paint);
 
             rect.set(x1, y1, x2, y2);
-            periods.paint(unit.getClass(), unit.from(), unit.to(), canvas, rect);
+            periods.paint(unit.getClass(), unit.from, unit.to, canvas, rect);
 
             if (y2 > getHeight()) {
                 break;
@@ -339,32 +339,51 @@ public class TimelineView extends View {
         }
     }
 
-    public interface Unit {
+    public static abstract class Unit {
 
-        long floor();
+        protected Calendar calendar = Calendar.getInstance();
 
-        long ceiling();
+        protected int mod;
 
-        void next();
+        long floor;
 
-        long from();
+        long ceiling;
 
-        long to();
+        long from;
+
+        long to;
+
+        abstract void next();
     }
 
-    public static class MinuteUnit implements Unit {
+    public static class SecondUnit extends Unit {
 
-        private Calendar calendar;
+        public SecondUnit(long time) {
+            this(time, 1);
+        }
 
-        private int mod;
+        public SecondUnit(long time, int mod) {
+            this.mod = mod;
 
-        private long floor;
+            calendar.setTimeInMillis(time);
+            int second = calendar.get(Calendar.SECOND);
+            calendar.set(Calendar.SECOND, second - (second % mod));
+            calendar.set(Calendar.MILLISECOND, 0);
 
-        private long ceiling;
+            floor = calendar.getTimeInMillis();
+            calendar.add(Calendar.SECOND, mod);
+            ceiling = calendar.getTimeInMillis();
+        }
 
-        private long from;
+        @Override
+        public void next() {
+            to = calendar.getTimeInMillis();
+            calendar.add(Calendar.SECOND, -mod);
+            from = calendar.getTimeInMillis();
+        }
+    }
 
-        private long to;
+    public static class MinuteUnit extends Unit {
 
         public MinuteUnit(long time) {
             this(time, 1);
@@ -372,8 +391,6 @@ public class TimelineView extends View {
 
         public MinuteUnit(long time, int mod) {
             this.mod = mod;
-
-            calendar = Calendar.getInstance();
 
             calendar.setTimeInMillis(time);
             int minute = calendar.get(Calendar.MINUTE);
@@ -387,49 +404,25 @@ public class TimelineView extends View {
         }
 
         @Override
-        public long floor() {
-            return floor;
-        }
-
-        @Override
-        public long ceiling() {
-            return ceiling;
-        }
-
-        @Override
         public void next() {
             to = calendar.getTimeInMillis();
             calendar.add(Calendar.MINUTE, -mod);
             from = calendar.getTimeInMillis();
         }
-
-        @Override
-        public long from() {
-            return from;
-        }
-
-        @Override
-        public long to() {
-            return to;
-        }
     }
 
-    public static class HourUnit implements Unit {
-
-        private Calendar calendar;
-
-        private long floor;
-
-        private long ceiling;
-
-        private long from;
-
-        private long to;
+    public static class HourUnit extends Unit {
 
         public HourUnit(long time) {
-            calendar = Calendar.getInstance();
+            this(time, 1);
+        }
+
+        public HourUnit(long time, int mod) {
+            this.mod = mod;
 
             calendar.setTimeInMillis(time);
+            int hour = calendar.get(Calendar.HOUR);
+            calendar.set(Calendar.HOUR, hour - (hour % mod));
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
@@ -440,49 +433,25 @@ public class TimelineView extends View {
         }
 
         @Override
-        public long floor() {
-            return floor;
-        }
-
-        @Override
-        public long ceiling() {
-            return ceiling;
-        }
-
-        @Override
         public void next() {
             to = calendar.getTimeInMillis();
-            calendar.add(Calendar.HOUR, -1);
+            calendar.add(Calendar.HOUR, -mod);
             from = calendar.getTimeInMillis();
-        }
-
-        @Override
-        public long from() {
-            return from;
-        }
-
-        @Override
-        public long to() {
-            return to;
         }
     }
 
-    public static class DayUnit implements Unit {
-
-        private Calendar calendar;
-
-        private long floor;
-
-        private long ceiling;
-
-        private long from;
-
-        private long to;
+    public static class DayUnit extends Unit {
 
         public DayUnit(long time) {
-            calendar = Calendar.getInstance();
+            this(time, 1);
+        }
+
+        public DayUnit(long time, int mod) {
+            this.mod = mod;
 
             calendar.setTimeInMillis(time);
+            int day = calendar.get(Calendar.DAY_OF_YEAR);
+            calendar.set(Calendar.DAY_OF_YEAR, day - (day % mod));
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -494,47 +463,17 @@ public class TimelineView extends View {
         }
 
         @Override
-        public long floor() {
-            return floor;
-        }
-
-        @Override
-        public long ceiling() {
-            return ceiling;
-        }
-
-        @Override
         public void next() {
             to = calendar.getTimeInMillis();
             calendar.add(Calendar.DATE, -1);
             from = calendar.getTimeInMillis();
         }
-
-        @Override
-        public long from() {
-            return from;
-        }
-
-        @Override
-        public long to() {
-            return to;
-        }
     }
 
-    public static class WeekUnit implements Unit {
-
-        private Calendar calendar;
-
-        private long floor;
-
-        private long ceiling;
-
-        private long from;
-
-        private long to;
+    public static class WeekUnit extends Unit {
 
         public WeekUnit(long time) {
-            calendar = Calendar.getInstance();
+            this.mod = 7;
 
             calendar.setTimeInMillis(time);
             calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
@@ -549,47 +488,17 @@ public class TimelineView extends View {
         }
 
         @Override
-        public long floor() {
-            return floor;
-        }
-
-        @Override
-        public long ceiling() {
-            return ceiling;
-        }
-
-        @Override
         public void next() {
             to = calendar.getTimeInMillis();
-            calendar.add(Calendar.DATE, -7);
+            calendar.add(Calendar.DATE, -mod);
             from = calendar.getTimeInMillis();
-        }
-
-        @Override
-        public long from() {
-            return from;
-        }
-
-        @Override
-        public long to() {
-            return to;
         }
     }
 
-    public static class MonthUnit implements Unit {
-
-        private Calendar calendar;
-
-        private long floor;
-
-        private long ceiling;
-
-        private long from;
-
-        private long to;
+    public static class MonthUnit extends Unit {
 
         public MonthUnit(long time) {
-            calendar = Calendar.getInstance();
+            this.mod = 1;
 
             calendar.setTimeInMillis(time);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -604,30 +513,10 @@ public class TimelineView extends View {
         }
 
         @Override
-        public long floor() {
-            return floor;
-        }
-
-        @Override
-        public long ceiling() {
-            return ceiling;
-        }
-
-        @Override
         public void next() {
             to = calendar.getTimeInMillis();
-            calendar.add(Calendar.MONTH, -1);
+            calendar.add(Calendar.MONTH, -mod);
             from = calendar.getTimeInMillis();
-        }
-
-        @Override
-        public long from() {
-            return from;
-        }
-
-        @Override
-        public long to() {
-            return to;
         }
     }
 

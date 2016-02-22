@@ -4,6 +4,12 @@
     <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
     </style>
 
+    <style name="TimelineTitle">
+        <item name="android:textColor">#ff3567ed</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="ValueContainer">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">0dp</item>

@@ -25,7 +25,10 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     private int highlight;
 
+    private TextView titleView;
+
     private TimelineView timelineView;
 
     private StatisticLookup lookup;
@@ -66,6 +71,9 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_statistics, container, false);
+
+        titleView = (TextView) root.findViewById(R.id.statistics_title);
+        updateTitle();
 
         timelineView = (TimelineView) root.findViewById(R.id.statistics_timeline);
         timelineView.setPeriods(new StatisticPeriods());
@@ -131,6 +139,27 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         highlight = (highlight + 1) % 4;
 
         timelineView.invalidate();
+        updateTitle();
+    }
+
+    private void updateTitle() {
+        switch (highlight) {
+            case 0:
+                titleView.setText(R.string.target_duration);
+                break;
+            case 1:
+                titleView.setText(R.string.target_distance);
+                break;
+            case 2:
+                titleView.setText(R.string.target_strokes);
+                break;
+            case 3:
+                titleView.setText(R.string.target_energy);
+                break;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+
     }
 
     private class Statistic {
@@ -194,6 +223,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     private class StatisticPeriods implements TimelineView.Periods {
 
+        private NumberFormat numberFormat = NumberFormat.getNumberInstance();
+
         private Paint paint = new Paint();
 
         private float textSize = Utils.dpToPx(getActivity(), 20);
@@ -254,16 +285,16 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 String what;
                 switch (highlight) {
                     case 0:
-                        what = getString(R.string.duration_minutes, statistic.duration / 60);
+                        what = numberFormat.format(statistic.duration / 60);
                         break;
                     case 1:
-                        what = getString(R.string.distance_meters, statistic.distance);
+                        what = numberFormat.format(statistic.distance);
                         break;
                     case 2:
-                        what = getString(R.string.strokes_count, statistic.strokes);
+                        what = numberFormat.format(statistic.strokes);
                         break;
                     case 3:
-                        what = getString(R.string.energy_calories, statistic.energy);
+                        what = numberFormat.format(statistic.energy);
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

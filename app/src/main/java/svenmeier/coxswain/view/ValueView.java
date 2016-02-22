@@ -17,6 +17,7 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
 import svenmeier.coxswain.R;
@@ -83,6 +84,12 @@ public class ValueView extends LabelView {
 
         this.value = value;
 
+        String text = format(value);
+
+        setText(text);
+    }
+
+    public String format(int value) {
         StringBuilder text = new StringBuilder();
 
         int digits = Math.abs(value);
@@ -115,6 +122,6 @@ public class ValueView extends LabelView {
 
         text.reverse();
 
-        setText(text.toString());
+        return text.toString();
     }
 }

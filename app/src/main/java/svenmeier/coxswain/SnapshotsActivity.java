@@ -320,17 +320,6 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
         protected void onLookup(List<Snapshot> lookup) {
             snapshots = new ArrayList<>(lookup);
 
-            if (snapshots.isEmpty()) {
-                // TODO
-                for (int i = 0; i <= 27 * 60; i++) {
-                    Snapshot object = new Snapshot();
-                    object.speed.set((int)(Math.random() * 500));
-                    object.strokeRate.set((int)(Math.random() * 500));
-                    object.pulse.set((int)(Math.random() * 500));
-                    snapshots.add(object);
-                }
-            }
-
             maxSnapshot = new Snapshot();
             for (Snapshot snapshot : snapshots) {
                 maxSnapshot.speed.set(Math.max(maxSnapshot.speed.get(), snapshot.speed.get()));

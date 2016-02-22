@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -229,7 +228,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         private float textSize = Utils.dpToPx(getActivity(), 20);
 
-        private int border = Utils.dpToPx(getActivity(), 4);
+        private float padding = Utils.dpToPx(getActivity(), 4);
 
         @Override
         public long min() {
@@ -270,10 +269,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
 			paintHeader(from, to, canvas, rect, statistic);
 
-            rect.left += border;
-            rect.top += border + textSize + border;
-            rect.right -= border;
-            rect.bottom -= border;
+            rect.left += padding;
+            rect.top += padding + textSize + padding;
+            rect.right -= padding;
+            rect.bottom -= padding;
 			paintBar(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
 			paintBar(statistic.distance, max.distance, statistic.animation, canvas, rect, 1);
 			paintBar(statistic.strokes, max.strokes, statistic.animation, canvas, rect, 2);
@@ -303,13 +302,13 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
                 paint.setColor(0xff3567ed);
                 paint.setTextSize(textSize);
-                canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
+                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding + textSize, paint);
             }
 
             String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);
-            canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);
+            canvas.drawText(when, rect.left + padding, rect.top + padding + textSize, paint);
         }
 
         private void paintBar(int value, int max, float animation, Canvas canvas, RectF rect, int index) {

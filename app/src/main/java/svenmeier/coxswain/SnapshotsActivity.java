@@ -42,7 +42,6 @@ import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
-import svenmeier.coxswain.view.ValueView;
 
 
 public class SnapshotsActivity extends Activity implements View.OnClickListener {
@@ -152,7 +151,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
         private Paint paint = new Paint();
 
-        private int border = Utils.dpToPx(SnapshotsActivity.this, 4);
+        private float padding = Utils.dpToPx(SnapshotsActivity.this, 4);
 
         private float textSize = Utils.dpToPx(SnapshotsActivity.this, 20);
 
@@ -239,7 +238,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setColor(0xff3567ed);
                 paint.setTextSize(textSize);
-                canvas.drawText(what, rect.right - border - whatWidth, rect.top + border + textSize, paint);
+                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding + textSize, paint);
             }
 
             String when = dateFormat.format(to);
@@ -247,7 +246,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);
-            canvas.drawText(when, rect.left + border, rect.top + border + textSize, paint);
+            canvas.drawText(when, rect.left + padding, rect.top + padding + textSize, paint);
         }
 
         private void paintCurve(Canvas canvas, RectF rect, int start, int end, int index) {
@@ -292,9 +291,9 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
         private void paintLine(Path path, RectF rect, int value, int max, int index, int count) {
 
-            float left = rect.left + border;
-            float width = rect.width() - border - border;
-            float x = left + border + (width * value / max);
+            float left = rect.left + padding;
+            float width = rect.width() - padding - padding;
+            float x = left + padding + (width * value / max);
             float y = rect.bottom - (rect.height() * index / count);
 
             if (path.isEmpty()) {

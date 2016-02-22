@@ -18,17 +18,16 @@ package svenmeier.coxswain.view;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 /**
  * Created by sven on 19.08.15.
  */
 public class Utils {
 
-    public static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+    public static float dpToPx(Context context, int dp) {
 
-        return (int)((dp * displayMetrics.density) + 0.5);
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
     @SuppressWarnings("unchecked")
@@ -37,7 +36,11 @@ public class Utils {
             if (t.isInstance(fragment)) {
                 return (T) fragment;
             }
-            Fragment parentFragment = fragment.getParentFragment();
+
+            Fragment parentFragment = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                parentFragment = fragment.getParentFragment();
+            }
             if (parentFragment == null) {
                 break;
             }

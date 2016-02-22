@@ -15,7 +15,6 @@
  */
 package svenmeier.coxswain;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
@@ -119,7 +119,6 @@ public class GymService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @SuppressLint("NewApi")
     private void startForeground(String text, Class<?> activity, String action) {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, activity), PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -135,11 +134,10 @@ public class GymService extends Service {
             // uncomment for heads-up notification
             // builder.setPriority(Notification.PRIORITY_MAX);
 
-            try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 builder.addAction(R.drawable.ic_stop_black_24dp,
-                        getString(R.string.gym_notification_stop),
-                        PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
-            } catch (NoSuchMethodError notApi14) {
+							getString(R.string.gym_notification_stop),
+							PendingIntent.getBroadcast(this, 0, new Intent(action), 0));
             }
         }
 

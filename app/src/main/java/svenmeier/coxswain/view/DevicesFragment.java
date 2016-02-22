@@ -15,8 +15,8 @@
  */
 package svenmeier.coxswain.view;
 
-import android.annotation.SuppressLint;
 import android.hardware.usb.UsbDevice;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -63,13 +63,13 @@ public class DevicesFragment extends PreferenceFragment {
         setPreferenceScreen(screen);
     }
 
-    @SuppressLint("NewApi")
     private String getTitle(UsbDevice device) {
         String title = device.getDeviceName();
-        try {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             title = device.getProductName();
-        } catch (NoSuchMethodError notApi14) {
         }
+
         return title;
     }
 

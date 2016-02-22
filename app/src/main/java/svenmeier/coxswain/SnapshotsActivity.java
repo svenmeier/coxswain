@@ -151,6 +151,8 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
         private Paint paint = new Paint();
 
+        private Paint.FontMetrics metrics = new Paint.FontMetrics();
+
         private float padding = Utils.dpToPx(SnapshotsActivity.this, 4);
 
         private float textSize = Utils.dpToPx(SnapshotsActivity.this, 20);
@@ -213,9 +215,11 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             paintHeader(to, canvas, rect);
         }
 
-        private void paintHeader(long to, Canvas canvas, RectF rect) {
-            int index = (int)(to / 1000);
+        private float paintHeader(long to, Canvas canvas, RectF rect) {
+            paint.setTextSize(textSize);
+            paint.getFontMetrics(metrics);
 
+            int index = (int)(to / 1000);
             if (index >= 0 && index < snapshots.size()) {
                 Snapshot snapshot = snapshots.get(index);
 
@@ -237,16 +241,16 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
                 paint.setStyle(Paint.Style.FILL);
                 paint.setColor(0xff3567ed);
-                paint.setTextSize(textSize);
-                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding + textSize, paint);
+                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding - metrics.top, paint);
             }
 
             String when = dateFormat.format(to);
 
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(0xff000000);
-            paint.setTextSize(textSize);
-            canvas.drawText(when, rect.left + padding, rect.top + padding + textSize, paint);
+            canvas.drawText(when, rect.left + padding, rect.top + padding - metrics.top, paint);
+
+            return -metrics.top;
         }
 
         private void paintCurve(Canvas canvas, RectF rect, int start, int end, int index) {

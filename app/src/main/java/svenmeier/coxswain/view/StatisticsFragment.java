@@ -75,8 +75,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         updateTitle();
 
         timelineView = (TimelineView) root.findViewById(R.id.statistics_timeline);
-        timelineView.setPeriods(new StatisticPeriods());
         timelineView.setWindow(24 * TimelineView.DAY);
+        timelineView.setPeriods(new StatisticPeriods());
         timelineView.setOnClickListener(this);
 
         return root;
@@ -226,6 +226,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         private Paint paint = new Paint();
 
+        private Paint.FontMetrics metrics = new Paint.FontMetrics();
+
         private float textSize = Utils.dpToPx(getActivity(), 20);
 
         private float padding = Utils.dpToPx(getActivity(), 4);
@@ -267,10 +269,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 			Statistic statistic = getStatistics(unit, from, to);
 			Statistic max = getMax(unit);
 
-			paintHeader(from, to, canvas, rect, statistic);
+			float headerHeight = paintHeader(from, to, canvas, rect, statistic);
 
             rect.left += padding;
-            rect.top += padding + textSize + padding;
+            rect.top += padding + headerHeight + padding;
             rect.right -= padding;
             rect.bottom -= padding;
 			paintBar(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
@@ -279,7 +281,10 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 			paintBar(statistic.energy, max.energy, statistic.animation, canvas, rect, 3);
 		}
 
-        private void paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+        private float paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+            paint.setTextSize(textSize);
+            paint.getFontMetrics(metrics);
+
             if (statistic.found) {
                 String what;
                 switch (highlight) {
@@ -301,14 +306,15 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
                 float whatWidth = paint.measureText(what);
 
                 paint.setColor(0xff3567ed);
-                paint.setTextSize(textSize);
-                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding + textSize, paint);
+                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding - metrics.top, paint);
             }
 
             String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
             paint.setColor(0xff000000);
             paint.setTextSize(textSize);
-            canvas.drawText(when, rect.left + padding, rect.top + padding + textSize, paint);
+            canvas.drawText(when, rect.left + padding, rect.top + padding - metrics.top, paint);
+
+            return -metrics.top;
         }
 
         private void paintBar(int value, int max, float animation, Canvas canvas, RectF rect, int index) {

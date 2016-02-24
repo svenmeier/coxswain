@@ -46,6 +46,8 @@ import svenmeier.coxswain.view.Utils;
 
 public class SnapshotsActivity extends Activity implements View.OnClickListener {
 
+    public static final int RESOLUTION = 10;
+
     private Gym gym;
 
     private Workout workout;
@@ -253,18 +255,20 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             return -metrics.top;
         }
 
-        private void paintCurve(Canvas canvas, RectF rect, int start, int end, int index) {
+        private void paintCurve(Canvas canvas, RectF rect, int start, int end, int property) {
             path.reset();
-            for (int current = start; current <= end; current++) {
+
+            for (int index = 0; index <= RESOLUTION; index++) {
+
+                int current = start + ((end - start) * index / RESOLUTION);
                 if (current < 0 || current >= snapshots.size()) {
                     continue;
                 }
-
                 Snapshot snapshot = snapshots.get(current);
 
                 int value;
                 int max;
-                switch (index) {
+                switch (property) {
                     case 0:
                         value = snapshot.speed.get();
                         max = maxSnapshot.speed.get();
@@ -281,30 +285,25 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                         throw new IndexOutOfBoundsException();
                 }
 
-                paintLine(path, rect, value, max, current - start, end - start);
+                float width = rect.width() - padding - padding;
+                float x = rect.left + padding + (width * value / max);
+                float y = rect.bottom - (rect.height() * index / RESOLUTION);
+
+                if (path.isEmpty()) {
+                    path.moveTo(x, y);
+                } else {
+                    path.lineTo(x, y);
+                }
             }
+
             paint.setStyle(Paint.Style.STROKE);
-            if (index == highlight) {
+            if (property == highlight) {
                 paint.setColor(0x803567ed);
             } else {
                 paint.setColor(0x403567ed);
             }
             paint.setStrokeWidth(strokeWidth);
             canvas.drawPath(path, paint);
-        }
-
-        private void paintLine(Path path, RectF rect, int value, int max, int index, int count) {
-
-            float left = rect.left + padding;
-            float width = rect.width() - padding - padding;
-            float x = left + padding + (width * value / max);
-            float y = rect.bottom - (rect.height() * index / count);
-
-            if (path.isEmpty()) {
-                path.moveTo(x, y);
-            } else {
-                path.lineTo(x, y);
-            }
         }
     }
 

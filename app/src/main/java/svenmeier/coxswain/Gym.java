@@ -178,7 +178,7 @@ public class Gym {
 
                 snapshot.workout.set(workout);
                 repository.insert(snapshot);
-                Row.setID(snapshot, Row.TRANSIENT);
+                Row.reset(snapshot);
                 snapshot.workout.set(null);
             }
 

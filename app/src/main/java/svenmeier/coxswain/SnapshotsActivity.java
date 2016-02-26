@@ -58,6 +58,8 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
     private List<Snapshot> snapshots = new ArrayList<>();
 
+    private Snapshot minSnapshot;
+
     private Snapshot maxSnapshot;
 
     private TextView titleView;
@@ -267,18 +269,22 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 Snapshot snapshot = snapshots.get(current);
 
                 int value;
+                int min;
                 int max;
                 switch (property) {
                     case 0:
                         value = snapshot.speed.get();
+                        min = minSnapshot.speed.get();
                         max = maxSnapshot.speed.get();
                         break;
                     case 1:
                         value = snapshot.pulse.get();
+                        min = minSnapshot.pulse.get();
                         max = maxSnapshot.pulse.get();
                         break;
                     case 2:
                         value = snapshot.strokeRate.get();
+                        min = minSnapshot.strokeRate.get();
                         max = maxSnapshot.strokeRate.get();
                         break;
                     default:
@@ -286,7 +292,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 }
 
                 float width = rect.width() - padding - padding;
-                float x = rect.left + padding + (width * value / max);
+                float x = rect.left + padding + (width * (value - min) / (max - min));
                 float y = rect.bottom - (rect.height() * index / RESOLUTION);
 
                 if (path.isEmpty()) {
@@ -319,8 +325,16 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
         protected void onLookup(List<Snapshot> lookup) {
             snapshots = new ArrayList<>(lookup);
 
+            minSnapshot = new Snapshot();
+            minSnapshot.speed.set(Integer.MAX_VALUE);
+            minSnapshot.strokeRate.set(Integer.MAX_VALUE);
+            minSnapshot.pulse.set(Integer.MAX_VALUE);
             maxSnapshot = new Snapshot();
             for (Snapshot snapshot : snapshots) {
+                minSnapshot.speed.set(Math.min(minSnapshot.speed.get(), snapshot.speed.get()));
+                minSnapshot.strokeRate.set(Math.min(minSnapshot.strokeRate.get(), snapshot.strokeRate.get()));
+                minSnapshot.pulse.set(Math.min(minSnapshot.pulse.get(), snapshot.pulse.get()));
+
                 maxSnapshot.speed.set(Math.max(maxSnapshot.speed.get(), snapshot.speed.get()));
                 maxSnapshot.strokeRate.set(Math.max(maxSnapshot.strokeRate.get(), snapshot.strokeRate.get()));
                 maxSnapshot.pulse.set(Math.max(maxSnapshot.pulse.get(), snapshot.pulse.get()));

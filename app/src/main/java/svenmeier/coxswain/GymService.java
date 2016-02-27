@@ -202,7 +202,7 @@ public class GymService extends Service {
                             String description = current.describe();
                             showNotification(name + " - " + description, WorkoutActivity.class, ACTION_STOP);
 
-                            Event event = gym.addSnapshot(memory);
+                            Event event = gym.addSnapshot(new Snapshot(memory));
                             motivator.onEvent(event);
 
                             if (event == Event.PROGRAM_FINISHED) {

@@ -292,7 +292,10 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 }
 
                 float width = rect.width() - padding - padding;
-                float x = rect.left + padding + (width * (value - min) / (max - min));
+                float x = rect.left + padding;
+                if (max > min) {
+                    x += width * (value - min) / (max - min);
+                }
                 float y = rect.bottom - (rect.height() * index / RESOLUTION);
 
                 if (path.isEmpty()) {

@@ -178,8 +178,6 @@ public class Gym {
 
                 snapshot.workout.set(workout);
                 repository.insert(snapshot);
-                Row.reset(snapshot);
-                snapshot.workout.set(null);
             }
 
             if (current.completion() == 1.0f) {

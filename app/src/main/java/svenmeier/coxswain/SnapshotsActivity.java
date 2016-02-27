@@ -189,7 +189,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
 
         @Override
         public long maxWindow() {
-            return TimelineView.HOUR;
+            return TimelineView.HOUR / 2;
         }
 
 

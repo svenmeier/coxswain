@@ -107,14 +107,14 @@ public class TimelineView extends View {
 
         int height = getHeight();
 
-        return (long)(display * window / height);
+        return (long)-(display * window / height);
     }
 
     private float toDisplay(long time) {
 
         int height = getHeight();
 
-        return time * height / window;
+        return -(time * height / window);
     }
 
     public void setTime(long time) {
@@ -149,8 +149,8 @@ public class TimelineView extends View {
         for (int i = 0; true; i++) {
             unit.next();
 
-            float y1 = toDisplay(time - unit.to);
-            float y2 = toDisplay(time - unit.from);
+            float y1 = toDisplay(unit.to - time);
+            float y2 = toDisplay(unit.from - time);
             float x1 = 0;
             float x2 = getWidth();
 
@@ -227,7 +227,7 @@ public class TimelineView extends View {
          */
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            setTime(time - toTime(distanceY));
+            setTime(time + toTime(distanceY));
 
             preventClick = true;
 
@@ -254,7 +254,7 @@ public class TimelineView extends View {
             if (scroller.computeScrollOffset()) {
                 int flingY = scroller.getCurrY();
 
-                setTime(time + toTime(flingY - lastFlingY));
+                setTime(time + toTime(lastFlingY - flingY));
 
                 lastFlingY = flingY;
             }

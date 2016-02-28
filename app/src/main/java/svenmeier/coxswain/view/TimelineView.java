@@ -103,18 +103,18 @@ public class TimelineView extends View {
         postInvalidate();
     }
 
-    private long toTime(float display) {
+    private long toTime(float displayDelta) {
 
         int height = getHeight();
 
-        return (long)-(display * window / height);
+        return (long)-(displayDelta * window / height);
     }
 
-    private float toDisplay(long time) {
+    private float toDisplay(long timeDelta) {
 
         int height = getHeight();
 
-        return -(time * height / window);
+        return -(timeDelta * height / window);
     }
 
     public void setTime(long time) {

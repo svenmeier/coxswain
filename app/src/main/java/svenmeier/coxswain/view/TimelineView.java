@@ -107,14 +107,14 @@ public class TimelineView extends View {
 
         int height = getHeight();
 
-        return (long)-(displayDelta * window / height);
+        return (long)(displayDelta * window / height);
     }
 
     private float toDisplay(long timeDelta) {
 
         int height = getHeight();
 
-        return -(timeDelta * height / window);
+        return (timeDelta * height / window);
     }
 
     public void setTime(long time) {
@@ -149,8 +149,8 @@ public class TimelineView extends View {
         for (int i = 0; true; i++) {
             unit.next();
 
-            float y1 = toDisplay(unit.to - time);
-            float y2 = toDisplay(unit.from - time);
+            float y1 = getHeight() - toDisplay(time - unit.from);
+            float y2 = getHeight() - toDisplay(time - unit.to);
             float x1 = 0;
             float x2 = getWidth();
 
@@ -161,7 +161,7 @@ public class TimelineView extends View {
             rect.set(x1, y1, x2, y2);
             periods.paint(unit.getClass(), unit.from, unit.to, canvas, rect);
 
-            if (y2 > getHeight()) {
+            if (y1 < 0) {
                 break;
             }
         }

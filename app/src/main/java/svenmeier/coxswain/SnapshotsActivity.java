@@ -216,14 +216,14 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             paintCurve(canvas, rect, start, end, 1);
             paintCurve(canvas, rect, start, end, 2);
 
-            paintHeader(to, canvas, rect);
+            paintHeader(from, canvas, rect);
         }
 
-        private float paintHeader(long to, Canvas canvas, RectF rect) {
+        private float paintHeader(long from, Canvas canvas, RectF rect) {
             paint.setTextSize(textSize);
             paint.getFontMetrics(metrics);
 
-            int index = (int)(to / 1000);
+            int index = (int)(from / 1000);
             if (index >= 0 && index < snapshots.size()) {
                 Snapshot snapshot = snapshots.get(index);
 
@@ -248,7 +248,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding - metrics.top, paint);
             }
 
-            String when = dateFormat.format(to);
+            String when = dateFormat.format(from);
 
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(0xff000000);
@@ -296,7 +296,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 if (max > min) {
                     x += width * 0.75f * (value - min) / (max - min);
                 }
-                float y = rect.bottom - (rect.height() * index / RESOLUTION);
+                float y = rect.top + (rect.height() * index / RESOLUTION);
 
                 if (path.isEmpty()) {
                     path.moveTo(x, y);

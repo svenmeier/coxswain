@@ -43,7 +43,7 @@
 
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>
-    <string name="statistics">Statistics</string>
+    <string name="performance">Performance</string>
 
     <string name="segments">Segments</string>
 
@@ -109,6 +109,6 @@
     <string name="preference_devices_none_title">No devices</string>
     <string name="preference_devices_none_summary">No USB devices are connected</string>
 
-    <string name="preference_statistics_window" translatable="false">preference_statistics_window</string>
+    <string name="preference_performance_window" translatable="false">preference_performance_window</string>
     <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
 </resources>

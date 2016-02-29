@@ -5,7 +5,7 @@
     >
 
     <TextView
-        android:id="@+id/statistics_title"
+        android:id="@+id/performance_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -13,7 +13,7 @@
         />
 
     <svenmeier.coxswain.view.TimelineView
-        android:id="@+id/statistics_timeline"
+        android:id="@+id/performance_timeline"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

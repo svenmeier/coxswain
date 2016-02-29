@@ -15,7 +15,6 @@
  */
 package svenmeier.coxswain;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -24,7 +23,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -34,9 +32,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.view.ProgramsFragment;
-import svenmeier.coxswain.view.StatisticsFragment;
+import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
 
@@ -203,7 +200,7 @@ public class MainActivity extends Activity {
             } else if (position == 1) {
                 return getString(R.string.workouts);
             } else {
-                return getString(R.string.statistics);
+                return getString(R.string.performance);
             }
         }
 
@@ -214,7 +211,7 @@ public class MainActivity extends Activity {
             } else if (position == 1) {
                 return new WorkoutsFragment();
             } else {
-                return new StatisticsFragment();
+                return new PerformanceFragment();
             }
         }
     }

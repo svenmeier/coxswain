@@ -40,13 +40,13 @@ import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
 
 
-public class StatisticsFragment extends Fragment implements View.OnClickListener {
+public class PerformanceFragment extends Fragment implements View.OnClickListener {
 
     private Gym gym;
 
-    private List<Statistic> pendings = new ArrayList<>();
+    private List<Performance> pendings = new ArrayList<>();
 
-    private Map<String, Statistic> statistics = new HashMap<>();
+    private Map<String, Performance> performances = new HashMap<>();
 
     private int highlight;
 
@@ -54,7 +54,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     private TimelineView timelineView;
 
-    private StatisticLookup lookup;
+    private PerformanceLookup lookup;
 
     private Preference<Long> windowPreference;
 
@@ -64,19 +64,19 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         gym = Gym.instance(activity);
 
-        windowPreference = Preference.getLong(activity, R.string.preference_statistics_window).fallback(28 * TimelineView.DAY);
+        windowPreference = Preference.getLong(activity, R.string.preference_performance_window).fallback(28 * TimelineView.DAY);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.layout_statistics, container, false);
+        View root = inflater.inflate(R.layout.layout_performance, container, false);
 
-        titleView = (TextView) root.findViewById(R.id.statistics_title);
+        titleView = (TextView) root.findViewById(R.id.performance_title);
         updateTitle();
 
-        timelineView = (TimelineView) root.findViewById(R.id.statistics_timeline);
+        timelineView = (TimelineView) root.findViewById(R.id.performance_timeline);
         timelineView.setWindow(24 * TimelineView.DAY);
-        timelineView.setPeriods(new StatisticPeriods());
+        timelineView.setPeriods(new PerformancePeriods());
         timelineView.setOnClickListener(this);
 
         return root;
@@ -96,41 +96,41 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         timelineView.setWindow(windowPreference.get());
     }
 
-    private Statistic getMax(Class<?> unit) {
+    private Performance getMax(Class<?> unit) {
         String key = unit.getSimpleName();
 
-        Statistic statistic = this.statistics.get(key);
-        if (statistic == null) {
-            statistic = new Statistic();
+        Performance performancestic = this.performances.get(key);
+        if (performancestic == null) {
+            performancestic = new Performance();
 
-            statistics.put(key, statistic);
+            performances.put(key, performancestic);
         }
 
-        return statistic;
+        return performancestic;
     }
 
-    private Statistic getStatistics(Class<?> unit, long from, long to) {
+    private Performance getPerformance(Class<?> unit, long from, long to) {
         String key = from + ":" + to;
 
-        Statistic statistic = this.statistics.get(key);
-        if (statistic == null) {
-            statistic = new Statistic();
+        Performance performance = this.performances.get(key);
+        if (performance == null) {
+            performance = new Performance();
 
-            statistics.put(key, statistic);
-            pendings.add(statistic);
+            performances.put(key, performance);
+            pendings.add(performance);
         }
 
-        if (pendings.contains(statistic) && lookup == null) {
-            lookup = new StatisticLookup(from, to, statistic, getMax(unit));
+        if (pendings.contains(performance) && lookup == null) {
+            lookup = new PerformanceLookup(from, to, performance, getMax(unit));
             lookup.restartLoader(0, this);
         }
 
-        statistic.animation = Math.min(statistic.animation + 0.05f, 1.0f);
-        if (statistic.animation < 1.0f) {
+        performance.animation = Math.min(performance.animation + 0.05f, 1.0f);
+        if (performance.animation < 1.0f) {
             timelineView.postInvalidate();
         }
 
-        return statistic;
+        return performance;
     }
 
     @Override
@@ -161,7 +161,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private class Statistic {
+    private class Performance {
 
         float animation;
 
@@ -173,13 +173,13 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         public int energy;
     }
 
-    private class StatisticLookup extends MatchLookup<Workout> {
+    private class PerformanceLookup extends MatchLookup<Workout> {
 
-        private final Statistic pending;
+        private final Performance pending;
 
-        private final Statistic max;
+        private final Performance max;
 
-        public StatisticLookup(long from, long to, Statistic pending, Statistic max) {
+        public PerformanceLookup(long from, long to, Performance pending, Performance max) {
             super(gym.getWorkouts(from, to));
 
             this.pending = pending;
@@ -220,7 +220,7 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private class StatisticPeriods implements TimelineView.Periods {
+    private class PerformancePeriods implements TimelineView.Periods {
 
         private NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
@@ -266,39 +266,39 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
         @Override
 		public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
-			Statistic statistic = getStatistics(unit, from, to);
-			Statistic max = getMax(unit);
+			Performance performance = getPerformance(unit, from, to);
+			Performance max = getMax(unit);
 
-			float headerHeight = paintHeader(from, to, canvas, rect, statistic);
+			float headerHeight = paintHeader(from, to, canvas, rect, performance);
 
             rect.left += padding;
             rect.top += padding + headerHeight + padding;
             rect.right -= padding;
             rect.bottom -= padding;
-			paintBar(statistic.duration, max.duration, statistic.animation, canvas, rect, 0);
-			paintBar(statistic.distance, max.distance, statistic.animation, canvas, rect, 1);
-			paintBar(statistic.strokes, max.strokes, statistic.animation, canvas, rect, 2);
-			paintBar(statistic.energy, max.energy, statistic.animation, canvas, rect, 3);
+			paintBar(performance.duration, max.duration, performance.animation, canvas, rect, 0);
+			paintBar(performance.distance, max.distance, performance.animation, canvas, rect, 1);
+			paintBar(performance.strokes, max.strokes, performance.animation, canvas, rect, 2);
+			paintBar(performance.energy, max.energy, performance.animation, canvas, rect, 3);
 		}
 
-        private float paintHeader(long from, long to, Canvas canvas, RectF rect, Statistic statistic) {
+        private float paintHeader(long from, long to, Canvas canvas, RectF rect, Performance performance) {
             paint.setTextSize(textSize);
             paint.getFontMetrics(metrics);
 
-            if (statistic.found) {
+            if (performance.found) {
                 String what;
                 switch (highlight) {
                     case 0:
-                        what = numberFormat.format(statistic.duration / 60);
+                        what = numberFormat.format(performance.duration / 60);
                         break;
                     case 1:
-                        what = numberFormat.format(statistic.distance);
+                        what = numberFormat.format(performance.distance);
                         break;
                     case 2:
-                        what = numberFormat.format(statistic.strokes);
+                        what = numberFormat.format(performance.strokes);
                         break;
                     case 3:
-                        what = numberFormat.format(statistic.energy);
+                        what = numberFormat.format(performance.energy);
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

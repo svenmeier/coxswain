@@ -230,12 +230,18 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 String what;
                 switch (highlight) {
                     case 0:
+                        numberFormat.setMaximumFractionDigits(2);
+                        numberFormat.setMinimumFractionDigits(2);
                         what = numberFormat.format(snapshot.speed.get() / 100f);
                         break;
                     case 1:
+                        numberFormat.setMaximumFractionDigits(0);
+                        numberFormat.setMinimumFractionDigits(0);
                         what = numberFormat.format(snapshot.pulse.get());
                         break;
                     case 2:
+                        numberFormat.setMaximumFractionDigits(0);
+                        numberFormat.setMinimumFractionDigits(0);
                         what = numberFormat.format(snapshot.strokeRate.get());
                         break;
                     default:

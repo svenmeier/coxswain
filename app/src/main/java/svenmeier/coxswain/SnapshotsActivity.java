@@ -266,7 +266,6 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
         private void paintCurve(Canvas canvas, RectF rect, int start, int end, int property) {
             path.reset();
 
-            float x = -1;
             float y = -1;
 
             for (int index = 0; index <= RESOLUTION; index++) {
@@ -301,7 +300,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 }
 
                 float width = rect.width() - padding - padding;
-                x = rect.left + padding;
+                float x = rect.left + padding;
                 if (max > min) {
                     x += width * 0.75f * (value - min) / (max - min);
                 }

@@ -266,6 +266,9 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
         private void paintCurve(Canvas canvas, RectF rect, int start, int end, int property) {
             path.reset();
 
+            float x = -1;
+            float y = -1;
+
             for (int index = 0; index <= RESOLUTION; index++) {
 
                 int current = start + ((end - start) * index / RESOLUTION);
@@ -298,11 +301,11 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
                 }
 
                 float width = rect.width() - padding - padding;
-                float x = rect.left + padding;
+                x = rect.left + padding;
                 if (max > min) {
                     x += width * 0.75f * (value - min) / (max - min);
                 }
-                float y = rect.top + (rect.height() * index / RESOLUTION);
+                y = rect.top + (rect.height() * index / RESOLUTION);
 
                 if (path.isEmpty()) {
                     path.moveTo(x, y);
@@ -319,6 +322,15 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             }
             paint.setStrokeWidth(strokeWidth);
             canvas.drawPath(path, paint);
+
+            if (y != -1 && property == highlight) {
+                path.lineTo(rect.left + padding, y);
+                path.lineTo(rect.left + padding, rect.top);
+
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(0x203567ed);
+                canvas.drawPath(path, paint);
+            }
         }
     }
 

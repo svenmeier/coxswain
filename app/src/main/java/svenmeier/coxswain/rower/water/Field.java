@@ -33,8 +33,12 @@ public abstract class Field {
         this.response = response;
     }
 
+    protected boolean cycle() {
+        return this.request != null;
+    }
+
     protected void update(String message, Snapshot memory) {
-        if (message.startsWith(response)) {
+        if (this.response != null && message.startsWith(response)) {
             onUpdate(message, memory);
         }
     }

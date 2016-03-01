@@ -27,11 +27,7 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import svenmeier.coxswain.Application;
-import svenmeier.coxswain.MainActivity;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.Input;
@@ -60,9 +56,9 @@ public class WaterRower implements Rower {
 
     private BroadcastReceiver receiver;
 
-    private Mapper mapper = new Mapper();
+    private Mapper mapper;
 
-    private Queue<String> requests = new LinkedList<>();
+    private String version;
 
     public WaterRower(Context context, Snapshot memory, UsbDevice device) {
         this.context = context;
@@ -97,15 +93,37 @@ public class WaterRower implements Rower {
         };
         context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
-        requests.add(Mapper.INIT);
-        requests.add(Mapper.VERSION);
+        Mapper mapper = new Mapper() {
+            @Override
+            protected void onInit() {
+                Log.i(Application.TAG, "waterrower: inited");
+            }
+
+            @Override
+            protected void onVersion(String version) {
+                Log.i(Application.TAG, String.format("waterrower: version %s", version));
+
+                WaterRower.this.version = version;
+            }
+
+            @Override
+            protected void onError() {
+                Log.i(Application.TAG, "waterrower: error");
+            }
+        };
+        mapper.queue(mapper.INIT);
+        mapper.queue(mapper.VERSION);
 
         return true;
     }
 
     @Override
     public String getName() {
-        return "Waterrower";
+        String name = "Waterrower";
+        if (version != null) {
+            name += " (" + version + ")";
+        }
+        return name;
     }
 
     @Override
@@ -118,8 +136,6 @@ public class WaterRower implements Rower {
         if (isOpen() == false) {
             return;
         }
-
-        this.requests.clear();
 
         context.unregisterReceiver(receiver);
         receiver = null;
@@ -135,7 +151,7 @@ public class WaterRower implements Rower {
 
     @Override
     public void reset() {
-        requests.add(Mapper.RESET);
+        mapper.queue(mapper.RESET);
     }
 
     @Override
@@ -145,15 +161,7 @@ public class WaterRower implements Rower {
         }
 
         if (output.isReady()) {
-            String request;
-            if (requests.isEmpty()) {
-                request = mapper.nextRequest();
-            } else {
-                request = requests.remove();
-            }
-            if (request != null) {
-                output.write(request);
-            }
+            output.write(mapper.nextRequest());
         }
 
         String message = input.read();
@@ -165,19 +173,21 @@ public class WaterRower implements Rower {
     }
 
     private boolean initConnection() {
-        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        Log.i(Application.TAG, String.format("waterrower connecting to %s", device.getDeviceName()));
 
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         this.connection = manager.openDevice(device);
         if (this.connection == null) {
-            Log.d(Application.TAG, String.format("no connection", device.getDeviceName()));
+            Log.i(Application.TAG, "waterrower: cannot open connection");
             return false;
         }
 
-        // set data request, baud rate, 115200,
-            this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, 0x001A, 0, null, 0, 0);
+        // set data request, baud rate, 115200
+        this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, 0x001A, 0, null, 0, 0);
 
         for (int i = 0; i < device.getInterfaceCount(); i++) {
             UsbInterface anInterface = device.getInterface(i);
+            int interfaceId = anInterface.getId();
 
             UsbEndpoint out = null;
             UsbEndpoint in = null;
@@ -196,18 +206,19 @@ public class WaterRower implements Rower {
 
             if (out != null && in != null) {
                 if (this.connection.claimInterface(anInterface, true)) {
+                    Log.i(Application.TAG, String.format("waterrower: endpoints found %s", interfaceId));
                     input = new Input(this.connection, in);
                     output = new Output(this.connection, out);
                     return true;
                 } else {
-                    Log.d(Application.TAG, String.format("can not claim interface %s", anInterface.getId()));
+                    Log.i(Application.TAG, String.format("waterrower: cannot claim interface %s", interfaceId));
                 }
             } else {
-                Log.d(Application.TAG, String.format("no suitable endpoints %s", anInterface.getId()));
+                Log.i(Application.TAG, String.format("waterrower: no suitable endpoints %s", interfaceId));
             }
         }
 
-        Log.d(Application.TAG, String.format("no suitable interface", device.getDeviceName()));
+        Log.i(Application.TAG, "waterrower: no suitable interface");
         this.connection.close();
         this.connection = null;
         return false;

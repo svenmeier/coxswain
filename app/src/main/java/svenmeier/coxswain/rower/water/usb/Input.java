@@ -25,7 +25,7 @@ import svenmeier.coxswain.view.ProgramsFragment;
  */
 public class Input {
 
-    private static final int TIMEOUT = 25;
+    private static final int TIMEOUT = 50;
 
     private byte[] buffer;
 

@@ -27,7 +27,7 @@ public class Output {
 
     private static final int PROCESSING_DELAY = 25; // milliseconds
 
-    private static final int TIMEOUT = 25;
+    private static final int TIMEOUT = 50;
 
     private final UsbDeviceConnection connection;
     private final UsbEndpoint endpoint;

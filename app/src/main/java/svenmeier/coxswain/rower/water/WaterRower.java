@@ -25,9 +25,20 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Application;
+import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.Input;
@@ -40,6 +51,8 @@ public class WaterRower implements Rower {
 
     private static final int SET_DATA_REQUEST_TYPE = 0x40;
     private static final int SET_BAUD_RATE = 0x03;
+
+    public static final String TRACE_FILE = "waterrower.trace";
 
     private final Context context;
 
@@ -58,7 +71,7 @@ public class WaterRower implements Rower {
 
     private Mapper mapper;
 
-    private String version;
+    private BufferedWriter trace;
 
     public WaterRower(Context context, Snapshot memory, UsbDevice device) {
         this.context = context;
@@ -73,7 +86,11 @@ public class WaterRower implements Rower {
             return true;
         }
 
+        initTrace();
+
         if (initConnection() == false) {
+            closeTrace();
+
             return false;
         }
 
@@ -93,22 +110,20 @@ public class WaterRower implements Rower {
         };
         context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
-        Mapper mapper = new Mapper() {
+        mapper = new Mapper() {
             @Override
             protected void onInit() {
-                Log.i(Application.TAG, "waterrower: inited");
+                trace('#', "init");
             }
 
             @Override
             protected void onVersion(String version) {
-                Log.i(Application.TAG, String.format("waterrower: version %s", version));
-
-                WaterRower.this.version = version;
+                trace('#', String.format("version %s", version));
             }
 
             @Override
             protected void onError() {
-                Log.i(Application.TAG, "waterrower: error");
+                trace('#', "error");
             }
         };
         mapper.queue(mapper.INIT);
@@ -119,11 +134,7 @@ public class WaterRower implements Rower {
 
     @Override
     public String getName() {
-        String name = "Waterrower";
-        if (version != null) {
-            name += " (" + version + ")";
-        }
-        return name;
+        return "Waterrower";
     }
 
     @Override
@@ -139,6 +150,8 @@ public class WaterRower implements Rower {
 
         context.unregisterReceiver(receiver);
         receiver = null;
+
+        closeTrace();
 
         this.input = null;
         this.output = null;
@@ -161,24 +174,69 @@ public class WaterRower implements Rower {
         }
 
         if (output.isReady()) {
-            output.write(mapper.nextRequest());
+            String write = mapper.nextRequest();
+            trace('>', write);
+            output.write(write);
         }
 
-        String message = input.read();
-        if (message != null) {
-            mapper.map(message, memory);
+        String read = input.read();
+        if (read != null) {
+            trace('<', read);
+            mapper.map(read, memory);
         }
 
         return true;
     }
 
+    private void initTrace() {
+        if (Preference.getBoolean(context, R.string.preference_hardware_trace).get()) {
+            try {
+                File dir = Environment.getExternalStoragePublicDirectory(Application.TAG);
+                dir.mkdirs();
+                dir.setReadable(true, false);
+                File file = new File(dir, TRACE_FILE);
+
+                trace = new BufferedWriter(new FileWriter(file));
+
+                // update media so file can be found via MTB
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+            } catch (Exception e) {
+                Log.e(Application.TAG, "cannot open trace", e);
+            }
+        }
+    }
+
+    private void trace(char prefix, String message) {
+        if (trace != null) {
+            try {
+                trace.write(prefix);
+                trace.write(message);
+                trace.newLine();
+                trace.flush();
+            } catch (IOException ex) {
+                Log.e(Application.TAG, "cannot write trace", ex);
+                trace = null;
+            }
+        }
+    }
+
+    private void closeTrace() {
+        if (trace != null) {
+            try {
+                trace.close();
+            } catch (IOException ignore) {
+            }
+            trace = null;
+        }
+    }
+
     private boolean initConnection() {
-        Log.i(Application.TAG, String.format("waterrower connecting to %s", device.getDeviceName()));
+        trace('#', String.format("connecting to %s", device.getDeviceName()));
 
         UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         this.connection = manager.openDevice(device);
         if (this.connection == null) {
-            Log.i(Application.TAG, "waterrower: cannot open connection");
+            trace('#', String.format("cannot open connection %s", device.getDeviceName()));
             return false;
         }
 
@@ -206,19 +264,19 @@ public class WaterRower implements Rower {
 
             if (out != null && in != null) {
                 if (this.connection.claimInterface(anInterface, true)) {
-                    Log.i(Application.TAG, String.format("waterrower: endpoints found %s", interfaceId));
+                    trace('#', String.format("claimed interface %s", interfaceId));
                     input = new Input(this.connection, in);
                     output = new Output(this.connection, out);
                     return true;
                 } else {
-                    Log.i(Application.TAG, String.format("waterrower: cannot claim interface %s", interfaceId));
+                    trace('#', String.format("cannot claim interface %s", interfaceId));
                 }
             } else {
-                Log.i(Application.TAG, String.format("waterrower: no suitable endpoints %s", interfaceId));
+                trace('#', String.format("no bulk endpoints %s", interfaceId));
             }
         }
 
-        Log.i(Application.TAG, "waterrower: no suitable interface");
+        trace('#', "no interface");
         this.connection.close();
         this.connection = null;
         return false;

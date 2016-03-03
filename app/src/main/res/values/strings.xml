@@ -104,7 +104,7 @@
 
     <string name="preference_hardware_trace" translatable="false">preference_hardware_trace</string>
     <string name="preference_hardware_trace_title">Trace</string>
-    <string name="preference_hardware_trace_summary">Write communication trace</string>
+    <string name="preference_hardware_trace_summary">Write protocol trace</string>
 
     <string name="preference_devices" translatable="false">preference_devices</string>
     <string name="preference_devices_title">Devices</string>

@@ -80,7 +80,7 @@
     <string name="preference_hardware_title">Hardware</string>
 
     <string name="preference_hardware_trace_title">Trace</string>
-    <string name="preference_hardware_trace_summary">Trace der Kommunikation schreiben</string>
+    <string name="preference_hardware_trace_summary">Protokoll mitschreiben</string>
 
     <string name="preference_devices_title">Geräte</string>
     <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>

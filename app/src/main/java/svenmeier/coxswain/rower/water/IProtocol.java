@@ -17,29 +17,9 @@ package svenmeier.coxswain.rower.water;
 
 import svenmeier.coxswain.gym.Snapshot;
 
-/**
- */
-public class Field {
+public interface IProtocol {
 
-    public String request;
+    void reset();
 
-    public String response;
-
-    protected Field() {
-    }
-
-    protected Field(String request, String response) {
-        this.request = request;
-        this.response = response;
-    }
-
-    protected void update(String message, Snapshot memory) {
-        if (this.response != null && message.startsWith(response)) {
-            onUpdate(message, memory);
-        }
-    }
-
-    protected void onUpdate(String message, Snapshot memory) {
-
-    }
+    void transfer(Snapshot memory);
 }

@@ -30,27 +30,21 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+import java.io.Writer;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Application;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
-import svenmeier.coxswain.rower.water.usb.Input;
-import svenmeier.coxswain.rower.water.usb.Output;
 
 /**
  * https://github.com/jamesnesfield/node-waterrower/blob/develop/Waterrower/index.js
  */
 public class WaterRower implements Rower {
-
-    private static final int SET_DATA_REQUEST_TYPE = 0x40;
-    private static final int SET_BAUD_RATE = 0x03;
 
     public static final String TRACE_FILE = "waterrower.trace";
 
@@ -61,17 +55,16 @@ public class WaterRower implements Rower {
     private final UsbDevice device;
 
     private UsbDeviceConnection connection;
+    private UsbEndpoint input;
+    private UsbEndpoint output;
 
-    private Input input;
-    private Output output;
+    private IProtocol protocol;
 
     private boolean detached;
 
     private BroadcastReceiver receiver;
 
-    private Mapper mapper;
-
-    private BufferedWriter trace;
+    private Writer trace;
 
     public WaterRower(Context context, Snapshot memory, UsbDevice device) {
         this.context = context;
@@ -110,24 +103,11 @@ public class WaterRower implements Rower {
         };
         context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
-        mapper = new Mapper() {
-            @Override
-            protected void onInit() {
-                trace('#', "init");
-            }
-
-            @Override
-            protected void onVersion(String version) {
-                trace('#', String.format("version %s", version));
-            }
-
-            @Override
-            protected void onError() {
-                trace('#', "error");
-            }
-        };
-        mapper.queue(mapper.INIT);
-        mapper.queue(mapper.VERSION);
+        if (true) {
+            protocol = new Protocol4(connection, input, output, trace);
+        } else {
+            protocol = new Protocol3(connection, input, trace);
+        }
 
         return true;
     }
@@ -164,7 +144,7 @@ public class WaterRower implements Rower {
 
     @Override
     public void reset() {
-        mapper.queue(mapper.RESET);
+        protocol.reset();
     }
 
     @Override
@@ -173,17 +153,7 @@ public class WaterRower implements Rower {
             return false;
         }
 
-        if (output.isReady()) {
-            String write = mapper.nextRequest();
-            trace('>', write);
-            output.write(write);
-        }
-
-        String read = input.read();
-        if (read != null) {
-            trace('<', read);
-            mapper.map(read, memory);
-        }
+        protocol.transfer(memory);
 
         return true;
     }
@@ -200,10 +170,14 @@ public class WaterRower implements Rower {
 
                 // update media so file can be found via MTB
                 context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+
+                return;
             } catch (Exception e) {
                 Log.e(Application.TAG, "cannot open trace", e);
             }
         }
+
+        trace = new NullWriter();
     }
 
     private void trace(char prefix, String message) {
@@ -211,7 +185,7 @@ public class WaterRower implements Rower {
             try {
                 trace.write(prefix);
                 trace.write(message);
-                trace.newLine();
+                trace.write('\n');
                 trace.flush();
             } catch (IOException ex) {
                 Log.e(Application.TAG, "cannot write trace", ex);
@@ -240,9 +214,6 @@ public class WaterRower implements Rower {
             return false;
         }
 
-        // set data request, baud rate, 115200
-        this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, 0x001A, 0, null, 0, 0);
-
         for (int i = 0; i < device.getInterfaceCount(); i++) {
             UsbInterface anInterface = device.getInterface(i);
             int interfaceId = anInterface.getId();
@@ -265,8 +236,8 @@ public class WaterRower implements Rower {
             if (out != null && in != null) {
                 if (this.connection.claimInterface(anInterface, true)) {
                     trace('#', String.format("claimed interface %s", interfaceId));
-                    input = new Input(this.connection, in);
-                    output = new Output(this.connection, out);
+                    input = in;
+                    output = out;
                     return true;
                 } else {
                     trace('#', String.format("cannot claim interface %s", interfaceId));

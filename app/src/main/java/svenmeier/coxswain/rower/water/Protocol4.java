@@ -31,7 +31,7 @@ public class Protocol4 implements IProtocol {
 
     private final ITransfer transfer;
 
-    private final Writer trace;
+    private final ITrace trace;
 
     private List<Field> fields = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class Protocol4 implements IProtocol {
 
     private String version;
 
-    public Protocol4(ITransfer transfer, Writer trace) {
+    public Protocol4(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
         transfer.setBaudRate(115200);
@@ -76,6 +76,8 @@ public class Protocol4 implements IProtocol {
                 fields.remove(this);
 
                 version = message.substring(response.length());
+
+                trace.comment("version " + version);
             }
         });
 
@@ -189,7 +191,7 @@ public class Protocol4 implements IProtocol {
         if (field != null) {
             String request = field.request;
 
-            trace('>', request);
+            trace.onOutput(request);
 
             byte[] buffer = transfer.buffer();
             int c = 0;
@@ -217,7 +219,7 @@ public class Protocol4 implements IProtocol {
                     if (response.length() > 0) {
                         String message = response.toString();
 
-                        trace('<', message);
+                        trace.onInput(message);
 
                         inputField(memory, message);
 
@@ -227,17 +229,6 @@ public class Protocol4 implements IProtocol {
                     response.append(character);
                 }
             }
-        }
-    }
-
-    private void trace(char prefix, String message) {
-        try {
-            trace.append(prefix);
-            trace.append(' ');
-            trace.append(message);
-            trace.write('\n');
-            trace.flush();
-        } catch (IOException ignore) {
         }
     }
 

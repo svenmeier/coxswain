@@ -40,6 +40,8 @@ import svenmeier.coxswain.Application;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.rower.water.usb.ITransfer;
+import svenmeier.coxswain.rower.water.usb.UsbTransfer;
 
 /**
  * https://github.com/jamesnesfield/node-waterrower/blob/develop/Waterrower/index.js
@@ -55,8 +57,8 @@ public class WaterRower implements Rower {
     private final UsbDevice device;
 
     private UsbDeviceConnection connection;
-    private UsbEndpoint input;
-    private UsbEndpoint output;
+
+    private ITransfer transfer;
 
     private IProtocol protocol;
 
@@ -103,11 +105,7 @@ public class WaterRower implements Rower {
         };
         context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
-        if (true) {
-            protocol = new Protocol4(connection, input, output, trace);
-        } else {
-            protocol = new Protocol3(connection, input, trace);
-        }
+        protocol = new Protocol4(transfer, trace);
 
         return true;
     }
@@ -133,8 +131,7 @@ public class WaterRower implements Rower {
 
         closeTrace();
 
-        this.input = null;
-        this.output = null;
+        this.transfer = null;
 
         if (this.connection != null) {
             this.connection.close();
@@ -168,7 +165,7 @@ public class WaterRower implements Rower {
 
                 trace = new BufferedWriter(new FileWriter(file));
 
-                // update media so file can be found via MTB
+                // input media so file can be found via MTB
                 context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
                 return;
@@ -236,8 +233,7 @@ public class WaterRower implements Rower {
             if (out != null && in != null) {
                 if (this.connection.claimInterface(anInterface, true)) {
                     trace('#', String.format("claimed interface %s", interfaceId));
-                    input = in;
-                    output = out;
+                    transfer = new UsbTransfer(connection, in, out);
                     return true;
                 } else {
                     trace('#', String.format("cannot claim interface %s", interfaceId));

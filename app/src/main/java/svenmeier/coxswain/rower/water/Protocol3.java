@@ -15,15 +15,11 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbEndpoint;
-
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
 import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.water.usb.ControlTransfer;
+import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 public class Protocol3 implements IProtocol {
 
@@ -31,16 +27,13 @@ public class Protocol3 implements IProtocol {
 
     private final Writer trace;
 
-    private final UsbDeviceConnection connection;
-    private final UsbEndpoint endpoint;
-    private byte[] buffer;
+    private final ITransfer transfer;
 
-    public Protocol3(UsbDeviceConnection connection, UsbEndpoint endpoint, Writer trace) {
-        this.connection = connection;
-        this.endpoint = endpoint;
-        this.buffer = new byte[endpoint.getMaxPacketSize()];
+    public Protocol3(ITransfer transfer, Writer trace) {
+        this.transfer = transfer;
 
-        new ControlTransfer(connection).setBaudRate(1200);
+        transfer.setBaudRate(1200);
+        transfer.setTimeout(TIMEOUT);
 
         this.trace = trace;
     }
@@ -51,8 +44,9 @@ public class Protocol3 implements IProtocol {
 
     @Override
     public void transfer(Snapshot memory) {
-        int length = connection.bulkTransfer(endpoint, buffer, buffer.length, TIMEOUT);
+        int length = transfer.bulkInput();
 
+        byte[] buffer = transfer.buffer();
         for (int c = 0; c < length; c++) {
             byte control = buffer[c];
 

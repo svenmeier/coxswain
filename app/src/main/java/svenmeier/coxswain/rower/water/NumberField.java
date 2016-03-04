@@ -54,7 +54,7 @@ public abstract class NumberField extends Field {
     }
 
     @Override
-    protected void onUpdate(String message, Snapshot memory) {
+    protected void onInput(String message, Snapshot memory) {
         onUpdate(fromAscii(message, response.length(), 16), memory);
     }
 

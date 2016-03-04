@@ -56,7 +56,7 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 	protected void onSaveRingtone(Uri ringtoneUri) {
 		super.onSaveRingtone(ringtoneUri);
 
-		// update summary
+		// input summary
 		notifyChanged();
 	}
 

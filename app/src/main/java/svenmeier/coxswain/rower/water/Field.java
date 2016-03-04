@@ -33,13 +33,16 @@ public class Field {
         this.response = response;
     }
 
-    protected void update(String message, Snapshot memory) {
+    protected void input(String message, Snapshot memory) {
         if (this.response != null && message.startsWith(response)) {
-            onUpdate(message, memory);
+            onInput(message, memory);
         }
     }
 
-    protected void onUpdate(String message, Snapshot memory) {
+    protected void onInput(String message, Snapshot memory) {
 
+    }
+
+    protected void onAfterOutput() {
     }
 }

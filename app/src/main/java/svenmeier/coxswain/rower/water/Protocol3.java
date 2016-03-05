@@ -33,6 +33,7 @@ public class Protocol3 implements IProtocol {
         transfer.setTimeout(TIMEOUT);
 
         this.trace = trace;
+        trace.comment("protocol 3");
     }
 
     @Override
@@ -109,7 +110,7 @@ public class Protocol3 implements IProtocol {
             string.append(hex[b & 0x0F]);
         }
 
-        trace.onOutput(string);
+        trace.onInput(string);
     }
 
     private static final char[] hex = "0123456789ABCDEF".toCharArray();

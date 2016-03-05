@@ -56,7 +56,7 @@ public class Protocol3Test {
 		assertEquals(Integer.valueOf(1), memory.strokeRate.get());
 		assertEquals(Integer.valueOf(20), memory.speed.get());
 
-		assertEquals(">FE 01>FE 01>FC 01>FC 01>FB 01>FB 01>FF 01 02>FF 01 02", trace.toString());
+		assertEquals("#protocol 3<FE 01<FE 01<FC 01<FC 01<FB 01<FB 01<FF 01 02<FF 01 02", trace.toString());
 	}
 
 }

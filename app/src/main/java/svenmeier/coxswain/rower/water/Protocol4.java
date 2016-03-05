@@ -54,6 +54,7 @@ public class Protocol4 implements IProtocol {
         transfer.setTimeout(TIMEOUT);
 
         this.trace = trace;
+        trace.comment("protocol 4");
 
         fields.add(new Field("USB", "_WR_") {
             /**

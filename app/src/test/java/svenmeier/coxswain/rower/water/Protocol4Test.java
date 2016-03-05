@@ -38,7 +38,7 @@ public class Protocol4Test {
 		protocol.transfer(memory);
 		assertEquals("42020", protocol.getVersion());
 
-		assertEquals(">USB<_WR_>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
+		assertEquals("#protocol 4>USB<_WR_>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
 	}
 
 	@Test
@@ -54,5 +54,6 @@ public class Protocol4Test {
 
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
 		protocol.transfer(memory);
+		assertEquals(Protocol4.VERSION_UNSUPPORTED, protocol.getVersion());
 	}
 }

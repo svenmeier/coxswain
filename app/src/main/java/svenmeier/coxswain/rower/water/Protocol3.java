@@ -48,33 +48,41 @@ public class Protocol3 implements IProtocol {
             byte control = buffer[c];
 
             switch (control) {
-                case (byte)0xFE:
+                case (byte)0xFB:
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
 
-                        memory.distance.set(memory.distance.get() + (int)buffer[++c]);
+                        memory.pulse.set(buffer[++c] & 0xFF);
                     }
                     continue;
                 case (byte)0xFC:
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
 
-                        memory.strokes.set(memory.strokes.get() + (int) buffer[++c]);
+                        memory.drive.set(false);
+                        memory.strokes.set(memory.strokes.get() + (buffer[++c] & 0xFF));
                     }
                     continue;
-                case (byte)0xFB:
+                case (byte)0xFD:
+                    if (c + 2 < length) {
+                        trace(buffer, c, 3);
+
+                        memory.drive.set(true);
+                    }
+                    continue;
+                case (byte)0xFE:
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
 
-                        memory.pulse.set((int) buffer[++c]);
+                        memory.distance.set(memory.distance.get() + (buffer[++c] & 0xFF) * 10);
                     }
                     continue;
                 case (byte)0xFF:
                     if (c + 2 < length) {
                         trace(buffer, c, 3);
 
-                        memory.strokeRate.set((int)buffer[++c]);
-                        memory.speed.set(((int)buffer[++c]) * 10);
+                        memory.strokeRate.set(buffer[++c] & 0xFF);
+                        memory.speed.set((buffer[++c] & 0xFF) * 10);
                     }
                     continue;
             }

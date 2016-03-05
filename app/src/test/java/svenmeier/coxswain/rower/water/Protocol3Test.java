@@ -21,11 +21,11 @@ public class Protocol3Test {
 
 		transfer.setupInput(new byte[]{(byte)0xFE, (byte)0x01});
 		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.distance.get());
+		assertEquals(Integer.valueOf(10), memory.distance.get());
 
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
 		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(2), memory.distance.get());
+		assertEquals(Integer.valueOf(20), memory.distance.get());
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFC, (byte) 0x01});

@@ -85,6 +85,12 @@ public class Protocol4 implements IProtocol {
             }
         });
 
+        fields.add(new Field(null, "PING") {
+            @Override
+            protected void onInput(String message, Snapshot memory) {
+            }
+        });
+
         fields.add(new Field(null, "ERROR") {
             @Override
             protected void onInput(String message, Snapshot memory) {
@@ -221,7 +227,7 @@ public class Protocol4 implements IProtocol {
     private void input(Snapshot memory) {
         int length = transfer.bulkInput();
         if (length > 0) {
-            boolean supported = false;
+            boolean recognized = false;
 
             byte[] buffer = transfer.buffer();
             StringBuilder response = new StringBuilder();
@@ -231,17 +237,19 @@ public class Protocol4 implements IProtocol {
                     if (response.length() > 0) {
                         String message = response.toString();
                         trace.onInput(message);
-                        inputField(memory, message);
+
+                        if (inputField(memory, message)) {
+                            recognized = true;
+                        }
 
                         response.setLength(0);
-                        supported = true;
                     }
                 } else {
                     response.append(character);
                 }
             }
 
-            if (supported == false) {
+            if (recognized == false && version == VERSION_UNKOWN) {
                 version = VERSION_UNSUPPORTED;
                 trace.comment("unsupported version");
             }

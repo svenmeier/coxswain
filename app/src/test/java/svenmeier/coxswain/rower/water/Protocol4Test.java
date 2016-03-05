@@ -34,11 +34,25 @@ public class Protocol4Test {
 		protocol.transfer(memory);
 		assertEquals("42020", protocol.getVersion());
 
-		assertEquals(">USB<_WR_>IV?<IV42020#version 42020>IRD140", trace.toString());
+		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
+		protocol.transfer(memory);
+		assertEquals("42020", protocol.getVersion());
+
+		assertEquals(">USB<_WR_>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
+	}
+
+	@Test
+	public void unsupported() throws Exception {
+		Snapshot memory = new Snapshot();
+
+		TestTransfer transfer = new TestTransfer();
+		TestTrace trace = new TestTrace();
+
+		Protocol4 protocol = new Protocol4(transfer, trace);
+		protocol.setOutputThrottle(0);
+		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
 
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
 		protocol.transfer(memory);
-
-		assertEquals(Protocol4.VERSION_UNSUPPORTED, protocol.getVersion());
 	}
 }

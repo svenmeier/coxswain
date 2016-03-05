@@ -25,6 +25,10 @@ import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 public class Protocol4 implements IProtocol {
 
+    public static final String VERSION_UNKOWN = null;
+
+    public static final String VERSION_UNSUPPORTED = "";
+
     private static final int TIMEOUT = 50;
 
     private static final long DEFAULT_OUTPUT_THROTTLE = 25;
@@ -41,7 +45,7 @@ public class Protocol4 implements IProtocol {
 
     private long lastOutput = 0;
 
-    private String version;
+    private String version = VERSION_UNKOWN;
 
     public Protocol4(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
@@ -168,17 +172,24 @@ public class Protocol4 implements IProtocol {
         return null;
     }
 
-    private void inputField(Snapshot memory, String message) {
+    private boolean inputField(Snapshot memory, String message) {
+
         for (int f = 0; f < fields.size(); f++) {
-            fields.get(f).input(message, memory);
+            if (fields.get(f).input(message, memory)) {
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public void transfer(Snapshot memory) {
+    public boolean transfer(Snapshot memory) {
 
         input(memory);
 
         output();
+
+        return (version != VERSION_UNSUPPORTED);
     }
 
     private void output() {
@@ -210,24 +221,29 @@ public class Protocol4 implements IProtocol {
     private void input(Snapshot memory) {
         int length = transfer.bulkInput();
         if (length > 0) {
-            byte[] buffer = transfer.buffer();
+            boolean supported = false;
 
+            byte[] buffer = transfer.buffer();
             StringBuilder response = new StringBuilder();
             for (int c = 0; c < length; c++) {
                 char character = (char)buffer[c];
                 if (character == '\n' || character == '\r') {
                     if (response.length() > 0) {
                         String message = response.toString();
-
                         trace.onInput(message);
-
                         inputField(memory, message);
 
                         response.setLength(0);
+                        supported = true;
                     }
                 } else {
                     response.append(character);
                 }
+            }
+
+            if (supported == false) {
+                version = VERSION_UNSUPPORTED;
+                trace.comment("unsupported version");
             }
         }
     }

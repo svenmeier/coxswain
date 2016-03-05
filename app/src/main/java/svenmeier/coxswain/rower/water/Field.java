@@ -33,10 +33,14 @@ public class Field {
         this.response = response;
     }
 
-    protected void input(String message, Snapshot memory) {
+    protected boolean input(String message, Snapshot memory) {
         if (this.response != null && message.startsWith(response)) {
             onInput(message, memory);
+
+            return true;
         }
+
+        return false;
     }
 
     protected void onInput(String message, Snapshot memory) {

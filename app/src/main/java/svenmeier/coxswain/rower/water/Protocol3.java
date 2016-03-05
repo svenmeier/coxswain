@@ -15,9 +15,6 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import java.io.IOException;
-import java.io.Writer;
-
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 
@@ -25,11 +22,11 @@ public class Protocol3 implements IProtocol {
 
     private static final int TIMEOUT = 50;
 
-    private final Writer trace;
+    private final ITrace trace;
 
     private final ITransfer transfer;
 
-    public Protocol3(ITransfer transfer, Writer trace) {
+    public Protocol3(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
         transfer.setBaudRate(1200);
@@ -43,7 +40,7 @@ public class Protocol3 implements IProtocol {
     }
 
     @Override
-    public void transfer(Snapshot memory) {
+    public boolean transfer(Snapshot memory) {
         int length = transfer.bulkInput();
 
         byte[] buffer = transfer.buffer();
@@ -86,20 +83,26 @@ public class Protocol3 implements IProtocol {
 
             // TODO calculate energy
         }
+
+        return true;
     }
 
     private void trace(byte[] buffer, int start, int length) {
-        try {
-            trace.write("< ");
+        StringBuilder string = new StringBuilder(length * 3);
 
-            for (int c = 0; c < length; c++) {
-                trace.write(Byte.toString(buffer[start + c]));
-                trace.write(' ');
+        for (int c = 0; c < length; c++) {
+            if (c > 0) {
+                string.append(' ');
             }
 
-            trace.write('\n');
-            trace.flush();
-        } catch (IOException ignore) {
+            int b = buffer[start + c] & 0xFF;
+
+            string.append(hex[b >>> 4]);
+            string.append(hex[b & 0x0F]);
         }
+
+        trace.onOutput(string);
     }
+
+    private static final char[] hex = "0123456789ABCDEF".toCharArray();
 }

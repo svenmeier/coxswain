@@ -148,7 +148,9 @@ public class WaterRower implements Rower {
             return false;
         }
 
-        protocol.transfer(memory);
+        if (protocol.transfer(memory) == false) {
+            protocol = new Protocol3(transfer, trace);
+        }
 
         return true;
     }

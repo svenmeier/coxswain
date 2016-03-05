@@ -19,11 +19,11 @@ import svenmeier.coxswain.gym.Snapshot;
 
 public interface ITrace {
 
-    void comment(String string);
+    void comment(CharSequence string);
 
-    void onOutput(String string);
+    void onOutput(CharSequence string);
 
-    void onInput(String string);
+    void onInput(CharSequence string);
 
     void close();
 }

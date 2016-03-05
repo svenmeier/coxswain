@@ -21,5 +21,5 @@ public interface IProtocol {
 
     void reset();
 
-    void transfer(Snapshot memory);
+    boolean transfer(Snapshot memory);
 }

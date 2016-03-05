@@ -15,8 +15,9 @@ public class Protocol3Test {
 		Snapshot memory = new Snapshot();
 
 		TestTransfer transfer = new TestTransfer();
+		TestTrace trace = new TestTrace();
 
-		Protocol3 protocol = new Protocol3(transfer, new NullWriter());
+		Protocol3 protocol = new Protocol3(transfer, trace);
 
 		transfer.setupInput(new byte[]{(byte)0xFE, (byte)0x01});
 		protocol.transfer(memory);
@@ -54,6 +55,8 @@ public class Protocol3Test {
 		protocol.transfer(memory);
 		assertEquals(Integer.valueOf(1), memory.strokeRate.get());
 		assertEquals(Integer.valueOf(20), memory.speed.get());
+
+		assertEquals(">FE 01>FE 01>FC 01>FC 01>FB 01>FB 01>FF 01 02>FF 01 02", trace.toString());
 	}
 
 }

@@ -49,25 +49,25 @@ public class FileTrace implements ITrace {
     }
 
     @Override
-    public void comment(String string) {
+    public void comment(CharSequence string) {
         trace('#', string);
     }
 
     @Override
-    public void onOutput(String string) {
+    public void onOutput(CharSequence string) {
         trace('>', string);
     }
 
     @Override
-    public void onInput(String string) {
+    public void onInput(CharSequence string) {
         trace('<', string);
     }
 
-    private void trace(char prefix, String message) {
+    private void trace(char prefix, CharSequence message) {
         try {
-            writer.write(prefix);
-            writer.write(message);
-            writer.write('\n');
+            writer.append(prefix);
+            writer.append(message);
+            writer.append('\n');
             writer.flush();
         } catch (IOException ignore) {
         }

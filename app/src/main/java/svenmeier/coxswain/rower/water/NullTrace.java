@@ -18,17 +18,17 @@ package svenmeier.coxswain.rower.water;
 public class NullTrace implements ITrace {
 
     @Override
-    public void comment(String string) {
+    public void comment(CharSequence string) {
 
     }
 
     @Override
-    public void onOutput(String string) {
+    public void onOutput(CharSequence string) {
 
     }
 
     @Override
-    public void onInput(String string) {
+    public void onInput(CharSequence string) {
 
     }
 

@@ -20,7 +20,7 @@ import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 public class Protocol3 implements IProtocol {
 
-    private static final int TIMEOUT = 50;
+    private static final int TIMEOUT = 100;
 
     private final ITrace trace;
 
@@ -46,9 +46,10 @@ public class Protocol3 implements IProtocol {
 
         byte[] buffer = transfer.buffer();
         for (int c = 0; c < length; c++) {
-            byte control = buffer[c];
 
-            switch (control) {
+            // TODO calculate energy
+
+            switch (buffer[c]) {
                 case (byte)0xFB:
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
@@ -57,16 +58,17 @@ public class Protocol3 implements IProtocol {
                     }
                     continue;
                 case (byte)0xFC:
-                    if (c + 1 < length) {
-                        trace(buffer, c, 2);
+                    trace(buffer, c, 1);
 
-                        memory.drive.set(false);
-                        memory.strokes.set(memory.strokes.get() + (buffer[++c] & 0xFF));
-                    }
+                    memory.drive.set(false);
+                    memory.strokes.set(memory.strokes.get() + 1);
                     continue;
                 case (byte)0xFD:
                     if (c + 2 < length) {
                         trace(buffer, c, 3);
+
+                        // voltage not used
+                        c += 2;
 
                         memory.drive.set(true);
                     }
@@ -89,8 +91,6 @@ public class Protocol3 implements IProtocol {
             }
 
             trace(buffer, c, 1);
-
-            // TODO calculate energy
         }
 
         return true;

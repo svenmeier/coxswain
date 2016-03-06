@@ -12,7 +12,11 @@ class TestTransfer implements ITransfer {
 	public int length = 0;
 
 	@Override
-	public void setBaudRate(int baudRate) {
+	public void setBaudrate(int baudrate) {
+	}
+
+	@Override
+	public void setData(int dataBits, int parity, int stopBits, boolean tx) {
 	}
 
 	@Override
@@ -34,19 +38,23 @@ class TestTransfer implements ITransfer {
 	}
 
 	public void assertOutput(String string) {
-		assertEquals(this.length, string.length());
+		assertEquals(string.length(), this.length);
 
 		for (int b = 0; b < string.length(); b++) {
-			assertEquals(this.buffer[b], (byte) string.charAt(b));
+			assertEquals((byte) string.charAt(b), this.buffer[b]);
 		}
+
+		this.length = 0;
 	}
 
 	public void assertOutput(byte[] buffer) {
-		assertEquals(this.length, buffer.length);
+		assertEquals(buffer.length, this.length);
 
 		for (int b = 0; b < buffer.length; b++) {
-			assertEquals(this.buffer[b], buffer[b]);
+			assertEquals(buffer[b], this.buffer[b]);
 		}
+
+		this.length = 0;
 	}
 
 	@Override
@@ -56,7 +64,11 @@ class TestTransfer implements ITransfer {
 
 	@Override
 	public int bulkInput() {
-		return this.length;
+		int length = this.length;
+
+		this.length = 0;
+
+		return length;
 	}
 
 	@Override

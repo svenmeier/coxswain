@@ -15,8 +15,6 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,26 +48,35 @@ public class Protocol4 implements IProtocol {
     public Protocol4(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
-        transfer.setBaudRate(115200);
+        transfer.setBaudrate(115200);
         transfer.setTimeout(TIMEOUT);
 
         this.trace = trace;
         trace.comment("protocol 4");
 
         fields.add(new Field("USB", "_WR_") {
+
             /**
-             * Remove on input and setup other fields.
+             * Clear request after first output.
+             */
+            @Override
+            protected void onAfterOutput() {
+                this.request = null;
+            }
+
+            /**
+             * Setup other fields.
              */
             @Override
             protected void onInput(String message, Snapshot memory) {
                 fields.remove(this);
 
-                init();
+                initCycle();
             }
         });
     }
 
-    private void init() {
+    private void initCycle() {
         cycle = 0;
 
         fields.add(new Field("IV?", "IV") {

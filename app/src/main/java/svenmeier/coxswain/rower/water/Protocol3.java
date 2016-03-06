@@ -31,9 +31,9 @@ public class Protocol3 implements IProtocol {
     public Protocol3(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
+        transfer.setTimeout(TIMEOUT);
         transfer.setBaudrate(1200);
         transfer.setData(8, ITransfer.PARITY_NONE, 1, false);
-        transfer.setTimeout(TIMEOUT);
 
         this.trace = trace;
         trace.comment("protocol 3");

@@ -30,21 +30,21 @@ public class UsbTransfer implements ITransfer {
 		this.buffer = new byte[Math.min(output.getMaxPacketSize(), input.getMaxPacketSize())];
 	}
 
+	@Override
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
 	public void setBaudrate(int baudrate) {
 		int divisor = divisor(baudrate);
 
-		this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, divisor, 0, null, 0, 0);
+		this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_BAUD_RATE, divisor, 0, null, 0, timeout);
 	}
 
 	public void setData(int dataBits, int parity, int stopBits, boolean tx) {
 		int data = data(dataBits, parity, stopBits, tx);
 
-		this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_DATA, data, 0, null, 0, 0);
-	}
-
-	@Override
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
+		this.connection.controlTransfer(SET_DATA_REQUEST_TYPE, SET_DATA, data, 0, null, 0, timeout);
 	}
 
 	@Override

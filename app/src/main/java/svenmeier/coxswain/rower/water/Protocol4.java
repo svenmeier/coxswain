@@ -48,8 +48,8 @@ public class Protocol4 implements IProtocol {
     public Protocol4(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
-        transfer.setBaudrate(115200);
         transfer.setTimeout(TIMEOUT);
+        transfer.setBaudrate(115200);
 
         this.trace = trace;
         trace.comment("protocol 4");

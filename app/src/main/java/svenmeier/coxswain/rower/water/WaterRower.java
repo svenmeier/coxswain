@@ -37,6 +37,7 @@ import java.io.Writer;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Application;
+import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
@@ -80,6 +81,8 @@ public class WaterRower implements Rower {
         }
 
         initTrace();
+
+        trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         if (initConnection() == false) {
             closeTrace();

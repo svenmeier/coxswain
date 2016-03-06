@@ -194,9 +194,13 @@ public class Protocol4 implements IProtocol {
 
         input(memory);
 
-        output();
+        if (version == VERSION_UNSUPPORTED) {
+            return false;
+        } else {
+            output();
 
-        return (version != VERSION_UNSUPPORTED);
+            return true;
+        }
     }
 
     private void output() {
@@ -252,7 +256,7 @@ public class Protocol4 implements IProtocol {
 
             if (recognized == false && version == VERSION_UNKOWN) {
                 version = VERSION_UNSUPPORTED;
-                trace.comment("unsupported version");
+                trace.comment("unsupported");
             }
         }
     }

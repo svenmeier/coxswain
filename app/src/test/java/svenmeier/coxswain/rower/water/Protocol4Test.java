@@ -55,5 +55,7 @@ public class Protocol4Test {
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
 		protocol.transfer(memory);
 		assertEquals(Protocol4.VERSION_UNSUPPORTED, protocol.getVersion());
+
+		assertEquals("#protocol 4#unsupported", trace.toString());
 	}
 }

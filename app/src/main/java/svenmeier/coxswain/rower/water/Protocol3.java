@@ -26,6 +26,8 @@ public class Protocol3 implements IProtocol {
 
     private final ITransfer transfer;
 
+    private int distanceInDecimeters;
+
     public Protocol3(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
@@ -38,6 +40,7 @@ public class Protocol3 implements IProtocol {
 
     @Override
     public void reset() {
+        distanceInDecimeters = 0;
     }
 
     @Override
@@ -77,7 +80,9 @@ public class Protocol3 implements IProtocol {
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
 
-                        memory.distance.set(memory.distance.get() + (buffer[++c] & 0xFF) * 10);
+                        distanceInDecimeters += (buffer[++c] & 0xFF);
+
+                        memory.distance.set(distanceInDecimeters / 10);
                     }
                     continue;
                 case (byte)0xFF:

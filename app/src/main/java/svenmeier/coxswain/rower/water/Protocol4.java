@@ -45,48 +45,49 @@ public class Protocol4 implements IProtocol {
 
     private String version = VERSION_UNKOWN;
 
-    public Protocol4(ITransfer transfer, ITrace trace) {
+    public Protocol4(ITransfer transfer, ITrace aTrace) {
         this.transfer = transfer;
 
         transfer.setTimeout(TIMEOUT);
         transfer.setBaudrate(115200);
 
-        this.trace = trace;
-        trace.comment("protocol 4");
+        this.trace = aTrace;
+        aTrace.comment("protocol 4");
 
         fields.add(new Field("USB", "_WR_") {
 
             /**
-             * Clear request after first output.
+             * Output once only.
              */
             @Override
             protected void onAfterOutput() {
                 this.request = null;
             }
 
-            /**
-             * Setup other fields.
-             */
             @Override
             protected void onInput(String message, Snapshot memory) {
-                fields.remove(this);
+                onHandshake();
 
-                initCycle();
+                trace.comment("handshake complete");
             }
         });
     }
 
-    private void initCycle() {
+    private void onHandshake() {
         cycle = 0;
 
         fields.add(new Field("IV?", "IV") {
+
             /**
-             * Remove on input and keep version.
+             * Output once only.
              */
             @Override
-            protected void onInput(String message, Snapshot memory) {
-                fields.remove(this);
+            protected void onAfterOutput() {
+                this.request = null;
+            }
 
+            @Override
+            protected void onInput(String message, Snapshot memory) {
                 version = message.substring(response.length());
 
                 trace.comment("version " + version);
@@ -270,16 +271,17 @@ public class Protocol4 implements IProtocol {
 
     @Override
     public void reset() {
-        cycle = 0;
-
-        fields.add(new Field("RESET", null) {
+        Field reset = new Field("RESET", null) {
             /**
-             * Remove after output.
+             * Remove immediately.
              */
             @Override
             protected void onAfterOutput() {
                 fields.remove(this);
             }
-        });
+        };
+        fields.add(reset);
+
+        cycle = fields.indexOf(reset);
     }
 }

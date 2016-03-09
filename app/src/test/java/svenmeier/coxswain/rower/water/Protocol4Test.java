@@ -38,7 +38,7 @@ public class Protocol4Test {
 		protocol.transfer(memory);
 		assertEquals("42020", protocol.getVersion());
 
-		assertEquals("#protocol 4>USB<_WR_>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
+		assertEquals("#protocol 4>USB<_WR_#handshake complete>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
 	}
 
 	@Test

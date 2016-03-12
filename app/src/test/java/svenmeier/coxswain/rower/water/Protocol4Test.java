@@ -18,7 +18,13 @@ public class Protocol4Test {
 		TestTrace trace = new TestTrace();
 
 		Protocol4 protocol = new Protocol4(transfer, trace);
+		assertEquals(115200, transfer.baudrate);
+		assertEquals(0, transfer.dataBits);
+		assertEquals(TestTransfer.PARITY_NONE, transfer.parity);
+		assertEquals(0, transfer.stopBits);
+		assertEquals(false, transfer.tx);
 		protocol.setOutputThrottle(0);
+
 		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
 
 		protocol.transfer(memory);

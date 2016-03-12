@@ -8,15 +8,26 @@ import static org.junit.Assert.assertEquals;
  */
 class TestTransfer implements ITransfer {
 
-	public byte[] buffer = new byte[256];
+	public int baudrate;
 	public int length = 0;
+	public int dataBits;
+	public int parity;
+	public int stopBits;
+	public boolean tx;
+
+	public byte[] buffer = new byte[256];
 
 	@Override
 	public void setBaudrate(int baudrate) {
+		this.baudrate = baudrate;
 	}
 
 	@Override
 	public void setData(int dataBits, int parity, int stopBits, boolean tx) {
+		this.dataBits = dataBits;
+		this.parity = parity;
+		this.stopBits = stopBits;
+		this.tx = tx;
 	}
 
 	@Override

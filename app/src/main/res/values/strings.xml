@@ -92,6 +92,10 @@
 
     <string name="preference_integration_title">Integration</string>
 
+    <string name="preference_integration_headsup" translatable="false">preference_integration_headsup</string>
+    <string name="preference_integration_headsup_title">Notification</string>
+    <string name="preference_integration_headsup_summary">Show heads-up notification while other Apps (>= Android 4.1)</string>
+
     <string name="preference_integration_intent" translatable="false">preference_integration_intent</string>
     <string name="preference_integration_intent_title">Intent</string>
     <string name="preference_integration_intent_summary">Open intent on program start</string>

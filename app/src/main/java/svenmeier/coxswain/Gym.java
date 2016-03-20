@@ -97,6 +97,15 @@ public class Gym {
         repository.insert(program);
     }
 
+    public boolean hasListener(Class<?> clazz) {
+        for (Listener listener : listeners) {
+            if (clazz.isInstance(listener)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addListener(Listener listener) {
         listeners.add(listener);
     }

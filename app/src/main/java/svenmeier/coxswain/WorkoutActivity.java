@@ -35,7 +35,7 @@ import svenmeier.coxswain.view.ValueView;
 
 /**
  */
-public class WorkoutActivity extends Activity implements View.OnSystemUiVisibilityChangeListener {
+public class WorkoutActivity extends Activity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener {
 
     private static final int DELAY_MILLIS = 250;
 
@@ -58,8 +58,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     private ValueView pulseView;
 
     private LevelView levelView;
-
-    private Gym.Listener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,28 +92,26 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     public void onResume() {
         super.onResume();
 
-        listener = new Gym.Listener() {
-            @Override
-            public void changed() {
-                if (gym.program == null) {
-                    finish();
-                    return;
-                }
-
-                updateValues();
-                updateLevel();
-            }
-        };
-        listener.changed();
-        gym.addListener(listener);
+        changed();
+        gym.addListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        gym.removeListener(listener);
-        listener = null;
+        gym.removeListener(this);
+    }
+
+    @Override
+    public void changed() {
+        if (gym.program == null) {
+            finish();
+            return;
+        }
+
+        updateValues();
+        updateLevel();
     }
 
     @Override

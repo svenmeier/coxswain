@@ -110,10 +110,6 @@
     <string name="preference_hardware_trace_title">Trace</string>
     <string name="preference_hardware_trace_summary">Write protocol trace</string>
 
-    <string name="preference_hardware_legacy" translatable="false">preference_hardware_legacy</string>
-    <string name="preference_hardware_legacy_title">Protocol</string>
-    <string name="preference_hardware_legacy_summary">Assume version III</string>
-
     <string name="preference_devices" translatable="false">preference_devices</string>
     <string name="preference_devices_title">Devices</string>
     <string name="preference_devices_summary">List all connected USB devices</string>

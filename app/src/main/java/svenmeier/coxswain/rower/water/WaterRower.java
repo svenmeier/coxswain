@@ -106,11 +106,8 @@ public class WaterRower implements Rower {
         };
         context.registerReceiver(receiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
 
-        if (Preference.getBoolean(context, R.string.preference_hardware_legacy).get()) {
-            protocol = new Protocol3(transfer, trace);
-        } else {
-            protocol = new Protocol4(transfer, trace);
-        }
+        // assume protocol 4 for a start
+        protocol = new Protocol4(transfer, trace);
 
         return true;
     }

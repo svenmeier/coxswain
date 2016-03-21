@@ -12,8 +12,8 @@ android {
         applicationId "svenmeier.coxswain"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 14
-        versionName "1.8-RC6"
+        versionCode 15
+        versionName "1.8"
     }
     buildTypes {
         release {

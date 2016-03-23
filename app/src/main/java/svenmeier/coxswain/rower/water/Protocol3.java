@@ -33,7 +33,7 @@ public class Protocol3 implements IProtocol {
 
         transfer.setTimeout(TIMEOUT);
         transfer.setBaudrate(1200);
-        transfer.setData(8, ITransfer.PARITY_NONE, 1, false);
+        transfer.setData(8, ITransfer.PARITY_NONE, ITransfer.STOP_BIT_1_0, false);
 
         this.trace = trace;
         trace.comment("protocol 3");

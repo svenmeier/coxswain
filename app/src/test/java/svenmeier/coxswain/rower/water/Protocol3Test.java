@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +26,7 @@ public class Protocol3Test {
 		assertEquals(1200, transfer.baudrate);
 		assertEquals(8, transfer.dataBits);
 		assertEquals(TestTransfer.PARITY_NONE, transfer.parity);
-		assertEquals(1, transfer.stopBits);
+		assertEquals(ITransfer.STOP_BIT_1_0, transfer.stopBits);
 		assertEquals(false, transfer.tx);
 
 		// distance +2.5

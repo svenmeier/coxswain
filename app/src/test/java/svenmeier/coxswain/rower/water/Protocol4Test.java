@@ -3,6 +3,7 @@ package svenmeier.coxswain.rower.water;
 import org.junit.Test;
 
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,7 +22,7 @@ public class Protocol4Test {
 		assertEquals(115200, transfer.baudrate);
 		assertEquals(0, transfer.dataBits);
 		assertEquals(TestTransfer.PARITY_NONE, transfer.parity);
-		assertEquals(0, transfer.stopBits);
+		assertEquals(ITransfer.STOP_BIT_1_0, transfer.stopBits);
 		assertEquals(false, transfer.tx);
 		protocol.setOutputThrottle(0);
 

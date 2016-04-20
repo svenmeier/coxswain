@@ -1,10 +1,11 @@
 package svenmeier.coxswain;
 
+import android.app.Application;
 import android.preference.PreferenceManager;
 
 /**
  */
-public class Application extends android.app.Application {
+public class Coxswain extends Application {
 
 	public static String TAG = "coxswain";
 
@@ -14,7 +15,7 @@ public class Application extends android.app.Application {
 	public void onCreate() {
 		super.onCreate();
 
-		PreferenceManager.setDefaultValues(Application.this, R.xml.preferences, true);
+		PreferenceManager.setDefaultValues(Coxswain.this, R.xml.preferences, true);
 
 		gym = Gym.instance(this);
 
@@ -29,7 +30,7 @@ public class Application extends android.app.Application {
 
 		@Override
 		public void run() {
-			gym.defaultPrograms();
+			gym.defaults();
 		}
 	}
 }

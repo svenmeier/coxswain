@@ -87,15 +87,15 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-22" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" name="support-v13-22.0.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.0.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
-    <orderEntry type="library" exported="" name="support-v13-22.0.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="mockable-android-22" level="project" />
-    <orderEntry type="module" module-name="propoid-db" exported="" />
-    <orderEntry type="module" module-name="propoid-core" exported="" />
     <orderEntry type="module" module-name="propoid-ui" exported="" />
+    <orderEntry type="module" module-name="propoid-core" exported="" />
+    <orderEntry type="module" module-name="propoid-db" exported="" />
     <orderEntry type="module" module-name="propoid-util" exported="" />
   </component>
 </module>

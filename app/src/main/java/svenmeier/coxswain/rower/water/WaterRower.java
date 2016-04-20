@@ -25,18 +25,10 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-
 import propoid.util.content.Preference;
-import svenmeier.coxswain.Application;
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
@@ -166,7 +158,7 @@ public class WaterRower implements Rower {
 
                 return;
             } catch (Exception e) {
-                Log.e(Application.TAG, "cannot open trace", e);
+                Log.e(Coxswain.TAG, "cannot open trace", e);
             }
         }
 

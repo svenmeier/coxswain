@@ -19,14 +19,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import svenmeier.coxswain.Application;
+import svenmeier.coxswain.Coxswain;
 
 public class FileTrace implements ITrace {
 
@@ -35,7 +34,7 @@ public class FileTrace implements ITrace {
     private final BufferedWriter writer;
 
     public FileTrace(Context context) throws IOException {
-        File dir = Environment.getExternalStoragePublicDirectory(Application.TAG);
+        File dir = Environment.getExternalStoragePublicDirectory(Coxswain.TAG);
         dir.mkdirs();
         dir.setReadable(true, false);
 

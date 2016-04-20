@@ -67,7 +67,7 @@ public class Gym {
         repository.index(workout, false, Order.descending(workout.start));
     }
 
-    public void defaultPrograms() {
+    public void defaults() {
         Match<Program> query = repository.query(new Program());
         if (query.count() > 0) {
             return;

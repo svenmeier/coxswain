@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2">
+  <Activities>
+    <Activity Sport="Other">
+      <Id>2015-06-15T00:01:00.000Z</Id>
+      <Lap StartTime="2015-06-15T00:01:00.000Z">
+        <TotalTimeSeconds>2</TotalTimeSeconds>
+        <DistanceMeters>6</DistanceMeters>
+        <Calories>3</Calories>
+        <Intensity>Active</Intensity>
+        <TriggerMethod>Manual</TriggerMethod>
+        <Track>
+          <Trackpoint>
+            <Time>2015-06-15T00:01:00.000Z</Time>
+            <HeartRateBpm>
+              <Value>80</Value>
+            </HeartRateBpm>
+            <Cadence>25</Cadence>
+            <Extensions>
+              <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
+                <Speed>4.5</Speed>
+              </TPX>
+            </Extensions>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-06-15T00:01:01.000Z</Time>
+            <HeartRateBpm>
+              <Value>81</Value>
+            </HeartRateBpm>
+            <Cadence>26</Cadence>
+            <Extensions>
+              <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
+                <Speed>4.51</Speed>
+              </TPX>
+            </Extensions>
+          </Trackpoint>
+          <Trackpoint>
+            <Time>2015-06-15T00:01:02.000Z</Time>
+            <HeartRateBpm>
+              <Value>82</Value>
+            </HeartRateBpm>
+            <Cadence>27</Cadence>
+            <Extensions>
+              <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
+                <Speed>4.52</Speed>
+              </TPX>
+            </Extensions>
+          </Trackpoint>
+        </Track>
+        <Extensions>
+          <LX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
+            <Steps>2</Steps>
+          </LX>
+        </Extensions>
+      </Lap>
+      <Notes>Created by Coxswain</Notes>
+      <Training VirtualPartner="true">
+        <Plan Type="Workout" IntervalWorkout="true">
+          <Name>Test</Name>
+        </Plan>
+      </Training>
+    </Activity>
+  </Activities>
+</TrainingCenterDatabase>

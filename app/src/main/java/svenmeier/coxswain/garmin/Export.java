@@ -98,8 +98,11 @@ public class Export implements Runnable {
 		File file = new File(dir, getFileName());
 
 		Writer writer = new BufferedWriter(new FileWriter(file));
-
-		new Workout2TCX(writer).document(workout, snapshots.list());
+		try {
+			new Workout2TCX(writer).document(workout, snapshots.list());
+		} finally {
+			writer.close();
+		}
 
 		return file;
 	}

@@ -1,5 +1,6 @@
 <resources>
     <string name="action_mock">Mock</string>
+    <string name="action_export">Exportieren</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
     <string name="action_ok">OK</string>
@@ -35,6 +36,9 @@
     <string name="performance">Leistung</string>
 
     <string name="segments">Segmente</string>
+
+    <string name="export_finished">Exported to %s</string>
+    <string name="export_failed">Export failed</string>
 
     <string name="preference_stroke_ratio_title">Schlag-Verhältnis</string>
     <string name="preference_stroke_ratio_summary">Schlag-Verhältnis 1:%s</string>

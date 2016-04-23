@@ -24,6 +24,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
+import svenmeier.coxswain.garmin.Export;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.TimelineView;
@@ -111,10 +113,19 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_snapshots, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_export:
+                new Export(this).start(workout);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

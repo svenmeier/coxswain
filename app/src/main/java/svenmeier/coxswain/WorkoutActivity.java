@@ -79,9 +79,9 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         durationView = (ValueView) findViewById(R.id.target_duration);
         distanceView = (ValueView) findViewById(R.id.target_distance);
         strokesView = (ValueView) findViewById(R.id.target_strokes);
-        speedView = (ValueView) findViewById(R.id.target_speed);
-        strokeRateView = (ValueView) findViewById(R.id.target_strokeRate);
-        pulseView = (ValueView) findViewById(R.id.target_pulse);
+        speedView = (ValueView) findViewById(R.id.limit_speed);
+        strokeRateView = (ValueView) findViewById(R.id.limit_strokeRate);
+        pulseView = (ValueView) findViewById(R.id.limit_pulse);
 
         levelView = (LevelView) findViewById(R.id.workout_progress);
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <clip xmlns:android="http://schemas.android.com/apk/res/android"
-    android:clipOrientation="vertical"
-    android:gravity="top"
+    android:clipOrientation="horizontal"
+    android:gravity="left"
     >
     <color android:color="#900000FF" />
 </clip>

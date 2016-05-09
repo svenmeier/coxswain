@@ -144,6 +144,10 @@ public class Gym {
         return repository.query(propotype, all(greaterEqual(propotype.start, from), lessThan(propotype.start, to)));
     }
 
+    public void deleteWorkout(Workout workout) {
+        repository.delete(workout);
+    }
+
     public void mergeWorkout(Workout workout) {
         repository.merge(workout);
     }

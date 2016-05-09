@@ -21,17 +21,22 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
+import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Workout;
 
 
@@ -84,11 +89,36 @@ public class WorkoutsFragment extends Fragment {
         }
 
         @Override
-        protected void bind(int position, View view, Workout workout) {
+        protected void bind(int position, View view, final Workout workout) {
             Index index = Index.get(view);
 
             TextView startView = index.get(R.id.workout_start);
             startView.setText(DateUtils.formatDateTime(getActivity(), workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+
+            final ImageButton menuButton = index.get(R.id.workout_menu);
+            menuButton.setFocusable(false);
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popup = new PopupMenu(getActivity(), menuButton);
+                    popup.getMenuInflater().inflate(R.menu.menu_workout_item, popup.getMenu());
+
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.action_delete:
+                                    gym.deleteWorkout(workout);
+
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+                    });
+
+                    popup.show();
+                }
+            });
 
             TextView nameView = index.get(R.id.workout_name);
             nameView.setText(workout.name.get());

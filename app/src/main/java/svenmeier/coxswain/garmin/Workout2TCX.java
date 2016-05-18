@@ -128,6 +128,8 @@ public class Workout2TCX {
 
 		tag(null, "Time", dateFormat.format(workout.start.get() + index * 1000));
 
+		tag(null, "DistanceMeters", snapshot.distance.get().toString());
+
 		heartRateBpm(snapshot.pulse.get());
 
 		tag(null, "Cadence", Integer.toString(snapshot.strokeRate.get()));

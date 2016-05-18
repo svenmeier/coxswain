@@ -12,6 +12,7 @@
         <Track>
           <Trackpoint>
             <Time>2015-06-15T00:01:00.000Z</Time>
+            <DistanceMeters>2</DistanceMeters>
             <HeartRateBpm>
               <Value>80</Value>
             </HeartRateBpm>
@@ -24,6 +25,7 @@
           </Trackpoint>
           <Trackpoint>
             <Time>2015-06-15T00:01:01.000Z</Time>
+            <DistanceMeters>4</DistanceMeters>
             <HeartRateBpm>
               <Value>81</Value>
             </HeartRateBpm>
@@ -36,6 +38,7 @@
           </Trackpoint>
           <Trackpoint>
             <Time>2015-06-15T00:01:02.000Z</Time>
+            <DistanceMeters>6</DistanceMeters>
             <HeartRateBpm>
               <Value>82</Value>
             </HeartRateBpm>

@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
@@ -43,11 +44,11 @@ public class MainActivity extends Activity {
 
     private ViewPager pager;
 
-    private ViewGroup currentView;
+    private ViewGroup programView;
 
-    private TextView currentNameView;
+    private TextView programNameView;
 
-    private TextView currentTargetView;
+    private TextView programCurrentView;
 
     private Gym.Listener listener;
 
@@ -64,16 +65,16 @@ public class MainActivity extends Activity {
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
 
-        currentView = (ViewGroup) findViewById(R.id.main_current);
-        currentView.setOnClickListener(new View.OnClickListener() {
+        programView = (ViewGroup) findViewById(R.id.main_program);
+        programView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WorkoutActivity.start(MainActivity.this);
             }
         });
 
-        currentNameView = (TextView) findViewById(R.id.main_current_name);
-        currentTargetView = (TextView) findViewById(R.id.main_current_target);
+        programNameView = (TextView) findViewById(R.id.main_program_name);
+        programCurrentView = (TextView) findViewById(R.id.main_program_current);
 
         findViewById(R.id.main_current_stop).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +91,7 @@ public class MainActivity extends Activity {
         listener = new Gym.Listener() {
             @Override
             public void changed() {
-                updateCurrent();
+                updateProgram();
             }
         };
         listener.changed();
@@ -104,29 +105,31 @@ public class MainActivity extends Activity {
         Gym.instance(this).removeListener(listener);
     }
 
-    private void updateCurrent() {
+    private void updateProgram() {
         Gym gym = Gym.instance(this);
 
-        Gym.Current current = gym.current;
-        if (current == null) {
-            currentView.setVisibility(View.GONE);
-            currentView.setEnabled(false);
+        Program program = gym.program;
+        if (program == null) {
+            programView.setVisibility(View.GONE);
+            programView.setEnabled(false);
         } else {
-            currentView.setVisibility(View.VISIBLE);
-            currentView.setEnabled(true);
+            programView.setVisibility(View.VISIBLE);
+            programView.setEnabled(true);
 
-            currentNameView.setText(gym.program.name.get());
+            programNameView.setText(gym.program.name.get());
 
-            String description = gym.current.describe();
-
-            currentTargetView.setText(description);
+            String description = "";
+            if (gym.current != null) {
+                description = gym.current.describe();
+            }
+            programCurrentView.setText(description);
         }
     }
 
     /**
      * Check whether the intent contains a {@link UsbDevice}, and pass it to {@link GymService}.
      *
-     * @param intent
+     * @param intent possible USB device connect
      */
     private void checkUsbDevice(Intent intent) {
         UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);

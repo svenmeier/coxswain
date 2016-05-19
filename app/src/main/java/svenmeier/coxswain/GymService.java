@@ -167,21 +167,23 @@ public class GymService extends Service {
                                 return;
                             }
 
-                            Gym.Current current = gym.current;
-                            if (current == null) {
+                            if (gym.program ==  null) {
                                 foreground.start(String.format(getString(R.string.gym_notification_connected), rower.getName()), MainActivity.class, null, null);
                                 return;
-                            }
-
-                            if (gym.program != program) {
+                            } else if (gym.program != program) {
                                 // program changed
                                 return;
                             }
 
-                            String name = program.name.get();
-                            String description = current.describe();
-                            int progress = (int)(current.completion() * 1000);
-                            foreground.start(name + " - " + description, WorkoutActivity.class, ACTION_STOP, progress);
+                            String text = program.name.get();
+                            Integer progress = null;
+
+                            Gym.Current current = gym.current;
+                            if (current != null) {
+                                text += " - " +  current.describe();
+                                progress = (int)(current.completion() * 1000);
+                            }
+                            foreground.start(text, WorkoutActivity.class, ACTION_STOP, progress);
 
                             Event event = gym.addSnapshot(new Snapshot(memory));
                             motivator.onEvent(event);
@@ -274,6 +276,7 @@ public class GymService extends Service {
 
                 notification = builder.build();
             } else {
+                //noinspection deprecation
                 notification = builder.getNotification();
             }
 

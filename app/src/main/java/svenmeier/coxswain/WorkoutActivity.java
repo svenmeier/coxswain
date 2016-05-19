@@ -127,9 +127,9 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     private void updateValues() {
         int achieved = 0;
 
-        int duration = 0;
-        int distance = 0;
-        int strokes = 0;
+        int targetDuration = 0;
+        int targetDistance = 0;
+        int targetStrokes = 0;
         int speed = 0;
         int strokeRate = 0;
         int pulse = 0;
@@ -144,17 +144,22 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
 
             achieved = gym.current.achieved();
 
-            duration = segment.duration.get();
-            distance = segment.distance.get();
-            strokes = segment.strokes.get();
+            targetDuration = segment.duration.get();
+            targetDistance = segment.distance.get();
+            targetStrokes = segment.strokes.get();
             speed = segment.speed.get();
             strokeRate = segment.strokeRate.get();
             pulse = segment.pulse.get();
         }
 
-        target(durationView, gym.workout.duration.get(), duration, achieved);
-        target(distanceView, snapshot.distance.get(), distance, achieved);
-        target(strokesView, snapshot.strokes.get(), strokes, achieved);
+        int duration = 0;
+        if (gym.workout != null) {
+            duration = gym.workout.duration.get();
+        }
+
+        target(durationView, duration, targetDuration, achieved);
+        target(distanceView, snapshot.distance.get(), targetDistance, achieved);
+        target(strokesView, snapshot.strokes.get(), targetStrokes, achieved);
         limit(speedView, snapshot.speed.get(), speed);
         limit(strokeRateView, snapshot.strokeRate.get(), strokeRate);
         limit(pulseView, snapshot.pulse.get(), pulse);

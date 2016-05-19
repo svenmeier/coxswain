@@ -22,6 +22,8 @@ import svenmeier.coxswain.rower.Rower;
  */
 public class MockRower implements Rower {
 
+    private long resettedAt = 0;
+
     private static double distance;
 
     private static double strokes;
@@ -55,6 +57,8 @@ public class MockRower implements Rower {
 
     @Override
     public void reset() {
+        resettedAt = System.currentTimeMillis();
+
         distance = 0;
         strokes = 0;
         energy = 0;
@@ -68,14 +72,18 @@ public class MockRower implements Rower {
         }
 
         if (open) {
-            distance += Math.random() * 0.5;
-            memory.distance.set((int)distance);
+            if (System.currentTimeMillis() > resettedAt + 5000) {
+                // delay before achieveing anything
 
-            strokes += 0.04;
-            memory.strokes.set((int)strokes);
+                distance += Math.random() * 0.5;
+                memory.distance.set((int)distance);
 
-            energy += 0.015;
-            memory.energy.set((int)energy);
+                strokes += 0.04;
+                memory.strokes.set((int)strokes);
+
+                energy += 0.015;
+                memory.energy.set((int)energy);
+            }
 
             memory.speed.set((int)(250 +  (Math.random() * 100)));
 

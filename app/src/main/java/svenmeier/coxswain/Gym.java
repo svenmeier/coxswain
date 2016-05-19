@@ -156,55 +156,59 @@ public class Gym {
         this.program = program;
 
         this.snapshot = null;
-
-        if (program == null) {
-            workout = null;
-
-            current = null;
-        } else {
-            workout = new Workout(program);
-
-            current = new Current(program.getSegment(0), 0, new Snapshot());
-        }
+        this.workout = null;
+        this.current = null;
 
         fireChanged();
     }
 
     public boolean isSelected(Program program) {
-        return this.program != null && Row.getID(this.program) == Row.getID(program) && current != null;
+        return this.program != null && Row.getID(this.program) == Row.getID(program);
     }
 
     public Event addSnapshot(Snapshot snapshot) {
         Event event = Event.REJECTED;
 
-        if (current != null) {
-            event = Event.SNAPPED;
+        if (program != null) {
+            // program is selected
 
-            if (this.snapshot == null) {
-                // first snapshot -> start of program
-                event = Event.PROGRAM_START;
-            }
-            this.snapshot = snapshot;
+            if (snapshot.distance.get() > 0 || snapshot.strokes.get() > 0) {
+                // workout has begun
 
-            if (workout.onSnapshot(snapshot)) {
-                mergeWorkout(workout);
+                if (workout == null) {
+                    workout = new Workout(program);
 
-                snapshot.workout.set(workout);
-                repository.insert(snapshot);
-            }
+                    current = new Current(program.getSegment(0), 0, new Snapshot());
+                }
 
-            if (current.completion() == 1.0f) {
-                Segment next = program.getNextSegment(current.segment);
-                if (next == null) {
+                event = Event.SNAPPED;
+
+                if (this.snapshot == null) {
+                    // first snapshot -> start of program
+                    event = Event.PROGRAM_START;
+                }
+                this.snapshot = snapshot;
+
+                if (workout.onSnapshot(snapshot)) {
                     mergeWorkout(workout);
 
-                    current = null;
+                    snapshot.workout.set(workout);
+                    repository.insert(snapshot);
+                }
 
-                    event = Event.PROGRAM_FINISHED;
-                } else {
-                    current = new Current(next, workout.duration.get(), snapshot);
+                if (current.completion() == 1.0f) {
+                    Segment next = program.getNextSegment(current.segment);
+                    if (next == null) {
+                        mergeWorkout(workout);
 
-                    event = Event.SEGMENT_CHANGED;
+                        current = null;
+
+                        event = Event.PROGRAM_FINISHED;
+                    } else {
+                        current = new Current(next, workout.duration.get(), snapshot);
+
+                        event = Event.SEGMENT_CHANGED;
+                    }
                 }
             }
         }
@@ -340,7 +344,7 @@ public class Gym {
         return instance;
     }
 
-    public static interface Listener {
-        public void changed();
+    public interface Listener {
+        void changed();
     }
 }

@@ -140,10 +140,16 @@ public class MainActivity extends Activity {
             // do not trigger repeated service starts
             intent.removeExtra(UsbManager.EXTRA_DEVICE);
 
-            getWindow().addFlags(
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            if (Gym.instance(this).program == null) {
+                // try to unlock device, does not work if this activity
+                // is already running :/
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            } else {
+                // program is already selected so start workout
+                WorkoutActivity.start(this);
+            }
         }
     }
 

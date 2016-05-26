@@ -196,7 +196,7 @@ public class Gym {
                     repository.insert(snapshot);
                 }
 
-                if (current.completion() == 1.0f) {
+                if (current != null && current.completion() == 1.0f) {
                     Segment next = program.getNextSegment(current.segment);
                     if (next == null) {
                         mergeWorkout(workout);

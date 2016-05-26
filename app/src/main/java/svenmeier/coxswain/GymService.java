@@ -54,6 +54,8 @@ public class GymService extends Service {
 
     private Preference<Boolean> headsup;
 
+    private Preference<Boolean> openEnd;
+
     private Rowing rowing;
 
     public GymService() {
@@ -63,6 +65,7 @@ public class GymService extends Service {
     public void onCreate() {
         gym = Gym.instance(this);
 
+        openEnd = Preference.getBoolean(this, R.string.preference_open_end);
         headsup = Preference.getBoolean(this, R.string.preference_integration_headsup);
 
         receiver = new BroadcastReceiver() {
@@ -188,7 +191,7 @@ public class GymService extends Service {
                             Event event = gym.addSnapshot(new Snapshot(memory));
                             motivator.onEvent(event);
 
-                            if (event == Event.PROGRAM_FINISHED) {
+                            if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
                                 gym.select(null);
                             }
                         }

@@ -107,6 +107,18 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
     }
 
     @Override
+    protected void onStop() {
+        if (gym.workout != null && gym.current == null) {
+            // workout is finished already (but continued because of "open end"),
+            // so deselect it now
+
+            gym.select(null);
+        }
+
+        super.onStop();
+    }
+
+    @Override
     public void changed() {
         if (gym.program == null) {
             finish();

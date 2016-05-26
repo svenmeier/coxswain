@@ -162,9 +162,17 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     private abstract class Analyser {
-        public abstract void analyse(Event event, Gym.Current current);
-        public abstract void reset();
         public abstract void init();
+
+		/**
+		 * Analyse an event.
+         *
+         * @param event event
+         * @param current current, may be {@code null}
+         */
+        public abstract void analyse(Event event, Gym.Current current);
+
+        public abstract void reset();
     }
 
     /**
@@ -251,7 +259,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
 
         public void analyse(Event event, Gym.Current current) {
-            if (event != Event.SNAPPED || speakLimitPreference.get() == false) {
+            if (event != Event.SNAPPED || current == null || speakLimitPreference.get() == false) {
                 return;
             }
 

@@ -63,6 +63,10 @@
     <string name="preference_water_level_title">Water level</string>
     <string name="preference_water_level_summary">Water level %s</string>
 
+    <string name="preference_open_end" translatable="false">preference_open_end</string>
+    <string name="preference_open_end_title">Open end</string>
+    <string name="preference_open_end_summary">Continue rowing after training has ended</string>
+
     <string name="preference_audio_title">Sounds</string>
     <string name="preference_audio_none">None</string>
 

@@ -3,6 +3,8 @@ package svenmeier.coxswain;
 import android.app.Application;
 import android.preference.PreferenceManager;
 
+import propoid.util.content.Preference;
+
 /**
  */
 public class Coxswain extends Application {
@@ -15,7 +17,7 @@ public class Coxswain extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		PreferenceManager.setDefaultValues(Coxswain.this, R.xml.preferences, true);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 
 		gym = Gym.instance(this);
 

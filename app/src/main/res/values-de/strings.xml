@@ -1,6 +1,7 @@
 <resources>
     <string name="action_mock">Mock</string>
-    <string name="action_export">Exportieren</string>
+    <string name="action_export_tcx">TCX schreiben</string>
+    <string name="action_export_fit">Zu Google Fit hochladen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
     <string name="action_ok">OK</string>

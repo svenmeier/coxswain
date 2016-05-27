@@ -2,6 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
-    <item android:id="@+id/action_export" android:title="@string/action_export" android:icon="@drawable/ic_sd_storage_black_24dp"
-        android:orderInCategory="100" android:showAsAction="always" />
+    <item android:id="@+id/action_export_tcx" android:title="@string/action_export_tcx" android:icon="@drawable/ic_sd_storage_black_24dp"
+          android:orderInCategory="100" android:showAsAction="always" />
+
+    <item android:id="@+id/action_export_fit" android:title="@string/action_export_fit" android:icon="@drawable/ic_file_upload_black_24dp"
+          android:orderInCategory="100" android:showAsAction="always" />
 </menu>

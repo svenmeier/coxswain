@@ -17,15 +17,15 @@ import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
 import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 
 /**
- * Created by sven on 23.04.16.
  */
-public class Export implements Runnable {
+public class TcxExport implements Runnable, Export {
 
 	public static final String SUFFIX = ".tcx";
 
@@ -37,7 +37,7 @@ public class Export implements Runnable {
 
 	private Workout workout;
 
-	public Export(Context context) {
+	public TcxExport(Context context) {
 		this.context = context;
 
 		this.handler = new Handler();
@@ -45,10 +45,15 @@ public class Export implements Runnable {
 		this.gym = Gym.instance(context);
 	}
 
+	@Override
 	public void start(Workout workout) {
 		this.workout = workout;
 
 		new Thread(this).start();
+	}
+
+	@Override
+	public void onResult(int resultCode) {
 	}
 
 	private void toast(final String text) {

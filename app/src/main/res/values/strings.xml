@@ -2,7 +2,8 @@
     <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
-    <string name="action_export">Export</string>
+    <string name="action_export_tcx">Write TCX</string>
+    <string name="action_export_fit">Upload to Google Fit</string>
     <string name="action_settings">Settings</string>
     <string name="action_rename">Rename</string>
     <string name="action_ok">OK</string>

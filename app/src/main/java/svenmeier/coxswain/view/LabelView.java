@@ -20,16 +20,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.text.InputType;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.BaseInputConnection;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import svenmeier.coxswain.R;
 
@@ -43,7 +35,7 @@ public class LabelView extends View {
 
     private float width;
 
-    private int foreground = 0xff000000;
+    private int textColor;
 
     private float size;
 
@@ -73,6 +65,8 @@ public class LabelView extends View {
                 text = "";
             }
             align = a.getInt(R.styleable.LabelView_align, 0);
+
+            textColor = a.getColor(R.styleable.LabelView_text_color, 0);
         } finally {
             a.recycle();
         }
@@ -128,7 +122,7 @@ public class LabelView extends View {
         }
         int y = bottom - 1;
 
-        paint.setColor(foreground);
+        paint.setColor(textColor);
         paint.setStyle(Paint.Style.FILL);
         canvas.drawText(text, x, y, paint);
     }

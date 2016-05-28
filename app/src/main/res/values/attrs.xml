@@ -1,5 +1,9 @@
 <resources>
 
+    <declare-styleable name="LightTheme">
+        <attr name="icon_menu" format="reference" />
+    </declare-styleable>
+
     <!-- Declare custom theme attributes that allow changing which styles are
          used for button bars depending on the API level.
          ?android:attr/buttonBarStyle is new as of API 11 so this is
@@ -9,17 +13,18 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="ValueView">
-        <attr name="pattern" format="string" />
-    </declare-styleable>
-
     <declare-styleable name="LabelView">
+        <attr name="text_color" format="color" />
         <attr name="text" format="string" />
         <attr name="align" format="enum">
             <enum name="center" value="0" />
             <enum name="left" value="-1" />
             <enum name="right" value="1" />
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ValueView">
+        <attr name="pattern" format="string" />
     </declare-styleable>
 
     <declare-styleable name="ValueContainer">
@@ -29,10 +34,8 @@
         <attr name="field_target" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="ChartView">
-        <attr name="fill" format="color" />
-        <attr name="stroke" format="color" />
-        <attr name="ticks" format="color" />
+    <declare-styleable name="TimelineView">
+        <attr name="foreground_color" format="color" />
     </declare-styleable>
 
     <declare-styleable name="SegmentsView">

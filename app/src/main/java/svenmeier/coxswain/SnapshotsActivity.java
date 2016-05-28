@@ -47,7 +47,7 @@ import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
 
 
-public class SnapshotsActivity extends Activity implements View.OnClickListener {
+public class SnapshotsActivity extends AbstractActivity implements View.OnClickListener {
 
     public static final int RESOLUTION = 10;
 
@@ -284,7 +284,7 @@ public class SnapshotsActivity extends Activity implements View.OnClickListener 
             String when = dateFormat.format(from);
 
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(0xff000000);
+            paint.setColor(timelineView.getForegroundColor());
             canvas.drawText(when, rect.left + padding, rect.top + padding - metrics.top, paint);
 
             return -metrics.top;

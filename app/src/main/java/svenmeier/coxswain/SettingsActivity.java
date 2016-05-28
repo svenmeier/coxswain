@@ -20,10 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.Set;
+
+import propoid.util.content.Preference;
 import svenmeier.coxswain.view.SettingsFragment;
 
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,27 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        theme.listen(new Preference.OnChangeListener() {
+            @Override
+            public void onChanged() {
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        theme.listen(null);
+
+        super.onStop();
     }
 
     public static Intent createIntent(Context context) {

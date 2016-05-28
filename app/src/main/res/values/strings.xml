@@ -52,6 +52,12 @@
     <string name="export_finished">Exportiert nach %s</string>
     <string name="export_failed">Export gescheitert</string>
 
+    <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
+    <string name="preference_theme_dark_title">Dark theme</string>
+    <string name="preference_theme_dark_summary">Use a dark theme</string>
+
+    <string name="preference_training_title">Training</string>
+
     <string name="preference_stroke_ratio" translatable="false">preference_stroke_ratio</string>
     <string name="preference_stroke_ratio_title">Stroke Ratio</string>
     <string name="preference_stroke_ratio_summary">Stroke ratio 1:%s</string>

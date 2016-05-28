@@ -38,7 +38,7 @@ import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AbstractActivity {
 
     public static String TAG = "coxswain";
 
@@ -55,8 +55,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         setContentView(R.layout.layout_main);
 

@@ -1,7 +1,15 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+    <style name="LightTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="icon_menu">@drawable/ic_more_vert_black_24dp</item>
+    </style>
+
+    <style name="DarkTheme" parent="@android:style/Theme.Holo">
+        <item name="icon_menu">@drawable/ic_more_vert_white_24dp</item>
+    </style>
+
+    <style name="TimelineView">
+        <item name="foreground_color">?android:attr/colorForeground</item>
     </style>
 
     <style name="TimelineTitle">
@@ -20,20 +28,19 @@
         <item name="android:layout_margin">3dp</item>
     </style>
 
-    <style name="ValueView">
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_weight">2</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">2dp</item>
-    </style>
-
     <style name="LabelView">
+        <item name="text_color">?android:attr/colorForeground</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:paddingTop">2dp</item>
         <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="ValueView" parent="@style/LabelView">
+        <item name="android:layout_weight">2</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">2dp</item>
     </style>
 
     <style name="MenuButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small">

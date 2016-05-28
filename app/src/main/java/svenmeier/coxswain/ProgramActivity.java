@@ -39,7 +39,7 @@ import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueView;
 
 
-public class ProgramActivity extends Activity implements AbstractValueFragment.Callback {
+public class ProgramActivity extends AbstractActivity implements AbstractValueFragment.Callback {
 
     private Gym gym;
 
@@ -53,8 +53,6 @@ public class ProgramActivity extends Activity implements AbstractValueFragment.C
         super.onCreate(savedInstanceState);
 
         gym = Gym.instance(this);
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

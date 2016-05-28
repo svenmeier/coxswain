@@ -41,6 +41,11 @@
     <string name="export_finished">Exported to %s</string>
     <string name="export_failed">Export failed</string>
 
+    <string name="preference_theme_dark_title">Dunkles Theme</string>
+    <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
+
+    <string name="preference_training_title">Training</string>
+
     <string name="preference_stroke_ratio_title">Schlag-Verhältnis</string>
     <string name="preference_stroke_ratio_summary">Schlag-Verhältnis 1:%s</string>
 

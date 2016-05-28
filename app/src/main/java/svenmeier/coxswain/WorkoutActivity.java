@@ -35,7 +35,7 @@ import svenmeier.coxswain.view.ValueView;
 
 /**
  */
-public class WorkoutActivity extends Activity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener {
+public class WorkoutActivity extends AbstractActivity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener {
 
     private static final int DELAY_MILLIS = 250;
 
@@ -87,8 +87,6 @@ public class WorkoutActivity extends Activity implements View.OnSystemUiVisibili
         pulseView = (ValueView) findViewById(R.id.limit_pulse);
 
         levelView = (LevelView) findViewById(R.id.workout_progress);
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override

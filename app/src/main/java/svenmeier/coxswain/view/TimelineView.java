@@ -16,6 +16,7 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -29,6 +30,8 @@ import android.view.View;
 import android.widget.Scroller;
 
 import java.util.Calendar;
+
+import svenmeier.coxswain.R;
 
 /**
  */
@@ -46,6 +49,8 @@ public class TimelineView extends View {
 
     private long window = DAY;
 
+    private int foregroundColor;
+
     private Interaction interaction;
 
     private Periods periods;
@@ -55,19 +60,34 @@ public class TimelineView extends View {
     public TimelineView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        init();
+        init(context, attrs);
     }
 
     public TimelineView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        init();
+        init(context, attrs);
     }
 
-    private void init() {
+    private void init(Context context, AttributeSet attrs) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.TimelineView,
+                0, 0);
+
+        try {
+            foregroundColor = a.getColor(R.styleable.TimelineView_foreground_color, 0xFFFF00FF);
+        } finally {
+            a.recycle();
+        }
+
         interaction = new Interaction();
 
         setPeriods(new DefaultPeriods());
+    }
+
+    public int getForegroundColor() {
+        return foregroundColor;
     }
 
     public long getWindow() {
@@ -155,7 +175,7 @@ public class TimelineView extends View {
             float x2 = getWidth();
 
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(0x80808080);
+            paint.setColor(foregroundColor);
             canvas.drawLine(0, y2, getWidth(), y2, paint);
 
             rect.set(x1, y1, x2, y2);

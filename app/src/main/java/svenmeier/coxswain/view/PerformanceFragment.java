@@ -310,7 +310,7 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
             }
 
             String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-            paint.setColor(0xff000000);
+            paint.setColor(timelineView.getForegroundColor());
             paint.setTextSize(textSize);
             canvas.drawText(when, rect.left + padding, rect.top + padding - metrics.top, paint);
 

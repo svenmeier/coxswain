@@ -1,7 +1,9 @@
 <resources>
 
     <declare-styleable name="LightTheme">
-        <attr name="icon_menu" format="reference" />
+        <attr name="icon_more" format="reference" />
+        <attr name="icon_storage" format="reference" />
+        <attr name="icon_upload" format="reference" />
     </declare-styleable>
 
     <!-- Declare custom theme attributes that allow changing which styles are

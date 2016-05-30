@@ -16,6 +16,8 @@
 package svenmeier.coxswain;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 
@@ -26,6 +28,8 @@ public class AbstractActivity extends Activity {
 
     protected Preference<Boolean> theme;
 
+    private boolean darkWhenCreated;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +37,33 @@ public class AbstractActivity extends Activity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         theme = Preference.getBoolean(this, R.string.preference_theme_dark);
-        if (theme.get()) {
+
+        darkWhenCreated = theme.get();
+        if (darkWhenCreated) {
             setTheme(R.style.DarkTheme);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (theme.get() != darkWhenCreated) {
+            recreate();
+        } else {
+            theme.listen(new Preference.OnChangeListener() {
+                @Override
+                public void onChanged() {
+                    recreate();
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        theme.listen(null);
+
+        super.onStop();
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import propoid.db.Match;
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
@@ -96,6 +98,7 @@ public class FitExport implements Export {
 				try {
 					result.startResolutionForResult(activity, requestCode);
 				} catch (IntentSender.SendIntentException e) {
+					Log.e(Coxswain.TAG, "export failed", e);
 					toast(activity.getString(R.string.export_failed));
 				}
 			} else {
@@ -124,6 +127,8 @@ public class FitExport implements Export {
 
 		@Override
 		public void run() {
+			toast(String.format(activity.getString(R.string.export_starting), "Google Fit"));
+
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
 			try {
 
@@ -133,6 +138,7 @@ public class FitExport implements Export {
 				if (status.isSuccess()) {
 					toast(String.format(activity.getString(R.string.export_finished), "Google Fit"));
 				} else {
+					Log.e(Coxswain.TAG, "export failed " + status);
 					toast(activity.getString(R.string.export_failed));
 				}
 			} finally {

@@ -78,13 +78,15 @@ public class TcxExport implements Runnable, Export {
 
 	@Override
 	public void run() {
+		toast(String.format(context.getString(R.string.export_starting), "TCX"));
+
 		Match<Snapshot> snapshots = gym.getSnapshots(workout);
 
 		File file;
 		try {
 			file = write(snapshots);
 		} catch (IOException e) {
-			Log.e(Coxswain.TAG, "write failed", e);
+			Log.e(Coxswain.TAG, "export failed", e);
 			toast(context.getString(R.string.export_failed));
 			return;
 		}

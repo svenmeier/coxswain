@@ -2,8 +2,7 @@
     <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
-    <string name="action_export_tcx">Write TCX</string>
-    <string name="action_export_fit">Upload to Google Fit</string>
+    <string name="action_share">Share</string>
     <string name="action_settings">Settings</string>
     <string name="action_rename">Rename</string>
     <string name="action_ok">OK</string>
@@ -49,6 +48,9 @@
 
     <string name="segments">Segments</string>
 
+    <string name="export_tcx">TCX</string>
+    <string name="export_fit">Google Fit</string>
+    <string name="export_starting">Exportiere nach %s</string>
     <string name="export_finished">Exportiert nach %s</string>
     <string name="export_failed">Export gescheitert</string>
 

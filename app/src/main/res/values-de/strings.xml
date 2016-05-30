@@ -1,7 +1,6 @@
 <resources>
     <string name="action_mock">Mock</string>
-    <string name="action_export_tcx">TCX schreiben</string>
-    <string name="action_export_fit">Zu Google Fit hochladen</string>
+    <string name="action_share">Teilen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
     <string name="action_ok">OK</string>
@@ -38,8 +37,11 @@
 
     <string name="segments">Segmente</string>
 
-    <string name="export_finished">Exported to %s</string>
-    <string name="export_failed">Export failed</string>
+    <string name="export_tcx">TCX</string>
+    <string name="export_fit">Google Fit</string>
+    <string name="export_starting">Exportiere nach %s</string>
+    <string name="export_finished">Exportiert nach %s</string>
+    <string name="export_failed">Export gescheitert</string>
 
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>

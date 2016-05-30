@@ -2,14 +2,12 @@
 
     <style name="LightTheme" parent="@android:style/Theme.Holo.Light">
         <item name="icon_more">@drawable/ic_more_vert_black_24dp</item>
-        <item name="icon_storage">@drawable/ic_sd_storage_black_24dp</item>
-        <item name="icon_upload">@drawable/ic_file_upload_black_24dp</item>
+        <item name="icon_share">@drawable/ic_share_black_24dp</item>
     </style>
 
     <style name="DarkTheme" parent="@android:style/Theme.Holo">
         <item name="icon_more">@drawable/ic_more_vert_white_24dp</item>
-        <item name="icon_storage">@drawable/ic_sd_storage_white_24dp</item>
-        <item name="icon_upload">@drawable/ic_file_upload_white_24dp</item>
+        <item name="icon_share">@drawable/ic_share_white_24dp</item>
     </style>
 
     <style name="TimelineView">

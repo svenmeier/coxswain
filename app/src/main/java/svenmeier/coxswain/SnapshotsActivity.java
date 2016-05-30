@@ -43,6 +43,7 @@ import svenmeier.coxswain.google.FitExport;
 import svenmeier.coxswain.garmin.TcxExport;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.view.ExportFragment;
 import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
 
@@ -50,8 +51,6 @@ import svenmeier.coxswain.view.Utils;
 public class SnapshotsActivity extends AbstractActivity implements View.OnClickListener {
 
     public static final int RESOLUTION = 10;
-
-    public static final int FIT_REQUEST_CODE = 1;
 
     private Gym gym;
 
@@ -70,8 +69,6 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     private TextView titleView;
 
     private TimelineView timelineView;
-
-    private Export export;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,22 +126,11 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_export_tcx:
-                new TcxExport(this).start(workout);
-                return true;
-            case R.id.action_export_fit:
-                export = new FitExport(this, FIT_REQUEST_CODE);
-                export.start(workout);
+            case R.id.action_share:
+                ExportFragment.create(workout).show(getFragmentManager(), "export");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (export != null && requestCode == FIT_REQUEST_CODE) {
-            export.onResult(resultCode);
         }
     }
 

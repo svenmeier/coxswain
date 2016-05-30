@@ -42,6 +42,8 @@ public class MainActivity extends AbstractActivity {
 
     public static String TAG = "coxswain";
 
+    private Gym gym;
+
     private ViewPager pager;
 
     private ViewGroup programView;
@@ -55,6 +57,8 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        gym = Gym.instance(this);
 
         setContentView(R.layout.layout_main);
 
@@ -86,6 +90,12 @@ public class MainActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
 
+        if (gym.workout != null && gym.current == null) {
+            // workout is still running due to "open end", time to stop it now
+
+            gym.select(null);
+        }
+
         listener = new Gym.Listener() {
             @Override
             public void changed() {
@@ -93,19 +103,17 @@ public class MainActivity extends AbstractActivity {
             }
         };
         listener.changed();
-        Gym.instance(this).addListener(listener);
+        gym.addListener(listener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        Gym.instance(this).removeListener(listener);
+        gym.removeListener(listener);
     }
 
     private void updateProgram() {
-        Gym gym = Gym.instance(this);
-
         Program program = gym.program;
         if (program == null) {
             programView.setVisibility(View.GONE);
@@ -138,9 +146,8 @@ public class MainActivity extends AbstractActivity {
             // do not trigger repeated service starts
             intent.removeExtra(UsbManager.EXTRA_DEVICE);
 
-            if (Gym.instance(this).program == null) {
-                // try to unlock device, does not work if this activity
-                // is already running :/
+            if (gym.program == null) {
+                // try to unlock device - has no effect if this activity is already running :/
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
                                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);

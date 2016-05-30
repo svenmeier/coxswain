@@ -15,10 +15,8 @@
  */
 package svenmeier.coxswain;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -102,18 +100,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         super.onPause();
 
         gym.removeListener(this);
-    }
-
-    @Override
-    protected void onStop() {
-        if (gym.workout != null && gym.current == null) {
-            // workout is finished already (but continued because of "open end"),
-            // so deselect it now
-
-            gym.select(null);
-        }
-
-        super.onStop();
     }
 
     @Override

@@ -11,9 +11,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 
 import java.util.List;
@@ -82,6 +85,7 @@ public class FitExport implements Export {
 		public Connection() {
 			client = new GoogleApiClient.Builder(activity)
 					.addApi(Fitness.SESSIONS_API)
+					.addApi(Fitness.HISTORY_API)
 					.addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
 					.addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
 					.addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
@@ -131,16 +135,30 @@ public class FitExport implements Export {
 
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
 			try {
+				Workout2Fit workout2Fit = new Workout2Fit();
 
-				SessionInsertRequest request = new Workout2Fit().request(workout, snapshots);
+				Session session = workout2Fit.session(workout);
 
-				Status status = Fitness.SessionsApi.insertSession(client, request).await(1,	TimeUnit.MINUTES);
-				if (status.isSuccess()) {
-					toast(String.format(activity.getString(R.string.export_finished), "Google Fit"));
-				} else {
+				SessionInsertRequest insertSession = new SessionInsertRequest.Builder()
+						.setSession(session)
+						.build();
+				Status status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
+				if (status.isSuccess() == false) {
 					Log.e(Coxswain.TAG, "export failed " + status);
 					toast(activity.getString(R.string.export_failed));
+					return;
 				}
+
+				for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
+					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
+					if (status.isSuccess() == false) {
+						Log.e(Coxswain.TAG, "export failed " + status);
+						toast(activity.getString(R.string.export_failed));
+						return;
+					}
+				}
+
+				toast(String.format(activity.getString(R.string.export_finished), "Google Fit"));
 			} finally {
 				snapshots.clear();
 

@@ -115,6 +115,11 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_snapshots, menu);
         return true;

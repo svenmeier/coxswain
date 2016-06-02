@@ -1,5 +1,7 @@
 package svenmeier.coxswain.google;
 
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 
 import org.junit.Test;
@@ -61,6 +63,10 @@ public class Workout2FitTest {
 		snapshot.strokes.set(2);
 		snapshots.add(snapshot);
 
-		SessionInsertRequest request = new Workout2Fit().request(workout, snapshots);
+		Workout2Fit workout2Fit = new Workout2Fit();
+		Session session = workout2Fit.session(workout);
+		for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
+
+		}
 	}
 }

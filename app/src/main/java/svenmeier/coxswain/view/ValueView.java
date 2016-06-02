@@ -34,32 +34,10 @@ public class ValueView extends LabelView {
 
     public ValueView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        init(context, attrs);
     }
 
     public ValueView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        init(context, attrs);
-    }
-
-    private void init(Context context, AttributeSet attrs) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.ValueView,
-                0, 0);
-
-        try {
-            pattern = a.getString(R.styleable.ValueView_pattern);
-            if (pattern == null) {
-                pattern = "";
-            }
-        } finally {
-            a.recycle();
-        }
-
-        setValue(0);
     }
 
     public String getPattern() {

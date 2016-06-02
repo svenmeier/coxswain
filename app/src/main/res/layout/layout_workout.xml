@@ -28,136 +28,58 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
         android:layout_weight="6"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_0"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/target_duration"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/duration_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/target_duration"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
-
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/target_distance"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/distance_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/target_distance"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
-
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/target_strokes"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/strokes_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/target_strokes"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
-
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/limit_speed"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/speed_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/limit_speed"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
-
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/limit_pulse"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/pulse_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/limit_pulse"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
-
-        <LinearLayout
+        <svenmeier.coxswain.view.ValueContainer
+            android:id="@+id/workout_value_5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
-            android:orientation="horizontal"
-            >
-
-            <svenmeier.coxswain.view.ValueContainer
-                style="@style/ValueContainer"
-                >
-                <svenmeier.coxswain.view.ValueView android:id="@+id/limit_strokeRate"
-                                                   style="@style/ValueView"
-                                                   coxswain:pattern="@string/strokeRate_pattern"
-                    />
-                <svenmeier.coxswain.view.LabelView
-                    style="@style/LabelView"
-                    coxswain:text="@string/limit_strokeRate"
-                    />
-            </svenmeier.coxswain.view.ValueContainer>
-        </LinearLayout>
+            android:layout_weight="1"
+            style="@style/ValueContainer"
+            />
 
     </LinearLayout>
 

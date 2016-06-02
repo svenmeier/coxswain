@@ -28,7 +28,6 @@ import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
 import svenmeier.coxswain.view.ValueContainer;
-import svenmeier.coxswain.view.ValueView;
 
 
 /**
@@ -48,12 +47,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private SegmentsView segmentsView;
 
-    private ValueView durationView;
-    private ValueView distanceView;
-    private ValueView strokesView;
-    private ValueView speedView;
-    private ValueView strokeRateView;
-    private ValueView pulseView;
+    private ValueContainer durationView;
+    private ValueContainer distanceView;
+    private ValueContainer strokesView;
+    private ValueContainer speedView;
+    private ValueContainer strokeRateView;
+    private ValueContainer pulseView;
 
     private LevelView levelView;
 
@@ -77,12 +76,29 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        durationView = (ValueView) findViewById(R.id.target_duration);
-        distanceView = (ValueView) findViewById(R.id.target_distance);
-        strokesView = (ValueView) findViewById(R.id.target_strokes);
-        speedView = (ValueView) findViewById(R.id.limit_speed);
-        strokeRateView = (ValueView) findViewById(R.id.limit_strokeRate);
-        pulseView = (ValueView) findViewById(R.id.limit_pulse);
+        durationView = (ValueContainer) findViewById(R.id.workout_value_0);
+        durationView.labelPattern(R.string.target_duration, R.string.duration_pattern);
+        durationView.value(0);
+
+        distanceView = (ValueContainer) findViewById(R.id.workout_value_1);
+        distanceView.labelPattern(R.string.target_distance, R.string.distance_pattern);
+        distanceView.value(0);
+
+        strokesView = (ValueContainer) findViewById(R.id.workout_value_2);
+        strokesView.labelPattern(R.string.target_strokes, R.string.strokes_pattern);
+        strokesView.value(0);
+
+        speedView = (ValueContainer) findViewById(R.id.workout_value_3);
+        speedView.labelPattern(R.string.limit_speed, R.string.speed_pattern);
+        speedView.value(0);
+
+        strokeRateView = (ValueContainer) findViewById(R.id.workout_value_4);
+        strokeRateView.labelPattern(R.string.limit_strokeRate, R.string.strokeRate_pattern);
+        strokeRateView.value(0);
+
+        pulseView = (ValueContainer) findViewById(R.id.workout_value_5);
+        pulseView.labelPattern(R.string.limit_pulse, R.string.pulse_pattern);
+        pulseView.value(0);
 
         levelView = (LevelView) findViewById(R.id.workout_progress);
     }
@@ -156,45 +172,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             duration = gym.workout.duration.get();
         }
 
-        target(durationView, duration, targetDuration, achieved);
-        target(distanceView, snapshot.distance.get(), targetDistance, achieved);
-        target(strokesView, snapshot.strokes.get(), targetStrokes, achieved);
-        limit(speedView, snapshot.speed.get(), speed);
-        limit(strokeRateView, snapshot.strokeRate.get(), strokeRate);
-        limit(pulseView, snapshot.pulse.get(), pulse);
-    }
-
-    private void target(ValueView view, int memory, int segment, int achieved) {
-        ValueContainer container = (ValueContainer)view.getParent();
-        if (segment > 0) {
-            container.setState(R.attr.field_target);
-
-            view.setValue(Math.max(0, segment - achieved));
-        } else {
-            container.clearState();
-
-            view.setValue(memory);
-        }
-    }
-
-    private void limit(ValueView view, int memory, int segment) {
-        ValueContainer container = (ValueContainer)view.getParent();
-        if (segment > 0) {
-            int difference = memory - segment;
-            if (difference < 0) {
-                container.setState(R.attr.field_low);
-            } else {
-                container.setState(R.attr.field_high);
-            }
-
-            view.setPattern(view.getPattern().replace('-', '+'));
-            view.setValue(difference);
-        } else {
-            container.clearState();
-
-            view.setPattern(view.getPattern().replace('+', '-'));
-            view.setValue(memory);
-        }
+        durationView.target(duration, targetDuration, achieved);
+        distanceView.target(snapshot.distance.get(), targetDistance, achieved);
+        strokesView.target(snapshot.strokes.get(), targetStrokes, achieved);
+        speedView.limit(snapshot.speed.get(), speed);
+        strokeRateView.limit(snapshot.strokeRate.get(), strokeRate);
+        pulseView.limit(snapshot.pulse.get(), pulse);
     }
 
     private void updateLevel() {

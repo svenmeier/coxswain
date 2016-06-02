@@ -18,37 +18,96 @@ package svenmeier.coxswain.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import svenmeier.coxswain.R;
 
 /**
  */
-public class ValueContainer extends LinearLayout {
+public class ValueContainer extends FrameLayout {
 
     private static final int[] state = {0};
 
+    private ValueView valueView;
+
+    private LabelView labelView;
+
     public ValueContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        init();
     }
 
     public ValueContainer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        init();
     }
 
-    public void clearState() {
+    private void init() {
+        inflate(getContext(), R.layout.layout_value, this);
+
+        valueView = (ValueView)findViewById(R.id.value);
+        labelView = (LabelView)findViewById(R.id.label);
+    }
+
+    public void labelPattern(int label, int pattern) {
+
+        labelView.setText(getContext().getString(label));
+
+        valueView.setPattern(getContext().getString(pattern));
+    }
+
+    public void value(int value) {
+        clearState();
+
+        valueView.setValue(value);
+    }
+
+    public void target(int memory, int segment, int achieved) {
+        if (segment > 0) {
+            setState(R.attr.field_target);
+
+            valueView.setValue(Math.max(0, segment - achieved));
+        } else {
+            clearState();
+
+            valueView.setValue(memory);
+        }
+    }
+
+    public void limit(int memory, int segment) {
+        if (segment > 0) {
+            int difference = memory - segment;
+            if (difference < 0) {
+                setState(R.attr.field_low);
+            } else {
+                setState(R.attr.field_high);
+            }
+
+            valueView.setPattern(valueView.getPattern().replace('-', '+'));
+            valueView.setValue(difference);
+        } else {
+            clearState();
+
+            valueView.setPattern(valueView.getPattern().replace('+', '-'));
+            valueView.setValue(memory);
+        }
+    }
+
+    private void clearState() {
         this.state[0] = R.attr.field_normal;
 
         refreshDrawableState();
-
         invalidate();
     }
 
-    public void setState(int state) {
+    private void setState(int state) {
         this.state[0] = state;
 
         refreshDrawableState();
-
         invalidate();
     }
 

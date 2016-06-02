@@ -15,10 +15,8 @@
  */
 package svenmeier.coxswain;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,11 +30,10 @@ import propoid.ui.list.GenericAdapter;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.AbstractValueFragment;
-import svenmeier.coxswain.view.LabelView;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.LimitDialogFragment;
 import svenmeier.coxswain.view.TargetDialogFragment;
-import svenmeier.coxswain.view.ValueView;
+import svenmeier.coxswain.view.ValueContainer;
 
 
 public class ProgramActivity extends AbstractActivity implements AbstractValueFragment.Callback {
@@ -99,24 +96,19 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         protected void bind(final int position, View view, final Segment segment) {
             Index index = Index.get(view);
 
-            ValueView targetView = index.get(R.id.segments_target);
-            final LabelView targetLabelView = index.get(R.id.segments_target_label);
+            ValueContainer targetView = index.get(R.id.segments_item_target);
             if (segment.duration.get() > 0) {
-                targetView.setPattern(getString(R.string.duration_short_pattern));
-                targetView.setValue(segment.duration.get());
-                targetLabelView.setText(getString(R.string.target_duration));
+                targetView.labelPattern(R.string.target_duration, R.string.duration_short_pattern);
+                targetView.value(segment.duration.get());
             } else if (segment.distance.get() > 0) {
-                targetView.setPattern(getString(R.string.distance_pattern));
-                targetView.setValue(segment.distance.get());
-                targetLabelView.setText(getString(R.string.target_distance));
+                targetView.labelPattern(R.string.target_distance, R.string.distance_pattern);
+                targetView.value(segment.distance.get());
             } else if (segment.strokes.get() > 0) {
-                targetView.setPattern(getString(R.string.strokes_pattern));
-                targetView.setValue(segment.strokes.get());
-                targetLabelView.setText(getString(R.string.target_strokes));
+                targetView.labelPattern(R.string.target_strokes, R.string.strokes_pattern);
+                targetView.value(segment.strokes.get());
             } else if (segment.energy.get() > 0) {
-                targetView.setPattern(getString(R.string.energy_pattern));
-                targetView.setValue(segment.energy.get());
-                targetLabelView.setText(getString(R.string.target_energy));
+                targetView.labelPattern(R.string.target_energy, R.string.energy_pattern);
+                targetView.value(segment.energy.get());
             }
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -128,23 +120,19 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                 }
             });
 
-            ValueView limitView = (ValueView) index.get(R.id.segments_limit);
-            LabelView limitLabelView = (LabelView) index.get(R.id.segments_limit_label);
+            ValueContainer limitView = index.get(R.id.segments_item_limit);
             if (segment.speed.get() > 0) {
-                limitView.setPattern(getString(R.string.speed_pattern));
-                limitView.setValue(segment.speed.get());
-                limitLabelView.setText(getString(R.string.limit_speed));
+                limitView.labelPattern(R.string.limit_speed, R.string.speed_pattern);
+                limitView.value(segment.speed.get());
             } else if (segment.pulse.get() > 0) {
-                limitView.setPattern(getString(R.string.pulse_pattern));
-                limitView.setValue(segment.pulse.get());
-                limitLabelView.setText(getString(R.string.limit_pulse));
+                limitView.labelPattern(R.string.limit_pulse, R.string.pulse_pattern);
+                limitView.value(segment.pulse.get());
             } else if (segment.strokeRate.get() > 0) {
-                limitView.setPattern(getString(R.string.strokeRate_pattern));
-                limitView.setValue(segment.strokeRate.get());
-                limitLabelView.setText(getString(R.string.limit_strokeRate));
+                limitView.labelPattern(R.string.limit_strokeRate, R.string.strokeRate_pattern);
+                limitView.value(segment.strokeRate.get());
             } else {
-                limitView.setText("");
-                limitLabelView.setText(getString(R.string.limit_none));
+                limitView.labelPattern(R.string.limit_none, R.string.none_pattern);
+                limitView.value(0);
             }
             limitView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -4,5 +4,5 @@
     android:layout_height="80dp"
     android:layout_width="match_parent"
     android:padding="5dp"
-    style="@style/ValueView"
+    style="@style/LabelView"
 />

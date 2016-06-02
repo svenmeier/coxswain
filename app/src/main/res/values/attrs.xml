@@ -24,10 +24,6 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ValueView">
-        <attr name="pattern" format="string" />
-    </declare-styleable>
-
     <declare-styleable name="ValueContainer">
         <attr name="field_normal" format="boolean"/>
         <attr name="field_low" format="boolean"/>

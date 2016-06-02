@@ -30,38 +30,18 @@
     </RelativeLayout>
 
     <svenmeier.coxswain.view.ValueContainer
+        android:id="@+id/segments_item_target"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         style="@style/ValueContainer"
-        >
-
-        <svenmeier.coxswain.view.ValueView
-            android:id="@+id/segments_target"
-            style="@style/ValueView"
-            coxswain:pattern="0:00:00"
-            />
-
-        <svenmeier.coxswain.view.LabelView
-            android:id="@+id/segments_target_label"
-            style="@style/LabelView"
-            coxswain:text="DURATION"
-            />
-
-    </svenmeier.coxswain.view.ValueContainer>
+        />
 
     <svenmeier.coxswain.view.ValueContainer
+        android:id="@+id/segments_item_limit"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         style="@style/ValueContainer"
-        >
-
-        <svenmeier.coxswain.view.ValueView
-            android:id="@+id/segments_limit"
-            style="@style/ValueView"
-            coxswain:pattern="0.00"
-            />
-
-        <svenmeier.coxswain.view.LabelView
-            android:id="@+id/segments_limit_label"
-            style="@style/LabelView"
-            coxswain:text="SPEED"
-            />
-
-    </svenmeier.coxswain.view.ValueContainer>
+        />
 </LinearLayout>

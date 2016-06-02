@@ -41,6 +41,7 @@
     <string name="speed_pattern" translatable="false">-0.00</string>
     <string name="pulse_pattern" translatable="false">-000</string>
     <string name="strokeRate_pattern" translatable="false">-00</string>
+    <string name="none_pattern" translatable="false"></string>
 
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>

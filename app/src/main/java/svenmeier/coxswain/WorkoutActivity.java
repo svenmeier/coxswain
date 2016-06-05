@@ -157,7 +157,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             return;
         }
 
-        getWindow().getDecorView().setBackgroundColor(RatioCalculator.pulling ? Color.RED : Color.GREEN);
+//        getWindow().getDecorView().setBackgroundColor(RatioCalculator.pulling ? Color.RED : Color.GREEN);
 
         updateValues();
         updateLevel();

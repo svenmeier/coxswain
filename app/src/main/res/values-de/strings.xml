@@ -19,9 +19,9 @@
     <string name="duration_minutes">%s Minuten</string>
     <string name="strokes_count">%s Züge</string>
     <string name="energy_calories">%s kcal</string>
-    <string name="strokeRate_strokesPerMinute">%s Züge pro Minute</string>
-    <string name="pulse_beatsPerMinute">%s Schläge pro Minute</string>
-    <string name="speed_metersPerSecond">%s Meter pro Sekunde</string>
+    <string name="strokeRate_strokesPerMinute">%s Züge in der Minute</string>
+    <string name="pulse_beatsPerMinute">%s Schläge in der Minute</string>
+    <string name="speed_metersPerSecond">%s Meter in der Sekunde</string>
 
     <string name="value_distance">DISTANZ</string>
     <string name="value_duration">DAUER</string>

@@ -287,32 +287,32 @@ public class Gym {
         }
 
         public String describeTarget() {
-            StringBuilder description = new StringBuilder();
+            String target = "";
 
             if (segment.distance.get() > 0) {
-                description.append(String.format(context.getString(R.string.distance_meters), segment.distance.get()));
+                target = String.format(context.getString(R.string.distance_meters), segment.distance.get());
             } else if (segment.strokes.get() > 0) {
-                description.append(String.format(context.getString(R.string.strokes_count), segment.strokes.get()));
+                target = String.format(context.getString(R.string.strokes_count), segment.strokes.get());
             } else if (segment.energy.get() > 0) {
-                description.append(String.format(context.getString(R.string.energy_calories), segment.energy.get()));
+                target = String.format(context.getString(R.string.energy_calories), segment.energy.get());
             } else if (segment.duration.get() > 0) {
-                description.append(String.format(context.getString(R.string.duration_minutes), Math.round(segment.duration.get() / 60f)));
+                target = String.format(context.getString(R.string.duration_minutes), Math.round(segment.duration.get() / 60f));
             }
-            return description.toString();
+            return target;
         }
 
         public String describeLimit() {
-            StringBuilder description = new StringBuilder();
+            String limit = "";
 
             if (segment.strokeRate.get() > 0) {
-                description.append(String.format(context.getString(R.string.strokeRate_strokesPerMinute), segment.strokeRate.get()));
+                limit = String.format(context.getString(R.string.strokeRate_strokesPerMinute), segment.strokeRate.get());
             } else if (segment.speed.get() > 0) {
-                description.append(String.format(context.getString(R.string.speed_metersPerSecond), Math.round(segment.speed.get() / 100f)));
+                limit = String.format(context.getString(R.string.speed_metersPerSecond), Math.round(segment.speed.get() / 100f));
             } else if (segment.pulse.get() > 0){
-                description.append(String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get()));
+                 limit = String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get());
             }
 
-            return description.toString();
+            return limit;
         }
 
         public String describe() {

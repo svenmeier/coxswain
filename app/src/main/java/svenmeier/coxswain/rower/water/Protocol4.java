@@ -37,6 +37,8 @@ public class Protocol4 implements IProtocol {
 
     private List<Field> fields = new ArrayList<>();
 
+    private RatioCalculator ratioCalculator = new RatioCalculator();
+
     private int cycle = 0;
 
     private long outputThrottle = DEFAULT_OUTPUT_THROTTLE;
@@ -109,17 +111,16 @@ public class Protocol4 implements IProtocol {
         fields.add(new Field(null, "SS") {
             @Override
             protected void onInput(String message, Snapshot memory) {
-                memory.drive.set(true);
+                ratioCalculator.pulling(memory, System.currentTimeMillis());
             }
         });
 
         fields.add(new Field(null, "SE") {
             @Override
             protected void onInput(String message, Snapshot memory) {
-                memory.drive.set(false);
+                ratioCalculator.recovering(memory, System.currentTimeMillis());
             }
         });
-
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Snapshot memory) {
@@ -283,5 +284,7 @@ public class Protocol4 implements IProtocol {
         fields.add(reset);
 
         cycle = fields.indexOf(reset);
+
+        ratioCalculator.clear(System.currentTimeMillis());
     }
 }

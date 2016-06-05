@@ -24,8 +24,6 @@ public class Snapshot extends Propoid {
 
     public final Property<Workout> workout = property();
 
-    public final Property<Boolean> drive = property();
-
     public final Property<Integer> distance = property();
 
     public final Property<Integer> strokes = property();
@@ -36,6 +34,8 @@ public class Snapshot extends Propoid {
 
     public final Property<Integer> strokeRate = property();
 
+    public final Property<Integer> strokeRatio = property();
+
     public final Property<Integer> energy = property();
 
     public Snapshot() {
@@ -43,22 +43,22 @@ public class Snapshot extends Propoid {
     }
 
     public Snapshot(Snapshot snapshot) {
-        drive.set(snapshot.drive.get());
         distance.set(snapshot.distance.get());
         strokes.set(snapshot.strokes.get());
         speed.set(snapshot.speed.get());
         pulse.set(snapshot.pulse.get());
         strokeRate.set(snapshot.strokeRate.get());
+        strokeRatio.set(snapshot.strokeRatio.get());
         energy.set(snapshot.energy.get());
     }
 
     public void clear() {
-        drive.set(false);
         distance.set(0);
         strokes.set(0);
         speed.set(0);
         pulse.set(0);
         strokeRate.set(0);
+        strokeRatio.set(0);
         energy.set(0);
     }
 }

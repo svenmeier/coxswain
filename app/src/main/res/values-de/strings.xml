@@ -1,6 +1,7 @@
 <resources>
     <string name="action_mock">Mock</string>
     <string name="action_share">Teilen</string>
+    <string name="action_bind">Verknüpfen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
     <string name="action_ok">OK</string>
@@ -22,14 +23,15 @@
     <string name="pulse_beatsPerMinute">%s Schläge pro Minute</string>
     <string name="speed_metersPerSecond">%s Meter pro Sekunde</string>
 
-    <string name="target_distance">DISTANZ</string>
-    <string name="target_duration">DAUER</string>
-    <string name="target_strokes">ZÜGE</string>
-    <string name="target_energy">ENERGIE</string>
-    <string name="limit_speed">TEMPO</string>
-    <string name="limit_pulse">PULS</string>
-    <string name="limit_strokeRate">SCHLAGZAHL</string>
-    <string name="limit_none">KEINE</string>
+    <string name="value_distance">DISTANZ</string>
+    <string name="value_duration">DAUER</string>
+    <string name="value_strokes">ZÜGE</string>
+    <string name="value_energy">ENERGIE</string>
+    <string name="value_speed">TEMPO</string>
+    <string name="value_pulse">PULS</string>
+    <string name="value_strokeRate">SCHLAGZAHL</string>
+    <string name="value_strokeRatio">TEILZAHL</string>
+    <string name="value_none">KEINE</string>
 
     <string name="programs">Programme</string>
     <string name="workouts">Trainings</string>
@@ -48,8 +50,8 @@
 
     <string name="preference_training_title">Training</string>
 
-    <string name="preference_stroke_ratio_title">Schlag-Verhältnis</string>
-    <string name="preference_stroke_ratio_summary">Schlag-Verhältnis 1:%s</string>
+    <string name="preference_stroke_ratio_title">Teilzahl</string>
+    <string name="preference_stroke_ratio_summary">Teilzahl 1:%s</string>
 
     <string name="preference_body_weight_title">Körpergewicht</string>
     <string name="preference_body_weight_summary">Körpergewicht %s kg</string>

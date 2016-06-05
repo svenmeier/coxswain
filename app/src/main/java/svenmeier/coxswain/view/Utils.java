@@ -19,6 +19,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.List;
 
 /**
  * Created by sven on 19.08.15.
@@ -28,6 +32,17 @@ public class Utils {
     public static float dpToPx(Context context, int dp) {
 
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static <T> void collect(Class<? extends T> t, View view, List<T> list) {
+        if (t.isInstance(view)) {
+            list.add((T) view);
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                collect(t, group.getChildAt(i), list);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")

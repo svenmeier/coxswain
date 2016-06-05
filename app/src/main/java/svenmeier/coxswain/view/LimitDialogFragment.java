@@ -28,7 +28,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.limit_speed);
+                return getString(R.string.value_speed);
             }
 
             @Override
@@ -38,7 +38,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.speed_pattern);
+                return getString(R.string.pattern_speed);
             }
 
             @Override
@@ -61,7 +61,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.limit_pulse);
+                return getString(R.string.value_pulse);
             }
 
             @Override
@@ -71,7 +71,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.pulse_pattern);
+                return getString(R.string.pattern_pulse);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.limit_strokeRate);
+                return getString(R.string.value_strokeRate);
             }
 
             @Override
@@ -104,7 +104,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.strokeRate_pattern);
+                return getString(R.string.pattern_strokeRate);
             }
 
             @Override
@@ -126,7 +126,7 @@ public class LimitDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.limit_none);
+                return getString(R.string.value_none);
             }
 
             @Override

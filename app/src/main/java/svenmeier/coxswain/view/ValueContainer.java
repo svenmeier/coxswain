@@ -16,19 +16,22 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
+import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Segment;
+import svenmeier.coxswain.gym.Snapshot;
 
 /**
  */
 public class ValueContainer extends FrameLayout {
 
     private static final int[] state = {0};
+
+    private ValueBinding binding;
 
     private ValueView valueView;
 
@@ -51,36 +54,109 @@ public class ValueContainer extends FrameLayout {
 
         valueView = (ValueView)findViewById(R.id.value);
         labelView = (LabelView)findViewById(R.id.label);
+
+        setBinding(ValueBinding.DISTANCE);
     }
 
-    public void labelPattern(int label, int pattern) {
+    public void setBinding(ValueBinding binding) {
+        if (this.binding == binding) {
+            return;
+        }
+        this.binding = binding;
 
-        labelView.setText(getContext().getString(label));
+        labelView.setText(getContext().getString(binding.label));
+        valueView.setPattern(getContext().getString(binding.pattern));
 
-        valueView.setPattern(getContext().getString(pattern));
+        update(0);
     }
 
-    public void value(int value) {
-        clearState();
+    public ValueBinding getBinding() {
+        return binding;
+    }
+
+    public void update(int value) {
+        setState(R.attr.field_normal);
 
         valueView.setValue(value);
     }
 
-    public void target(int memory, int segment, int achieved) {
-        if (segment > 0) {
-            setState(R.attr.field_target);
+    public void update(Gym gym) {
+        int achieved = 0;
 
-            valueView.setValue(Math.max(0, segment - achieved));
-        } else {
-            clearState();
+        int targetDuration = 0;
+        int targetDistance = 0;
+        int targetStrokes = 0;
+        int targetEnergy = 0;
+        int limitSpeed = 0;
+        int limitStrokeRate = 0;
+        int limitPulse = 0;
 
-            valueView.setValue(memory);
+        if (gym.current != null) {
+            Segment segment = gym.current.segment;
+
+            achieved = gym.current.achieved();
+
+            targetDuration = segment.duration.get();
+            targetDistance = segment.distance.get();
+            targetStrokes = segment.strokes.get();
+            limitSpeed = segment.speed.get();
+            limitStrokeRate = segment.strokeRate.get();
+            limitPulse = segment.pulse.get();
+        }
+
+        Snapshot snapshot = gym.getLastSnapshot();
+        if (snapshot == null) {
+            snapshot = new Snapshot();
+        }
+
+        int duration = 0;
+        if (gym.workout != null) {
+            duration = gym.workout.duration.get();
+        }
+
+        switch (binding) {
+            case DURATION:
+                target(duration, targetDuration, achieved);
+                break;
+            case DISTANCE:
+                target(snapshot.distance.get(), targetDistance, achieved);
+                break;
+            case STROKES:
+                target(snapshot.strokes.get(), targetStrokes, achieved);
+                break;
+            case ENERGY:
+                target(snapshot.energy.get(), targetEnergy, achieved);
+                break;
+            case SPEED:
+                limit(snapshot.speed.get(), limitSpeed);
+                break;
+            case PULSE:
+                limit(snapshot.pulse.get(), limitPulse);
+                break;
+            case STROKE_RATE:
+                limit(snapshot.strokeRate.get(), limitStrokeRate);
+                break;
+            case STROKE_RATIO:
+                limit(snapshot.strokeRatio.get(), 0);
+                break;
         }
     }
 
-    public void limit(int memory, int segment) {
-        if (segment > 0) {
-            int difference = memory - segment;
+    private void target(int value, int target, int achieved) {
+        if (target > 0) {
+            setState(R.attr.field_target);
+
+            valueView.setValue(Math.max(0, target - achieved));
+        } else {
+            setState(R.attr.field_normal);
+
+            valueView.setValue(value);
+        }
+    }
+
+    private void limit(int value, int limit) {
+        if (limit > 0) {
+            int difference = value - limit;
             if (difference < 0) {
                 setState(R.attr.field_low);
             } else {
@@ -90,18 +166,11 @@ public class ValueContainer extends FrameLayout {
             valueView.setPattern(valueView.getPattern().replace('-', '+'));
             valueView.setValue(difference);
         } else {
-            clearState();
+            setState(R.attr.field_normal);
 
             valueView.setPattern(valueView.getPattern().replace('+', '-'));
-            valueView.setValue(memory);
+            valueView.setValue(value);
         }
-    }
-
-    private void clearState() {
-        this.state[0] = R.attr.field_normal;
-
-        refreshDrawableState();
-        invalidate();
     }
 
     private void setState(int state) {

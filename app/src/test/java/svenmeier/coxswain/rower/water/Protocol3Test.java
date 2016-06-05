@@ -39,15 +39,13 @@ public class Protocol3Test {
 		assertEquals(Integer.valueOf(3), memory.distance.get());
 
 
-		transfer.setupInput(new byte[]{(byte) 0xFC, (byte) 0xFC});
+		transfer.setupInput(new byte[]{(byte) 0xFC});
 		protocol.transfer(memory);
-		assertEquals(Boolean.FALSE, memory.drive.get());
-		assertEquals(Integer.valueOf(2), memory.strokes.get());
+		assertEquals(Integer.valueOf(1), memory.strokes.get());
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFD, (byte) 0x01, (byte) 0x02});
 		protocol.transfer(memory);
-		assertEquals(Boolean.TRUE, memory.drive.get());
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01});
@@ -72,7 +70,7 @@ public class Protocol3Test {
 		transfer.setupInput(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
 		protocol.transfer(memory);
 
-		assertEquals("#protocol 3<FE 19<FE 05<FC<FC<FD 01 02<FB 01<FB 01<FF 01 02<FF 01 02<01<02<03", trace.toString());
+		assertEquals("#protocol 3<FE 19<FE 05<FC<FD 01 02<FB 01<FB 01<FF 01 02<FF 01 02<01<02<03", trace.toString());
 	}
 
 	@Test

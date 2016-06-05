@@ -15,7 +15,7 @@ import svenmeier.coxswain.garmin.TcxExport;
 import svenmeier.coxswain.google.FitExport;
 import svenmeier.coxswain.gym.Workout;
 
-public class ExportFragment extends DialogFragment {
+public class ExportDialogFragment extends DialogFragment {
 
 	public static final int FIT_REQUEST_CODE = 1;
 
@@ -59,8 +59,8 @@ public class ExportFragment extends DialogFragment {
 	}
 
 
-	public static ExportFragment create(Workout workout) {
-		ExportFragment fragment = new ExportFragment();
+	public static ExportDialogFragment create(Workout workout) {
+		ExportDialogFragment fragment = new ExportDialogFragment();
 
 		fragment.setArguments(new Reference<>(workout).to(new Bundle()));
 

@@ -28,6 +28,8 @@ public class Protocol3 implements IProtocol {
 
     private int distanceInDecimeters;
 
+    private RatioCalculator ratioCalculator = new RatioCalculator();
+
     public Protocol3(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;
 
@@ -42,6 +44,8 @@ public class Protocol3 implements IProtocol {
     @Override
     public void reset() {
         distanceInDecimeters = 0;
+
+        ratioCalculator.clear(System.currentTimeMillis());
     }
 
     @Override
@@ -64,17 +68,19 @@ public class Protocol3 implements IProtocol {
                 case (byte)0xFC:
                     trace(buffer, c, 1);
 
-                    memory.drive.set(false);
                     memory.strokes.set(memory.strokes.get() + 1);
+
+                    ratioCalculator.recovering(memory, System.currentTimeMillis());
+
                     continue;
                 case (byte)0xFD:
                     if (c + 2 < length) {
                         trace(buffer, c, 3);
 
+                        ratioCalculator.pulling(memory, System.currentTimeMillis());
+
                         // voltage not used
                         c += 2;
-
-                        memory.drive.set(true);
                     }
                     continue;
                 case (byte)0xFE:

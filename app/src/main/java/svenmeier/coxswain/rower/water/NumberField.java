@@ -55,16 +55,16 @@ public abstract class NumberField extends Field {
 
     @Override
     protected void onInput(String message, Snapshot memory) {
-        onUpdate(fromAscii(message, response.length(), 16), memory);
+        onUpdate(fromAscii(message, response.length()), memory);
     }
 
     protected abstract void onUpdate(int value, Snapshot memory);
 
-    private static int fromAscii(String ach, int start, int base) {
+    private static int fromAscii(String ach, int start) {
         int total = 0;
 
         for (int c = start; c < ach.length(); c++) {
-            total *= base;
+            total *= 16;
 
             int codepoint = ach.codePointAt(c);
             int digit = codepoint - CODEPOINT_0;

@@ -89,9 +89,9 @@ public class MockRower implements Rower {
 
             memory.strokeRate.set((int)(26 +  (Math.random() * 3)));
 
-            memory.pulse.set((int)(80 +  (Math.random() * 10)));
+            memory.strokeRatio.set((int)(100 +  (Math.random() * 50)));
 
-            memory.drive.set((strokes % 1.0) < 0.3);
+            memory.pulse.set((int)(80 +  (Math.random() * 10)));
 
             return true;
         } else {

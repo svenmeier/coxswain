@@ -15,7 +15,6 @@
  */
 package svenmeier.coxswain;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -39,11 +38,9 @@ import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
-import svenmeier.coxswain.google.FitExport;
-import svenmeier.coxswain.garmin.TcxExport;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
-import svenmeier.coxswain.view.ExportFragment;
+import svenmeier.coxswain.view.ExportDialogFragment;
 import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
 
@@ -132,7 +129,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                 finish();
                 return true;
             case R.id.action_share:
-                ExportFragment.create(workout).show(getFragmentManager(), "export");
+                ExportDialogFragment.create(workout).show(getFragmentManager(), "export");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,13 +148,13 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     private void updateTitle() {
         switch (highlight) {
             case 0:
-                titleView.setText(R.string.limit_speed);
+                titleView.setText(R.string.value_speed);
                 break;
             case 1:
-                titleView.setText(R.string.limit_pulse);
+                titleView.setText(R.string.value_pulse);
                 break;
             case 2:
-                titleView.setText(R.string.limit_strokeRate);
+                titleView.setText(R.string.value_strokeRate);
                 break;
             default:
                 throw new IndexOutOfBoundsException();

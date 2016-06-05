@@ -17,22 +17,33 @@ package svenmeier.coxswain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
-import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.water.RatioCalculator;
+import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
+import svenmeier.coxswain.view.Utils;
+import svenmeier.coxswain.view.ValueBinding;
 import svenmeier.coxswain.view.ValueContainer;
 
 
 /**
  */
-public class WorkoutActivity extends AbstractActivity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener {
+public class WorkoutActivity extends AbstractActivity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener, BindingDialogFragment.Callback {
 
     private static final int DELAY_MILLIS = 250;
 
@@ -47,14 +58,18 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private SegmentsView segmentsView;
 
-    private ValueContainer durationView;
-    private ValueContainer distanceView;
-    private ValueContainer strokesView;
-    private ValueContainer speedView;
-    private ValueContainer strokeRateView;
-    private ValueContainer pulseView;
+    private List<ValueContainer> valueViews = new ArrayList<>();
 
     private LevelView levelView;
+
+    private Preference<String> binding;
+
+    private Runnable returnToLeanBack = new Runnable() {
+        @Override
+        public void run() {
+            getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +78,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         super.onCreate(savedInstanceState);
 
         gym = Gym.instance(this);
+
+        binding = Preference.getString(this, R.string.preference_workout_binding);
 
         setContentView(R.layout.layout_workout);
 
@@ -76,29 +93,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        durationView = (ValueContainer) findViewById(R.id.workout_value_0);
-        durationView.labelPattern(R.string.target_duration, R.string.duration_pattern);
-        durationView.value(0);
-
-        distanceView = (ValueContainer) findViewById(R.id.workout_value_1);
-        distanceView.labelPattern(R.string.target_distance, R.string.distance_pattern);
-        distanceView.value(0);
-
-        strokesView = (ValueContainer) findViewById(R.id.workout_value_2);
-        strokesView.labelPattern(R.string.target_strokes, R.string.strokes_pattern);
-        strokesView.value(0);
-
-        speedView = (ValueContainer) findViewById(R.id.workout_value_3);
-        speedView.labelPattern(R.string.limit_speed, R.string.speed_pattern);
-        speedView.value(0);
-
-        strokeRateView = (ValueContainer) findViewById(R.id.workout_value_4);
-        strokeRateView.labelPattern(R.string.limit_strokeRate, R.string.strokeRate_pattern);
-        strokeRateView.value(0);
-
-        pulseView = (ValueContainer) findViewById(R.id.workout_value_5);
-        pulseView.labelPattern(R.string.limit_pulse, R.string.pulse_pattern);
-        pulseView.value(0);
+        Utils.collect(ValueContainer.class, getWindow().getDecorView(), valueViews);
 
         levelView = (LevelView) findViewById(R.id.workout_progress);
     }
@@ -107,6 +102,37 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     public void onResume() {
         super.onResume();
 
+        List<ValueBinding> bindings = new ArrayList<>();
+        try {
+            for (String name : TextUtils.split(binding.get(), ",")) {
+                bindings.add(ValueBinding.valueOf(name));
+            }
+        } catch (Exception useDefault) {
+            bindings = Arrays.asList(
+                ValueBinding.DURATION,
+                ValueBinding.DISTANCE,
+                ValueBinding.STROKES,
+                ValueBinding.SPEED,
+                ValueBinding.PULSE,
+                ValueBinding.STROKE_RATE);
+        }
+        for (int b = 0; b < Math.min(bindings.size(), valueViews.size()); b++) {
+            valueViews.get(b).setBinding(bindings.get(b));
+            valueViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    leanBack(false);
+
+                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId());
+
+                    fragment.show(getFragmentManager(), "binding");
+
+                    return true;
+                }
+            });
+        }
+
         changed();
         gym.addListener(this);
     }
@@ -114,6 +140,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     @Override
     protected void onPause() {
         super.onPause();
+
+        List<String> bindings = new ArrayList<>();
+        for (ValueContainer valueView : valueViews) {
+            bindings.add(valueView.getBinding().name());
+        }
+        binding.set(TextUtils.join(",", bindings));
 
         gym.removeListener(this);
     }
@@ -125,59 +157,21 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             return;
         }
 
+        getWindow().getDecorView().setBackgroundColor(RatioCalculator.pulling ? Color.RED : Color.GREEN);
+
         updateValues();
         updateLevel();
     }
 
     @Override
     public void onSystemUiVisibilityChange(int visibility) {
-        getWindow().getDecorView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
-            }
-        }, 3000);
+        leanBack(true);
     }
 
     private void updateValues() {
-        int achieved = 0;
-
-        int targetDuration = 0;
-        int targetDistance = 0;
-        int targetStrokes = 0;
-        int speed = 0;
-        int strokeRate = 0;
-        int pulse = 0;
-
-        Snapshot snapshot = gym.getLastSnapshot();
-        if (snapshot == null) {
-            snapshot = new Snapshot();
+        for (int v = 0; v < valueViews.size(); v++) {
+            valueViews.get(v).update(gym);
         }
-
-        if (gym.current != null) {
-            Segment segment = gym.current.segment;
-
-            achieved = gym.current.achieved();
-
-            targetDuration = segment.duration.get();
-            targetDistance = segment.distance.get();
-            targetStrokes = segment.strokes.get();
-            speed = segment.speed.get();
-            strokeRate = segment.strokeRate.get();
-            pulse = segment.pulse.get();
-        }
-
-        int duration = 0;
-        if (gym.workout != null) {
-            duration = gym.workout.duration.get();
-        }
-
-        durationView.target(duration, targetDuration, achieved);
-        distanceView.target(snapshot.distance.get(), targetDistance, achieved);
-        strokesView.target(snapshot.strokes.get(), targetStrokes, achieved);
-        speedView.limit(snapshot.speed.get(), speed);
-        strokeRateView.limit(snapshot.strokeRate.get(), strokeRate);
-        pulseView.limit(snapshot.pulse.get(), pulse);
     }
 
     private void updateLevel() {
@@ -197,6 +191,23 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             value = total;
         }
         levelView.setLevel(Math.round(value * 10000 / total));
+    }
+
+    @Override
+    public void onBinding(int viewId, ValueBinding binding) {
+        if (binding != null) {
+            ((ValueContainer)findViewById(viewId)).setBinding(binding);
+        }
+
+        leanBack(true);
+    }
+
+    private void leanBack(boolean yes) {
+        if (yes) {
+            getWindow().getDecorView().postDelayed(returnToLeanBack, 3000);
+        } else {
+            getWindow().getDecorView().getHandler().removeCallbacks(returnToLeanBack);
+        }
     }
 
     public static void start(Context context) {

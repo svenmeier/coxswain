@@ -144,16 +144,16 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
     private void updateTitle() {
         switch (highlight) {
             case 0:
-                titleView.setText(R.string.target_duration);
+                titleView.setText(R.string.value_duration);
                 break;
             case 1:
-                titleView.setText(R.string.target_distance);
+                titleView.setText(R.string.value_distance);
                 break;
             case 2:
-                titleView.setText(R.string.target_strokes);
+                titleView.setText(R.string.value_strokes);
                 break;
             case 3:
-                titleView.setText(R.string.target_energy);
+                titleView.setText(R.string.value_energy);
                 break;
             default:
                 throw new IndexOutOfBoundsException();
@@ -215,7 +215,7 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
 
             lookup = null;
 
-            // release cursor
+            // recover cursor
             workouts.clear();
         }
     }

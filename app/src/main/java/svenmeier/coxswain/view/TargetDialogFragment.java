@@ -28,7 +28,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.target_duration);
+                return getString(R.string.value_duration);
             }
 
             @Override
@@ -38,7 +38,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.duration_pattern);
+                return getString(R.string.pattern_duration);
             }
 
             @Override
@@ -61,7 +61,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.target_distance);
+                return getString(R.string.value_distance);
             }
 
             @Override
@@ -71,7 +71,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.distance_pattern);
+                return getString(R.string.pattern_distance);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.target_strokes);
+                return getString(R.string.value_strokes);
             }
 
             @Override
@@ -104,7 +104,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.strokes_pattern);
+                return getString(R.string.pattern_strokes);
             }
 
             @Override
@@ -127,7 +127,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public CharSequence getTitle() {
-                return getString(R.string.target_energy);
+                return getString(R.string.value_energy);
             }
 
             @Override
@@ -137,7 +137,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public String getPattern() {
-                return getString(R.string.energy_pattern);
+                return getString(R.string.pattern_energy);
             }
 
             @Override

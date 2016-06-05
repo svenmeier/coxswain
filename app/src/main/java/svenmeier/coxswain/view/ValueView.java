@@ -74,15 +74,16 @@ public class ValueView extends LabelView {
         for (int c = pattern.length() - 1; c >= 0; c--) {
             char character = pattern.charAt(c);
 
-            if (Character.isDigit(character)) {
-                int base = ((int)character) - CODEPOINT_0;
-                if (base == 0) {
-                    base = 10;
-                }
+            if ('0' == character) {
+                // decimal
+                text.append(digits % 10);
 
-                text.append(digits % base);
+                digits /= 10;
+            } else if ('6' == character) {
+                // minutes or hours
+                text.append(digits % 6);
 
-                digits /= base;
+                digits /= 6;
             } else if ('-' == character) {
                 if (value < 0) {
                     text.append("-");

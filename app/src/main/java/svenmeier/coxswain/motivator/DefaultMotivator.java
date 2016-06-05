@@ -82,7 +82,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         analysers.add(new Finish());
         analysers.add(new Change());
         analysers.add(new Limit());
-        analysers.add(new Ratio());
     }
 
     @Override
@@ -284,77 +283,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         public void reset() {
             underLimitSince = -1;
-        }
-    }
-
-    /**
-     * Analyse stroke ratio.
-     */
-    private class Ratio extends Analyser {
-
-        private static final String TICK = "[TICK]";
-
-        private Preference<String> ringtoneDrivePreference = Preference.getString(context, R.string.preference_audio_ringtone_catch);
-        private Preference<Float> ratioPreference = Preference.getFloat(context, R.string.preference_stroke_ratio).range(1f, 3f);
-
-        private boolean drive;
-
-        private long drawTime = -1;
-
-        private long catchTime = -1;
-
-        private long duration = -1;
-
-        @Override
-        public void init() {
-            addRingtone(ringtoneDrivePreference, TICK);
-        }
-
-        public void analyse(Event event, Gym.Current current) {
-            if (event != Event.SNAPPED) {
-                return;
-            }
-
-            long now = System.currentTimeMillis();
-
-            if (gym.snapshot.drive.get() != this.drive) {
-                if (this.drive) {
-                    // drive phase ends
-
-                    if (drawTime != -1) {
-                        // full stroke
-
-                        duration = now - drawTime;
-
-                        float ratio = ratioPreference.get();
-                        catchTime = now + Math.round(duration * ratio / (1 + ratio) * RATIO_RECOVER_FACTOR);
-                    }
-
-                    drawTime = now;
-                } else {
-                    // drive phase starts, no need to give hint anymore
-                    catchTime = -1;
-                }
-
-                this.drive = gym.snapshot.drive.get();
-            }
-
-            if (catchTime != -1 && now > catchTime) {
-                // hint start of drive phase
-
-                catchTime = -1;
-
-
-                if (speaking == false) {
-                    speech.playEarcon(TICK, TextToSpeech.QUEUE_ADD, null);
-                }
-            }
-        }
-
-        public void reset() {
-            drawTime = -1;
-            catchTime = -1;
-            duration = -1;
         }
     }
 }

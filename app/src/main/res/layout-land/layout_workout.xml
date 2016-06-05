@@ -9,75 +9,75 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="6"
         android:orientation="horizontal"
         >
 
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_0"
-            android:layout_height="match_parent"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
-
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_3"
             android:layout_height="match_parent"
-            android:layout_width="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
+            android:orientation="vertical"
+            >
 
-    </LinearLayout>
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_0"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="horizontal"
-        >
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_1"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
 
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_1"
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_2"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_width="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
+            android:orientation="vertical"
+            >
 
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_4"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
-    </LinearLayout>
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_3"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="horizontal"
-        >
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_4"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
 
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_2"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
+            <svenmeier.coxswain.view.ValueContainer
+                android:id="@+id/workout_value_5"
+                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                style="@style/ValueContainer"
+                />
 
-        <svenmeier.coxswain.view.ValueContainer
-            android:id="@+id/workout_value_5"
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            style="@style/ValueContainer"
-            />
-
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout

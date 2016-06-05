@@ -3,6 +3,7 @@
 
     <string name="action_mock">Mock</string>
     <string name="action_share">Share</string>
+    <string name="action_bind">Bind</string>
     <string name="action_settings">Settings</string>
     <string name="action_rename">Rename</string>
     <string name="action_ok">OK</string>
@@ -24,24 +25,26 @@
     <string name="pulse_beatsPerMinute">%s beats per minute</string>
     <string name="speed_metersPerSecond">%s meters per second</string>
 
-    <string name="target_distance">DISTANCE</string>
-    <string name="target_duration">DURATION</string>
-    <string name="target_strokes">STROKES</string>
-    <string name="target_energy">ENERGY</string>
-    <string name="limit_speed">SPEED</string>
-    <string name="limit_pulse">PULSE</string>
-    <string name="limit_strokeRate">STROKERATE</string>
-    <string name="limit_none">NONE</string>
+    <string name="value_distance">DISTANCE</string>
+    <string name="value_duration">DURATION</string>
+    <string name="value_strokes">STROKES</string>
+    <string name="value_energy">ENERGY</string>
+    <string name="value_speed">SPEED</string>
+    <string name="value_pulse">PULSE</string>
+    <string name="value_strokeRate">STROKERATE</string>
+    <string name="value_strokeRatio">STROKERATIO</string>
+    <string name="value_none">NONE</string>
 
-    <string name="distance_pattern" translatable="false">00000</string>
-    <string name="duration_pattern" translatable="false">0:60:60</string>
-    <string name="duration_short_pattern" translatable="false">60:60</string>
-    <string name="strokes_pattern" translatable="false">0000</string>
-    <string name="energy_pattern" translatable="false">0000</string>
-    <string name="speed_pattern" translatable="false">-0.00</string>
-    <string name="pulse_pattern" translatable="false">-000</string>
-    <string name="strokeRate_pattern" translatable="false">-00</string>
-    <string name="none_pattern" translatable="false"></string>
+    <string name="pattern_distance" translatable="false">00000</string>
+    <string name="pattern_duration" translatable="false">0:60:60</string>
+    <string name="pattern_duration_short" translatable="false">60:60</string>
+    <string name="pattern_strokes" translatable="false">0000</string>
+    <string name="pattern_energy" translatable="false">0000</string>
+    <string name="pattern_speed" translatable="false">-0.00</string>
+    <string name="pattern_pulse" translatable="false">-000</string>
+    <string name="pattern_strokeRate" translatable="false">-00</string>
+    <string name="pattern_strokeRatio" translatable="false">1:0.00</string>
+    <string name="pattern_none" translatable="false"></string>
 
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>
@@ -60,10 +63,6 @@
     <string name="preference_theme_dark_summary">Use a dark theme</string>
 
     <string name="preference_training_title">Training</string>
-
-    <string name="preference_stroke_ratio" translatable="false">preference_stroke_ratio</string>
-    <string name="preference_stroke_ratio_title">Stroke Ratio</string>
-    <string name="preference_stroke_ratio_summary">Stroke ratio 1:%s</string>
 
     <string name="preference_body_weight" translatable="false">preference_body_weight</string>
     <string name="preference_body_weight_title">Body weight</string>
@@ -104,10 +103,6 @@
     <string name="preference_audio_speak_limit_title">Segment limit</string>
     <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled</string>
 
-    <string name="preference_audio_ringtone_catch" translatable="false">preference_audio_ringtone_catch</string>
-    <string name="preference_audio_ringtone_catch_title">Drive phase due</string>
-    <string name="preference_audio_ringtone_catch_summary">%s</string>
-
     <string name="preference_integration_title">Integration</string>
 
     <string name="preference_integration_headsup" translatable="false">preference_integration_headsup</string>
@@ -137,4 +132,5 @@
 
     <string name="preference_performance_window" translatable="false">preference_performance_window</string>
     <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
+    <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
 </resources>

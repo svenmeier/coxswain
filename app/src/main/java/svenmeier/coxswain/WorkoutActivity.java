@@ -124,7 +124,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
                     leanBack(false);
 
-                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId());
+                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((ValueContainer)view).getBinding());
 
                     fragment.show(getFragmentManager(), "binding");
 

@@ -99,6 +99,7 @@ public class ValueContainer extends FrameLayout {
             targetDuration = segment.duration.get();
             targetDistance = segment.distance.get();
             targetStrokes = segment.strokes.get();
+            targetEnergy = segment.energy.get();
             limitSpeed = segment.speed.get();
             limitStrokeRate = segment.strokeRate.get();
             limitPulse = segment.pulse.get();

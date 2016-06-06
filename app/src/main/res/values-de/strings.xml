@@ -50,9 +50,6 @@
 
     <string name="preference_training_title">Training</string>
 
-    <string name="preference_stroke_ratio_title">Teilzahl</string>
-    <string name="preference_stroke_ratio_summary">Teilzahl 1:%s</string>
-
     <string name="preference_body_weight_title">Körpergewicht</string>
     <string name="preference_body_weight_summary">Körpergewicht %s kg</string>
 
@@ -82,9 +79,6 @@
 
     <string name="preference_audio_speak_limit_title">Segment Anforderung</string>
     <string name="preference_audio_speak_limit_summary">Anforderung für Semgent wiederholen wenn nicht erfüllt</string>
-
-    <string name="preference_audio_ringtone_catch_title">Durchzug-Phase fällig</string>
-    <string name="preference_audio_ringtone_catch_summary">%s</string>
 
     <string name="preference_integration_title">Integration</string>
 

@@ -15,16 +15,18 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 public class RatioCalculator {
 
-    public static boolean pulling = true;
+    // actually would be 10 for one decimal place, but S4
+    // reports pulls too late and recover too early -
+    // thus we reduce the recovering phase
+    public static final int MULTIPLIER = 8;
+
+    public static final int MAX = 99;
+
+    public boolean pulling = true;
 
     private long start = 0;
 
@@ -56,8 +58,7 @@ public class RatioCalculator {
             pullDuration = (now - start);
             start = now;
 
-            int ratio = Math.min((int) (100 * recoverDuration / pullDuration), 999);
-
+            int ratio = Math.min((int) (MULTIPLIER * recoverDuration / pullDuration), MAX);
             memory.strokeRatio.set(ratio);
         }
     }

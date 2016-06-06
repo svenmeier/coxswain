@@ -7,6 +7,7 @@ import svenmeier.coxswain.gym.Snapshot;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Test for {@link RatioCalculator}.
  */
 public class RatioCalculatorTest {
 
@@ -28,7 +29,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(snapshot, now);
 		calculator.recovering(snapshot, now + 200);
 
-		assertEquals(Integer.valueOf(100), snapshot.strokeRatio.get());
+		assertEquals(Integer.valueOf(8), snapshot.strokeRatio.get());
 
 		now += 2000;
 		calculator.pulling(snapshot, now);
@@ -38,7 +39,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(snapshot, now);
 		calculator.recovering(snapshot, now + 200);
 
-		assertEquals(Integer.valueOf(200), snapshot.strokeRatio.get());
+		assertEquals(Integer.valueOf(16), snapshot.strokeRatio.get());
 
 		now += 1500;
 		calculator.pulling(snapshot, now);
@@ -48,7 +49,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(snapshot, now);
 		calculator.recovering(snapshot, now + 500);
 
-		assertEquals(Integer.valueOf(150), snapshot.strokeRatio.get());
+		assertEquals(Integer.valueOf(12), snapshot.strokeRatio.get());
 
 		now += 500;
 		calculator.pulling(snapshot, now);
@@ -58,6 +59,6 @@ public class RatioCalculatorTest {
 		calculator.recovering(snapshot, now);
 		calculator.recovering(snapshot, now + 200);
 
-		assertEquals(Integer.valueOf(50), snapshot.strokeRatio.get());
+		assertEquals(Integer.valueOf(4), snapshot.strokeRatio.get());
 	}
 }

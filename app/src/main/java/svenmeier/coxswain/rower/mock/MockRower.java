@@ -72,7 +72,7 @@ public class MockRower implements Rower {
         }
 
         if (open) {
-            if (System.currentTimeMillis() > resettedAt + 5000) {
+            if (System.currentTimeMillis() > resettedAt + 2000) {
                 // delay before achieveing anything
 
                 distance += Math.random() * 0.5;
@@ -89,7 +89,7 @@ public class MockRower implements Rower {
 
             memory.strokeRate.set((int)(26 +  (Math.random() * 3)));
 
-            memory.strokeRatio.set((int)(100 +  (Math.random() * 50)));
+            memory.strokeRatio.set((int)(10 +  (Math.random() * 5)));
 
             memory.pulse.set((int)(80 +  (Math.random() * 10)));
 

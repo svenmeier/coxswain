@@ -15,6 +15,8 @@
  */
 package svenmeier.coxswain.gym;
 
+import android.location.Location;
+
 import propoid.core.Property;
 import propoid.core.Propoid;
 
@@ -23,6 +25,8 @@ import propoid.core.Propoid;
 public class Workout extends Propoid {
 
     public final Property<String> name = property();
+
+    public final Property<Location> location = property();
 
     public final Property<Long> start = property();
 

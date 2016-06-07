@@ -16,6 +16,8 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +178,7 @@ public class Gym {
                 // workout has begun
 
                 if (workout == null) {
-                    workout = new Workout(program);
+                    workout = newWorkout(program);
 
                     current = new Current(program.getSegment(0), 0, new Snapshot());
                 }
@@ -216,6 +218,23 @@ public class Gym {
         fireChanged();
 
         return event;
+    }
+
+    private Workout newWorkout(Program program) {
+        Workout workout = new Workout(program);
+
+        try {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (location == null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
+            workout.location.set(location);
+        } catch (SecurityException notPermitted) {
+            // leave location null;
+        }
+
+        return workout;
     }
 
     public Snapshot getLastSnapshot() {

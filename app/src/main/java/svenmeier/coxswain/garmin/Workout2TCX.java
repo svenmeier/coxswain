@@ -1,5 +1,8 @@
 package svenmeier.coxswain.garmin;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -128,6 +131,10 @@ public class Workout2TCX {
 
 		tag(null, "Time", dateFormat.format(workout.start.get() + index * 1000));
 
+		if (index == 0) {
+			position(workout.location.get());
+		}
+
 		tag(null, "DistanceMeters", snapshot.distance.get().toString());
 
 		heartRateBpm(snapshot.pulse.get());
@@ -135,6 +142,21 @@ public class Workout2TCX {
 		tag(null, "Cadence", Integer.toString(snapshot.strokeRate.get()));
 
 		extension("TPX", "Speed", Float.toString(snapshot.speed.get() / 100f));
+
+		serializer.endTag(null, serializer.getName());
+	}
+
+	private void position(Location location) throws IOException {
+		if (location == null) {
+			location = new Location("");
+			location.setLatitude(0d);
+			location.setLongitude(0d);
+		}
+
+		serializer.startTag(null, "Position");
+
+		tag(null, "LatitudeDegrees", Double.toString(location.getLatitude()));
+		tag(null, "LongitudeDegrees", Double.toString(location.getLongitude()));
 
 		serializer.endTag(null, serializer.getName());
 	}

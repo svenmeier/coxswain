@@ -12,6 +12,10 @@
         <Track>
           <Trackpoint>
             <Time>2015-06-15T00:01:00.000Z</Time>
+            <Position>
+              <LatitudeDegrees>0.0</LatitudeDegrees>
+              <LongitudeDegrees>0.0</LongitudeDegrees>
+            </Position>
             <DistanceMeters>2</DistanceMeters>
             <HeartRateBpm>
               <Value>80</Value>

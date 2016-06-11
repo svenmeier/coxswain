@@ -39,14 +39,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
      */
     public static final int LIMIT_LATENCY = 20000;
 
-    /**
-     * Factor to apply to recover phase, to cater for use response time and
-     * Waterrower signalling the drive phase too late.
-     */
-    public static final float RATIO_RECOVER_FACTOR = 0.8f;
-
-    private static final String SPOKEN = "[spoken]";
-
     private final Context context;
 
     private Gym gym;
@@ -57,7 +49,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private boolean initialized;
 
-    private boolean speaking;
+    private int spoken;
 
     private Event pending;
 
@@ -72,12 +64,15 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         speech.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
             @Override
             public void onUtteranceCompleted(String utteranceId) {
-                speaking = false;
+                spoken--;
+
+                if (spoken == 0 && audio != null) {
+                    audio.abandonAudioFocus(DefaultMotivator.this);
+                }
             }
         });
 
         audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 
         analysers.add(new Finish());
         analysers.add(new Change());
@@ -100,10 +95,13 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     private void speak(String text) {
-        speaking = true;
+        if (spoken == 0) {
+            audio.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+        }
+        spoken++;
 
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, SPOKEN);
+        parameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "spoken" + spoken);
 
         speech.speak(text, TextToSpeech.QUEUE_ADD, parameters);
     }
@@ -121,7 +119,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         speech.shutdown();
         speech = null;
 
-        audio.abandonAudioFocus(this);
         audio = null;
     }
 

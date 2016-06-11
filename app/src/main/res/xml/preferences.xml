@@ -113,6 +113,14 @@
             android:defaultValue="https://www.youtube.com/playlist?list=WL&amp;playnext=1"
             android:dependency="@string/preference_integration_intent"
             />
+
+        <CheckBoxPreference
+            android:key="@string/preference_integration_googlefit"
+            android:title="@string/preference_integration_googlefit_title"
+            android:summary="@string/preference_integration_googlefit_summary"
+            android:defaultValue="false"
+            />
+
     </PreferenceCategory>
 
 

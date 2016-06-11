@@ -53,7 +53,7 @@ public class TcxExport implements Runnable, Export {
 	}
 
 	@Override
-	public void onResult(int resultCode) {
+	public void onRequestResult(int resultCode) {
 	}
 
 	private void toast(final String text) {
@@ -78,7 +78,7 @@ public class TcxExport implements Runnable, Export {
 
 	@Override
 	public void run() {
-		toast(String.format(context.getString(R.string.export_starting), "TCX"));
+		toast(context.getString(R.string.garmin_export_starting));
 
 		Match<Snapshot> snapshots = gym.getSnapshots(workout);
 
@@ -87,14 +87,14 @@ public class TcxExport implements Runnable, Export {
 			file = write(snapshots);
 		} catch (IOException e) {
 			Log.e(Coxswain.TAG, "export failed", e);
-			toast(context.getString(R.string.export_failed));
+			toast(context.getString(R.string.garmin_export_failed));
 			return;
 		}
 
 		// input media so file can be found via MTB
 		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
-		toast(String.format(context.getString(R.string.export_finished), file.getAbsolutePath()));
+		toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
 	}
 
 	private File write(Match<Snapshot> snapshots) throws IOException {

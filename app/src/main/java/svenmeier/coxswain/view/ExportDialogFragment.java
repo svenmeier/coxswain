@@ -27,7 +27,7 @@ public class ExportDialogFragment extends DialogFragment {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-		String[] exports = new String[]{getString(R.string.export_tcx), getString(R.string.export_fit)};
+		String[] exports = new String[]{getString(R.string.garmin_export), getString(R.string.googlefit_export)};
 
 		builder.setTitle(R.string.action_share)
 				.setItems(exports, new DialogInterface.OnClickListener() {
@@ -54,7 +54,7 @@ public class ExportDialogFragment extends DialogFragment {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (export != null && requestCode == FIT_REQUEST_CODE) {
-			export.onResult(resultCode);
+			export.onRequestResult(resultCode);
 		}
 	}
 

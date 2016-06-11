@@ -9,5 +9,5 @@ public interface Export {
 
 	void start(Workout workout);
 
-	void onResult(int resultCode);
+	void onRequestResult(int resultCode);
 }

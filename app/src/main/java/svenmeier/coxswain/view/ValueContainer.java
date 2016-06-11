@@ -16,9 +16,12 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
+import android.telephony.CellIdentityCdma;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import java.util.Calendar;
 
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
@@ -36,6 +39,8 @@ public class ValueContainer extends FrameLayout {
     private ValueView valueView;
 
     private LabelView labelView;
+
+    private Calendar calendar;
 
     public ValueContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -139,6 +144,19 @@ public class ValueContainer extends FrameLayout {
                 break;
             case STROKE_RATIO:
                 limit(snapshot.strokeRatio.get(), 0);
+                break;
+            case TIME:
+                if (calendar == null) {
+                    calendar = Calendar.getInstance();
+                }
+
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                int seconds = calendar.get(Calendar.HOUR_OF_DAY);
+                seconds *= 60;
+                seconds += calendar.get(Calendar.MINUTE);
+                seconds *= 60;
+                seconds += calendar.get(Calendar.SECOND);
+                limit(seconds, 0);
                 break;
         }
     }

@@ -25,7 +25,8 @@ public class BindingDialogFragment extends DialogFragment {
 			ValueBinding.SPEED,
 			ValueBinding.PULSE,
 			ValueBinding.STROKE_RATE,
-			ValueBinding.STROKE_RATIO);
+			ValueBinding.STROKE_RATIO,
+			ValueBinding.TIME);
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {

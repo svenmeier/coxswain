@@ -31,6 +31,7 @@
     <string name="value_pulse">PULS</string>
     <string name="value_strokeRate">SCHLAGZAHL</string>
     <string name="value_strokeRatio">TEILZAHL</string>
+    <string name="value_time">ZEIT</string>
     <string name="value_none">KEINE</string>
 
     <string name="programs">Programme</string>
@@ -39,11 +40,13 @@
 
     <string name="segments">Segmente</string>
 
-    <string name="export_tcx">TCX</string>
-    <string name="export_fit">Google Fit</string>
-    <string name="export_starting">Exportiere nach %s</string>
-    <string name="export_finished">Exportiert nach %s</string>
-    <string name="export_failed">Export gescheitert</string>
+    <string name="garmin_export">TCX</string>
+    <string name="garmin_export_starting">Exportiere nach TCX</string>
+    <string name="garmin_export_finished">Exportiert nach %s</string>
+    <string name="garmin_export_failed">Export nach TCX gescheitert</string>
+
+    <string name="googlefit_export">Google Fit</string>
+    <string name="googlefit_failed">Google Fit ist nicht verfügbar</string>
 
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
@@ -90,6 +93,9 @@
 
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
+
+    <string name="preference_integration_googlefit_title">Google Fit</string>
+    <string name="preference_integration_googlefit_summary">Puls von Google Fit Sensoren lesen</string>
 
     <string name="preference_hardware_title">Hardware</string>
 

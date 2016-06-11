@@ -15,9 +15,12 @@
  */
 package svenmeier.coxswain;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +66,7 @@ public class Gym {
 
         repository = new Repository(context, "gym");
 
-        ((DefaultCascading)repository.cascading).setCascaded(new Program().segments);
+        ((DefaultCascading) repository.cascading).setCascaded(new Program().segments);
 
         Workout workout = new Workout();
         repository.index(workout, false, Order.descending(workout.start));
@@ -171,6 +174,8 @@ public class Gym {
     public Event addSnapshot(Snapshot snapshot) {
         Event event = Event.REJECTED;
 
+        this.snapshot = snapshot;
+
         if (program != null) {
             // program is selected
 
@@ -178,18 +183,15 @@ public class Gym {
                 // workout has begun
 
                 if (workout == null) {
-                    workout = newWorkout(program);
+                    workout = new Workout(program);
+                    workout.location.set(getLocation());
 
                     current = new Current(program.getSegment(0), 0, new Snapshot());
+
+                    event = Event.PROGRAM_START;
                 }
 
                 event = Event.SNAPPED;
-
-                if (this.snapshot == null) {
-                    // first snapshot -> start of program
-                    event = Event.PROGRAM_START;
-                }
-                this.snapshot = snapshot;
 
                 if (workout.onSnapshot(snapshot)) {
                     mergeWorkout(workout);
@@ -220,23 +222,6 @@ public class Gym {
         return event;
     }
 
-    private Workout newWorkout(Program program) {
-        Workout workout = new Workout(program);
-
-        try {
-            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location == null) {
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
-            workout.location.set(location);
-        } catch (SecurityException notPermitted) {
-            // leave location null;
-        }
-
-        return workout;
-    }
-
     public Snapshot getLastSnapshot() {
         return snapshot;
     }
@@ -245,6 +230,28 @@ public class Gym {
         Snapshot prototype = new Snapshot();
 
         return repository.query(prototype, Where.equal(prototype.workout, workout));
+    }
+
+    public Location getLocation() {
+        Location bestLocation = null;
+
+        try {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+            for (String provider : locationManager.getProviders(true)) {
+                Location location = locationManager.getLastKnownLocation(provider);
+                if (location == null) {
+                    continue;
+                }
+
+                if (bestLocation == null || location.getAccuracy() < bestLocation.getAccuracy()) {
+                    bestLocation = location;
+                }
+            }
+        } catch (SecurityException ex) {
+        }
+
+        return bestLocation;
     }
 
     public class Current {

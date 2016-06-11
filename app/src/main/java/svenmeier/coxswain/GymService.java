@@ -110,6 +110,8 @@ public class GymService extends Service {
 
     private void startRowing(UsbDevice device) {
 
+        memory.clear();
+
         Rower rower;
         if (device == null) {
             rower = new MockRower(memory);

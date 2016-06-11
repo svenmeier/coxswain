@@ -15,6 +15,7 @@ public enum ValueBinding {
 	PULSE(R.string.value_pulse, R.string.pattern_pulse),
 	STROKE_RATE(R.string.value_strokeRate, R.string.pattern_strokeRate),
 	STROKE_RATIO(R.string.value_strokeRatio, R.string.pattern_strokeRatio),
+	TIME(R.string.value_time, R.string.pattern_time),
 	NONE(R.string.value_none, R.string.pattern_none);
 
 	public final int label;

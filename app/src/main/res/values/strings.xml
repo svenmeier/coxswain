@@ -33,6 +33,7 @@
     <string name="value_pulse">PULSE</string>
     <string name="value_strokeRate">STROKERATE</string>
     <string name="value_strokeRatio">STROKERATIO</string>
+    <string name="value_time">TIME</string>
     <string name="value_none">NONE</string>
 
     <string name="pattern_distance" translatable="false">00000</string>
@@ -44,6 +45,7 @@
     <string name="pattern_pulse" translatable="false">-000</string>
     <string name="pattern_strokeRate" translatable="false">-00</string>
     <string name="pattern_strokeRatio" translatable="false">1:0.0</string>
+    <string name="pattern_time" translatable="false">00:60:60</string>
     <string name="pattern_none" translatable="false"></string>
 
     <string name="programs">Programs</string>
@@ -52,11 +54,16 @@
 
     <string name="segments">Segments</string>
 
-    <string name="export_tcx">TCX</string>
-    <string name="export_fit">Google Fit</string>
-    <string name="export_starting">Exportiere nach %s</string>
-    <string name="export_finished">Exportiert nach %s</string>
-    <string name="export_failed">Export gescheitert</string>
+    <string name="garmin_export">TCX</string>
+    <string name="garmin_export_starting">Exportiere nach TCX</string>
+    <string name="garmin_export_finished">Exportiert nach %s</string>
+    <string name="garmin_export_failed">Export nach TCX gescheitert</string>
+
+    <string name="googlefit_failed">Google Fit not available</string>
+    <string name="googlefit_export">Google Fit</string>
+    <string name="googlefit_export_starting">Exportiere nach Google Fit</string>
+    <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
+    <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>
 
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>
@@ -116,6 +123,10 @@
     <string name="preference_integration_intent_uri" translatable="false">preference_integration_intent_uri</string>
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
+
+    <string name="preference_integration_googlefit" translatable="false">preference_integration_googlefit</string>
+    <string name="preference_integration_googlefit_title">Google Fit</string>
+    <string name="preference_integration_googlefit_summary">Read heart rate from Google Fit sensors</string>
 
     <string name="preference_hardware_title">Hardware</string>
 

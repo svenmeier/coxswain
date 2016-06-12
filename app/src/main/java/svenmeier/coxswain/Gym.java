@@ -180,18 +180,16 @@ public class Gym {
             // program is selected
 
             if (snapshot.distance.get() > 0 || snapshot.strokes.get() > 0) {
-                // workout has begun
+                event = Event.SNAPPED;
 
                 if (workout == null) {
+                    event = Event.PROGRAM_START;
+                    W
                     workout = new Workout(program);
                     workout.location.set(getLocation());
 
                     current = new Current(program.getSegment(0), 0, new Snapshot());
-
-                    event = Event.PROGRAM_START;
                 }
-
-                event = Event.SNAPPED;
 
                 if (workout.onSnapshot(snapshot)) {
                     mergeWorkout(workout);

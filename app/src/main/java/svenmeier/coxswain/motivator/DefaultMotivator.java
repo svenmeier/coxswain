@@ -49,7 +49,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
     private boolean initialized;
 
-    private int spoken;
+    private int spoken = 0;
 
     private Event pending;
 
@@ -134,7 +134,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
      */
     @Override
     public void onInit(int status) {
-        if (status == 0) {
+        if (status == TextToSpeech.SUCCESS) {
             speech.setLanguage(Locale.getDefault());
 
             for (Analyser analyser : analysers) {

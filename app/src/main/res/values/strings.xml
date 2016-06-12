@@ -45,7 +45,7 @@
     <string name="pattern_pulse" translatable="false">-000</string>
     <string name="pattern_strokeRate" translatable="false">-00</string>
     <string name="pattern_strokeRatio" translatable="false">1:0.0</string>
-    <string name="pattern_time" translatable="false">00:60:60</string>
+    <string name="pattern_time" translatable="false">00:60</string>
     <string name="pattern_none" translatable="false"></string>
 
     <string name="programs">Programs</string>

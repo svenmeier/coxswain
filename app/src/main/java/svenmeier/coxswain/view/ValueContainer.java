@@ -151,12 +151,10 @@ public class ValueContainer extends FrameLayout {
                 }
 
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                int seconds = calendar.get(Calendar.HOUR_OF_DAY);
-                seconds *= 60;
-                seconds += calendar.get(Calendar.MINUTE);
-                seconds *= 60;
-                seconds += calendar.get(Calendar.SECOND);
-                limit(seconds, 0);
+                int time = calendar.get(Calendar.HOUR_OF_DAY);
+                time *= 60;
+                time += calendar.get(Calendar.MINUTE);
+                limit(time / 10, 0);
                 break;
         }
     }

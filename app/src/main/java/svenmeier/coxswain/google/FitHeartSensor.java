@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
@@ -29,12 +31,16 @@ import java.util.concurrent.TimeUnit;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.HeartSensor;
 
 /**
  */
-public class FitHeart {
+public class FitHeartSensor implements HeartSensor {
 
 	private static final DataType TYPE = DataType.TYPE_HEART_RATE_BPM;
+
+	private final Snapshot memory;
 
 	private Connection connection;
 
@@ -42,22 +48,29 @@ public class FitHeart {
 
 	private final int requestCode;
 
-	public float heartRate = 0;
+	private float heartRate = 0;
 
-	public FitHeart(Context context, int requestCode) {
+	public FitHeartSensor(Context context, Snapshot memory, int requestCode) {
 		this.context = context;
+
+		this.memory = memory;
+
 		this.requestCode = requestCode;
 	}
 
-	public void connect() {
+	public FitHeartSensor connect() {
 		connection = new Connection();
+
+		return this;
 	}
 
-	public void disconnect() {
+	public FitHeartSensor disconnect() {
 		if (connection != null) {
 			connection.destroy();
 			connection = null;
 		}
+
+		return this;
 	}
 
 	public void onRequestResult(int resultCode) {
@@ -66,7 +79,12 @@ public class FitHeart {
 		}
 	}
 
-	private class Connection implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, OnDataPointListener {
+	@Override
+	public void pulse() {
+		memory.pulse.set(Math.round(heartRate));
+	}
+
+	private class Connection implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ResultCallback<DataSourcesResult>, OnDataPointListener {
 
 		private final GoogleApiClient client;
 
@@ -79,6 +97,10 @@ public class FitHeart {
 					.build();
 
 			client.connect();
+		}
+
+		public void destroy() {
+			Fitness.SensorsApi.remove(client, this);
 		}
 
 		@Override
@@ -112,31 +134,27 @@ public class FitHeart {
 
 		@Override
 		public void onConnected(@Nullable Bundle bundle) {
-			Fitness.SensorsApi.findDataSources(client,
+			PendingResult<DataSourcesResult> dataSources = Fitness.SensorsApi.findDataSources(client,
 					new DataSourcesRequest.Builder()
 							.setDataTypes(TYPE)
 							.setDataSourceTypes(DataSource.TYPE_RAW)
-							.build())
-					.setResultCallback(new ResultCallback<DataSourcesResult>() {
-						@Override
-						public void onResult(DataSourcesResult dataSourcesResult) {
-							SensorRequest request = new SensorRequest.Builder()
-									.setDataType(TYPE)
-									.setSamplingRate(1, TimeUnit.SECONDS)
-									.build();
+							.build());
 
-							Fitness.SensorsApi.add(client, request, Connection.this);
-						}
-					});
-
+			dataSources.setResultCallback(this);
 		}
 
 		@Override
 		public void onConnectionSuspended(int i) {
 		}
 
-		public void destroy() {
-			Fitness.SensorsApi.remove(client, this);
+		@Override
+		public void onResult(@NonNull DataSourcesResult dataSourcesResult) {
+			SensorRequest request = new SensorRequest.Builder()
+					.setDataType(TYPE)
+					.setSamplingRate(1, TimeUnit.SECONDS)
+					.build();
+
+			Fitness.SensorsApi.add(client, request, Connection.this);
 		}
 
 		@Override

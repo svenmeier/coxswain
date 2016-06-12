@@ -115,9 +115,9 @@
             />
 
         <CheckBoxPreference
-            android:key="@string/preference_integration_googlefit"
-            android:title="@string/preference_integration_googlefit_title"
-            android:summary="@string/preference_integration_googlefit_summary"
+            android:key="@string/preference_integration_sensors"
+            android:title="@string/preference_integration_sensors_title"
+            android:summary="@string/preference_integration_sensors_summary"
             android:defaultValue="false"
             />
 

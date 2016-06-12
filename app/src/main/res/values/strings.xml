@@ -124,9 +124,9 @@
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
-    <string name="preference_integration_googlefit" translatable="false">preference_integration_googlefit</string>
-    <string name="preference_integration_googlefit_title">Google Fit</string>
-    <string name="preference_integration_googlefit_summary">Read heart rate from Google Fit sensors</string>
+    <string name="preference_integration_sensors" translatable="false">preference_integration_googlefit</string>
+    <string name="preference_integration_sensors_title">Sensors</string>
+    <string name="preference_integration_sensors_summary">Use available sensors to read heart rate</string>
 
     <string name="preference_hardware_title">Hardware</string>
 

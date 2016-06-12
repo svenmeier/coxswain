@@ -94,8 +94,8 @@
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
-    <string name="preference_integration_googlefit_title">Google Fit</string>
-    <string name="preference_integration_googlefit_summary">Puls von Google Fit Sensoren lesen</string>
+    <string name="preference_integration_sensors_title">Sensoren</string>
+    <string name="preference_integration_sensors_summary">Puls von verfügbaren Sensoren lesen</string>
 
     <string name="preference_hardware_title">Hardware</string>
 

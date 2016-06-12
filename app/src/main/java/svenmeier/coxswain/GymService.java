@@ -16,7 +16,6 @@
 package svenmeier.coxswain;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -30,10 +29,12 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.google.FitHeartSensor;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
+import svenmeier.coxswain.rower.HeartSensor;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.mock.MockRower;
 import svenmeier.coxswain.rower.water.WaterRower;
@@ -56,6 +57,8 @@ public class GymService extends Service {
 
     private Preference<Boolean> openEnd;
 
+    private Preference<Boolean> sensors;
+
     private Rowing rowing;
 
     public GymService() {
@@ -67,6 +70,7 @@ public class GymService extends Service {
 
         openEnd = Preference.getBoolean(this, R.string.preference_open_end);
         headsup = Preference.getBoolean(this, R.string.preference_integration_headsup);
+        sensors = Preference.getBoolean(this, R.string.preference_integration_sensors);
 
         receiver = new BroadcastReceiver() {
             @Override
@@ -139,6 +143,8 @@ public class GymService extends Service {
 
         private final Rower rower;
 
+        private HeartSensor heart;
+
         private final Motivator motivator;
 
         private Program program;
@@ -146,7 +152,11 @@ public class GymService extends Service {
         public Rowing(Rower rower) {
             this.rower = rower;
 
-            motivator = new DefaultMotivator(GymService.this);
+            if (sensors.get()) {
+                this.heart = new FitHeartSensor(GymService.this, memory, 1).connect();
+            }
+
+            this.motivator = new DefaultMotivator(GymService.this);
         }
 
         public void run() {
@@ -162,6 +172,10 @@ public class GymService extends Service {
 
                     if (GymService.this.rowing != this|| rower.row() == false) {
                         break;
+                    }
+
+                    if (heart != null) {
+                        heart.pulse();
                     }
 
                     handler.post(new Runnable() {
@@ -208,6 +222,9 @@ public class GymService extends Service {
                 public void run() {
                     motivator.destroy();
 
+                    if (heart != null) {
+                        heart.disconnect();
+                    }
                     foreground.stop();
                 }
             });

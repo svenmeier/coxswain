@@ -184,7 +184,6 @@ public class Gym {
 
                 if (workout == null) {
                     event = Event.PROGRAM_START;
-                    W
                     workout = new Workout(program);
                     workout.location.set(getLocation());
 

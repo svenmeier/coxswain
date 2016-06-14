@@ -55,15 +55,15 @@
     <string name="segments">Segments</string>
 
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_starting">Exportiere nach TCX</string>
-    <string name="garmin_export_finished">Exportiert nach %s</string>
-    <string name="garmin_export_failed">Export nach TCX gescheitert</string>
+    <string name="garmin_export_starting">Exporting to TCX</string>
+    <string name="garmin_export_finished">Exported to %s</string>
+    <string name="garmin_export_failed">Export to TCX failed</string>
 
     <string name="googlefit_failed">Google Fit not available</string>
     <string name="googlefit_export">Google Fit</string>
-    <string name="googlefit_export_starting">Exportiere nach Google Fit</string>
-    <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
-    <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>
+    <string name="googlefit_export_starting">Exporting to Google Fit</string>
+    <string name="googlefit_export_finished">Exported to Google Fit</string>
+    <string name="googlefit_export_failed">Export to Google Fit failed</string>
 
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>

@@ -45,8 +45,11 @@
     <string name="garmin_export_finished">Exportiert nach %s</string>
     <string name="garmin_export_failed">Export nach TCX gescheitert</string>
 
-    <string name="googlefit_export">Google Fit</string>
     <string name="googlefit_failed">Google Fit ist nicht verfügbar</string>
+    <string name="googlefit_export">Google Fit</string>
+    <string name="googlefit_export_starting">Exportiere nach Google Fit</string>
+    <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
+    <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>
 
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>

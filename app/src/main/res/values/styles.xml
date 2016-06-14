@@ -29,6 +29,11 @@
         <item name="text_color">?android:attr/colorForeground</item>
     </style>
 
+    <style name="ValueView">
+        <item name="text_color">?android:attr/colorForeground</item>
+        <item name="font">coxswain.ttf</item>
+    </style>
+
     <style name="MenuButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small">
         <item name="android:minHeight">0dp</item>
         <item name="android:minWidth">0dp</item>

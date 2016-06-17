@@ -18,35 +18,33 @@
     <string name="gym_finished">finished</string>
 
     <string name="distance_meters">%s meters</string>
+    <string name="distance_label">DISTANCE</string>
+    <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%s minutes</string>
+    <string name="duration_label">DURATION</string>
+    <string name="duration_pattern">0:60:60</string>
+    <string name="duration_short_pattern">60:60</string>
     <string name="strokes_count">%s strokes</string>
+    <string name="strokes_label">STROKES</string>
+    <string name="strokes_pattern">0000</string>
     <string name="energy_calories">%s kcal</string>
+    <string name="energy_label">ENERGY</string>
+    <string name="energy_pattern">0000</string>
     <string name="strokeRate_strokesPerMinute">%s strokes per minute</string>
+    <string name="strokeRate_label">STROKERATE</string>
+    <string name="strokeRate_pattern">-00</string>
     <string name="pulse_beatsPerMinute">%s beats per minute</string>
+    <string name="pulse_label">PULSE</string>
+    <string name="pulse_pattern">-000</string>
     <string name="speed_metersPerSecond">%s meters per second</string>
-
-    <string name="value_distance">DISTANCE</string>
-    <string name="value_duration">DURATION</string>
-    <string name="value_strokes">STROKES</string>
-    <string name="value_energy">ENERGY</string>
-    <string name="value_speed">SPEED</string>
-    <string name="value_pulse">PULSE</string>
-    <string name="value_strokeRate">STROKERATE</string>
-    <string name="value_strokeRatio">STROKERATIO</string>
-    <string name="value_time">TIME</string>
-    <string name="value_none">NONE</string>
-
-    <string name="pattern_distance" translatable="false">00000</string>
-    <string name="pattern_duration" translatable="false">0:60:60</string>
-    <string name="pattern_duration_short" translatable="false">60:60</string>
-    <string name="pattern_strokes" translatable="false">0000</string>
-    <string name="pattern_energy" translatable="false">0000</string>
-    <string name="pattern_speed" translatable="false">-0.00</string>
-    <string name="pattern_pulse" translatable="false">-000</string>
-    <string name="pattern_strokeRate" translatable="false">-00</string>
-    <string name="pattern_strokeRatio" translatable="false">1:0.0</string>
-    <string name="pattern_time" translatable="false">00:60</string>
-    <string name="pattern_none" translatable="false"></string>
+    <string name="speed_label">SPEED</string>
+    <string name="speed_pattern">-0.00</string>
+    <string name="strokeRatio_label">STROKERATIO</string>
+    <string name="strokeRatio_pattern">1:0.0</string>
+    <string name="time_label">TIME</string>
+    <string name="time_pattern">00:60</string>
+    <string name="none_label">NONE</string>
+    <string name="none_pattern"></string>
 
     <string name="programs">Programs</string>
     <string name="workouts">Workouts</string>

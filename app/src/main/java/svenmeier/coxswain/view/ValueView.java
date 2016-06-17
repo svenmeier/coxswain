@@ -23,6 +23,21 @@ import android.util.AttributeSet;
 import svenmeier.coxswain.R;
 
 /**
+ * A {@link }LabelView} specialization for displaying of integer values.
+ * <br>
+ * A pattern allows to format each digit separately:
+ * <dl>
+ *     <dt>0</dt>
+ *     <dd>a decimal digit</dd>
+ *     <dt>6</dt>
+ *     <dd>a senary digit (as used as the second digit in minutes and hours)</dd>
+ *     <dt>F</dt>
+ *     <dd>a hexadecimal digit</dd>
+ *     <dt>-</dt>
+ *     <dd>an optinal minus sign (only shown if value is negative)</dd>
+ *     <dt>+</dt>
+ *     <dd>a forced minus or plus sign (always shown)</dd>
+ * </dl>
  */
 public class ValueView extends LabelView {
 
@@ -84,11 +99,18 @@ public class ValueView extends LabelView {
                 text.append(digits % 6);
 
                 digits /= 6;
+            } else if ('F' == character) {
+                // hexadecimal
+                text.append(Integer.toHexString(digits % 0xF));
+
+                digits /= 0xF;
             } else if ('-' == character) {
+                // optional sign
                 if (value < 0) {
                     text.append("-");
                 }
             } else if ('+' == character){
+                // forced sign
                 if (value < 0) {
                     text.append("-");
                 } else {

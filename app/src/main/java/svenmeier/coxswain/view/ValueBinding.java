@@ -6,17 +6,17 @@ import svenmeier.coxswain.R;
  */
 public enum ValueBinding {
 
-	DURATION(R.string.value_duration, R.string.pattern_duration),
-	DURATION_SHORT(R.string.value_duration, R.string.pattern_duration_short),
-	DISTANCE(R.string.value_distance, R.string.pattern_distance),
-	STROKES(R.string.value_strokes, R.string.pattern_strokes),
-	ENERGY(R.string.value_energy, R.string.pattern_energy),
-	SPEED(R.string.value_speed, R.string.pattern_speed),
-	PULSE(R.string.value_pulse, R.string.pattern_pulse),
-	STROKE_RATE(R.string.value_strokeRate, R.string.pattern_strokeRate),
-	STROKE_RATIO(R.string.value_strokeRatio, R.string.pattern_strokeRatio),
-	TIME(R.string.value_time, R.string.pattern_time),
-	NONE(R.string.value_none, R.string.pattern_none);
+	DURATION(R.string.duration_label, R.string.duration_pattern),
+	DURATION_SHORT(R.string.duration_label, R.string.duration_short_pattern),
+	DISTANCE(R.string.distance_label, R.string.distance_pattern),
+	STROKES(R.string.strokes_label, R.string.strokes_pattern),
+	ENERGY(R.string.energy_label, R.string.energy_pattern),
+	SPEED(R.string.speed_label, R.string.speed_pattern),
+	PULSE(R.string.pulse_label, R.string.pulse_pattern),
+	STROKE_RATE(R.string.strokeRate_label, R.string.strokeRate_pattern),
+	STROKE_RATIO(R.string.strokeRatio_label, R.string.strokeRatio_pattern),
+	TIME(R.string.time_label, R.string.time_pattern),
+	NONE(R.string.none_label, R.string.none_pattern);
 
 	public final int label;
 	public final int pattern;

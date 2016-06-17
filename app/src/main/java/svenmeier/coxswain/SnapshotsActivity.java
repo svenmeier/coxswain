@@ -148,13 +148,13 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     private void updateTitle() {
         switch (highlight) {
             case 0:
-                titleView.setText(R.string.value_speed);
+                titleView.setText(R.string.speed_label);
                 break;
             case 1:
-                titleView.setText(R.string.value_pulse);
+                titleView.setText(R.string.pulse_label);
                 break;
             case 2:
-                titleView.setText(R.string.value_strokeRate);
+                titleView.setText(R.string.strokeRate_label);
                 break;
             default:
                 throw new IndexOutOfBoundsException();

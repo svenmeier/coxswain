@@ -2,9 +2,12 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import svenmeier.coxswain.Coxswain;
 
 public class FontCache {
 
@@ -15,7 +18,11 @@ public class FontCache {
 		Typeface font = fonts.get(name);
 
 		if (font == null){
-			font = Typeface.createFromAsset(context.getAssets(), name);
+			try {
+				font = Typeface.createFromAsset(context.getAssets(), name);
+			} catch (Exception ex) {
+				Log.e(Coxswain.TAG, name);
+			}
 
 			fonts.put(name, font);
 		}

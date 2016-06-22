@@ -152,7 +152,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 		@Override
 		public void run() {
-			if (gatt == null) {
+			if (adapter != null && gatt == null) {
 				close();
 
 				Toast.makeText(context, R.string.bluetooth_sensor_not_available, Toast.LENGTH_LONG).show();

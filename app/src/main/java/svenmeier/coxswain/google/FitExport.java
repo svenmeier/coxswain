@@ -1,7 +1,6 @@
 package svenmeier.coxswain.google;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +8,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -33,9 +31,7 @@ import svenmeier.coxswain.gym.Workout;
  */
 public class FitExport implements Export {
 
-	private Context context;
-
-	private final int requestCode;
+	private Activity activity;
 
 	private Handler handler = new Handler();
 
@@ -45,13 +41,12 @@ public class FitExport implements Export {
 
 	private Connection connection;
 
-	public FitExport(Context context, int requestCode) {
-		this.context = context;
-		this.requestCode = requestCode;
+	public FitExport(Activity activity) {
+		this.activity = activity;
 
 		this.handler = new Handler();
 
-		this.gym = Gym.instance(context);
+		this.gym = Gym.instance(activity);
 	}
 
 	@Override
@@ -61,18 +56,11 @@ public class FitExport implements Export {
 		connection = new Connection();
 	}
 
-	@Override
-	public void onRequestResult(int resultCode) {
-		if (connection != null) {
-			connection.onRequestResult(resultCode);
-		}
-	}
-
 	private void toast(final String text) {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+				Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
 			}
 		});
 	}
@@ -82,7 +70,7 @@ public class FitExport implements Export {
 		private final GoogleApiClient client;
 
 		public Connection() {
-			client = new GoogleApiClient.Builder(context)
+			client = new GoogleApiClient.Builder(activity)
 					.addApi(Fitness.SESSIONS_API)
 					.addApi(Fitness.HISTORY_API)
 					.addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
@@ -97,27 +85,21 @@ public class FitExport implements Export {
 
 		@Override
 		public void onConnectionFailed(ConnectionResult result) {
-			if (context instanceof Activity) {
-				Activity activity = (Activity)context;
-
-				if (result.hasResolution()) {
-					try {
-						result.startResolutionForResult(activity, requestCode);
-					} catch (IntentSender.SendIntentException e) {
-						Log.e(Coxswain.TAG, "export failed", e);
-						toast(activity.getString(R.string.googlefit_export_failed));
-					}
-				} else {
-					// Show the localized error dialog
-					GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(),
-							activity, 0, null).show();
+			if (result.hasResolution()) {
+				try {
+					result.startResolutionForResult(activity, 1);
+					return;
+				} catch (IntentSender.SendIntentException e) {
 				}
-			} else {
-				toast(context.getString(R.string.googlefit_failed));
 			}
+
+			toast(activity.getString(R.string.googlefit_export_failed));
 		}
 
-		public void onRequestResult(int resultCode) {
+		/**
+		 * TODO who calls this
+		 */
+		public void onResolutionResult(int resultCode) {
 			if (resultCode == Activity.RESULT_OK) {
 				if (client.isConnecting() == false && client.isConnected() == false) {
 					client.connect();
@@ -136,7 +118,7 @@ public class FitExport implements Export {
 
 		@Override
 		public void run() {
-			toast(context.getString(R.string.googlefit_export_starting));
+			toast(activity.getString(R.string.googlefit_export_starting));
 
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
 			try {
@@ -150,7 +132,7 @@ public class FitExport implements Export {
 				Status status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
 				if (status.isSuccess() == false) {
 					Log.e(Coxswain.TAG, "insert failed " + status);
-					toast(context.getString(R.string.googlefit_export_failed));
+					toast(activity.getString(R.string.googlefit_export_failed));
 					return;
 				}
 
@@ -158,12 +140,12 @@ public class FitExport implements Export {
 					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
 					if (status.isSuccess() == false) {
 						Log.e(Coxswain.TAG, "on failed " + status);
-						toast(context.getString(R.string.googlefit_export_failed));
+						toast(activity.getString(R.string.googlefit_export_failed));
 						return;
 					}
 				}
 
-				toast(context.getString(R.string.googlefit_export_finished));
+				toast(activity.getString(R.string.googlefit_export_finished));
 			} finally {
 				snapshots.clear();
 

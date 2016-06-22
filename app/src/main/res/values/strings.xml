@@ -63,6 +63,10 @@
     <string name="googlefit_export_finished">Exported to Google Fit</string>
     <string name="googlefit_export_failed">Export to Google Fit failed</string>
 
+    <string name="sensors_sensor_not_available">Heart rate sensor not available</string>
+
+    <string name="bluetooth_sensor_not_available">Bluetooth heart rate not available</string>
+
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>
     <string name="preference_theme_dark_summary">Use a dark theme</string>
@@ -122,11 +126,11 @@
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
-    <string name="preference_integration_sensors" translatable="false">preference_integration_googlefit</string>
-    <string name="preference_integration_sensors_title">Sensors</string>
-    <string name="preference_integration_sensors_summary">Use available sensors to read heart rate</string>
-
     <string name="preference_hardware_title">Hardware</string>
+
+    <string name="preference_hardware_heart_sensor" translatable="false">preference_hardware_heart_sensor</string>
+    <string name="preference_hardware_heart_sensor_title">Sensors</string>
+    <string name="preference_hardware_heart_sensor_summary">Read heart rate from %s</string>
 
     <string name="preference_hardware_trace" translatable="false">preference_hardware_trace</string>
     <string name="preference_hardware_trace_title">Trace</string>

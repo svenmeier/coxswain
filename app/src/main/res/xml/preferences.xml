@@ -114,13 +114,6 @@
             android:dependency="@string/preference_integration_intent"
             />
 
-        <CheckBoxPreference
-            android:key="@string/preference_integration_sensors"
-            android:title="@string/preference_integration_sensors_title"
-            android:summary="@string/preference_integration_sensors_summary"
-            android:defaultValue="false"
-            />
-
     </PreferenceCategory>
 
 
@@ -128,6 +121,15 @@
     <PreferenceCategory
         android:title="@string/preference_hardware_title"
         >
+
+        <ListPreference
+            android:key="@string/preference_hardware_heart_sensor"
+            android:title="@string/preference_hardware_heart_sensor_title"
+            android:summary="@string/preference_hardware_heart_sensor_summary"
+            android:defaultValue="svenmeier.coxswain.HeartSensor.None"
+            android:entries="@array/sensors"
+            android:entryValues="@array/sensor_values"
+            />
 
         <CheckBoxPreference
             android:key="@string/preference_hardware_trace"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sensors">
+        <item>None</item>
+        <item>Sensor</item>
+        <item>Bluetooth</item>
+    </string-array>
+
+    <string-array name="sensor_values">
+        <item>svenmeier.coxswain.HeartSensor.None</item>
+        <item>svenmeier.coxswain.sensors.SensorsHeartSensor</item>
+        <item>svenmeier.coxswain.bluetooth.BluetoothHeartSensor</item>
+    </string-array>
+</resources>

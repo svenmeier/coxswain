@@ -8,6 +8,4 @@ import svenmeier.coxswain.gym.Workout;
 public interface Export {
 
 	void start(Workout workout);
-
-	void onRequestResult(int resultCode);
 }

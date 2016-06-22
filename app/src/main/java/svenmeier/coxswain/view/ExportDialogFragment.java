@@ -17,8 +17,6 @@ import svenmeier.coxswain.gym.Workout;
 
 public class ExportDialogFragment extends DialogFragment {
 
-	public static final int FIT_REQUEST_CODE = 1;
-
 	private Export export;
 
 	@Override
@@ -37,7 +35,7 @@ public class ExportDialogFragment extends DialogFragment {
 								export = new TcxExport(getActivity());
 								break;
 							case 1:
-								export = new FitExport(getActivity(), FIT_REQUEST_CODE);
+								export = new FitExport(getActivity());
 								break;
 							default:
 								throw new IndexOutOfBoundsException();
@@ -50,14 +48,6 @@ public class ExportDialogFragment extends DialogFragment {
 
 		return builder.create();
 	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (export != null && requestCode == FIT_REQUEST_CODE) {
-			export.onRequestResult(resultCode);
-		}
-	}
-
 
 	public static ExportDialogFragment create(Workout workout) {
 		ExportDialogFragment fragment = new ExportDialogFragment();

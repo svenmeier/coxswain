@@ -5,11 +5,15 @@
     >
 
     <uses-feature android:name="android.hardware.usb.host" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BODY_SENSORS"/>
 
     <application
         android:allowBackup="true"
@@ -70,6 +74,13 @@
             >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".util.PermissionActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            >
         </activity>
 
         <service

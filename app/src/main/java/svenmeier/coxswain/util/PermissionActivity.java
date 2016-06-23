@@ -11,6 +11,12 @@ import android.support.v4.app.ActivityCompat;
  */
 public class PermissionActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
+	static final String ACTION = "svenmeier.coxswain.util.permission.GRANTED";
+
+	static final String PERMISSIONS = "permissions";
+
+	static final String GRANTED = "granted";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -22,14 +28,17 @@ public class PermissionActivity extends Activity implements ActivityCompat.OnReq
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		boolean granted = true;
 		for (int grantResult : grantResults) {
-			if (grantResult != PackageManager.PERMISSION_GRANTED) {
-				finish();
-				return;
-			}
+			granted &= (grantResult == PackageManager.PERMISSION_GRANTED);
 		}
 
-		// TODO report back to called
+		Intent intent = new Intent();
+		intent.setAction(ACTION);
+		intent.putExtra(PERMISSIONS, permissions);
+		intent.putExtra(GRANTED, granted);
+		sendBroadcast(intent);
+
 		finish();
 	}
 
@@ -39,7 +48,7 @@ public class PermissionActivity extends Activity implements ActivityCompat.OnReq
 		// required for activity started from non-activity
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		intent.putExtra("permissions", permissions);
+		intent.putExtra(PERMISSIONS, permissions);
 
 		context.startActivity(intent);
 	}

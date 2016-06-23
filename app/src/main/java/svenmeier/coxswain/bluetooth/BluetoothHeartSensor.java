@@ -72,27 +72,46 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 		private BluetoothGatt gatt;
 
+		private boolean disableBlootoothOnClose;
+
 		public Connection() {
 			super(context);
 
-			enter(Manifest.permission.ACCESS_FINE_LOCATION);
+			acquire(Manifest.permission.ACCESS_FINE_LOCATION);
 		}
 
 		@Override
-		protected void entered() {
+		protected void onApproved() {
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 
 			adapter = manager.getAdapter();
 
-			if (adapter == null || adapter.isEnabled() == false) {
-				Toast.makeText(context, R.string.bluetooth_sensor_not_available, Toast.LENGTH_LONG).show();
+			if (adapter == null) {
+				unavailable();
+				return;
+			}
+
+			if (adapter.isEnabled() == false) {
+				if (adapter.enable()) {
+					this.disableBlootoothOnClose = true;
+				} else {
+					adapter = null;
+					unavailable();
+					return;
+				}
 			}
 
 			adapter.startLeScan(this);
 			handler.postDelayed(this, 10000);
 		}
 
+		private void unavailable() {
+			Toast.makeText(context, R.string.bluetooth_sensor_not_available, Toast.LENGTH_LONG).show();
+		}
+
 		public void close() {
+			cancel();
+
 			if (gatt != null) {
 				gatt.close();
 				gatt = null;
@@ -100,6 +119,11 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 			if (adapter != null) {
 				adapter.stopLeScan(this);
+
+				if (disableBlootoothOnClose) {
+					adapter.disable();
+				}
+
 				adapter = null;
 			}
 		}
@@ -152,10 +176,10 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 		@Override
 		public void run() {
-			if (adapter != null && gatt == null) {
-				close();
+			if (adapter != null) {
+				unavailable();
 
-				Toast.makeText(context, R.string.bluetooth_sensor_not_available, Toast.LENGTH_LONG).show();
+				close();
 			}
 		}
 	}

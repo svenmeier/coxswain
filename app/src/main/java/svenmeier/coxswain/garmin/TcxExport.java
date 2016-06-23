@@ -2,14 +2,10 @@ package svenmeier.coxswain.garmin;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,7 +13,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
@@ -51,23 +46,23 @@ public class TcxExport implements Export {
 
 	@Override
 	public void start(Workout workout) {
-		new Runner(workout);
+		new Writer(workout);
 	}
 
-	private class Runner extends PermissionBlock implements Runnable {
+	private class Writer extends PermissionBlock implements Runnable {
 
 		private final Workout workout;
 
-		public Runner(Workout workout) {
+		public Writer(Workout workout) {
 			super(activity);
 
 			this.workout = workout;
 
-			super.enter(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			super.acquire(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		}
 
 		@Override
-		protected void entered() {
+		protected void onApproved() {
 			new Thread(this).start();
 		}
 
@@ -110,7 +105,7 @@ public class TcxExport implements Export {
 
 			File file = new File(dir, getFileName());
 
-			Writer writer = new BufferedWriter(new FileWriter(file));
+			java.io.Writer writer = new BufferedWriter(new FileWriter(file));
 			try {
 				new Workout2TCX(writer).document(workout, snapshots.list());
 			} finally {

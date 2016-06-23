@@ -1,37 +1,82 @@
 package svenmeier.coxswain.util;
 
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-public abstract class PermissionBlock {
+import java.util.Arrays;
+
+public abstract class PermissionBlock extends BroadcastReceiver {
 
 	private final Context context;
+
+	private String[] permissions;
+
+	private boolean registered;
 
 	public PermissionBlock(Context context) {
 		this.context = context;
 	}
 
-	public void enter(String... permissions) {
+	protected void acquire(String... permissions) {
+		unregister();
+
+		this.permissions = permissions;
+
 		for (String permission : permissions) {
 			if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(permissions);
+				requestPermissions();
 				return;
 			}
 		}
 
-		entered();
+		onApproved();
 	}
 
-	private void requestPermissions(String[] permissions) {
-		if (context instanceof Activity) {
-			ActivityCompat.requestPermissions((Activity) context, permissions, 1);
+	protected final void cancel() {
+		unregister();
+	}
+
+	protected abstract void onApproved();
+
+	protected void onRejected() {
+	}
+
+	private void requestPermissions() {
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(PermissionActivity.ACTION);
+		context.registerReceiver(this, filter);
+		registered = true;
+
+		PermissionActivity.start(context, permissions);
+	}
+
+	@Override
+	public final void onReceive(Context context, Intent intent) {
+
+		String[] permissions = intent.getStringArrayExtra(PermissionActivity.PERMISSIONS);
+		if (Arrays.equals(this.permissions, permissions) == false) {
+			return;
+		}
+
+		unregister();
+
+		boolean granted = intent.getBooleanExtra(PermissionActivity.GRANTED, false);
+		if (granted) {
+			onApproved();
 		} else {
-			PermissionActivity.start(context, permissions);
+			onRejected();
 		}
 	}
 
-	protected abstract void entered();
+	private void unregister() {
+		if (registered) {
+			context.unregisterReceiver(this);
+			registered = false;
+		}
+	}
 }

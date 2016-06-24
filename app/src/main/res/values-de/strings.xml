@@ -61,6 +61,14 @@
     <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
     <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>
 
+    <string name="sensors_sensor_no_heart">Puls Sensor nicht verfügbar</string>
+    <string name="sensors_sensor_reading">Lese von Puls Sensor</string>
+
+    <string name="bluetooth_sensor_no_bluetooth">Kein Bluetooth</string>
+    <string name="bluetooth_sensor_no_location">Standortdienste müssen aktiviert sein zum lesen von Bluetooth</string>
+    <string name="bluetooth_sensor_no_heart">Bluetooth Puls-Sensor ist nicht verfügbar</string>
+    <string name="bluetooth_sensor_reading">Lese von Bluetooth Puls-Sensor</string>
+
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
 

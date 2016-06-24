@@ -9,13 +9,13 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.Arrays;
 
-public abstract class PermissionBlock extends BroadcastReceiver {
+public abstract class PermissionBlock {
 
 	private final Context context;
 
 	private String[] permissions;
 
-	private boolean registered;
+	private BroadcastReceiverImpl receiver;
 
 	public PermissionBlock(Context context) {
 		this.context = context;
@@ -36,7 +36,7 @@ public abstract class PermissionBlock extends BroadcastReceiver {
 		onApproved();
 	}
 
-	protected final void release() {
+	protected final void abort() {
 		unregister();
 	}
 
@@ -49,34 +49,37 @@ public abstract class PermissionBlock extends BroadcastReceiver {
 
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(PermissionActivity.ACTION);
-		context.registerReceiver(this, filter);
-		registered = true;
+
+		receiver = new BroadcastReceiverImpl();
+		context.registerReceiver(receiver, filter);
 
 		PermissionActivity.start(context, permissions);
 	}
 
-	@Override
-	public final void onReceive(Context context, Intent intent) {
-
-		String[] permissions = intent.getStringArrayExtra(PermissionActivity.PERMISSIONS);
-		if (Arrays.equals(this.permissions, permissions) == false) {
-			return;
-		}
-
-		unregister();
-
-		boolean granted = intent.getBooleanExtra(PermissionActivity.GRANTED, false);
-		if (granted) {
-			onApproved();
-		} else {
-			onRejected();
+	private void unregister() {
+		if (receiver != null) {
+			context.unregisterReceiver(receiver);
+			receiver = null;
 		}
 	}
 
-	private void unregister() {
-		if (registered) {
-			context.unregisterReceiver(this);
-			registered = false;
+	private class BroadcastReceiverImpl extends BroadcastReceiver {
+		@Override
+		public final void onReceive(Context context, Intent intent) {
+
+			String[] permissions = intent.getStringArrayExtra(PermissionActivity.PERMISSIONS);
+			if (Arrays.equals(PermissionBlock.this.permissions, permissions) == false) {
+				return;
+			}
+
+			unregister();
+
+			boolean granted = intent.getBooleanExtra(PermissionActivity.GRANTED, false);
+			if (granted) {
+				onApproved();
+			} else {
+				onRejected();
+			}
 		}
 	}
 }

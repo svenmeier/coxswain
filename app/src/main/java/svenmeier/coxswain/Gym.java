@@ -233,10 +233,10 @@ public class Gym {
         Location bestLocation = null;
 
         try {
-            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-            for (String provider : locationManager.getProviders(true)) {
-                Location location = locationManager.getLastKnownLocation(provider);
+            for (String provider : manager.getProviders(true)) {
+                Location location = manager.getLastKnownLocation(provider);
                 if (location == null) {
                     continue;
                 }

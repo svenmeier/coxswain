@@ -61,8 +61,9 @@ public class SensorsHeartSensor extends HeartSensor {
 			}
 
 			if (sensor == null) {
-				Toast.makeText(context, R.string.sensors_sensor_not_available, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, R.string.sensors_sensor_no_heart, Toast.LENGTH_LONG).show();
 			} else {
+				Toast.makeText(context, R.string.sensors_sensor_reading, Toast.LENGTH_LONG).show();
 				manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 			}
 		}

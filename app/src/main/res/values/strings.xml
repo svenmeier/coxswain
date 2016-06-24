@@ -63,10 +63,13 @@
     <string name="googlefit_export_finished">Exported to Google Fit</string>
     <string name="googlefit_export_failed">Export to Google Fit failed</string>
 
-    <string name="sensors_sensor_not_available">Heart rate sensor not available</string>
+    <string name="sensors_sensor_no_heart">Heart rate sensor not available</string>
+    <string name="sensors_sensor_reading">Reading from Heart rate sensor</string>
 
-    <string name="bluetooth_sensor_connected">Connected to Bluetooth heart rate sensor</string>
-    <string name="bluetooth_sensor_not_available">Bluetooth heart rate sensor not available</string>
+    <string name="bluetooth_sensor_no_bluetooth">No Bluetooth</string>
+    <string name="bluetooth_sensor_no_location">Location services have to be enabled to read from Bluetooth</string>
+    <string name="bluetooth_sensor_no_heart">Bluetooth heart rate sensor not available</string>
+    <string name="bluetooth_sensor_reading">Reading from Bluetooth heart rate sensor</string>
 
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>

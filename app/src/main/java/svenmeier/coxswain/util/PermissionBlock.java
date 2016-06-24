@@ -36,7 +36,7 @@ public abstract class PermissionBlock extends BroadcastReceiver {
 		onApproved();
 	}
 
-	protected final void cancel() {
+	protected final void release() {
 		unregister();
 	}
 

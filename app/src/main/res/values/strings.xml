@@ -65,7 +65,8 @@
 
     <string name="sensors_sensor_not_available">Heart rate sensor not available</string>
 
-    <string name="bluetooth_sensor_not_available">Bluetooth heart rate not available</string>
+    <string name="bluetooth_sensor_connected">Connected to Bluetooth heart rate sensor</string>
+    <string name="bluetooth_sensor_not_available">Bluetooth heart rate sensor not available</string>
 
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>

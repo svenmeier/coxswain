@@ -12,6 +12,7 @@ import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 
 /**
+ * {@link HeartSensor} using the device's sensor.
  */
 public class SensorsHeartSensor extends HeartSensor {
 

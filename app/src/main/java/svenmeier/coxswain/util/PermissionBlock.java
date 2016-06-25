@@ -21,7 +21,7 @@ public abstract class PermissionBlock {
 		this.context = context;
 	}
 
-	protected void acquire(String... permissions) {
+	protected void acquirePermissions(String... permissions) {
 		unregister();
 
 		this.permissions = permissions;
@@ -33,14 +33,14 @@ public abstract class PermissionBlock {
 			}
 		}
 
-		onApproved();
+		onPermissionsApproved();
 	}
 
-	protected final void abort() {
+	protected final void abortPermissions() {
 		unregister();
 	}
 
-	protected abstract void onApproved();
+	protected abstract void onPermissionsApproved();
 
 	protected void onRejected() {
 	}
@@ -76,7 +76,7 @@ public abstract class PermissionBlock {
 
 			boolean granted = intent.getBooleanExtra(PermissionActivity.GRANTED, false);
 			if (granted) {
-				onApproved();
+				onPermissionsApproved();
 			} else {
 				onRejected();
 			}

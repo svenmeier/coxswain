@@ -58,11 +58,11 @@ public class TcxExport implements Export {
 
 			this.workout = workout;
 
-			super.acquire(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			super.acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		}
 
 		@Override
-		protected void onApproved() {
+		protected void onPermissionsApproved() {
 			new Thread(this).start();
 		}
 

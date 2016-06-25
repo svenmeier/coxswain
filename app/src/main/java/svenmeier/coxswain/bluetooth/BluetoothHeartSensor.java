@@ -30,6 +30,7 @@ import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
+ * {@link HeartSensor} using a sensor connected via Bluetooth.
  */
 public class BluetoothHeartSensor extends HeartSensor {
 
@@ -60,9 +61,13 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 		this.memory = memory;
 
-		if (connection == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-			connection = new Connection();
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
+			return;
 		}
+
+		connection = new LocationServices();
+		connection.open();
 	}
 
 	@Override
@@ -86,34 +91,94 @@ public class BluetoothHeartSensor extends HeartSensor {
 		memory.pulse.set(heartRate);
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class Connection extends PermissionBlock implements BluetoothAdapter.LeScanCallback, Runnable {
+	private void toast(String text) {
+		Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+	}
 
-		private BluetoothAdapter adapter;
+	private interface Connection {
 
-		private BluetoothGatt gatt;
+		void open();
 
-		private BluetoothEnabler enabler;
+		void close();
+	}
 
-		public Connection() {
-			super(context);
+	private class LocationServices extends BroadcastReceiver implements Connection {
 
-			acquire(Manifest.permission.ACCESS_FINE_LOCATION);
+		private boolean registered;
+
+		public void open() {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				if (isEnabled() == false) {
+					toast(context.getString(R.string.bluetooth_sensor_no_location));
+
+					Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					context.startActivity(intent);
+
+					IntentFilter filter = new IntentFilter();
+					filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+					context.registerReceiver(this, filter);
+					registered = true;
+
+					return;
+				}
+			}
+
+			proceed();
+		}
+
+		private boolean isEnabled() {
+			LocationManager manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
+			Criteria criteria = new Criteria();
+			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+			criteria.setAltitudeRequired(false);
+			criteria.setBearingRequired(false);
+			criteria.setCostAllowed(true);
+			criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
+
+			String provider = manager.getBestProvider(criteria, true);
+
+			return provider != null && LocationManager.PASSIVE_PROVIDER.equals(provider) == false;
 		}
 
 		@Override
-		protected void onApproved() {
-
-			if (checkLocation() == false) {
-				// starting with Android 6.0 location services have to be enabled
-				// to be able to discover bluetooth devices :/
-
-				toast(context.getString(R.string.bluetooth_sensor_no_location));
+		public void onReceive(Context context, Intent intent) {
+			if (connection != this) {
 				return;
 			}
 
-			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+			if (isEnabled()) {
+				proceed();
+			}
+		}
 
+		private void proceed() {
+			close();
+
+			connection = new Bluetooth();
+			connection.open();
+		}
+
+		@Override
+		public void close() {
+			if (registered) {
+				context.unregisterReceiver(this);
+				registered = false;
+			}
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+	private class Bluetooth extends BroadcastReceiver implements Connection {
+
+		private BluetoothAdapter adapter;
+
+		private boolean registered;
+
+		@Override
+		public void open() {
+			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 			adapter = manager.getAdapter();
 
 			if (adapter == null) {
@@ -122,15 +187,71 @@ public class BluetoothHeartSensor extends HeartSensor {
 			}
 
 			if (adapter.isEnabled() == false) {
-				enabler = new BluetoothEnabler();
+				IntentFilter filter = new IntentFilter();
+				filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+				filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+				context.registerReceiver(this, filter);
+				registered = true;
 
+				adapter.enable();
 				return;
 			}
 
-			scan();
+			proceed();
 		}
 
-		private void scan() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (connection != this) {
+				return;
+			}
+
+			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+			if (state == BluetoothAdapter.STATE_ON) {
+				proceed();
+			}
+		}
+
+		private void proceed() {
+			close();
+
+			connection = new GattConnection();
+			connection.open();
+		}
+
+		@Override
+		public void close() {
+			if (registered) {
+				context.unregisterReceiver(this);
+				registered = false;
+			}
+
+			adapter = null;
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+	private class GattConnection extends PermissionBlock implements BluetoothAdapter.LeScanCallback, Runnable, Connection {
+
+		private BluetoothAdapter adapter;
+
+		private BluetoothGatt gatt;
+
+		public GattConnection() {
+			super(context);
+		}
+
+		@Override
+		public void open() {
+			acquirePermissions(Manifest.permission.ACCESS_FINE_LOCATION);
+		}
+
+		@Override
+		protected void onPermissionsApproved() {
+
+			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+			adapter = manager.getAdapter();
+
 			if (adapter.startLeScan(this) == false) {
 				toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
 
@@ -141,45 +262,11 @@ public class BluetoothHeartSensor extends HeartSensor {
 			handler.postDelayed(this, SCAN_TIMEOUT_MILLIS);
 		}
 
-		private void toast(String text) {
-			Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-		}
-
-		private boolean checkLocation() {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				LocationManager manager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-
-				Criteria criteria = new Criteria();
-				criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-				criteria.setAltitudeRequired(false);
-				criteria.setBearingRequired(false);
-				criteria.setCostAllowed(true);
-				criteria.setPowerRequirement(Criteria.NO_REQUIREMENT);
-
-				String provider = manager.getBestProvider(criteria, true);
-				if (provider == null || LocationManager.PASSIVE_PROVIDER.equals(provider)) {
-					Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					context.startActivity(intent);
-
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		public void close() {
-			abort();
+			abortPermissions();
 
 			if (adapter != null) {
 				adapter.stopLeScan(this);
-
-				if (enabler != null) {
-					enabler.close();
-					enabler = null;
-				}
-
 				adapter = null;
 			}
 
@@ -192,6 +279,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 			if (gatt != null) {
+				// no more discovery
 				return;
 			}
 
@@ -207,7 +295,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 					close();
 				} else {
-					adapter.stopLeScan(Connection.this);
+					adapter.stopLeScan(this);
 					adapter = null;
 				}
 			}
@@ -236,6 +324,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 					// no more discovery
 					return;
 				}
+
 
 				BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
 				if (service != null) {
@@ -288,35 +377,6 @@ public class BluetoothHeartSensor extends HeartSensor {
 				}
 
 				heartRate = characteristic.getIntValue(format, 1);
-			}
-		}
-
-		private class BluetoothEnabler extends BroadcastReceiver {
-
-			public BluetoothEnabler() {
-				IntentFilter filter = new IntentFilter();
-				filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-				context.registerReceiver(this, filter);
-
-				adapter.enable();
-			}
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (adapter == null) {
-					return;
-				}
-
-				int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-				if (state == BluetoothAdapter.STATE_ON) {
-					scan();
-				}
-			}
-
-			public void close() {
-				adapter.disable();
-
-				context.unregisterReceiver(this);
 			}
 		}
 	}

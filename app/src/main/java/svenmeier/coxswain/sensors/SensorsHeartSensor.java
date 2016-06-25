@@ -1,5 +1,6 @@
 package svenmeier.coxswain.sensors;
 
+import android.Manifest;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import svenmeier.coxswain.HeartSensor;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.util.PermissionBlock;
 
 /**
  * {@link HeartSensor} using the device's sensor.
@@ -31,7 +33,8 @@ public class SensorsHeartSensor extends HeartSensor {
 
 		this.memory = memory;
 
-		connection = new Connection();
+		connection = new Connection(context);
+		connection.open();
 	}
 
 	@Override
@@ -49,27 +52,39 @@ public class SensorsHeartSensor extends HeartSensor {
 		memory.pulse.set(heartRate);
 	}
 
-	private class Connection implements SensorEventListener {
+	private class Connection extends PermissionBlock implements SensorEventListener {
 
 		private Sensor sensor;
 
-		public Connection() {
+		public Connection(Context context) {
+			super(context);
+		}
+
+		public void open() {
+			acquirePermissions(Manifest.permission.BODY_SENSORS);
+		}
+
+		@Override
+		protected void onPermissionsApproved() {
 			SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
 			sensor = manager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
 			if (sensor == null) {
 				sensor = manager.getDefaultSensor(TYPE_HEART_RATE_LEGACY);
 			}
-
 			if (sensor == null) {
 				Toast.makeText(context, R.string.sensors_sensor_no_heart, Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(context, R.string.sensors_sensor_reading, Toast.LENGTH_LONG).show();
-				manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+				close();
+				return;
 			}
+
+			Toast.makeText(context, R.string.sensors_sensor_reading, Toast.LENGTH_LONG).show();
+			manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 		}
 
 		public void close() {
+			abortPermissions();
+
 			if (sensor != null) {
 				SensorManager manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 

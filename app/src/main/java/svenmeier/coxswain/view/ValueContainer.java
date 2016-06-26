@@ -151,8 +151,7 @@ public class ValueContainer extends FrameLayout {
                 }
 
                 calendar.setTimeInMillis(System.currentTimeMillis());
-                int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60;
-                minutes += calendar.get(Calendar.MINUTE);
+                int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
                 limit(minutes, 0);
                 break;
         }

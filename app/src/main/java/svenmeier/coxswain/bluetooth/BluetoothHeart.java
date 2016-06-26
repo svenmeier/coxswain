@@ -24,15 +24,15 @@ import android.widget.Toast;
 
 import java.util.UUID;
 
-import svenmeier.coxswain.HeartSensor;
+import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
- * {@link HeartSensor} using a sensor connected via Bluetooth.
+ * {@link Heart} reading from a connected Bluetooth device.
  */
-public class BluetoothHeartSensor extends HeartSensor {
+public class BluetoothHeart extends Heart {
 
 	private static final int SCAN_TIMEOUT_MILLIS = 10000;
 
@@ -52,7 +52,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 	private int heartRate = -1;
 
-	public BluetoothHeartSensor(Context context, Snapshot memory) {
+	public BluetoothHeart(Context context, Snapshot memory) {
 		super(context, memory);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {

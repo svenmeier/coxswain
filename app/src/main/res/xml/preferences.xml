@@ -126,7 +126,7 @@
             android:key="@string/preference_hardware_heart_sensor"
             android:title="@string/preference_hardware_heart_sensor_title"
             android:summary="@string/preference_hardware_heart_sensor_summary"
-            android:defaultValue="svenmeier.coxswain.HeartSensor"
+            android:defaultValue="svenmeier.coxswain.Heart"
             android:entries="@array/sensors"
             android:entryValues="@array/sensor_values"
             />

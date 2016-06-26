@@ -138,7 +138,7 @@ public class GymService extends Service {
 
         private final Rower rower;
 
-        private HeartSensor heart;
+        private Heart heart;
 
         private final Motivator motivator;
 
@@ -147,7 +147,7 @@ public class GymService extends Service {
         public Rowing(Rower rower) {
             this.rower = rower;
 
-            this.heart = HeartSensor.create(GymService.this, memory);
+            this.heart = Heart.create(GymService.this, memory);
 
             this.motivator = new DefaultMotivator(GymService.this);
         }

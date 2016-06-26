@@ -65,6 +65,7 @@
     <string name="sensors_sensor_reading">Lese Puls-Sensor</string>
 
     <string name="bluetooth_sensor_no_bluetooth">Kein Bluetooth</string>
+    <string name="bluetooth_sensor_no_bluetooth_le">Kein Bluetooth LE</string>
     <string name="bluetooth_sensor_no_location">Standortdienste müssen zum lesen von Bluetooth aktiviert sein</string>
     <string name="bluetooth_sensor_no_heart">Bluetooth Puls-Sensor ist nicht verfügbar</string>
     <string name="bluetooth_sensor_reading">Lese Bluetooth Puls-Sensor</string>

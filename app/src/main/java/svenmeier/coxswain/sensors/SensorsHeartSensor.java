@@ -20,35 +20,31 @@ public class SensorsHeartSensor extends HeartSensor {
 
 	private static final int TYPE_HEART_RATE_LEGACY = 65562;
 
-	private final Context context;
-
-	private final Snapshot memory;
-
 	private Connection connection;
 
-	private int heartRate = 0;
+	private int heartRate = -1;
 
 	public SensorsHeartSensor(Context context, Snapshot memory) {
-		this.context = context;
-
-		this.memory = memory;
+		super(context, memory);
 
 		connection = new Connection(context);
 		connection.open();
 	}
 
 	@Override
-	public HeartSensor destroy() {
+	public void destroy() {
 		if (connection != null) {
 			connection.close();
 			connection = null;
 		}
-
-		return this;
 	}
 
 	@Override
 	public void pulse() {
+		if (heartRate == -1) {
+			return;
+		}
+
 		memory.pulse.set(heartRate);
 	}
 

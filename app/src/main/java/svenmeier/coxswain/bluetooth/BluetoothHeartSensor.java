@@ -44,22 +44,16 @@ public class BluetoothHeartSensor extends HeartSensor {
 
 	private static final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
 
-	private final Context context;
-
 	private Handler handler = new Handler();
-
-	private final Snapshot memory;
 
 	private Connection connection;
 
 	private long lastPulse;
 
-	private int heartRate = 0;
+	private int heartRate = -1;
 
 	public BluetoothHeartSensor(Context context, Snapshot memory) {
-		this.context = context;
-
-		this.memory = memory;
+		super(context, memory);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
@@ -71,17 +65,19 @@ public class BluetoothHeartSensor extends HeartSensor {
 	}
 
 	@Override
-	public HeartSensor destroy() {
+	public void destroy() {
 		if (connection != null) {
 			connection.close();
 			connection = null;
 		}
-
-		return this;
 	}
 
 	@Override
 	public void pulse() {
+		if (heartRate == -1) {
+			return;
+		}
+
 		long now = System.currentTimeMillis();
 		if (now - lastPulse > PULSE_TIMEOUT_MILLIS) {
 			heartRate = 0;
@@ -253,7 +249,7 @@ public class BluetoothHeartSensor extends HeartSensor {
 			adapter = manager.getAdapter();
 
 			if (adapter.startLeScan(this) == false) {
-				toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
+				toast(context.getString(R.string.bluetooth_sensor_no_bluetooth_le));
 
 				close();
 				return;

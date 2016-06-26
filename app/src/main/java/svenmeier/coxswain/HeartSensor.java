@@ -3,32 +3,26 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
-
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Snapshot;
 
 /**
  */
-public abstract class HeartSensor {
+public class HeartSensor {
 
-	public abstract HeartSensor destroy();
+	protected final Context context;
 
-	public abstract void pulse();
+	protected final Snapshot memory;
 
-	public static class None extends HeartSensor {
+	protected HeartSensor(Context context, Snapshot memory) {
+		this.context = context;
+		this.memory = memory;
+	}
 
-		public None (Context context, Snapshot memory) {
-		}
+	public void destroy() {
+	}
 
-		@Override
-		public HeartSensor destroy() {
-			return this;
-		}
-
-		@Override
-		public void pulse() {
-		}
+	public void pulse() {
 	}
 
 	public static HeartSensor create(Context context, Snapshot snapshot) {
@@ -39,7 +33,7 @@ public abstract class HeartSensor {
 			return (HeartSensor) Class.forName(name).getConstructor(Context.class, Snapshot.class).newInstance(context, snapshot);
 		} catch (Exception ex) {
 			Log.e(Coxswain.TAG, "cannot create sensor " + name);
-			return new None(context, snapshot);
+			return new HeartSensor(context, snapshot);
 		}
 	}
 }

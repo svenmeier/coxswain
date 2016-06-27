@@ -121,9 +121,6 @@
     <string name="preference_hardware_heart_sensor_title">Sensoren</string>
     <string name="preference_hardware_heart_sensor_summary">Puls lesen von %s</string>
 
-    <string name="preference_hardware_bluetooth_title">Bluetooth</string>
-    <string name="preference_hardware_bluetooth_summary">Puls von verbundenem Bluetooth Gerät lesen</string>
-
     <string name="preference_hardware_trace_title">Trace</string>
     <string name="preference_hardware_trace_summary">Protokoll mitschreiben</string>
 

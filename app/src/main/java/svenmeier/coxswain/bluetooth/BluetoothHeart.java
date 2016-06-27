@@ -60,7 +60,7 @@ public class BluetoothHeart extends Heart {
 			return;
 		}
 
-		connection = new LocationServices();
+		connection = new Permissions(context);
 		connection.open();
 	}
 
@@ -96,6 +96,29 @@ public class BluetoothHeart extends Heart {
 		void open();
 
 		void close();
+	}
+
+	private class Permissions extends PermissionBlock implements Connection {
+
+		public Permissions(Context context) {
+			super(context);
+		}
+
+		@Override
+		public void open() {
+			acquirePermissions(Manifest.permission.ACCESS_FINE_LOCATION);
+		}
+
+		@Override
+		public void close() {
+			abortPermissions();
+		}
+
+		@Override
+		protected void onPermissionsApproved() {
+			connection = new LocationServices();
+			connection.open();
+		}
 	}
 
 	private class LocationServices extends BroadcastReceiver implements Connection {
@@ -227,24 +250,14 @@ public class BluetoothHeart extends Heart {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class GattConnection extends PermissionBlock implements BluetoothAdapter.LeScanCallback, Runnable, Connection {
+	private class GattConnection extends BluetoothGattCallback implements BluetoothAdapter.LeScanCallback, Runnable, Connection {
 
 		private BluetoothAdapter adapter;
 
 		private BluetoothGatt gatt;
 
-		public GattConnection() {
-			super(context);
-		}
-
 		@Override
 		public void open() {
-			acquirePermissions(Manifest.permission.ACCESS_FINE_LOCATION);
-		}
-
-		@Override
-		protected void onPermissionsApproved() {
-
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 			adapter = manager.getAdapter();
 
@@ -258,9 +271,7 @@ public class BluetoothHeart extends Heart {
 			handler.postDelayed(this, SCAN_TIMEOUT_MILLIS);
 		}
 
-		public void close() {
-			abortPermissions();
-
+		public synchronized void close() {
 			if (adapter != null) {
 				adapter.stopLeScan(this);
 				adapter = null;
@@ -279,9 +290,12 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			device.connectGatt(context, false, new BluetoothGattCallbackImpl());
+			device.connectGatt(context, false, this);
 		}
 
+		/**
+		 * Timeout, see {@link #SCAN_TIMEOUT_MILLIS}
+		 */
 		@Override
 		public void run() {
 			// still scanning?
@@ -297,83 +311,80 @@ public class BluetoothHeart extends Heart {
 			}
 		}
 
-		/**
-		 * The method of this class are not called on the main thread!
-		 */
-		private class BluetoothGattCallbackImpl extends BluetoothGattCallback {
-
-			@Override
-			public void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
-				if (adapter == null || gatt != null) {
-					// no more discovery
-					return;
-				}
-
-				if (newState == BluetoothProfile.STATE_CONNECTED) {
-					candidate.discoverServices();
-				}
+		// not called on main thread!
+		@Override
+		public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
+			if (adapter == null || gatt != null) {
+				// no more discovery
+				return;
 			}
 
-			@Override
-			public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
-				if (adapter == null || gatt != null) {
-					// no more discovery
-					return;
-				}
+			if (newState == BluetoothProfile.STATE_CONNECTED) {
+				candidate.discoverServices();
+			}
+		}
+
+		// not called on main thread!
+		@Override
+		public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
+			if (adapter == null || gatt != null) {
+				// no more discovery
+				return;
+			}
 
 
-				BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
-				if (service != null) {
-					BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
-					if (characteristic != null) {
-						if (enableNotification(candidate, characteristic)) {
-							gatt = candidate;
-							handler.post(new Runnable() {
-								@Override
-								public void run() {
-									toast(context.getString(R.string.bluetooth_heart_reading));
-								}
-							});
-							return;
-						}
+			BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
+			if (service != null) {
+				BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
+				if (characteristic != null) {
+					if (enableNotification(candidate, characteristic)) {
+						gatt = candidate;
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								toast(context.getString(R.string.bluetooth_heart_reading));
+							}
+						});
+						return;
 					}
 				}
-
-				candidate.close();
 			}
 
-			private boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {
-				if (candidate.setCharacteristicNotification(characteristic, true) == false) {
-					return false;
-				}
+			candidate.close();
+		}
 
-				BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
-				if (descriptor == null) {
-					return false;
-				}
-
-				if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == false) {
-					return false;
-				}
-
-				if (candidate.writeDescriptor(descriptor) == false) {
-					return false;
-				}
-
-				return true;
+		private boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {
+			if (candidate.setCharacteristicNotification(characteristic, true) == false) {
+				return false;
 			}
 
-			@Override
-			public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-				int format;
-				if ((characteristic.getProperties() & 0x01) == 0) {
-					format = BluetoothGattCharacteristic.FORMAT_UINT8;
-				} else {
-					format = BluetoothGattCharacteristic.FORMAT_UINT16;
-				}
-
-				heartRate = characteristic.getIntValue(format, 1);
+			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
+			if (descriptor == null) {
+				return false;
 			}
+
+			if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == false) {
+				return false;
+			}
+
+			if (candidate.writeDescriptor(descriptor) == false) {
+				return false;
+			}
+
+			return true;
+		}
+
+		// not called on main thread!
+		@Override
+		public synchronized void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+			int format;
+			if ((characteristic.getProperties() & 0x01) == 0) {
+				format = BluetoothGattCharacteristic.FORMAT_UINT8;
+			} else {
+				format = BluetoothGattCharacteristic.FORMAT_UINT16;
+			}
+
+			heartRate = characteristic.getIntValue(format, 1);
 		}
 	}
 

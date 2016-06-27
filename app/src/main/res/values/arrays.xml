@@ -8,7 +8,7 @@
 
     <string-array name="sensor_values">
         <item>svenmeier.coxswain.Heart</item>
-        <item>svenmeier.coxswain.sensors.SensorHeart</item>
+        <item>svenmeier.coxswain.sensors.SensorsHeart</item>
         <item>svenmeier.coxswain.bluetooth.BluetoothHeart</item>
     </string-array>
 </resources>

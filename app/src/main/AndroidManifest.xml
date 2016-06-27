@@ -7,12 +7,21 @@
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
+    <!-- notifications -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- location & bluetooth -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- export -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- bluetooth heart rate -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <!-- sensor heart rate -->
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
 
     <application

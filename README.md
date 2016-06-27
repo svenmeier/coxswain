@@ -4,7 +4,7 @@ Coxswain helps you organize your rowing: Connect your Android device to your Wat
 - adjust the workout display to your needs (long press any value to change its binding)
 - export your workout to TCX (Training Center XML) to import it into your favorite fitness tracking App or service.
 - export your workout to Google Fit
-- read heart rate from you Waterrower, your device's sensor or connected Bluetooth LE device
+- read heart rate from your Waterrower, Android sensors or connected Bluetooth LE devices
 
 You'll need
 - a USB On-The-Go (OTG) capable device

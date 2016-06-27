@@ -56,7 +56,7 @@ public class BluetoothHeart extends Heart {
 		super(context, memory);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-			toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
+			toast(context.getString(R.string.bluetooth_heart_no_bluetooth));
 			return;
 		}
 
@@ -105,7 +105,7 @@ public class BluetoothHeart extends Heart {
 		public void open() {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 				if (isEnabled() == false) {
-					toast(context.getString(R.string.bluetooth_sensor_no_location));
+					toast(context.getString(R.string.bluetooth_heart_no_location));
 
 					Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -178,7 +178,7 @@ public class BluetoothHeart extends Heart {
 			adapter = manager.getAdapter();
 
 			if (adapter == null) {
-				toast(context.getString(R.string.bluetooth_sensor_no_bluetooth));
+				toast(context.getString(R.string.bluetooth_heart_no_bluetooth));
 				return;
 			}
 
@@ -249,7 +249,7 @@ public class BluetoothHeart extends Heart {
 			adapter = manager.getAdapter();
 
 			if (adapter.startLeScan(this) == false) {
-				toast(context.getString(R.string.bluetooth_sensor_no_bluetooth_le));
+				toast(context.getString(R.string.bluetooth_heart_no_bluetooth_le));
 
 				close();
 				return;
@@ -287,7 +287,7 @@ public class BluetoothHeart extends Heart {
 			// still scanning?
 			if (adapter != null) {
 				if (gatt == null) {
-					toast(context.getString(R.string.bluetooth_sensor_no_heart));
+					toast(context.getString(R.string.bluetooth_heart_not_found));
 
 					close();
 				} else {
@@ -331,7 +331,7 @@ public class BluetoothHeart extends Heart {
 							handler.post(new Runnable() {
 								@Override
 								public void run() {
-									toast(context.getString(R.string.bluetooth_sensor_reading));
+									toast(context.getString(R.string.bluetooth_heart_reading));
 								}
 							});
 							return;

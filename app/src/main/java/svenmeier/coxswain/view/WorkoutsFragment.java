@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import propoid.db.LookupException;
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
@@ -36,6 +37,7 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
+import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Workout;
 
@@ -117,6 +119,20 @@ public class WorkoutsFragment extends Fragment {
                     });
 
                     popup.show();
+                }
+            });
+
+            final ImageButton repeatButton = index.get(R.id.workout_repeat);
+            repeatButton.setFocusable(false);
+            repeatButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Program program = workout.program.get();
+
+                        WorkoutActivity.start(getActivity(), program);
+                    } catch (LookupException programAlreadyDeleted) {
+                    }
                 }
             });
 

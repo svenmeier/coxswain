@@ -15,12 +15,12 @@
  */
 package svenmeier.coxswain;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
-import svenmeier.coxswain.rower.water.RatioCalculator;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
@@ -212,5 +212,26 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         Intent intent = new Intent(context, WorkoutActivity.class);
 
         context.startActivity(intent);
+    }
+
+
+    public static void start(Activity activity, Program program) {
+
+        Preference<Boolean> intentPreference = Preference.getBoolean(activity, R.string.preference_integration_intent);
+        if (intentPreference.get()) {
+            Preference<String> intentUriPreference = Preference.getString(activity, R.string.preference_integration_intent_uri);
+            String uri = intentUriPreference.get();
+
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                activity.startActivity(intent);
+                return;
+            } catch (Exception ex) {
+            }
+        }
+
+        Gym.instance(activity).select(program);
+
+        activity.startActivity(new Intent(activity, WorkoutActivity.class));
     }
 }

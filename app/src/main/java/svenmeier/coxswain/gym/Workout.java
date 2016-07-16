@@ -24,6 +24,8 @@ import propoid.core.Propoid;
  */
 public class Workout extends Propoid {
 
+    public final Property<Program> program = property();
+
     public final Property<String> name = property();
 
     public final Property<Location> location = property();
@@ -48,6 +50,7 @@ public class Workout extends Propoid {
     public Workout(Program program) {
         this();
 
+        this.program.set(program);
         this.name.set(program.name.get());
         this.start.set(System.currentTimeMillis());
     }

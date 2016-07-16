@@ -3,6 +3,7 @@
     <declare-styleable name="LightTheme">
         <attr name="icon_more" format="reference" />
         <attr name="icon_share" format="reference" />
+        <attr name="icon_repeat" format="reference" />
     </declare-styleable>
 
     <!-- Declare custom theme attributes that allow changing which styles are

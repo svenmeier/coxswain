@@ -3,54 +3,84 @@
     xmlns:coxswain="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp"
+    android:orientation="horizontal"
     >
 
+    <ImageButton
+        android:id="@+id/workout_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="4dp"
+        android:src="?attr/icon_more"
+        style="@style/MenuButton"
+        />
+
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:coxswain="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:padding="4dp"
         >
 
-        <ImageButton
-            android:id="@+id/workout_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="?attr/icon_more"
-            style="@style/MenuButton"
-            />
-
-        <TextView
-            android:id="@+id/workout_start"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="32dp"
-            />
+            android:orientation="horizontal"
+            >
 
+            <TextView
+                android:id="@+id/workout_start"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="32dp"
+                android:text="Start"
+                />
+
+            <TextView
+                android:id="@+id/workout_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16dp"
+                android:text="Name"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/workout_counts"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="16dp"
+                android:text="Counts"
+                />
+            <TextView
+                android:id="@+id/workout_calories"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="16dp"
+                android:text="calories"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/workout_name"
+    <ImageButton
+        android:id="@+id/workout_repeat"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="16dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="4dp"
+        android:src="?attr/icon_repeat"
+        style="@style/MenuButton"
         />
-    <TextView
-        android:id="@+id/workout_counts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        />
-    <TextView
-        android:id="@+id/workout_calories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        />
+
 </LinearLayout>

@@ -43,6 +43,10 @@
     <string name="strokeRatio_pattern">1:0.0</string>
     <string name="time_label">TIME</string>
     <string name="time_pattern">00:60</string>
+    <string name="delta_duration_label">ΔDURATION</string>
+    <string name="delta_duration_pattern">0:60:60</string>
+    <string name="delta_distance_label">ΔDISTANCE</string>
+    <string name="delta_distance_pattern">00000</string>
     <string name="none_label">NONE</string>
     <string name="none_pattern"></string>
 

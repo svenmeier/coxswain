@@ -154,6 +154,12 @@ public class ValueContainer extends FrameLayout {
                 int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
                 limit(minutes, 0);
                 break;
+            case DELTA_DISTANCE:
+                // TODO
+                break;
+            case DELTA_DURATION:
+                // TODO
+                break;
         }
     }
 

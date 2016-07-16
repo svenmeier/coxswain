@@ -3,11 +3,13 @@
     <style name="LightTheme" parent="@android:style/Theme.Holo.Light">
         <item name="icon_more">@drawable/ic_more_vert_black_24dp</item>
         <item name="icon_share">@drawable/ic_share_black_24dp</item>
+        <item name="icon_repeat">@drawable/ic_repeat_black_24dp</item>
     </style>
 
     <style name="DarkTheme" parent="@android:style/Theme.Holo">
         <item name="icon_more">@drawable/ic_more_vert_white_24dp</item>
         <item name="icon_share">@drawable/ic_share_white_24dp</item>
+        <item name="icon_repeat">@drawable/ic_repeat_white_24dp</item>
     </style>
 
     <style name="TimelineView">

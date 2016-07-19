@@ -280,6 +280,7 @@ public class GymService extends Service {
 
             builder.setContentText(text);
             builder.setProgress(1000, progress, false);
+            builder.setPriority(Notification.PRIORITY_DEFAULT);
             if (headsup.get()) {
                 if (gym.hasListener(Object.class)) {
                     headsupSince = 0;

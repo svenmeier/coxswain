@@ -275,7 +275,7 @@ public class GymService extends Service {
                         .addAction(R.drawable.ic_stop_black_24dp, getString(R.string.gym_notification_stop),
                                 PendingIntent.getBroadcast(service, 0, new Intent(ACTION_STOP), 0));
 
-                builder.setDefaults(Notification.DEFAULT_ALL);
+                builder.setDefaults(Notification.DEFAULT_VIBRATE);
             }
 
             builder.setContentText(text);
@@ -301,7 +301,7 @@ public class GymService extends Service {
             this.text = text;
             this.progress = progress;
 
-            // remove defaults, but keep dummy vibrate so headsup continues
+            // no vibration until next text change, needs empty array though to keep headsup
             builder.setDefaults(0);
             builder.setVibrate(new long[0]);
         }

@@ -15,16 +15,14 @@
  */
 package svenmeier.coxswain;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.v4.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import propoid.db.LookupException;
 import propoid.db.Match;
 import propoid.db.Order;
 import propoid.db.Reference;
@@ -50,15 +48,32 @@ public class Gym {
 
     private Repository repository;
 
+    private List<Listener> listeners = new ArrayList<>();
+
+    /**
+     * The selected program.
+     */
     public Program program;
 
-    public Workout workout;
+	/**
+     * Optional pace workout.
+     */
+    public Workout pace;
 
+	/**
+     * The current workout.
+     */
+    public Workout current;
+
+    /**
+     * The last snapshot.
+     */
     public Snapshot snapshot;
 
-    public Current current;
-
-    private List<Listener> listeners = new ArrayList<>();
+	/**
+     * Progress of current workout.
+     */
+    public Progress progress;
 
     private Gym(Context context) {
 
@@ -157,14 +172,46 @@ public class Gym {
         repository.merge(workout);
     }
 
+    public void deselect() {
+        this.pace = null;
+        this.program = null;
+
+        this.snapshot = null;
+        this.current = null;
+        this.progress = null;
+
+        fireChanged();
+    }
+
     public void select(Program program) {
+        this.pace = null;
         this.program = program;
 
         this.snapshot = null;
-        this.workout = null;
         this.current = null;
+        this.progress = null;
 
         fireChanged();
+    }
+
+    public boolean select(Workout pace) {
+        Program program;
+        try {
+            program = pace.program.get();
+        } catch (LookupException programAlreadyDeleted) {
+            return false;
+        }
+
+        this.pace = pace;
+        this.program = program;
+
+        this.snapshot = null;
+        this.current = null;
+        this.progress = null;
+
+        fireChanged();
+
+        return true;
     }
 
     public boolean isSelected(Program program) {
@@ -182,31 +229,31 @@ public class Gym {
             if (snapshot.distance.get() > 0 || snapshot.strokes.get() > 0) {
                 event = Event.SNAPPED;
 
-                if (workout == null) {
+                if (current == null) {
                     event = Event.PROGRAM_START;
-                    workout = new Workout(program);
-                    workout.location.set(getLocation());
+                    current = new Workout(program);
+                    current.location.set(getLocation());
 
-                    current = new Current(program.getSegment(0), 0, new Snapshot());
+                    progress = new Progress(program.getSegment(0), 0, new Snapshot());
                 }
 
-                if (workout.onSnapshot(snapshot)) {
-                    mergeWorkout(workout);
+                if (current.onSnapshot(snapshot)) {
+                    mergeWorkout(current);
 
-                    snapshot.workout.set(workout);
+                    snapshot.workout.set(current);
                     repository.insert(snapshot);
                 }
 
-                if (current != null && current.completion() == 1.0f) {
-                    Segment next = program.getNextSegment(current.segment);
+                if (progress != null && progress.completion() == 1.0f) {
+                    Segment next = program.getNextSegment(progress.segment);
                     if (next == null) {
-                        mergeWorkout(workout);
+                        mergeWorkout(current);
 
-                        current = null;
+                        progress = null;
 
                         event = Event.PROGRAM_FINISHED;
                     } else {
-                        current = new Current(next, workout.duration.get(), snapshot);
+                        progress = new Progress(next, current.duration.get(), snapshot);
 
                         event = Event.SEGMENT_CHANGED;
                     }
@@ -217,10 +264,6 @@ public class Gym {
         fireChanged();
 
         return event;
-    }
-
-    public Snapshot getLastSnapshot() {
-        return snapshot;
     }
 
     public Match<Snapshot> getSnapshots(Workout workout) {
@@ -251,18 +294,21 @@ public class Gym {
         return bestLocation;
     }
 
-    public class Current {
+    public class Progress {
 
         public final Segment segment;
 
         final int duration;
 
-        final Snapshot snapshot;
+		/**
+         * Start snapshot of the segment.
+         */
+        final Snapshot start;
 
-        public Current(Segment segment, int duration, Snapshot snapshot) {
+        public Progress(Segment segment, int duration, Snapshot snapshot) {
             this.segment = segment;
             this.duration = duration;
-            this.snapshot = snapshot;
+            this.start = snapshot;
         }
 
         public float completion() {
@@ -273,13 +319,12 @@ public class Gym {
         }
 
         public int achieved() {
-            int lastDuration = workout.duration.get();
-            Snapshot lastSnapshot = getLastSnapshot();
-            if (lastSnapshot == null) {
+            int lastDuration = current.duration.get();
+            if (snapshot == null) {
                 return 0;
             }
 
-            return achieved(lastSnapshot, lastDuration) - achieved(snapshot, duration);
+            return achieved(snapshot, lastDuration) - achieved(start, duration);
         }
 
         private int achieved(Snapshot snapshot, int duration) {
@@ -296,13 +341,11 @@ public class Gym {
         }
 
         public boolean inLimit() {
-            Snapshot lastSnapshot = getLastSnapshot();
-
-            if (lastSnapshot.speed.get() < current.segment.speed.get()) {
+            if (snapshot.speed.get() < progress.segment.speed.get()) {
                 return false;
-            } else if (lastSnapshot.pulse.get() < current.segment.pulse.get()) {
+            } else if (snapshot.pulse.get() < progress.segment.pulse.get()) {
                 return false;
-            } else if (lastSnapshot.strokeRate.get() < current.segment.strokeRate.get()) {
+            } else if (snapshot.strokeRate.get() < progress.segment.strokeRate.get()) {
                 return false;
             }
 

@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import propoid.util.content.Preference;
-import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.LevelView;
@@ -175,17 +174,17 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     private void updateLevel() {
         float value = 0f;
         float total = 0f;
-        Gym.Current current = gym.current;
+        Gym.Progress progress = gym.progress;
         for (Segment segment : gym.program.segments.get()) {
             float segmentValue = segment.asDuration();
 
-            if (current != null && current.segment == segment) {
-                value = total + current.completion() * segmentValue;
+            if (progress != null && progress.segment == segment) {
+                value = total + progress.completion() * segmentValue;
             }
 
             total += segmentValue;
         }
-        if (current == null) {
+        if (progress == null) {
             value = total;
         }
         levelView.setLevel(Math.round(value * 10000 / total));
@@ -215,7 +214,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
 
-    public static void start(Activity activity, Program program) {
+    public static void start(Activity activity) {
 
         Preference<Boolean> intentPreference = Preference.getBoolean(activity, R.string.preference_integration_intent);
         if (intentPreference.get()) {
@@ -229,8 +228,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             } catch (Exception ex) {
             }
         }
-
-        Gym.instance(activity).select(program);
 
         activity.startActivity(new Intent(activity, WorkoutActivity.class));
     }

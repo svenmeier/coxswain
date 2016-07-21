@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import propoid.db.LookupException;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
@@ -38,7 +39,7 @@ public class Workout2Fit {
 	public Session session(Workout workout) {
 
 		return new Session.Builder()
-				.setName(workout.name.get())
+				.setName(workout.name("UNKNOWN"))
 				.setIdentifier(dateFormat.format(workout.start.get()))
 				.setActivity(FitnessActivities.ROWING_MACHINE)
 				.setStartTime(workout.start.get(), TimeUnit.MILLISECONDS)

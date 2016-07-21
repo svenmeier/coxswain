@@ -19,14 +19,13 @@ import android.location.Location;
 
 import propoid.core.Property;
 import propoid.core.Propoid;
+import propoid.db.LookupException;
 
 /**
  */
 public class Workout extends Propoid {
 
     public final Property<Program> program = property();
-
-    public final Property<String> name = property();
 
     public final Property<Location> location = property();
 
@@ -51,7 +50,6 @@ public class Workout extends Propoid {
         this();
 
         this.program.set(program);
-        this.name.set(program.name.get());
         this.start.set(System.currentTimeMillis());
     }
 
@@ -69,5 +67,14 @@ public class Workout extends Propoid {
         } else {
             return false;
         }
+    }
+
+    public String name(String fallback) {
+        String name = fallback;
+        try {
+            name = program.get().name.get();
+        } catch (LookupException programDeleted) {
+        }
+        return name;
     }
 }

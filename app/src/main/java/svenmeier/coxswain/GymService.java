@@ -72,7 +72,7 @@ public class GymService extends Service {
                 String action = intent.getAction();
 
                 if (ACTION_STOP.equals(action)) {
-                    Gym.instance(GymService.this).select(null);
+                    Gym.instance(GymService.this).deselect();
                 }
             }
         };
@@ -189,10 +189,9 @@ public class GymService extends Service {
                             String text = program.name.get();
                             int progress = 0;
 
-                            Gym.Current current = gym.current;
-                            if (current != null) {
-                                text += " - " +  current.describe();
-                                progress = (int)(current.completion() * 1000);
+                            if (gym.progress != null) {
+                                text += " - " +  gym.progress.describe();
+                                progress = (int)(gym.progress.completion() * 1000);
                             }
                             foreground.workout(text, progress);
 
@@ -200,7 +199,7 @@ public class GymService extends Service {
                             motivator.onEvent(event);
 
                             if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
-                                gym.select(null);
+                                gym.deselect();
                             }
                         }
                     });

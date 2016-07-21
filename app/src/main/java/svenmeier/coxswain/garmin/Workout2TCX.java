@@ -91,7 +91,7 @@ public class Workout2TCX {
 		serializer.attribute(null, "Type", "Workout");
 		serializer.attribute(null, "IntervalWorkout", "true");
 
-		tag(null, "Name", workout.name.get());
+		tag(null, "Name", workout.name("-"));
 
 		serializer.endTag(null, serializer.getName());
 	}

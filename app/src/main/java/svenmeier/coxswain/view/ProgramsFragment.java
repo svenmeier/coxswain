@@ -110,7 +110,7 @@ public class ProgramsFragment extends Fragment {
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    gym.select(null);
+                    gym.deselect();
 
                     PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                     popup.getMenuInflater().inflate(R.menu.menu_programs_item, popup.getMenu());
@@ -145,7 +145,9 @@ public class ProgramsFragment extends Fragment {
 
         @Override
         protected void onItem(Program program, int position) {
-            WorkoutActivity.start(getActivity(), program);
+            gym.select(program);
+
+            WorkoutActivity.start(getActivity());
         }
     }
 }

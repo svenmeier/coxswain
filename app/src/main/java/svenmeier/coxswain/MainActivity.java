@@ -15,13 +15,11 @@
  */
 package svenmeier.coxswain;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -81,7 +79,7 @@ public class MainActivity extends AbstractActivity {
         findViewById(R.id.main_current_stop).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Gym.instance(MainActivity.this).select(null);
+                Gym.instance(MainActivity.this).deselect();
             }
         });
     }
@@ -90,10 +88,10 @@ public class MainActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
 
-        if (gym.workout != null && gym.current == null) {
+        if (gym.current != null && gym.progress == null) {
             // workout is still running due to "open end", time to stop it now
 
-            gym.select(null);
+            gym.deselect();
         }
 
         listener = new Gym.Listener() {
@@ -125,8 +123,8 @@ public class MainActivity extends AbstractActivity {
             programNameView.setText(gym.program.name.get());
 
             String description = "";
-            if (gym.current != null) {
-                description = gym.current.describe();
+            if (gym.progress != null) {
+                description = gym.progress.describe();
             }
             programCurrentView.setText(description);
         }

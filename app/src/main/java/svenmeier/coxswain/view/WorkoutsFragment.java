@@ -127,28 +127,23 @@ public class WorkoutsFragment extends Fragment {
             repeatButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        Program program = workout.program.get();
-
-                        WorkoutActivity.start(getActivity(), program);
-                    } catch (LookupException programAlreadyDeleted) {
+                    if (gym.select(workout)) {
+                        WorkoutActivity.start(getActivity());
                     }
                 }
             });
 
             TextView nameView = index.get(R.id.workout_name);
-            nameView.setText(workout.name.get());
+            nameView.setText(workout.name("-"));
 
             TextView countsView = index.get(R.id.workout_counts);
             String counts = TextUtils.join(", ", new String[]{
                     String.format(getString(R.string.duration_minutes), workout.duration.get() / 60),
                     String.format(getString(R.string.distance_meters), workout.distance.get()),
-                    String.format(getString(R.string.strokes_count), workout.strokes.get())
+                    String.format(getString(R.string.strokes_count), workout.strokes.get()),
+                    String.format(getString(R.string.energy_calories), workout.energy.get())
             });
             countsView.setText(counts);
-
-            TextView caloriesView = index.get(R.id.workout_calories);
-            caloriesView.setText(String.format(getString(R.string.energy_calories), workout.energy.get()));
         }
 
         @Override

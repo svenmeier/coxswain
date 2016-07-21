@@ -16,9 +16,7 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
-import android.telephony.CellIdentityCdma;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import java.util.Calendar;
@@ -96,10 +94,10 @@ public class ValueContainer extends FrameLayout {
         int limitStrokeRate = 0;
         int limitPulse = 0;
 
-        if (gym.current != null) {
-            Segment segment = gym.current.segment;
+        if (gym.progress != null) {
+            Segment segment = gym.progress.segment;
 
-            achieved = gym.current.achieved();
+            achieved = gym.progress.achieved();
 
             targetDuration = segment.duration.get();
             targetDistance = segment.distance.get();
@@ -110,14 +108,14 @@ public class ValueContainer extends FrameLayout {
             limitPulse = segment.pulse.get();
         }
 
-        Snapshot snapshot = gym.getLastSnapshot();
+        Snapshot snapshot = gym.snapshot;
         if (snapshot == null) {
             snapshot = new Snapshot();
         }
 
         int duration = 0;
-        if (gym.workout != null) {
-            duration = gym.workout.duration.get();
+        if (gym.current != null) {
+            duration = gym.current.duration.get();
         }
 
         switch (binding) {

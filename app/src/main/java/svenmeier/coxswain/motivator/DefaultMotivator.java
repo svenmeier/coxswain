@@ -88,9 +88,9 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             return;
         }
 
-        Gym.Current current = gym.current;
+        Gym.Progress progress = gym.progress;
         for (int a = 0; a < analysers.size(); a++) {
-            analysers.get(a).analyse(event, current);
+            analysers.get(a).analyse(event, progress);
         }
     }
 
@@ -164,9 +164,9 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 		 * Analyse an event.
          *
          * @param event event
-         * @param current current, may be {@code null}
+         * @param progress current, may be {@code null}
          */
-        public abstract void analyse(Event event, Gym.Current current);
+        public abstract void analyse(Event event, Gym.Progress progress);
 
         public abstract void reset();
     }
@@ -193,13 +193,13 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             return "[" + difficulty.toString() + "]";
         }
 
-        public void analyse(Event event, Gym.Current current) {
+        public void analyse(Event event, Gym.Progress progress) {
             if (event == Event.PROGRAM_START || event == Event.SEGMENT_CHANGED) {
-                if (current != null) {
-                    ringtone(key(current.segment.difficulty.get()));
+                if (progress != null) {
+                    ringtone(key(progress.segment.difficulty.get()));
 
                     if (speakSegmentPreference.get()) {
-                        String describe = current.describe();
+                        String describe = progress.describe();
                         pause();
                         speak(describe);
                     }
@@ -230,7 +230,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             addRingtone(ringtoneFinishPreference, KEY);
         }
 
-        public void analyse(Event event, Gym.Current current) {
+        public void analyse(Event event, Gym.Progress progress) {
             if (event == Event.PROGRAM_FINISHED) {
                 ringtone(KEY);
             }
@@ -254,12 +254,12 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         public void init() {
         }
 
-        public void analyse(Event event, Gym.Current current) {
-            if (event != Event.SNAPPED || current == null || speakLimitPreference.get() == false) {
+        public void analyse(Event event, Gym.Progress progress) {
+            if (event != Event.SNAPPED || progress == null || speakLimitPreference.get() == false) {
                 return;
             }
 
-            if (current.inLimit()) {
+            if (progress.inLimit()) {
                 underLimitSince = -1;
             } else {
                 long now = System.currentTimeMillis();
@@ -267,7 +267,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 if (underLimitSince == -1) {
                     underLimitSince = now;
                 } else if ((now - underLimitSince) > LIMIT_LATENCY) {
-                    String limit = current.describeLimit();
+                    String limit = progress.describeLimit();
                     if (limit.isEmpty() == false) {
                         speak(limit);
                     }

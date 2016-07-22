@@ -73,7 +73,7 @@ public class Workout extends Propoid {
         String name = fallback;
         try {
             name = program.get().name.get();
-        } catch (LookupException programDeleted) {
+        } catch (Exception noProgramSetOrAlreadyDeleted) {
         }
         return name;
     }

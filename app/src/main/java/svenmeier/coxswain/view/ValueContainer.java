@@ -85,6 +85,8 @@ public class ValueContainer extends FrameLayout {
 
     public void update(Gym gym) {
         int achieved = 0;
+        int deltaDistance = 0;
+        int deltaDuration = 0;
 
         int targetDuration = 0;
         int targetDistance = 0;
@@ -95,9 +97,11 @@ public class ValueContainer extends FrameLayout {
         int limitPulse = 0;
 
         if (gym.progress != null) {
-            Segment segment = gym.progress.segment;
-
             achieved = gym.progress.achieved();
+            deltaDistance = -10;
+            deltaDuration = 5;
+
+            Segment segment = gym.progress.segment;
 
             targetDuration = segment.duration.get();
             targetDistance = segment.distance.get();
@@ -153,12 +157,21 @@ public class ValueContainer extends FrameLayout {
                 limit(minutes, 0);
                 break;
             case DELTA_DISTANCE:
-                // TODO
+                delta(deltaDistance, false);
                 break;
             case DELTA_DURATION:
-                // TODO
+                delta(deltaDuration, true);
                 break;
         }
+    }
+
+    private void delta(int delta, boolean positiveIsLow) {
+        if ((delta < 0) ^ positiveIsLow) {
+            setState(R.attr.field_low);
+        } else {
+            setState(R.attr.field_high);
+        }
+        valueView.setValue(delta);
     }
 
     private void target(int value, int target, int achieved) {

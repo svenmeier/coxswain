@@ -85,6 +85,8 @@ public class Gym {
 
         Workout workout = new Workout();
         repository.index(workout, false, Order.descending(workout.start));
+        Snapshot snapshot = new Snapshot();
+        repository.index(snapshot, false, Order.ascending(snapshot.workout));
     }
 
     public void defaults() {

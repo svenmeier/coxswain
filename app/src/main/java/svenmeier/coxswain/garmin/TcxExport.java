@@ -90,9 +90,9 @@ public class TcxExport implements Export {
 		public String getFileName() {
 			StringBuilder name = new StringBuilder();
 
+			name.append(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(workout.start.get()));
+			name.append('_');
 			name.append(workout.name("UNKNOWN"));
-			name.append('-');
-			name.append(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(workout.start.get()));
 			name.append(SUFFIX);
 
 			return name.toString();

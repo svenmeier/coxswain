@@ -29,15 +29,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
+import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
 import svenmeier.coxswain.view.Utils;
 import svenmeier.coxswain.view.ValueBinding;
-import svenmeier.coxswain.view.ValueContainer;
+import svenmeier.coxswain.view.BindingView;
 
 
 /**
@@ -55,13 +57,15 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private Gym gym;
 
-    private SegmentsView segmentsView;
+    private PaceLookup paceLookup;
 
-    private List<ValueContainer> valueViews = new ArrayList<>();
+    private Preference<String> binding;
+
+    private SegmentsView segmentsView;
 
     private LevelView levelView;
 
-    private Preference<String> binding;
+    private List<BindingView> bindingViews = new ArrayList<>();
 
     private Runnable returnToLeanBack = new Runnable() {
         @Override
@@ -92,14 +96,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        Utils.collect(ValueContainer.class, getWindow().getDecorView(), valueViews);
+        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
 
         levelView = (LevelView) findViewById(R.id.workout_progress);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         List<ValueBinding> bindings = new ArrayList<>();
         try {
@@ -108,22 +107,22 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             }
         } catch (Exception useDefault) {
             bindings = Arrays.asList(
-                ValueBinding.DURATION,
-                ValueBinding.DISTANCE,
-                ValueBinding.STROKES,
-                ValueBinding.SPEED,
-                ValueBinding.PULSE,
-                ValueBinding.STROKE_RATE);
+                    ValueBinding.DURATION,
+                    ValueBinding.DISTANCE,
+                    ValueBinding.STROKES,
+                    ValueBinding.SPEED,
+                    ValueBinding.PULSE,
+                    ValueBinding.STROKE_RATE);
         }
-        for (int b = 0; b < Math.min(bindings.size(), valueViews.size()); b++) {
-            valueViews.get(b).setBinding(bindings.get(b));
-            valueViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
+        for (int b = 0; b < Math.min(bindings.size(), bindingViews.size()); b++) {
+            bindingViews.get(b).setBinding(bindings.get(b));
+            bindingViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
 
                     leanBack(false);
 
-                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((ValueContainer)view).getBinding());
+                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((BindingView)view).getBinding());
 
                     fragment.show(getFragmentManager(), "binding");
 
@@ -132,21 +131,41 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             });
         }
 
+        if (gym.pace != null) {
+            paceLookup = new PaceLookup();
+            paceLookup.restartLoader(0, this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        List<String> bindings = new ArrayList<>();
+        for (BindingView valueView : bindingViews) {
+            bindings.add(valueView.getBinding().name());
+        }
+        binding.set(TextUtils.join(",", bindings));
+
+        if (paceLookup != null) {
+            paceLookup.destroy(0, this);
+            paceLookup = null;
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         changed();
         gym.addListener(this);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
-
-        List<String> bindings = new ArrayList<>();
-        for (ValueContainer valueView : valueViews) {
-            bindings.add(valueView.getBinding().name());
-        }
-        binding.set(TextUtils.join(",", bindings));
-
         gym.removeListener(this);
+
+        super.onPause();
     }
 
     @Override
@@ -156,7 +175,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             return;
         }
 
-        updateValues();
+        updateBindings();
         updateLevel();
     }
 
@@ -165,9 +184,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         leanBack(true);
     }
 
-    private void updateValues() {
-        for (int v = 0; v < valueViews.size(); v++) {
-            valueViews.get(v).update(gym);
+    private void updateBindings() {
+        for (int v = 0; v < bindingViews.size(); v++) {
+            bindingViews.get(v).changed(gym, paceLookup);
         }
     }
 
@@ -193,7 +212,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     @Override
     public void onBinding(int viewId, ValueBinding binding) {
         if (binding != null) {
-            ((ValueContainer)findViewById(viewId)).setBinding(binding);
+            ((BindingView)findViewById(viewId)).setBinding(binding);
         }
 
         leanBack(true);
@@ -230,5 +249,48 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         activity.startActivity(new Intent(activity, WorkoutActivity.class));
+    }
+
+    private class PaceLookup extends MatchLookup<Snapshot> implements BindingView.PaceBoat {
+
+        private List<Snapshot> snapshots = new ArrayList<>();
+
+        private int duration;
+
+        protected PaceLookup() {
+            super(gym.getSnapshots(gym.pace));
+        }
+
+        @Override
+        public int getDistance(int duration) {
+            if (snapshots.isEmpty()) {
+                return -1;
+            }
+
+            int index = Math.min(snapshots.size() - 1, duration);
+            return snapshots.get(index).distance.get();
+        }
+
+        @Override
+        public int getDuration(int distance) {
+            while (duration < snapshots.size()) {
+                if (snapshots.get(duration).distance.get() >= distance) {
+                    break;
+                }
+
+                duration++;
+            }
+
+            if (duration == snapshots.size()) {
+                return -1;
+            } else {
+                return duration;
+            }
+        }
+
+        @Override
+        protected void onLookup(List<Snapshot> propoids) {
+            this.snapshots = propoids;
+        }
     }
 }

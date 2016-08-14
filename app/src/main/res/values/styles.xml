@@ -23,7 +23,7 @@
         <item name="android:padding">3dp</item>
     </style>
 
-    <style name="ValueContainer">
+    <style name="BindingView">
         <item name="android:background">@drawable/field</item>
     </style>
 

@@ -156,13 +156,13 @@ public class SegmentsView extends View {
         }
     }
 
-    public static interface Data {
-        public int length();
+    public interface Data {
+        int length();
 
-        public float value(int index);
+        float value(int index);
 
-        public int level(int index);
+        int level(int index);
 
-        public float total();
+        float total();
     }
 }

@@ -33,52 +33,52 @@
         android:orientation="vertical"
         >
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_0"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_3"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
-        <svenmeier.coxswain.view.ValueContainer
+        <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            style="@style/ValueContainer"
+            style="@style/BindingView"
             />
 
     </LinearLayout>

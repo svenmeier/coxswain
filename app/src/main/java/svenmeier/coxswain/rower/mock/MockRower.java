@@ -24,11 +24,11 @@ public class MockRower implements Rower {
 
     private long resettedAt = 0;
 
-    private static double distance;
+    private double speed;
 
-    private static double strokes;
+    private double strokes;
 
-    private static double energy;
+    private double energy;
 
     private final Snapshot memory;
 
@@ -59,7 +59,8 @@ public class MockRower implements Rower {
     public void reset() {
         resettedAt = System.currentTimeMillis();
 
-        distance = 0;
+        speed = 2.5 + Math.random();
+
         strokes = 0;
         energy = 0;
     }
@@ -72,11 +73,11 @@ public class MockRower implements Rower {
         }
 
         if (open) {
-            if (System.currentTimeMillis() > resettedAt + 2000) {
-                // delay before achieveing anything
+            long now = System.currentTimeMillis();
+            if (now > resettedAt + 2000) {
+                // delay before achieving anything
 
-                distance += Math.random() * 0.5;
-                memory.distance.set((int)distance);
+                memory.distance.set((int)((now - resettedAt) / 1000 * speed));
 
                 strokes += 0.04;
                 memory.strokes.set((int)strokes);
@@ -85,7 +86,7 @@ public class MockRower implements Rower {
                 memory.energy.set((int)energy);
             }
 
-            memory.speed.set((int)(250 +  (Math.random() * 100)));
+            memory.speed.set((int)(speed * 100));
 
             memory.strokeRate.set((int)(26 +  (Math.random() * 3)));
 

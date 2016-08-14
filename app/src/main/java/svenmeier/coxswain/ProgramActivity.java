@@ -34,7 +34,7 @@ import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.LimitDialogFragment;
 import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueBinding;
-import svenmeier.coxswain.view.ValueContainer;
+import svenmeier.coxswain.view.BindingView;
 
 
 public class ProgramActivity extends AbstractActivity implements AbstractValueFragment.Callback {
@@ -97,19 +97,19 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         protected void bind(final int position, View view, final Segment segment) {
             Index index = Index.get(view);
 
-            ValueContainer targetView = index.get(R.id.segments_item_target);
+            BindingView targetView = index.get(R.id.segments_item_target);
             if (segment.duration.get() > 0) {
                 targetView.setBinding(ValueBinding.DURATION_SHORT);
-                targetView.update(segment.duration.get());
+                targetView.changed(segment.duration.get());
             } else if (segment.distance.get() > 0) {
                 targetView.setBinding(ValueBinding.DISTANCE);
-                targetView.update(segment.distance.get());
+                targetView.changed(segment.distance.get());
             } else if (segment.strokes.get() > 0) {
                 targetView.setBinding(ValueBinding.STROKES);
-                targetView.update(segment.strokes.get());
+                targetView.changed(segment.strokes.get());
             } else if (segment.energy.get() > 0) {
                 targetView.setBinding(ValueBinding.ENERGY);
-                targetView.update(segment.energy.get());
+                targetView.changed(segment.energy.get());
             }
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,30 +117,30 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                     boolean was = segmentsView.isItemChecked(position);
                     segmentsView.setItemChecked(position, true);
 
-                    new TargetDialogFragment().show(getFragmentManager(), "update");
+                    new TargetDialogFragment().show(getFragmentManager(), "changed");
                 }
             });
 
-            ValueContainer limitView = index.get(R.id.segments_item_limit);
+            BindingView limitView = index.get(R.id.segments_item_limit);
             if (segment.speed.get() > 0) {
                 limitView.setBinding(ValueBinding.SPEED);
-                limitView.update(segment.speed.get());
+                limitView.changed(segment.speed.get());
             } else if (segment.pulse.get() > 0) {
                 limitView.setBinding(ValueBinding.PULSE);
-                limitView.update(segment.pulse.get());
+                limitView.changed(segment.pulse.get());
             } else if (segment.strokeRate.get() > 0) {
                 limitView.setBinding(ValueBinding.STROKE_RATE);
-                limitView.update(segment.strokeRate.get());
+                limitView.changed(segment.strokeRate.get());
             } else {
                 limitView.setBinding(ValueBinding.NONE);
-                limitView.update(0);
+                limitView.changed(0);
             }
             limitView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     segmentsView.setItemChecked(position, true);
 
-                    new LimitDialogFragment().show(getFragmentManager(), "update");
+                    new LimitDialogFragment().show(getFragmentManager(), "changed");
                 }
             });
 

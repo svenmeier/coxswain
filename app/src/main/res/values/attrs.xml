@@ -26,7 +26,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="ValueContainer">
+    <declare-styleable name="BindingView">
         <attr name="field_normal" format="boolean"/>
         <attr name="field_low" format="boolean"/>
         <attr name="field_high" format="boolean"/>

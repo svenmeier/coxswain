@@ -28,9 +28,9 @@ import svenmeier.coxswain.gym.Snapshot;
 
 /**
  */
-public class ValueContainer extends FrameLayout {
+public class BindingView extends FrameLayout {
 
-    private static final int[] state = {0};
+    private static final int[] state = {R.attr.field_normal};
 
     private ValueBinding binding;
 
@@ -38,15 +38,15 @@ public class ValueContainer extends FrameLayout {
 
     private LabelView labelView;
 
-    private Calendar calendar;
+    private Runnable timer;
 
-    public ValueContainer(Context context, AttributeSet attrs) {
+    public BindingView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         init();
     }
 
-    public ValueContainer(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BindingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         init();
@@ -70,23 +70,56 @@ public class ValueContainer extends FrameLayout {
         labelView.setText(getContext().getString(binding.label));
         valueView.setPattern(getContext().getString(binding.pattern));
 
-        update(0);
+        changed(0);
+
+        initBinding();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        initBinding();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        this.timer = null;
+
+        super.onDetachedFromWindow();
+    }
+
+    private void initBinding() {
+        switch (binding) {
+            case TIME:
+                timer = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (timer == this && binding == ValueBinding.TIME) {
+                            Calendar calendar = Calendar.getInstance();
+                            int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
+                            limit(minutes, 0);
+
+                            postDelayed(timer, 1000);
+                        }
+                    }
+                };
+                timer.run();
+                break;
+        }
     }
 
     public ValueBinding getBinding() {
         return binding;
     }
 
-    public void update(int value) {
+    public void changed(int value) {
         setState(R.attr.field_normal);
-
         valueView.setValue(value);
     }
 
-    public void update(Gym gym) {
+    public void changed(Gym gym, PaceBoat paceBoat) {
         int achieved = 0;
-        int deltaDistance = 0;
-        int deltaDuration = 0;
 
         int targetDuration = 0;
         int targetDistance = 0;
@@ -98,8 +131,6 @@ public class ValueContainer extends FrameLayout {
 
         if (gym.progress != null) {
             achieved = gym.progress.achieved();
-            deltaDistance = -10;
-            deltaDuration = 5;
 
             Segment segment = gym.progress.segment;
 
@@ -147,31 +178,29 @@ public class ValueContainer extends FrameLayout {
             case STROKE_RATIO:
                 limit(snapshot.strokeRatio.get(), 0);
                 break;
-            case TIME:
-                if (calendar == null) {
-                    calendar = Calendar.getInstance();
-                }
-
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                limit(minutes, 0);
-                break;
             case DELTA_DISTANCE:
-                delta(deltaDistance, false);
+                delta(snapshot.distance.get(), paceBoat == null ? snapshot.distance.get() : paceBoat.getDistance(duration), false);
                 break;
             case DELTA_DURATION:
-                delta(deltaDuration, true);
+                delta(duration, paceBoat == null ? duration : paceBoat.getDuration(snapshot.distance.get()), true);
                 break;
         }
     }
 
-    private void delta(int delta, boolean positiveIsLow) {
-        if ((delta < 0) ^ positiveIsLow) {
-            setState(R.attr.field_low);
+    private void delta(int value, int pace, boolean positiveIsLow) {
+        if (pace == -1) {
+            setState(R.attr.field_normal);
+            valueView.setText("");
         } else {
-            setState(R.attr.field_high);
+            int delta = value - pace;
+
+            if ((delta < 0) ^ positiveIsLow) {
+                setState(R.attr.field_low);
+            } else {
+                setState(R.attr.field_high);
+            }
+            valueView.setValue(delta);
         }
-        valueView.setValue(delta);
     }
 
     private void target(int value, int target, int achieved) {
@@ -206,7 +235,7 @@ public class ValueContainer extends FrameLayout {
     }
 
     private void setState(int state) {
-        this.state[0] = state;
+        BindingView.state[0] = state;
 
         refreshDrawableState();
         invalidate();
@@ -219,5 +248,12 @@ public class ValueContainer extends FrameLayout {
         mergeDrawableStates(drawableState, state);
 
         return drawableState;
+    }
+
+    public interface PaceBoat {
+
+        int getDuration(int distance);
+
+        int getDistance(int duration);
     }
 }

@@ -34,7 +34,6 @@ public class Workout2TCXTest {
 	public void empty() throws IOException {
 
 		Workout workout = new Workout();
-		workout.name.set("Test");
 		workout.start.set(Mon_Jun_15_2015);
 		workout.duration.set(2);
 		workout.distance.set(6);
@@ -53,7 +52,6 @@ public class Workout2TCXTest {
 	@Test
 	public void snapshots() throws IOException {
 		Workout workout = new Workout();
-		workout.name.set("Test");
 		workout.start.set(Mon_Jun_15_2015 + (60 * 1000));
 		workout.duration.set(2);
 		workout.distance.set(6);

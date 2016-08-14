@@ -167,6 +167,9 @@ public class Gym {
     }
 
     public void deleteWorkout(Workout workout) {
+        Snapshot prototype = new Snapshot();
+        repository.query(prototype, Where.equal(prototype.workout, workout)).delete();
+
         repository.delete(workout);
     }
 

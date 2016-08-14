@@ -190,7 +190,7 @@ public class BindingView extends FrameLayout {
     private void delta(int value, int pace, boolean positiveIsLow) {
         if (pace == -1) {
             setState(R.attr.field_normal);
-            valueView.setText("");
+            valueView.setValue(0);
         } else {
             int delta = value - pace;
 

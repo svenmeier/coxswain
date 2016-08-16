@@ -27,10 +27,10 @@
     </declare-styleable>
 
     <declare-styleable name="BindingView">
-        <attr name="field_normal" format="boolean"/>
-        <attr name="field_low" format="boolean"/>
-        <attr name="field_high" format="boolean"/>
-        <attr name="field_target" format="boolean"/>
+        <attr name="value_normal" format="boolean"/>
+        <attr name="value_low" format="boolean"/>
+        <attr name="value_high" format="boolean"/>
+        <attr name="value_target" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="TimelineView">

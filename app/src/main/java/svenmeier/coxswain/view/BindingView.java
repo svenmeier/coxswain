@@ -30,7 +30,7 @@ import svenmeier.coxswain.gym.Snapshot;
  */
 public class BindingView extends FrameLayout {
 
-    private static final int[] state = {R.attr.field_normal};
+    private static final int[] state = {R.attr.value_normal};
 
     private ValueBinding binding;
 
@@ -114,7 +114,7 @@ public class BindingView extends FrameLayout {
     }
 
     public void changed(int value) {
-        setState(R.attr.field_normal);
+        setState(R.attr.value_normal);
         valueView.setValue(value);
     }
 
@@ -179,37 +179,34 @@ public class BindingView extends FrameLayout {
                 limit(snapshot.strokeRatio.get(), 0);
                 break;
             case DELTA_DISTANCE:
-                delta(snapshot.distance.get(), paceBoat == null ? snapshot.distance.get() : paceBoat.getDistance(duration), false);
+                delta(snapshot.distance.get(), paceBoat.getDistance(duration, snapshot.distance.get()), false);
                 break;
             case DELTA_DURATION:
-                delta(duration, paceBoat == null ? duration : paceBoat.getDuration(snapshot.distance.get()), true);
+                delta(duration, paceBoat.getDuration(duration, snapshot.distance.get()), true);
                 break;
         }
     }
 
     private void delta(int value, int pace, boolean positiveIsLow) {
-        if (pace == -1) {
-            setState(R.attr.field_normal);
-            valueView.setValue(0);
-        } else {
-            int delta = value - pace;
+        int delta = value - pace;
 
-            if ((delta < 0) ^ positiveIsLow) {
-                setState(R.attr.field_low);
-            } else {
-                setState(R.attr.field_high);
-            }
-            valueView.setValue(delta);
+        if (delta == 0) {
+            setState(R.attr.value_normal);
+        } if ((delta < 0) ^ positiveIsLow) {
+            setState(R.attr.value_low);
+        } else {
+            setState(R.attr.value_high);
         }
+        valueView.setValue(delta);
     }
 
     private void target(int value, int target, int achieved) {
         if (target > 0) {
-            setState(R.attr.field_target);
+            setState(R.attr.value_target);
 
             valueView.setValue(Math.max(0, target - achieved));
         } else {
-            setState(R.attr.field_normal);
+            setState(R.attr.value_normal);
 
             valueView.setValue(value);
         }
@@ -219,15 +216,15 @@ public class BindingView extends FrameLayout {
         if (limit > 0) {
             int difference = value - limit;
             if (difference < 0) {
-                setState(R.attr.field_low);
+                setState(R.attr.value_low);
             } else {
-                setState(R.attr.field_high);
+                setState(R.attr.value_high);
             }
 
             valueView.setPattern(valueView.getPattern().replace('-', '+'));
             valueView.setValue(difference);
         } else {
-            setState(R.attr.field_normal);
+            setState(R.attr.value_normal);
 
             valueView.setPattern(valueView.getPattern().replace('+', '-'));
             valueView.setValue(value);
@@ -252,8 +249,8 @@ public class BindingView extends FrameLayout {
 
     public interface PaceBoat {
 
-        int getDuration(int distance);
+        int getDuration(int duration, int distance);
 
-        int getDistance(int duration);
+        int getDistance(int duration, int distance);
     }
 }

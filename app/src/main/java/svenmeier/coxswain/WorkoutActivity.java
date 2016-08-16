@@ -34,12 +34,12 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.BindingDialogFragment;
+import svenmeier.coxswain.view.BindingView;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
 import svenmeier.coxswain.view.Utils;
 import svenmeier.coxswain.view.ValueBinding;
-import svenmeier.coxswain.view.BindingView;
 
 
 /**
@@ -185,8 +185,15 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
     private void updateBindings() {
+        BindingView.PaceBoat pace;
+        if (paceLookup == null) {
+            pace = new NoPaceBoat();
+        } else {
+            pace = paceLookup;
+        }
+
         for (int v = 0; v < bindingViews.size(); v++) {
-            bindingViews.get(v).changed(gym, paceLookup);
+            bindingViews.get(v).changed(gym, pace);
         }
     }
 
@@ -262,29 +269,31 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         @Override
-        public int getDistance(int duration) {
+        public int getDistance(int currentDuration, int curentDistance) {
             if (snapshots.isEmpty()) {
-                return -1;
+                return 0;
             }
 
-            int index = Math.min(snapshots.size() - 1, duration);
+            int index = Math.min(snapshots.size() - 1, currentDuration);
             return snapshots.get(index).distance.get();
         }
 
         @Override
-        public int getDuration(int distance) {
-            while (duration < snapshots.size()) {
-                if (snapshots.get(duration).distance.get() >= distance) {
+        public int getDuration(int currentDuration, int currentDistance) {
+            while (this.duration < snapshots.size()) {
+                if (snapshots.get(this.duration).distance.get() >= currentDistance) {
                     break;
                 }
 
-                duration++;
+                this.duration++;
             }
 
-            if (duration == snapshots.size()) {
-                return -1;
+            if (this.duration > 0 && this.duration == snapshots.size()) {
+                int distance = getDistance(currentDuration, currentDistance);
+
+                return distance * currentDuration / this.duration;
             } else {
-                return duration;
+                return this.duration;
             }
         }
 
@@ -292,5 +301,18 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         protected void onLookup(List<Snapshot> propoids) {
             this.snapshots = propoids;
         }
+    }
+
+    private class NoPaceBoat implements BindingView.PaceBoat {
+        @Override
+        public int getDistance(int duration, int distance) {
+            return distance;
+        }
+
+        @Override
+        public int getDuration(int duration, int distance) {
+            return duration;
+        }
+
     }
 }

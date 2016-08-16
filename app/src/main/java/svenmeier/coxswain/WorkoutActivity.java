@@ -81,8 +81,14 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         super.onCreate(savedInstanceState);
 
         gym = Gym.instance(this);
+        if (gym.pace == null) {
+            binding = Preference.getString(this, R.string.preference_workout_binding);
+        } else {
+            binding = Preference.getString(this, R.string.preference_workout_binding_pace);
 
-        binding = Preference.getString(this, R.string.preference_workout_binding);
+            paceLookup = new PaceLookup();
+            paceLookup.restartLoader(0, this);
+        }
 
         setContentView(R.layout.layout_workout);
 
@@ -96,10 +102,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
 
-        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
-
         levelView = (LevelView) findViewById(R.id.workout_progress);
 
+        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
         List<ValueBinding> bindings = new ArrayList<>();
         try {
             for (String name : TextUtils.split(binding.get(), ",")) {
@@ -119,7 +124,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             bindingViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-
                     leanBack(false);
 
                     BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((BindingView)view).getBinding());
@@ -129,11 +133,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                     return true;
                 }
             });
-        }
-
-        if (gym.pace != null) {
-            paceLookup = new PaceLookup();
-            paceLookup.restartLoader(0, this);
         }
     }
 
@@ -270,11 +269,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
         @Override
         public int getDistance(int currentDuration, int curentDistance) {
-            if (snapshots.isEmpty()) {
+            if (snapshots.isEmpty() || currentDuration == 0) {
                 return 0;
             }
 
-            int index = Math.min(snapshots.size() - 1, currentDuration);
+            int index = Math.min(snapshots.size() - 1, currentDuration - 1);
             return snapshots.get(index).distance.get();
         }
 
@@ -288,13 +287,15 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                 this.duration++;
             }
 
-            if (this.duration > 0 && this.duration == snapshots.size()) {
+            if (this.duration == snapshots.size()) {
                 int distance = getDistance(currentDuration, currentDistance);
-
-                return distance * currentDuration / this.duration;
-            } else {
-                return this.duration;
+                if (distance > 0) {
+                    // estimate duration
+                    return this.duration * currentDistance / distance;
+                }
             }
+
+            return this.duration;
         }
 
         @Override

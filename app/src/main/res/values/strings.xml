@@ -155,4 +155,5 @@
     <string name="preference_performance_window" translatable="false">preference_performance_window</string>
     <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
     <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
+    <string name="preference_workout_binding_pace" translatable="false">preference_workout_binding_pace</string>
 </resources>

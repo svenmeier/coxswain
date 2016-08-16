@@ -30,7 +30,7 @@ import svenmeier.coxswain.gym.Snapshot;
  */
 public class BindingView extends FrameLayout {
 
-    private static final int[] state = {R.attr.value_normal};
+    private int state = R.attr.value_normal;
 
     private ValueBinding binding;
 
@@ -232,7 +232,10 @@ public class BindingView extends FrameLayout {
     }
 
     private void setState(int state) {
-        BindingView.state[0] = state;
+        if (this.state == state) {
+            return;
+        }
+        this.state = state;
 
         refreshDrawableState();
         invalidate();
@@ -242,7 +245,7 @@ public class BindingView extends FrameLayout {
     protected int[] onCreateDrawableState(int extraSpace) {
         final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
 
-        mergeDrawableStates(drawableState, state);
+        mergeDrawableStates(drawableState, new int[]{state});
 
         return drawableState;
     }

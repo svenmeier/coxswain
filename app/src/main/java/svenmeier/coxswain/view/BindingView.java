@@ -192,7 +192,7 @@ public class BindingView extends FrameLayout {
 
         if (delta == 0) {
             setState(R.attr.value_normal);
-        } if ((delta < 0) ^ positiveIsLow) {
+        } else if ((delta < 0) ^ positiveIsLow) {
             setState(R.attr.value_low);
         } else {
             setState(R.attr.value_high);

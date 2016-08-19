@@ -179,17 +179,15 @@ public class BindingView extends FrameLayout {
                 limit(snapshot.strokeRatio.get(), 0);
                 break;
             case DELTA_DISTANCE:
-                delta(snapshot.distance.get(), paceBoat.getDistance(duration, snapshot.distance.get()), false);
+                delta(paceBoat.getDistanceDelta(duration, snapshot.distance.get()), false);
                 break;
             case DELTA_DURATION:
-                delta(duration, paceBoat.getDuration(duration, snapshot.distance.get()), true);
+                delta(paceBoat.getDurationDelta(duration, snapshot.distance.get()), true);
                 break;
         }
     }
 
-    private void delta(int value, int pace, boolean positiveIsLow) {
-        int delta = value - pace;
-
+    private void delta(int delta, boolean positiveIsLow) {
         if (delta == 0) {
             setState(R.attr.value_normal);
         } else if ((delta < 0) ^ positiveIsLow) {
@@ -252,8 +250,8 @@ public class BindingView extends FrameLayout {
 
     public interface PaceBoat {
 
-        int getDuration(int duration, int distance);
+        int getDurationDelta(int duration, int distance);
 
-        int getDistance(int duration, int distance);
+        int getDistanceDelta(int duration, int distance);
     }
 }

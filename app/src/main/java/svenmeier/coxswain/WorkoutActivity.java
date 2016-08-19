@@ -268,17 +268,18 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         @Override
-        public int getDistance(int currentDuration, int curentDistance) {
+        public int getDistanceDelta(int currentDuration, int currentDistance) {
             if (snapshots.isEmpty() || currentDuration == 0) {
                 return 0;
             }
 
-            int index = Math.min(snapshots.size() - 1, currentDuration - 1);
-            return snapshots.get(index).distance.get();
+            Snapshot snapshot = snapshots.get(Math.min(snapshots.size() - 1, currentDuration - 1));
+
+            return (currentDistance - snapshot.distance.get());
         }
 
         @Override
-        public int getDuration(int currentDuration, int currentDistance) {
+        public int getDurationDelta(int currentDuration, int currentDistance) {
             while (this.duration < snapshots.size()) {
                 if (snapshots.get(this.duration).distance.get() >= currentDistance) {
                     break;
@@ -287,15 +288,17 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                 this.duration++;
             }
 
-            if (this.duration == snapshots.size()) {
-                int distance = getDistance(currentDuration, currentDistance);
+            if (this.duration >= snapshots.size() && this.duration > 0) {
+                Snapshot snapshot = snapshots.get(snapshots.size() - 1);
+
+                int distance = snapshot.distance.get();
                 if (distance > 0) {
                     // estimate duration
-                    return this.duration * currentDistance / distance;
+                    this.duration = snapshots.size() * currentDistance / distance;
                 }
             }
 
-            return this.duration;
+            return (currentDuration - this.duration);
         }
 
         @Override
@@ -306,13 +309,13 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private class NoPaceBoat implements BindingView.PaceBoat {
         @Override
-        public int getDistance(int duration, int distance) {
-            return distance;
+        public int getDistanceDelta(int duration, int distance) {
+            return 0;
         }
 
         @Override
-        public int getDuration(int duration, int distance) {
-            return duration;
+        public int getDurationDelta(int duration, int distance) {
+            return 0;
         }
 
     }

@@ -33,6 +33,7 @@ import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.BindingView;
 import svenmeier.coxswain.view.LevelView;
@@ -304,6 +305,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         @Override
         protected void onLookup(List<Snapshot> propoids) {
             this.snapshots = propoids;
+
+            // no updates needed
+            destroy(0, WorkoutActivity.this);
         }
     }
 

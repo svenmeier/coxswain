@@ -58,7 +58,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private Gym gym;
 
-    private PaceLookup paceLookup;
+    private DismissablePaceBoat paceBoat;
 
     private Preference<String> binding;
 
@@ -84,11 +84,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         gym = Gym.instance(this);
         if (gym.pace == null) {
             binding = Preference.getString(this, R.string.preference_workout_binding);
+
+            paceBoat = new SelfPaceBoat();
         } else {
             binding = Preference.getString(this, R.string.preference_workout_binding_pace);
 
-            paceLookup = new PaceLookup();
-            paceLookup.restartLoader(0, this);
+            paceBoat = new DebouncePaceBoat(new WorkoutPaceBoat());
         }
 
         setContentView(R.layout.layout_workout);
@@ -145,9 +146,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
         binding.set(TextUtils.join(",", bindings));
 
-        if (paceLookup != null) {
-            paceLookup.destroy(0, this);
-            paceLookup = null;
+        if (paceBoat != null) {
+            paceBoat.dismiss();
+            paceBoat = null;
         }
 
         super.onDestroy();
@@ -185,15 +186,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
     private void updateBindings() {
-        BindingView.PaceBoat pace;
-        if (paceLookup == null) {
-            pace = new NoPaceBoat();
-        } else {
-            pace = paceLookup;
-        }
-
         for (int v = 0; v < bindingViews.size(); v++) {
-            bindingViews.get(v).changed(gym, pace);
+            bindingViews.get(v).changed(gym, paceBoat);
         }
     }
 
@@ -258,14 +252,23 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         activity.startActivity(new Intent(activity, WorkoutActivity.class));
     }
 
-    private class PaceLookup extends MatchLookup<Snapshot> implements BindingView.PaceBoat {
+    private interface DismissablePaceBoat extends BindingView.PaceBoat {
+        void dismiss();
+    }
+
+	/**
+     * Use a previous {@link svenmeier.coxswain.gym.Workout} as a pace boat.
+     */
+    private class WorkoutPaceBoat extends MatchLookup<Snapshot> implements DismissablePaceBoat {
 
         private List<Snapshot> snapshots = new ArrayList<>();
 
         private int duration;
 
-        protected PaceLookup() {
+        protected WorkoutPaceBoat() {
             super(gym.getSnapshots(gym.pace));
+
+            restartLoader(0, WorkoutActivity.this);
         }
 
         @Override
@@ -309,9 +312,18 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             // no updates needed
             destroy(0, WorkoutActivity.this);
         }
+
+        @Override
+        public void dismiss() {
+            destroy(0, WorkoutActivity.this);
+        }
     }
 
-    private class NoPaceBoat implements BindingView.PaceBoat {
+	/**
+     * Use self as pace boat.
+     */
+    private class SelfPaceBoat implements DismissablePaceBoat {
+
         @Override
         public int getDistanceDelta(int duration, int distance) {
             return 0;
@@ -322,5 +334,58 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             return 0;
         }
 
+        @Override
+        public void dismiss() {
+        }
+    }
+
+	/**
+     * {@link }WorkoutPaceBoat}'s pace changes each second only, while the current
+     * {@link Workout} is available continuously. The latter has to be transferred
+     * to seconds unit too, to prevent unwanted bouncing of the deltas.
+     */
+    private class DebouncePaceBoat implements DismissablePaceBoat {
+
+        private WorkoutPaceBoat pace;
+
+        private int durationDelta;
+
+        private int distanceDelta;
+
+        private long timestamp;
+
+        public DebouncePaceBoat(WorkoutPaceBoat pace) {
+            this.pace = pace;
+        }
+
+        @Override
+        public int getDurationDelta(int duration, int distance) {
+            check(duration, distance);
+
+            return durationDelta;
+        }
+
+        @Override
+        public int getDistanceDelta(int duration, int distance) {
+            check(duration, distance);
+
+            return distanceDelta;
+        }
+
+        private void check(int duration, int distance) {
+            long now = System.currentTimeMillis();
+
+            if (now > timestamp + 1000) {
+                timestamp = now;
+
+                durationDelta = pace.getDurationDelta(duration, distance);
+                distanceDelta = pace.getDistanceDelta(duration, distance);
+            }
+        }
+
+        @Override
+        public void dismiss() {
+            pace.dismiss();
+        }
     }
 }

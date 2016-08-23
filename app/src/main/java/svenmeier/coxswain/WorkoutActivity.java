@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -47,7 +46,21 @@ import svenmeier.coxswain.view.ValueBinding;
  */
 public class WorkoutActivity extends AbstractActivity implements View.OnSystemUiVisibilityChangeListener, Gym.Listener, BindingDialogFragment.Callback {
 
-    private static final int DELAY_MILLIS = 250;
+    private static final List<ValueBinding> DEFAULT_BINDING = Arrays.asList(
+            ValueBinding.DURATION,
+            ValueBinding.DISTANCE,
+            ValueBinding.STROKES,
+            ValueBinding.SPEED,
+            ValueBinding.PULSE,
+            ValueBinding.STROKE_RATE);
+
+    private static final List<ValueBinding> DEFAULT_PACE_BINDING = Arrays.asList(
+            ValueBinding.DURATION,
+            ValueBinding.DISTANCE,
+            ValueBinding.STROKES,
+            ValueBinding.SPEED,
+            ValueBinding.DELTA_DURATION,
+            ValueBinding.DELTA_DISTANCE);
 
     private static final int LEAN_BACK =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -60,11 +73,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private DismissablePaceBoat paceBoat;
 
-    private Preference<String> binding;
+    private Preference<String> bindingPreference;
 
     private SegmentsView segmentsView;
 
-    private LevelView levelView;
+    private LevelView progressView;
 
     private List<BindingView> bindingViews = new ArrayList<>();
 
@@ -77,52 +90,48 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        gym = Gym.instance(this);
+
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         super.onCreate(savedInstanceState);
 
-        gym = Gym.instance(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
+
+        setContentView(R.layout.layout_workout);
+        segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
+        segmentsView.setData(new SegmentsData(gym.program));
+        progressView = (LevelView) findViewById(R.id.workout_progress);
+        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
+
+        List<ValueBinding> binding;
         if (gym.pace == null) {
-            binding = Preference.getString(this, R.string.preference_workout_binding);
+            bindingPreference = Preference.getString(this, R.string.preference_workout_binding);
+            binding = DEFAULT_BINDING;
 
             paceBoat = new SelfPaceBoat();
         } else {
-            binding = Preference.getString(this, R.string.preference_workout_binding_pace);
+            bindingPreference = Preference.getString(this, R.string.preference_workout_binding_pace);
+            binding = DEFAULT_PACE_BINDING;
 
             paceBoat = new DebouncePaceBoat(new WorkoutPaceBoat());
         }
 
-        setContentView(R.layout.layout_workout);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getWindow().getDecorView().setSystemUiVisibility(LEAN_BACK);
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
-
-        segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
-        segmentsView.setData(new SegmentsData(gym.program));
-
-        levelView = (LevelView) findViewById(R.id.workout_progress);
-
-        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
-        List<ValueBinding> bindings = new ArrayList<>();
-        try {
-            for (String name : TextUtils.split(binding.get(), ",")) {
-                bindings.add(ValueBinding.valueOf(name));
+        List<String> previousBinding = bindingPreference.getList();
+        for (int b = 0; b < Math.min(binding.size(), bindingViews.size()); b++) {
+            ValueBinding temp = binding.get(b);
+            try {
+                temp = ValueBinding.valueOf(previousBinding.get(b));
+            } catch (Exception ex) {
             }
-        } catch (Exception useDefault) {
-            bindings = Arrays.asList(
-                    ValueBinding.DURATION,
-                    ValueBinding.DISTANCE,
-                    ValueBinding.STROKES,
-                    ValueBinding.SPEED,
-                    ValueBinding.PULSE,
-                    ValueBinding.STROKE_RATE);
-        }
-        for (int b = 0; b < Math.min(bindings.size(), bindingViews.size()); b++) {
-            bindingViews.get(b).setBinding(bindings.get(b));
+            bindingViews.get(b).setBinding(temp);
+
             bindingViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -130,7 +139,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
                     BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((BindingView)view).getBinding());
 
-                    fragment.show(getFragmentManager(), "binding");
+                    fragment.show(getFragmentManager(), "bindingPreference");
 
                     return true;
                 }
@@ -144,7 +153,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         for (BindingView valueView : bindingViews) {
             bindings.add(valueView.getBinding().name());
         }
-        binding.set(TextUtils.join(",", bindings));
+        bindingPreference.setList(bindings);
 
         if (paceBoat != null) {
             paceBoat.dismiss();
@@ -207,7 +216,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         if (progress == null) {
             value = total;
         }
-        levelView.setLevel(Math.round(value * 10000 / total));
+        progressView.setLevel(Math.round(value * 10000 / total));
     }
 
     @Override
@@ -310,7 +319,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             this.snapshots = propoids;
 
             // no updates needed
-            destroy(0, WorkoutActivity.this);
+            dismiss();
         }
 
         @Override
@@ -348,11 +357,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
         private WorkoutPaceBoat pace;
 
+        private int duration;
+
         private int durationDelta;
 
         private int distanceDelta;
-
-        private long timestamp;
 
         public DebouncePaceBoat(WorkoutPaceBoat pace) {
             this.pace = pace;
@@ -373,10 +382,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         private void check(int duration, int distance) {
-            long now = System.currentTimeMillis();
-
-            if (now > timestamp + 1000) {
-                timestamp = now;
+            if (this.duration != duration) {
+                this.duration = duration;
 
                 durationDelta = pace.getDurationDelta(duration, distance);
                 distanceDelta = pace.getDistanceDelta(duration, distance);

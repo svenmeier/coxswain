@@ -29,16 +29,13 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import propoid.db.LookupException;
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
 import svenmeier.coxswain.Gym;
-import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
-import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Workout;
 
 

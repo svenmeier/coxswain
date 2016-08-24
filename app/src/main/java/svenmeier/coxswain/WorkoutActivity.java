@@ -16,7 +16,6 @@
 package svenmeier.coxswain;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -236,13 +235,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
     }
 
-    public static void start(Context context) {
-        Intent intent = new Intent(context, WorkoutActivity.class);
-
-        context.startActivity(intent);
-    }
-
-
     public static void start(Activity activity) {
 
         Preference<Boolean> intentPreference = Preference.getBoolean(activity, R.string.preference_integration_intent);
@@ -258,6 +250,10 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             }
         }
 
+        restart(activity);
+    }
+
+    public static void restart(Activity activity) {
         activity.startActivity(new Intent(activity, WorkoutActivity.class));
     }
 

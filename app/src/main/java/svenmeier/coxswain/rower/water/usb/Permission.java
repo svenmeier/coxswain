@@ -11,7 +11,7 @@ import android.hardware.usb.UsbManager;
 /**
  * Request permission to use a {@link UsbDevice}.
  * <p>
- * Not used currently, since we start an activity for intent USB_DEVICE_ATTACHED and
+ * Not used currently, since we restart an activity for intent USB_DEVICE_ATTACHED and
  * Android will ask the user for permissions automatically.
  */
 public class Permission extends BroadcastReceiver {

@@ -69,7 +69,7 @@ public class MainActivity extends AbstractActivity {
         programView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WorkoutActivity.start(MainActivity.this);
+                WorkoutActivity.restart(MainActivity.this);
             }
         });
 
@@ -150,7 +150,7 @@ public class MainActivity extends AbstractActivity {
                                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
             } else {
-                // program is already selected so start workout
+                // program is already selected so restart workout
                 WorkoutActivity.start(this);
             }
         }

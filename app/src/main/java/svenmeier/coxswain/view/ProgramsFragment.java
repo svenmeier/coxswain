@@ -17,8 +17,6 @@ package svenmeier.coxswain.view;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,12 +27,8 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
-import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;

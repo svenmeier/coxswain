@@ -9,10 +9,6 @@
 
     <ImageButton
         android:id="@+id/program_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:padding="4dp"
         android:src="?attr/icon_more"
         style="@style/MenuButton"
         />

@@ -92,7 +92,7 @@ public class WorkoutsFragment extends Fragment {
             Index index = Index.get(view);
 
             TextView startView = index.get(R.id.workout_start);
-            startView.setText(DateUtils.formatDateTime(getActivity(), workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+            startView.setText(DateUtils.formatDateTime(getActivity(), workout.start.get(), DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
 
             final ImageButton menuButton = index.get(R.id.workout_menu);
             menuButton.setFocusable(false);

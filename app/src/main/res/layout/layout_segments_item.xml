@@ -1,33 +1,15 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:coxswain="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="80dp"
     android:orientation="horizontal"
     >
 
-    <RelativeLayout
-        android:layout_width="40dp"
-        android:layout_height="80dp"
-        >
-
-        <svenmeier.coxswain.view.LevelView
-            android:id="@+id/segments_difficulty"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/segment"
-            />
-
-        <ImageButton
-            android:id="@+id/segment_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/ic_more_vert_black_24dp"
-            style="@style/MenuButton"
-            />
-    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/segment_menu"
+        android:src="@drawable/ic_more_vert_black_24dp"
+        style="@style/MenuButton"
+        />
 
     <svenmeier.coxswain.view.BindingView
         android:id="@+id/segments_item_target"
@@ -44,4 +26,10 @@
         android:layout_weight="1"
         style="@style/BindingView"
         />
+
+    <svenmeier.coxswain.view.LevelView
+        android:id="@+id/segments_difficulty"
+        android:background="@drawable/segment"
+        style="@style/MenuButton"
+    />
 </LinearLayout>

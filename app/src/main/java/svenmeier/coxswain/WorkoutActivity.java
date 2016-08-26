@@ -58,8 +58,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             ValueBinding.DISTANCE,
             ValueBinding.STROKES,
             ValueBinding.SPEED,
-            ValueBinding.DELTA_DURATION,
-            ValueBinding.DELTA_DISTANCE);
+            ValueBinding.DELTA_DISTANCE,
+            ValueBinding.STROKE_RATE);
 
     private static final int LEAN_BACK =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE |

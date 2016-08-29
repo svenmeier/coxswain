@@ -22,6 +22,7 @@ import android.location.LocationManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import propoid.core.Propoid;
 import propoid.db.LookupException;
 import propoid.db.Match;
 import propoid.db.Order;
@@ -144,16 +145,12 @@ public class Gym {
         return repository.lookup(reference);
     }
 
-    public Workout getWorkout(Reference<Workout> reference) {
+    public <P extends Propoid> P get(Reference<P> reference) {
         return repository.lookup(reference);
     }
 
     public void mergeProgram(Program program) {
         repository.merge(program);
-    }
-
-    public void deleteProgram(Program program) {
-        repository.delete(program);
     }
 
     public Match<Workout> getWorkouts() {
@@ -166,11 +163,13 @@ public class Gym {
         return repository.query(propotype, all(greaterEqual(propotype.start, from), lessThan(propotype.start, to)));
     }
 
-    public void deleteWorkout(Workout workout) {
-        Snapshot prototype = new Snapshot();
-        repository.query(prototype, Where.equal(prototype.workout, workout)).delete();
+    public void delete(Propoid propoid) {
+        if (propoid instanceof Workout) {
+            Snapshot prototype = new Snapshot();
+            repository.query(prototype, Where.equal(prototype.workout, (Workout) propoid)).delete();
+        }
 
-        repository.delete(workout);
+        repository.delete(propoid);
     }
 
     public void mergeWorkout(Workout workout) {

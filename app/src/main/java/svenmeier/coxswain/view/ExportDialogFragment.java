@@ -21,7 +21,7 @@ public class ExportDialogFragment extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final Workout workout = Gym.instance(getActivity()).getWorkout(Reference.<Workout>from(getArguments()));
+		final Workout workout = Gym.instance(getActivity()).get(Reference.<Workout>from(getArguments()));
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 

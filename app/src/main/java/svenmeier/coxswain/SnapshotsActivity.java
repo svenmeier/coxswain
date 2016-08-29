@@ -76,7 +76,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
         windowPreference = Preference.getLong(this, R.string.preference_snapshots_window).fallback(2 * TimelineView.MINUTE);
 
         Reference<Workout> reference = Reference.from(getIntent());
-        workout = gym.getWorkout(reference);
+        workout = gym.get(reference);
         if (workout == null) {
             finish();
         } else {
@@ -117,19 +117,10 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_snapshots, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                return true;
-            case R.id.action_share:
-                ExportDialogFragment.create(workout).show(getFragmentManager(), "export");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -106,8 +106,17 @@ public class WorkoutsFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.action_delete:
-                                    gym.deleteWorkout(workout);
+                                    DeleteDialogFragment.create(workout).show(getFragmentManager(), "delete");
 
+                                    return true;
+                                case R.id.action_share:
+                                    ExportDialogFragment.create(workout).show(getFragmentManager(), "export");
+
+                                    return true;
+                                case R.id.action_repeat:
+                                    if (gym.select(workout)) {
+                                        WorkoutActivity.start(getActivity());
+                                    }
                                     return true;
                                 default:
                                     return false;
@@ -116,17 +125,6 @@ public class WorkoutsFragment extends Fragment {
                     });
 
                     popup.show();
-                }
-            });
-
-            final ImageButton repeatButton = index.get(R.id.workout_repeat);
-            repeatButton.setFocusable(false);
-            repeatButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (gym.select(workout)) {
-                        WorkoutActivity.start(getActivity());
-                    }
                 }
             });
 

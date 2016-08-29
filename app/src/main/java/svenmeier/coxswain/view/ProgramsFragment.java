@@ -123,7 +123,7 @@ public class ProgramsFragment extends Fragment {
                                     startActivity(ProgramActivity.createIntent(getActivity(), program));
                                     return true;
                                 case R.id.action_delete:
-                                    Gym.instance(getActivity()).deleteProgram(program);
+                                    DeleteDialogFragment.create(program).show(getFragmentManager(), "delete");
 
                                     return true;
                                 default:

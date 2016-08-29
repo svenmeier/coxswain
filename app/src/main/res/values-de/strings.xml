@@ -7,8 +7,12 @@
     <string name="action_ok">OK</string>
     <string name="action_edit">Bearbeiten</string>
     <string name="action_delete">Löschen</string>
+    <string name="action_delete_confirm_title">Löschen?</string>
+    <string name="action_delete_confirm_message">Löschen kann nicht rückgängig gemacht werden!</string>
+    <string name="action_delete_confirm">Jetzt löschen</string>
     <string name="action_insert_before">Einfügen davor</string>
     <string name="action_insert_after">Einfügen hinter</string>
+    <string name="action_repeat">Wiederholen</string>
     <string name="action_new">Neu</string>
 
     <string name="gym_notification_connected">Verbunden mit %s</string>

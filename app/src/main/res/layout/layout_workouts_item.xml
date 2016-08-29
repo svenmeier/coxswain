@@ -53,11 +53,4 @@
             android:text="Counts"
             />
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/workout_repeat"
-        android:src="?attr/icon_repeat"
-        style="@style/MenuButton"
-        />
-
 </LinearLayout>

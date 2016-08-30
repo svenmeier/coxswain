@@ -1,6 +1,7 @@
 Coxswain helps you organize your rowing: Connect your Android device to your Waterrower and choose your training program. 
 
 - record your workout while watching Youtube videos or other media (choose an intent to be executed on training start)
+- row against previous workouts
 - adjust the workout display to your needs (long press any value to change its binding)
 - export your workout to TCX (Training Center XML) to import it into your favorite fitness tracking App or service.
 - export your workout to Google Fit

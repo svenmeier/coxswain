@@ -24,7 +24,7 @@ public class CalendarExport implements Export {
 
 	@Override
 	public void start(Workout workout) {
-		Intent intent = new Intent(Intent.ACTION_EDIT);
+		Intent intent = new Intent(Intent.ACTION_INSERT);
 		intent.setData(CalendarContract.Events.CONTENT_URI);
 
 		intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, workout.start.get());

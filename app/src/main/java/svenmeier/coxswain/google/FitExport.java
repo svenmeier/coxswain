@@ -131,7 +131,7 @@ public class FitExport implements Export {
 						.build();
 				Status status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
 				if (status.isSuccess() == false) {
-					Log.e(Coxswain.TAG, "insert failed " + status);
+					Log.e(Coxswain.TAG, "insert session failed " + status);
 					toast(activity.getString(R.string.googlefit_export_failed));
 					return;
 				}
@@ -139,7 +139,7 @@ public class FitExport implements Export {
 				for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
 					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
 					if (status.isSuccess() == false) {
-						Log.e(Coxswain.TAG, "on failed " + status);
+						Log.e(Coxswain.TAG, "insert dataset failed " + status);
 						toast(activity.getString(R.string.googlefit_export_failed));
 						return;
 					}

@@ -13,6 +13,14 @@
         >
 
         <svenmeier.coxswain.view.preference.EditTextPreference
+            android:key="@string/preference_split_distance"
+            android:title="@string/preference_split_distance_title"
+            android:summary="@string/preference_split_distance_summary"
+            android:numeric="decimal"
+            android:defaultValue="500"
+        />
+
+        <svenmeier.coxswain.view.preference.EditTextPreference
             android:key="@string/preference_body_weight"
             android:title="@string/preference_body_weight_title"
             android:summary="@string/preference_body_weight_summary"

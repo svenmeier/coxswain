@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 
 import java.util.Calendar;
 
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Segment;
@@ -39,6 +40,8 @@ public class BindingView extends FrameLayout {
     private LabelView labelView;
 
     private Runnable timer;
+
+    private int splitDistance;
 
     public BindingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,6 +62,8 @@ public class BindingView extends FrameLayout {
         labelView = (LabelView)findViewById(R.id.label);
 
         setBinding(ValueBinding.DISTANCE);
+
+        splitDistance = Preference.getInt(getContext(), R.string.preference_split_distance).fallback(500).get();
     }
 
     public void setBinding(ValueBinding binding) {
@@ -178,6 +183,12 @@ public class BindingView extends FrameLayout {
             case STROKE_RATIO:
                 limit(snapshot.strokeRatio.get(), 0);
                 break;
+            case SPLIT:
+                split(splitDistance * 100f / snapshot.speed.get());
+                break;
+            case AVERAGE_SPLIT:
+                split(splitDistance * duration / (float)snapshot.distance.get());
+                break;
             case DELTA_DISTANCE:
                 delta(paceBoat.getDistanceDelta(duration, snapshot.distance.get()), false);
                 break;
@@ -185,6 +196,12 @@ public class BindingView extends FrameLayout {
                 delta(paceBoat.getDurationDelta(duration, snapshot.distance.get()), true);
                 break;
         }
+    }
+
+    private void split(float speed) {
+        setState(R.attr.value_normal);
+
+        valueView.setValue(speed == Float.NaN ? 0 : (int)(speed));
     }
 
     private void delta(int delta, boolean positiveIsLow) {

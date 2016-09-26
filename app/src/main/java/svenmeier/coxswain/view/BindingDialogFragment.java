@@ -27,6 +27,8 @@ public class BindingDialogFragment extends DialogFragment {
 			ValueBinding.STROKE_RATE,
 			ValueBinding.STROKE_RATIO,
 			ValueBinding.TIME,
+			ValueBinding.SPLIT,
+			ValueBinding.AVERAGE_SPLIT,
 			ValueBinding.DELTA_DISTANCE,
 			ValueBinding.DELTA_DURATION);
 

@@ -45,6 +45,10 @@
     <string name="strokeRatio_pattern">1:0,0</string>
     <string name="time_label">ZEIT</string>
     <string name="time_pattern">00:60</string>
+    <string name="split_label">SPLIT</string>
+    <string name="split_pattern">60:60</string>
+    <string name="average_split_label">⌀ SPLIT</string>
+    <string name="average_split_pattern">60:60</string>
     <string name="delta_duration_label">Δ DAUER</string>
     <string name="delta_duration_pattern">+60:60</string>
     <string name="delta_distance_label">Δ DISTANZ</string>
@@ -84,6 +88,9 @@
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
 
     <string name="preference_training_title">Training</string>
+
+    <string name="preference_split_distance_title">Split time</string>
+    <string name="preference_split_distance_summary">%s Meter</string>
 
     <string name="preference_body_weight_title">Körpergewicht</string>
     <string name="preference_body_weight_summary">Körpergewicht %s kg</string>

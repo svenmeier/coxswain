@@ -52,8 +52,8 @@ public class Workout2Fit {
 					private List<Mapper> mappers = new ArrayList<>();
 
 					{
-					    mappers.add(new DistanceCumulative());
-						mappers.add(new CaloriesExpended());
+					    mappers.add(new AggregateDistanceDelta());
+						mappers.add(new AggregateCaloriesExpended());
 						mappers.add(new StepCountCadence());
 						mappers.add(new Speed());
 						mappers.add(new HeartRateBpm());
@@ -167,7 +167,7 @@ public class Workout2Fit {
 		public abstract void map(Workout workout, DataPoint point);
 	}
 
-	private class DistanceCumulative extends AbstractWorkoutMapper {
+	private class AggregateDistanceDelta extends AbstractWorkoutMapper {
 
 		@Override
 		public DataType type() {
@@ -181,7 +181,7 @@ public class Workout2Fit {
 		}
 	}
 
-	private class CaloriesExpended extends AbstractWorkoutMapper {
+	private class AggregateCaloriesExpended extends AbstractWorkoutMapper {
 
 		@Override
 		public DataType type() {

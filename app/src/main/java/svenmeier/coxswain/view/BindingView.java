@@ -184,10 +184,10 @@ public class BindingView extends FrameLayout {
                 limit(snapshot.strokeRatio.get(), 0);
                 break;
             case SPLIT:
-                split(splitDistance * 100f / snapshot.speed.get());
+                split(100f / snapshot.speed.get());
                 break;
             case AVERAGE_SPLIT:
-                split(splitDistance * duration / (float)snapshot.distance.get());
+                split(duration / (float)snapshot.distance.get());
                 break;
             case DELTA_DISTANCE:
                 delta(paceBoat.getDistanceDelta(duration, snapshot.distance.get()), false);
@@ -198,10 +198,12 @@ public class BindingView extends FrameLayout {
         }
     }
 
-    private void split(float speed) {
+    private void split(float inverseSpeed) {
         setState(R.attr.value_normal);
 
-        valueView.setValue(speed == Float.NaN ? 0 : (int)(speed));
+        float duration = splitDistance * inverseSpeed;
+
+        valueView.setValue((duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration));
     }
 
     private void delta(int delta, boolean positiveIsLow) {

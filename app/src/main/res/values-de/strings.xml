@@ -89,7 +89,7 @@
 
     <string name="preference_training_title">Training</string>
 
-    <string name="preference_split_distance_title">Split time</string>
+    <string name="preference_split_distance_title">Split-Zeit</string>
     <string name="preference_split_distance_summary">%s Meter</string>
 
     <string name="preference_body_weight_title">Körpergewicht</string>

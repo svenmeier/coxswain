@@ -89,14 +89,8 @@
 
     <string name="preference_training_title">Training</string>
 
-    <string name="preference_split_distance_title">Split-Zeit</string>
-    <string name="preference_split_distance_summary">%s Meter</string>
-
-    <string name="preference_body_weight_title">Körpergewicht</string>
-    <string name="preference_body_weight_summary">Körpergewicht %s kg</string>
-
-    <string name="preference_water_level_title">Wasserstand</string>
-    <string name="preference_water_level_summary">Wasserstand %s</string>
+    <string name="preference_split_distance_title">Split</string>
+    <string name="preference_split_distance_summary">Zeit pro %s Meter</string>
 
     <string name="preference_open_end_title">Offenes Ende</string>
     <string name="preference_open_end_summary">Nach Beendigung des Trainings weiter rudern</string>

@@ -20,22 +20,6 @@
             android:defaultValue="500"
         />
 
-        <svenmeier.coxswain.view.preference.EditTextPreference
-            android:key="@string/preference_body_weight"
-            android:title="@string/preference_body_weight_title"
-            android:summary="@string/preference_body_weight_summary"
-            android:numeric="decimal"
-            android:defaultValue="80"
-            />
-
-        <svenmeier.coxswain.view.preference.EditTextPreference
-            android:key="@string/preference_water_level"
-            android:title="@string/preference_water_level_title"
-            android:summary="@string/preference_water_level_summary"
-            android:numeric="decimal"
-            android:defaultValue="17"
-            />
-
         <CheckBoxPreference
             android:key="@string/preference_open_end"
             android:title="@string/preference_open_end_title"

@@ -93,16 +93,8 @@
     <string name="preference_training_title">Training</string>
 
     <string name="preference_split_distance" translatable="false">preference_split_distance</string>
-    <string name="preference_split_distance_title">Split time</string>
-    <string name="preference_split_distance_summary">%s meters</string>
-
-    <string name="preference_body_weight" translatable="false">preference_body_weight</string>
-    <string name="preference_body_weight_title">Body weight</string>
-    <string name="preference_body_weight_summary">Weight %s kg</string>
-
-    <string name="preference_water_level" translatable="false">preference_water_level</string>
-    <string name="preference_water_level_title">Water level</string>
-    <string name="preference_water_level_summary">Water level %s</string>
+    <string name="preference_split_distance_title">Split</string>
+    <string name="preference_split_distance_summary">Time per %s meters</string>
 
     <string name="preference_open_end" translatable="false">preference_open_end</string>
     <string name="preference_open_end_title">Open end</string>

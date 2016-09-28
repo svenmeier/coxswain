@@ -17,7 +17,7 @@
 
     <string name="gym_notification_connected">Verbunden mit %s</string>
     <string name="gym_notification_stop">Stopp</string>
-    <string name="gym_finished">fertig</string>
+    <string name="gym_ready">bereit</string>
 
     <string name="distance_meters">%s Meter</string>
     <string name="distance_label">DISTANZ</string>

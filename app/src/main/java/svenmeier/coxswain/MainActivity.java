@@ -122,7 +122,7 @@ public class MainActivity extends AbstractActivity {
 
             programNameView.setText(gym.program.name.get());
 
-            String description = "";
+            String description = getString(R.string.gym_ready);
             if (gym.progress != null) {
                 description = gym.progress.describe();
             }

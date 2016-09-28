@@ -30,7 +30,7 @@
 
         <ImageButton
             android:id="@+id/main_current_stop"
-            android:src="@drawable/ic_stop_white_36dp"
+            android:src="@drawable/ic_close_white_24dp"
             style="@style/MenuButton"
             />
 

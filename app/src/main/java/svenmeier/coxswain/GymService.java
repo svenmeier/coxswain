@@ -271,7 +271,7 @@ public class GymService extends Service {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(getString(R.string.app_name))
                         .setContentIntent(pendingIntent)
-                        .addAction(R.drawable.ic_stop_black_24dp, getString(R.string.gym_notification_stop),
+                        .addAction(R.drawable.ic_close_black_24dp, getString(R.string.gym_notification_stop),
                                 PendingIntent.getBroadcast(service, 0, new Intent(ACTION_STOP), 0));
 
                 builder.setDefaults(Notification.DEFAULT_VIBRATE);

@@ -119,7 +119,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             bindingPreference = Preference.getString(this, R.string.preference_workout_binding_pace);
             binding = DEFAULT_PACE_BINDING;
 
-            paceBoat = new DebouncePaceBoat(new WorkoutPaceBoat());
+            paceBoat = new WorkoutPaceBoat();
         }
 
         List<String> previousBinding = bindingPreference.getList();
@@ -277,18 +277,34 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         @Override
-        public int getDistanceDelta(int currentDuration, int currentDistance) {
-            if (snapshots.isEmpty() || currentDuration == 0) {
+        public int getDistanceDelta(long elapsed, int currentDistance) {
+            if (snapshots.isEmpty()) {
                 return 0;
             }
 
-            Snapshot snapshot = snapshots.get(Math.min(snapshots.size() - 1, currentDuration - 1));
+            int from = distanceAt(elapsed);
+            int to = distanceAt(elapsed + 1000);
 
-            return (currentDistance - snapshot.distance.get());
+            int paceDistance = from + ((to - from) * (currentDistance % 1000) / 1000);
+
+            return currentDistance - paceDistance;
+        }
+
+        private int distanceAt(long elapsed) {
+            // increment by one, because first snapshot is written after one second only
+            int index = (int)(elapsed / 1000) - 1;
+            if (index < 0) {
+                return 0;
+            }
+
+            if (index >= snapshots.size()) {
+                index = snapshots.size() - 1;
+            }
+            return snapshots.get(index).distance.get();
         }
 
         @Override
-        public int getDurationDelta(int currentDuration, int currentDistance) {
+        public int getDurationDelta(long elapsed, int currentDistance) {
             while (this.duration < snapshots.size()) {
                 if (snapshots.get(this.duration).distance.get() >= currentDistance) {
                     break;
@@ -307,7 +323,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                 }
             }
 
-            return (currentDuration - this.duration);
+            return (int)(elapsed / 1000) - this.duration;
         }
 
         @Override
@@ -330,65 +346,17 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     private class SelfPaceBoat implements DismissablePaceBoat {
 
         @Override
-        public int getDistanceDelta(int duration, int distance) {
+        public int getDistanceDelta(long elapsed, int distance) {
             return 0;
         }
 
         @Override
-        public int getDurationDelta(int duration, int distance) {
+        public int getDurationDelta(long elapsed, int distance) {
             return 0;
         }
 
         @Override
         public void dismiss() {
-        }
-    }
-
-	/**
-     * {@link }WorkoutPaceBoat}'s pace changes each second only, while the current
-     * {@link Workout} is available continuously. The latter has to be transferred
-     * to seconds unit too, to prevent unwanted bouncing of the deltas.
-     */
-    private class DebouncePaceBoat implements DismissablePaceBoat {
-
-        private WorkoutPaceBoat pace;
-
-        private int duration;
-
-        private int durationDelta;
-
-        private int distanceDelta;
-
-        public DebouncePaceBoat(WorkoutPaceBoat pace) {
-            this.pace = pace;
-        }
-
-        @Override
-        public int getDurationDelta(int duration, int distance) {
-            check(duration, distance);
-
-            return durationDelta;
-        }
-
-        @Override
-        public int getDistanceDelta(int duration, int distance) {
-            check(duration, distance);
-
-            return distanceDelta;
-        }
-
-        private void check(int duration, int distance) {
-            if (this.duration != duration) {
-                this.duration = duration;
-
-                durationDelta = pace.getDurationDelta(duration, distance);
-                distanceDelta = pace.getDistanceDelta(duration, distance);
-            }
-        }
-
-        @Override
-        public void dismiss() {
-            pace.dismiss();
         }
     }
 }

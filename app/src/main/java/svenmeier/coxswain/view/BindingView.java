@@ -153,14 +153,14 @@ public class BindingView extends FrameLayout {
             snapshot = new Snapshot();
         }
 
-        int duration = 0;
+        long elapsed = 0;
         if (gym.current != null) {
-            duration = gym.current.duration.get();
+            elapsed = System.currentTimeMillis() - gym.current.start.get();
         }
 
         switch (binding) {
             case DURATION:
-                target(duration, targetDuration, achieved);
+                target((int)(elapsed / 1000), targetDuration, achieved);
                 break;
             case DISTANCE:
                 target(snapshot.distance.get(), targetDistance, achieved);
@@ -187,13 +187,13 @@ public class BindingView extends FrameLayout {
                 split(100f / snapshot.speed.get());
                 break;
             case AVERAGE_SPLIT:
-                split(duration / (float)snapshot.distance.get());
+                split(elapsed / 1000f / snapshot.distance.get());
                 break;
             case DELTA_DISTANCE:
-                delta(paceBoat.getDistanceDelta(duration, snapshot.distance.get()), false);
+                delta(paceBoat.getDistanceDelta(elapsed, snapshot.distance.get()), false);
                 break;
             case DELTA_DURATION:
-                delta(paceBoat.getDurationDelta(duration, snapshot.distance.get()), true);
+                delta(paceBoat.getDurationDelta(elapsed, snapshot.distance.get()), true);
                 break;
         }
     }
@@ -269,8 +269,18 @@ public class BindingView extends FrameLayout {
 
     public interface PaceBoat {
 
-        int getDurationDelta(int duration, int distance);
+		/**
+         * @param elapsed elapsed milliseconds since start of workout
+         * @param distance current distance of workout
+         * @return delta to pace duration
+         */
+        int getDurationDelta(long elapsed, int distance);
 
-        int getDistanceDelta(int duration, int distance);
+        /**
+         * @param elapsed elapsed milliseconds since start of workout
+         * @param distance current distance of workout
+         * @return delta to pace distance
+         */
+        int getDistanceDelta(long elapsed, int distance);
     }
 }

@@ -13,7 +13,7 @@ import svenmeier.coxswain.R;
 
 public class BindingDialogFragment extends DialogFragment {
 
-	public static final String VIEW_ID = "id";
+	public static final String BINDING_INDEX = "id";
 
 	public static final String BINDING = "binding";
 
@@ -35,7 +35,7 @@ public class BindingDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		final int viewId = getArguments().getInt(VIEW_ID);
+		final int viewId = getArguments().getInt(BINDING_INDEX);
 		final ValueBinding binding = (ValueBinding) getArguments().getSerializable(BINDING);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -61,20 +61,20 @@ public class BindingDialogFragment extends DialogFragment {
 
 	@Override
 	public void onDismiss(DialogInterface dialog) {
-		final int viewId = getArguments().getInt(VIEW_ID);
+		final int index = getArguments().getInt(BINDING_INDEX);
 
 		if (isAdded()) {
-			((Callback)getActivity()).onBinding(viewId, null);
+			((Callback)getActivity()).onBinding(index, null);
 		}
 
 		super.onDismiss(dialog);
 	}
 
-	public static BindingDialogFragment create(int viewId, ValueBinding binding) {
+	public static BindingDialogFragment create(int index, ValueBinding binding) {
 		BindingDialogFragment fragment = new BindingDialogFragment();
 
 		Bundle argumets = new Bundle();
-		argumets.putInt(VIEW_ID, viewId);
+		argumets.putInt(BINDING_INDEX, index);
 		argumets.putSerializable(BINDING, binding);
 		fragment.setArguments(argumets);
 

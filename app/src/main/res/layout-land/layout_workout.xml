@@ -7,40 +7,11 @@
     >
 
     <svenmeier.coxswain.view.DashLayout
+        android:id="@+id/workout_dash"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6"
         >
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_0"
-            style="@style/BindingView"
-            />
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_1"
-            style="@style/BindingView"
-            />
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_2"
-            style="@style/BindingView"
-            />
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_3"
-            style="@style/BindingView"
-            />
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_4"
-            style="@style/BindingView"
-            />
-
-        <svenmeier.coxswain.view.BindingView
-            android:id="@+id/workout_value_5"
-            style="@style/BindingView"
-            />
 
     </svenmeier.coxswain.view.DashLayout>
 

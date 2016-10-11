@@ -31,9 +31,9 @@ import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.BindingView;
+import svenmeier.coxswain.view.DashLayout;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
@@ -72,7 +72,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private DismissablePaceBoat paceBoat;
 
-    private Preference<String> bindingPreference;
+    private Preference<ValueBinding> bindingPreference;
+
+    private DashLayout dashView;
 
     private SegmentsView segmentsView;
 
@@ -104,53 +106,69 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
         setContentView(R.layout.layout_workout);
+        dashView = (DashLayout)findViewById(R.id.workout_dash);
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
         progressView = (LevelView) findViewById(R.id.workout_progress);
-        Utils.collect(BindingView.class, getWindow().getDecorView(), bindingViews);
 
-        List<ValueBinding> binding;
+        List<ValueBinding> defaultBinding;
         if (gym.pace == null) {
-            bindingPreference = Preference.getString(this, R.string.preference_workout_binding);
-            binding = DEFAULT_BINDING;
+            defaultBinding = DEFAULT_BINDING;
+            bindingPreference = Preference.getEnum(this, ValueBinding.class, R.string.preference_workout_binding);
 
             paceBoat = new SelfPaceBoat();
         } else {
-            bindingPreference = Preference.getString(this, R.string.preference_workout_binding_pace);
-            binding = DEFAULT_PACE_BINDING;
+            defaultBinding = DEFAULT_PACE_BINDING;
+            bindingPreference = Preference.getEnum(this, ValueBinding.class, R.string.preference_workout_binding_pace);
 
             paceBoat = new WorkoutPaceBoat();
         }
 
-        List<String> previousBinding = bindingPreference.getList();
-        for (int b = 0; b < Math.min(binding.size(), bindingViews.size()); b++) {
-            ValueBinding temp = binding.get(b);
-            try {
-                temp = ValueBinding.valueOf(previousBinding.get(b));
-            } catch (Exception ex) {
-            }
-            bindingViews.get(b).setBinding(temp);
+        try {
+            readDash(bindingPreference.getList());
+        } catch (Exception ex) {
+            readDash(defaultBinding);
+        }
+    }
 
-            bindingViews.get(b).setOnLongClickListener(new View.OnLongClickListener() {
+    private void readDash(List<ValueBinding> binding) {
+        if (binding == null || binding.isEmpty()) {
+            throw new IllegalArgumentException("binding must not be empty");
+        }
+
+        dashView.removeAllViews();
+        bindingViews.clear();
+
+        for (int b = 0; b < binding.size(); b++) {
+            ValueBinding temp = binding.get(b);
+
+            final BindingView bindingView = new BindingView(this, null, R.style.BindingView);
+            bindingView.setBinding(temp);
+
+            final int index = b;
+            bindingView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
                     leanBack(false);
 
-                    BindingDialogFragment fragment = BindingDialogFragment.create(view.getId(), ((BindingView)view).getBinding());
+                    BindingDialogFragment fragment = BindingDialogFragment.create(index, bindingView.getBinding());
 
                     fragment.show(getFragmentManager(), "bindingPreference");
 
                     return true;
                 }
             });
+
+            dashView.addView(bindingView);
+            bindingViews.add(bindingView);
         }
     }
 
     @Override
     protected void onDestroy() {
-        List<String> bindings = new ArrayList<>();
+        List<ValueBinding> bindings = new ArrayList<>();
         for (BindingView valueView : bindingViews) {
-            bindings.add(valueView.getBinding().name());
+            bindings.add(valueView.getBinding());
         }
         bindingPreference.setList(bindings);
 
@@ -219,9 +237,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
     @Override
-    public void onBinding(int viewId, ValueBinding binding) {
+    public void onBinding(int index, ValueBinding binding) {
         if (binding != null) {
-            ((BindingView)findViewById(viewId)).setBinding(binding);
+            bindingViews.get(index).setBinding(binding);
         }
 
         leanBack(true);

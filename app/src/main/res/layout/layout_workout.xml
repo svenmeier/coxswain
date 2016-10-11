@@ -26,61 +26,42 @@
             />
     </FrameLayout>
 
-    <LinearLayout
+    <svenmeier.coxswain.view.DashLayout
         android:layout_width="0dp"
         android:layout_weight="6"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         >
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_0"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_4"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
         <svenmeier.coxswain.view.BindingView
             android:id="@+id/workout_value_5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
             style="@style/BindingView"
             />
 
-    </LinearLayout>
+    </svenmeier.coxswain.view.DashLayout>
 
 </LinearLayout>

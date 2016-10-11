@@ -74,8 +74,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private Preference<ValueBinding> bindingPreference;
 
-    private DashLayout dashView;
-
     private SegmentsView segmentsView;
 
     private LevelView progressView;
@@ -106,7 +104,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
         setContentView(R.layout.layout_workout);
-        dashView = (DashLayout)findViewById(R.id.workout_dash);
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
         progressView = (LevelView) findViewById(R.id.workout_progress);
@@ -136,9 +133,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             throw new IllegalArgumentException("binding must not be empty");
         }
 
+        DashLayout dashView = (DashLayout)findViewById(R.id.workout_dash);
         dashView.removeAllViews();
         bindingViews.clear();
-
         for (int b = 0; b < binding.size(); b++) {
             ValueBinding temp = binding.get(b);
 

@@ -56,7 +56,7 @@ public class BindingView extends FrameLayout {
     }
 
     private void init() {
-        inflate(getContext(), R.layout.layout_value, this);
+        inflate(getContext(), R.layout.layout_binding, this);
 
         valueView = (ValueView)findViewById(R.id.value);
         labelView = (LabelView)findViewById(R.id.label);

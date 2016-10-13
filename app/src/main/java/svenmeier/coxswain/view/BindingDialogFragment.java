@@ -9,6 +9,7 @@ import android.os.Bundle;
 import java.util.Arrays;
 import java.util.List;
 
+import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.R;
 
 public class BindingDialogFragment extends DialogFragment {
@@ -35,7 +36,7 @@ public class BindingDialogFragment extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		final int viewId = getArguments().getInt(BINDING_INDEX);
+		final int index = getArguments().getInt(BINDING_INDEX);
 		final ValueBinding binding = (ValueBinding) getArguments().getSerializable(BINDING);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -50,13 +51,33 @@ public class BindingDialogFragment extends DialogFragment {
 					public void onClick(DialogInterface dialog, int which) {
 						ValueBinding binding = bindings.get(which);
 
-						((Callback)getActivity()).onBinding(viewId, binding);
+						getCallback().onBinding(index, binding);
 
 						dismiss();
 					}
 				});
 
+		if (BuildConfig.DEBUG == false) {
+			builder.setNegativeButton("\u2296", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					getCallback().removeBinding(index);
+				}
+			});
+
+			builder.setPositiveButton("\u2295", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					getCallback().addBinding(index);
+				}
+			});
+		}
+
 		return builder.create();
+	}
+
+	private Callback getCallback() {
+		return (Callback)getActivity();
 	}
 
 	@Override
@@ -64,7 +85,7 @@ public class BindingDialogFragment extends DialogFragment {
 		final int index = getArguments().getInt(BINDING_INDEX);
 
 		if (isAdded()) {
-			((Callback)getActivity()).onBinding(index, null);
+			(getCallback()).onBinding(index, null);
 		}
 
 		super.onDismiss(dialog);
@@ -82,6 +103,10 @@ public class BindingDialogFragment extends DialogFragment {
 	}
 
 	public interface Callback {
-		public void onBinding(int viewId, ValueBinding binding);
+		void onBinding(int viewId, ValueBinding binding);
+
+		void addBinding(int index);
+
+		void removeBinding(int index);
 	}
 }

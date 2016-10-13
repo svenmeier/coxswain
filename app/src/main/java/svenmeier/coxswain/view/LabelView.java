@@ -109,11 +109,12 @@ public class LabelView extends View {
             Rect textBounds = new Rect();
             paint.setTextSize(100f);
             paint.getTextBounds(text, 0, text.length(), textBounds);
-            size = 100f * (bottom - top)/ textBounds.height();
+            size = 100f * (bottom - top) / textBounds.height();
             paint.setTextSize(size);
             width = paint.measureText(text);
             if (width > right - left) {
-                paint.setTextScaleX((right - left) / width);
+                size = size * (right - left) / width;
+                paint.setTextSize(size);
                 width = paint.measureText(text);
             }
         }

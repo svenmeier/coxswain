@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static android.R.attr.height;
+
 /**
  */
 public class DashLayout extends ViewGroup {
@@ -29,18 +31,12 @@ public class DashLayout extends ViewGroup {
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
-		int height = (bottom - top) - getPaddingTop() + getPaddingBottom();
 		int width = (right - left) - getPaddingLeft() - getPaddingRight();
+		int height = (bottom - top) - getPaddingTop() + getPaddingBottom();
 
-		int columns;
-		if (width < height || getChildCount() <= 1) {
-			columns = 1;
-		}else {
-			columns = 2;
-		}
+		int columns = columns(width, height);
 
 		int index = 0;
-
 		for (int c = 0; c < columns; c++) {
 			int childLeft = getPaddingLeft() + (c * width / columns);
 			int childRight = getPaddingLeft() + ((c + 1) * width / columns);
@@ -58,5 +54,16 @@ public class DashLayout extends ViewGroup {
 				index++;
 			}
 		}
+	}
+
+	private int columns(int width, int height) {
+		int columns = 1;
+		int rows =  getChildCount();
+		while (rows >= 2 && (width / (columns + 1) > height / rows * 4)) {
+			columns++;
+			rows = rows / 2;
+		}
+
+		return columns;
 	}
 }

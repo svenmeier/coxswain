@@ -31,8 +31,7 @@
         <item name="text_color">?android:attr/colorForeground</item>
     </style>
 
-    <style name="ValueView">
-        <item name="text_color">?android:attr/colorForeground</item>
+    <style name="ValueView" parent="LabelView">
         <item name="font">fonts/coxswain.ttf</item>
     </style>
 

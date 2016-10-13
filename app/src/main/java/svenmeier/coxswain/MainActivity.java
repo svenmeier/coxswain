@@ -140,7 +140,7 @@ public class MainActivity extends AbstractActivity {
         if (device != null) {
             GymService.start(this, device);
 
-            // remove device so that a successive orientation changes
+            // removeBinding device so that a successive orientation changes
             // do not trigger repeated service starts
             intent.removeExtra(UsbManager.EXTRA_DEVICE);
 

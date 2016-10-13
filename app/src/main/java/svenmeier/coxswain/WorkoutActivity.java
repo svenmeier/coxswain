@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,7 +38,6 @@ import svenmeier.coxswain.view.DashLayout;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
-import svenmeier.coxswain.view.Utils;
 import svenmeier.coxswain.view.ValueBinding;
 
 
@@ -122,13 +122,13 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         try {
-            readDash(bindingPreference.getList());
+            fillDash(bindingPreference.getList());
         } catch (Exception ex) {
-            readDash(defaultBinding);
+            fillDash(defaultBinding);
         }
     }
 
-    private void readDash(List<ValueBinding> binding) {
+    private void fillDash(List<ValueBinding> binding) {
         if (binding == null || binding.isEmpty()) {
             throw new IllegalArgumentException("binding must not be empty");
         }
@@ -159,14 +159,22 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             dashView.addView(bindingView);
             bindingViews.add(bindingView);
         }
+
+        dashView.requestLayout();
     }
 
-    @Override
-    protected void onDestroy() {
+    @NonNull
+    private List<ValueBinding> getValueBindings() {
         List<ValueBinding> bindings = new ArrayList<>();
         for (BindingView valueView : bindingViews) {
             bindings.add(valueView.getBinding());
         }
+        return bindings;
+    }
+
+    @Override
+    protected void onDestroy() {
+        List<ValueBinding> bindings = getValueBindings();
         bindingPreference.setList(bindings);
 
         if (paceBoat != null) {
@@ -240,6 +248,24 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         leanBack(true);
+    }
+
+    @Override
+    public void addBinding(int index) {
+        List<ValueBinding> bindings = getValueBindings();
+
+        bindings.add(bindings.get(index));
+
+        fillDash(bindings);
+    }
+
+    @Override
+    public void removeBinding(int index) {
+        List<ValueBinding> bindings = getValueBindings();
+
+        bindings.remove(index);
+
+        fillDash(bindings);
     }
 
     private void leanBack(boolean yes) {

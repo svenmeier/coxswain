@@ -57,7 +57,7 @@ public class BindingDialogFragment extends DialogFragment {
 					}
 				});
 
-		if (BuildConfig.DEBUG == false) {
+		if (BuildConfig.DEBUG == true) {
 			builder.setNegativeButton("\u2296", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialogInterface, int i) {

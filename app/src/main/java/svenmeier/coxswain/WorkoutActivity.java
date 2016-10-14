@@ -74,11 +74,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private Preference<ValueBinding> bindingPreference;
 
+    private DashLayout dashView;
+
     private SegmentsView segmentsView;
 
     private LevelView progressView;
-
-    private List<BindingView> bindingViews = new ArrayList<>();
 
     private Runnable returnToLeanBack = new Runnable() {
         @Override
@@ -107,6 +107,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
         progressView = (LevelView) findViewById(R.id.workout_progress);
+        dashView = (DashLayout)findViewById(R.id.workout_dash);
 
         List<ValueBinding> defaultBinding;
         if (gym.pace == null) {
@@ -122,24 +123,21 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         try {
-            fillDash(bindingPreference.getList());
+            writeToDash(bindingPreference.getList());
         } catch (Exception ex) {
-            fillDash(defaultBinding);
+            writeToDash(defaultBinding);
         }
     }
 
-    private void fillDash(List<ValueBinding> binding) {
+    private void writeToDash(List<ValueBinding> binding) {
         if (binding == null || binding.isEmpty()) {
             throw new IllegalArgumentException("binding must not be empty");
         }
 
-        DashLayout dashView = (DashLayout)findViewById(R.id.workout_dash);
-        dashView.removeAllViews();
-        bindingViews.clear();
-        for (int b = 0; b < binding.size(); b++) {
+        for (int b = 0; b < Math.min(binding.size(), dashView.getChildCount()); b++) {
             ValueBinding temp = binding.get(b);
 
-            final BindingView bindingView = new BindingView(this, null, R.style.BindingView);
+            final BindingView bindingView = (BindingView) dashView.getChildAt(b);
             bindingView.setBinding(temp);
 
             final int index = b;
@@ -155,26 +153,23 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                     return true;
                 }
             });
-
-            dashView.addView(bindingView);
-            bindingViews.add(bindingView);
         }
 
         dashView.requestLayout();
     }
 
     @NonNull
-    private List<ValueBinding> getValueBindings() {
+    private List<ValueBinding> readFromDash() {
         List<ValueBinding> bindings = new ArrayList<>();
-        for (BindingView valueView : bindingViews) {
-            bindings.add(valueView.getBinding());
+        for (int v = 0; v < dashView.getChildCount(); v++) {
+            bindings.add(((BindingView)dashView.getChildAt(v)).getBinding());
         }
         return bindings;
     }
 
     @Override
     protected void onDestroy() {
-        List<ValueBinding> bindings = getValueBindings();
+        List<ValueBinding> bindings = readFromDash();
         bindingPreference.setList(bindings);
 
         if (paceBoat != null) {
@@ -217,8 +212,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
     private void updateBindings() {
-        for (int v = 0; v < bindingViews.size(); v++) {
-            bindingViews.get(v).changed(gym, paceBoat);
+        int count = dashView.getChildCount();
+        for (int v = 0; v < count; v++) {
+            ((BindingView)dashView.getChildAt(v)).changed(gym, paceBoat);
         }
     }
 
@@ -244,28 +240,10 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     @Override
     public void onBinding(int index, ValueBinding binding) {
         if (binding != null) {
-            bindingViews.get(index).setBinding(binding);
+            ((BindingView)dashView.getChildAt(index)).setBinding(binding);
         }
 
         leanBack(true);
-    }
-
-    @Override
-    public void addBinding(int index) {
-        List<ValueBinding> bindings = getValueBindings();
-
-        bindings.add(bindings.get(index));
-
-        fillDash(bindings);
-    }
-
-    @Override
-    public void removeBinding(int index) {
-        List<ValueBinding> bindings = getValueBindings();
-
-        bindings.remove(index);
-
-        fillDash(bindings);
     }
 
     private void leanBack(boolean yes) {

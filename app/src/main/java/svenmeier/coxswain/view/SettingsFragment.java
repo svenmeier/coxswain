@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import java.util.ArrayList;
+
 import svenmeier.coxswain.R;
 
 public class SettingsFragment extends PreferenceFragment {
@@ -30,8 +32,19 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference preference = findPreference(getString(R.string.preference_devices));
-        preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference bindings = findPreference(getString(R.string.preference_workout_bindings_reset));
+        bindings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                propoid.util.content.Preference.getEnum(getActivity(), ValueBinding.class, R.string.preference_workout_binding).setList(new ArrayList<ValueBinding>());
+                propoid.util.content.Preference.getEnum(getActivity(), ValueBinding.class, R.string.preference_workout_binding_pace).setList(new ArrayList<ValueBinding>());
+
+                return true;
+            }
+        });
+
+        Preference devices = findPreference(getString(R.string.preference_devices));
+        devices.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();

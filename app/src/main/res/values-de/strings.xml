@@ -95,6 +95,9 @@
     <string name="preference_open_end_title">Offenes Ende</string>
     <string name="preference_open_end_summary">Nach Beendigung des Trainings weiter rudern</string>
 
+    <string name="preference_workout_bindings_reset_title">Verknüpfungen zurücksetzen</string>
+    <string name="preference_workout_bindings_reset_summary">Verknüpfungen für Training auf Standard zurücksetzen</string>
+
     <string name="preference_audio_title">Töne</string>
     <string name="preference_audio_none">Keine</string>
 

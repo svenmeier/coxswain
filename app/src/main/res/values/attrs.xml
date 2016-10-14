@@ -33,6 +33,10 @@
         <attr name="value_target" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="DashLayout">
+        <attr name="columns" format="integer"/>
+    </declare-styleable>
+
     <declare-styleable name="TimelineView">
         <attr name="foreground_color" format="color" />
     </declare-styleable>

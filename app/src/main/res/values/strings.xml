@@ -100,6 +100,12 @@
     <string name="preference_open_end_title">Open end</string>
     <string name="preference_open_end_summary">Continue rowing after training has ended</string>
 
+    <string name="preference_workout_bindings_reset" translatable="false">preference_bindings_reset</string>
+    <string name="preference_workout_bindings_reset_title">Reset bindings</string>
+    <string name="preference_workout_bindings_reset_summary">Reset workout bindings to defaults</string>
+    <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
+    <string name="preference_workout_binding_pace" translatable="false">preference_workout_binding_pace</string>
+
     <string name="preference_audio_title">Sounds</string>
     <string name="preference_audio_none">None</string>
 
@@ -160,6 +166,4 @@
 
     <string name="preference_performance_window" translatable="false">preference_performance_window</string>
     <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
-    <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
-    <string name="preference_workout_binding_pace" translatable="false">preference_workout_binding_pace</string>
 </resources>

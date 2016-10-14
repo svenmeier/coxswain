@@ -57,22 +57,6 @@ public class BindingDialogFragment extends DialogFragment {
 					}
 				});
 
-		if (BuildConfig.DEBUG == true) {
-			builder.setNegativeButton("\u2296", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialogInterface, int i) {
-					getCallback().removeBinding(index);
-				}
-			});
-
-			builder.setPositiveButton("\u2295", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialogInterface, int i) {
-					getCallback().addBinding(index);
-				}
-			});
-		}
-
 		return builder.create();
 	}
 
@@ -103,10 +87,6 @@ public class BindingDialogFragment extends DialogFragment {
 	}
 
 	public interface Callback {
-		void onBinding(int viewId, ValueBinding binding);
-
-		void addBinding(int index);
-
-		void removeBinding(int index);
+		void onBinding(int index, ValueBinding binding);
 	}
 }

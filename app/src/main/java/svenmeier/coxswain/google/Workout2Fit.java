@@ -5,6 +5,7 @@ import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Session;
 
 import java.text.SimpleDateFormat;
@@ -54,7 +55,6 @@ public class Workout2Fit {
 					{
 					    mappers.add(new AggregateDistanceDelta());
 						mappers.add(new AggregateCaloriesExpended());
-						mappers.add(new StepCountCadence());
 						mappers.add(new Speed());
 						mappers.add(new HeartRateBpm());
 					}
@@ -103,9 +103,11 @@ public class Workout2Fit {
 
 	private abstract class AbstractSnapshotMapper extends Mapper {
 
+		private static final int MAX_DATAPOINTS = 1000;
+
 		@Override
 		protected void map(DataSet dataSet, Workout workout, List<Snapshot> snapshots) {
-			for (int index = 0; index < snapshots.size(); index++) {
+			for (int index = 0; index < Math.min(snapshots.size(), MAX_DATAPOINTS); index++) {
 				Snapshot snapshot = snapshots.get(index);
 
 				DataPoint point = dataSet.createDataPoint();
@@ -118,18 +120,6 @@ public class Workout2Fit {
 		protected abstract void map(Snapshot snapshot, DataPoint point);
 	}
 
-	private class StepCountCadence extends AbstractSnapshotMapper {
-		@Override
-		public DataType type() {
-			return DataType.TYPE_STEP_COUNT_CADENCE;
-		}
-
-		@Override
-		public void map(Snapshot snapshot, DataPoint point) {
-			point.setFloatValues(snapshot.strokeRate.get() / 100f);
-		}
-	}
-
 	private class Speed extends AbstractSnapshotMapper {
 		@Override
 		public DataType type() {
@@ -138,7 +128,7 @@ public class Workout2Fit {
 
 		@Override
 		public void map(Snapshot snapshot, DataPoint point) {
-			point.setFloatValues(snapshot.speed.get() / 100f);
+			point.getValue(Field.FIELD_SPEED).setFloat(snapshot.speed.get() / 100f);
 		}
 	}
 
@@ -150,7 +140,7 @@ public class Workout2Fit {
 
 		@Override
 		public void map(Snapshot snapshot, DataPoint point) {
-			point.setFloatValues((float)snapshot.pulse.get());
+			point.getValue(Field.FIELD_BPM).setFloat(snapshot.pulse.get());
 		}
 	}
 
@@ -176,8 +166,7 @@ public class Workout2Fit {
 
 		@Override
 		public void map(Workout workout, DataPoint point) {
-
-			point.setFloatValues(workout.distance.get());
+			point.getValue(Field.FIELD_DISTANCE).setFloat(workout.distance.get());
 		}
 	}
 
@@ -190,8 +179,7 @@ public class Workout2Fit {
 
 		@Override
 		public void map(Workout workout, DataPoint point) {
-
-			point.setFloatValues(workout.energy.get());
+			point.getValue(Field.FIELD_CALORIES).setFloat(workout.energy.get());
 		}
 	}
 }

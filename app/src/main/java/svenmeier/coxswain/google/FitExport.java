@@ -125,7 +125,7 @@ public class FitExport implements Export {
 				Workout2Fit workout2Fit = new Workout2Fit();
 
 				Status status;
-/*
+
 				Session session = workout2Fit.session(workout);
 				SessionInsertRequest insertSession = new SessionInsertRequest.Builder()
 						.setSession(session)
@@ -136,7 +136,7 @@ public class FitExport implements Export {
 					toast(activity.getString(R.string.googlefit_export_failed));
 					return;
 				}
-*/
+
 				for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
 					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
 					if (status.isSuccess() == false) {

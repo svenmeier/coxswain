@@ -16,6 +16,7 @@
 package svenmeier.coxswain;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -27,6 +28,7 @@ import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.IBinder;
 
+import propoid.db.Where;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
@@ -187,13 +189,12 @@ public class GymService extends Service {
                             }
 
                             String text = program.name.get();
-                            int progress = 0;
-
+                            float completion = 0;
                             if (gym.progress != null) {
                                 text += " - " +  gym.progress.describe();
-                                progress = (int)(gym.progress.completion() * 1000);
+                                completion = gym.progress.completion();
                             }
-                            foreground.workout(text, progress);
+                            foreground.workout(text, completion);
 
                             Event event = gym.addSnapshot(new Snapshot(memory));
                             motivator.onEvent(event);
@@ -224,8 +225,6 @@ public class GymService extends Service {
 
     private class Foreground {
 
-        private Notification.Builder builder;
-
         private String text;
 
         private int progress = -1;
@@ -241,7 +240,7 @@ public class GymService extends Service {
 
             PendingIntent pendingIntent = PendingIntent.getActivity(service, 1, new Intent(service, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-            builder = new Notification.Builder(service)
+            Notification.Builder builder = new Notification.Builder(service)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.app_name))
                     .setContentIntent(pendingIntent);
@@ -256,30 +255,53 @@ public class GymService extends Service {
             this.progress = -1;
         }
 
-        private void workout(String text, int progress) {
+        private void workout(String text, float completion) {
             GymService service = GymService.this;
+
+            int progress = (int)(completion * 100);
 
             if (text.equals(this.text) && progress == this.progress) {
                 return;
             }
 
-            // reuse builder as long as text stays the same, otherwise the notification will flicker
-            if (text.equals(this.text) == false) {
-                PendingIntent pendingIntent = PendingIntent.getActivity(service, 1, new Intent(service, WorkoutActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(service, 1, new Intent(service, WorkoutActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                builder = new Notification.Builder(service)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentIntent(pendingIntent)
-                        .addAction(R.drawable.ic_close_black_24dp, getString(R.string.gym_notification_stop),
-                                PendingIntent.getBroadcast(service, 0, new Intent(ACTION_STOP), 0));
+            Notification.Builder builder = new Notification.Builder(service)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true);
 
+            if (text.equals(this.text)) {
+                // no vibration, but needs empty array to keep headsup
+                builder.setDefaults(0);
+                builder.setVibrate(new long[0]);
+            } else {
                 builder.setDefaults(Notification.DEFAULT_VIBRATE);
             }
 
             builder.setContentText(text);
-            builder.setProgress(1000, progress, false);
-            builder.setPriority(Notification.PRIORITY_DEFAULT);
+            builder.setProgress(100, progress, false);
+
+            if (headsUp()) {
+                builder.setPriority(Notification.PRIORITY_HIGH);
+            } else {
+                builder.setPriority(Notification.PRIORITY_DEFAULT);
+                builder.addAction(R.drawable.ic_close_black_24dp, getString(R.string.gym_notification_stop),
+                        PendingIntent.getBroadcast(service, 0, new Intent(ACTION_STOP), 0));
+
+            }
+
+            Notification notification = builder.build();
+
+            NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(1, notification);
+
+            this.text = text;
+            this.progress = progress;
+        }
+
+        private boolean headsUp() {
             if (headsup.get()) {
                 if (gym.hasListener(Object.class)) {
                     headsupSince = 0;
@@ -288,26 +310,16 @@ public class GymService extends Service {
                         headsupSince = System.currentTimeMillis();
                     } else {
                         if (System.currentTimeMillis() - headsupSince > 2000) {
-                            builder.setPriority(Notification.PRIORITY_HIGH);
+                            return true;
                         }
                     }
                 }
             }
 
-            Notification notification = builder.build();
-            startForeground(1, notification);
-
-            this.text = text;
-            this.progress = progress;
-
-            // no vibration until next text change, needs empty array though to keep headsup
-            builder.setDefaults(0);
-            builder.setVibrate(new long[0]);
+            return false;
         }
 
         public void stop() {
-            builder = null;
-
             text = null;
             progress = -1;
 

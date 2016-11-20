@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain.view;
 
+import android.Manifest;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -23,6 +24,8 @@ import android.preference.PreferenceFragment;
 import java.util.ArrayList;
 
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.util.PermissionBlock;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -38,6 +41,18 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 propoid.util.content.Preference.getEnum(getActivity(), ValueBinding.class, R.string.preference_workout_binding).setList(new ArrayList<ValueBinding>());
                 propoid.util.content.Preference.getEnum(getActivity(), ValueBinding.class, R.string.preference_workout_binding_pace).setList(new ArrayList<ValueBinding>());
+
+                return true;
+            }
+        });
+
+        Preference trace = findPreference(getString(R.string.preference_hardware_trace));
+        trace.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (Boolean.TRUE.equals(o)) {
+                    new PermissionBlock(getActivity()).acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                }
 
                 return true;
             }

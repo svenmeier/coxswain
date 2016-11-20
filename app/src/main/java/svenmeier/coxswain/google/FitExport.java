@@ -1,6 +1,7 @@
 package svenmeier.coxswain.google;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +32,7 @@ import svenmeier.coxswain.gym.Workout;
  */
 public class FitExport implements Export {
 
-	private Activity activity;
+	private Context context;
 
 	private Handler handler = new Handler();
 
@@ -41,12 +42,12 @@ public class FitExport implements Export {
 
 	private Connection connection;
 
-	public FitExport(Activity activity) {
-		this.activity = activity;
+	public FitExport(Context context) {
+		this.context = context;
 
 		this.handler = new Handler();
 
-		this.gym = Gym.instance(activity);
+		this.gym = Gym.instance(context);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class FitExport implements Export {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			}
 		});
 	}
@@ -70,7 +71,7 @@ public class FitExport implements Export {
 		private final GoogleApiClient client;
 
 		public Connection() {
-			client = new GoogleApiClient.Builder(activity)
+			client = new GoogleApiClient.Builder(context)
 					.addApi(Fitness.SESSIONS_API)
 					.addApi(Fitness.HISTORY_API)
 					.addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
@@ -85,15 +86,15 @@ public class FitExport implements Export {
 
 		@Override
 		public void onConnectionFailed(ConnectionResult result) {
-			if (result.hasResolution()) {
+			if (result.hasResolution() && context instanceof Activity) {
 				try {
-					result.startResolutionForResult(activity, 1);
+					result.startResolutionForResult((Activity) context, 1);
 					return;
 				} catch (IntentSender.SendIntentException e) {
 				}
 			}
 
-			toast(activity.getString(R.string.googlefit_export_failed));
+			toast(context.getString(R.string.googlefit_export_failed));
 		}
 
 		/**
@@ -118,7 +119,7 @@ public class FitExport implements Export {
 
 		@Override
 		public void run() {
-			toast(activity.getString(R.string.googlefit_export_starting));
+			toast(context.getString(R.string.googlefit_export_starting));
 
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
 			try {
@@ -133,7 +134,7 @@ public class FitExport implements Export {
 				status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
 				if (status.isSuccess() == false) {
 					Log.e(Coxswain.TAG, "insert session failed " + status);
-					toast(activity.getString(R.string.googlefit_export_failed));
+					toast(context.getString(R.string.googlefit_export_failed));
 					return;
 				}
 
@@ -141,12 +142,12 @@ public class FitExport implements Export {
 					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
 					if (status.isSuccess() == false) {
 						Log.e(Coxswain.TAG, "insert dataset failed " + status);
-						toast(activity.getString(R.string.googlefit_export_failed));
+						toast(context.getString(R.string.googlefit_export_failed));
 						return;
 					}
 				}
 
-				toast(activity.getString(R.string.googlefit_export_finished));
+				toast(context.getString(R.string.googlefit_export_finished));
 			} finally {
 				snapshots.clear();
 

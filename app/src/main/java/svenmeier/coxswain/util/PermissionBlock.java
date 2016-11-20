@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.Arrays;
 
-public abstract class PermissionBlock {
+public class PermissionBlock {
 
 	private final Context context;
 
@@ -21,7 +21,7 @@ public abstract class PermissionBlock {
 		this.context = context;
 	}
 
-	protected void acquirePermissions(String... permissions) {
+	public void acquirePermissions(String... permissions) {
 		unregister();
 
 		this.permissions = permissions;
@@ -40,7 +40,8 @@ public abstract class PermissionBlock {
 		unregister();
 	}
 
-	protected abstract void onPermissionsApproved();
+	protected void onPermissionsApproved() {
+	}
 
 	protected void onRejected() {
 	}

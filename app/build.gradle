@@ -5,15 +5,15 @@ if (project.hasProperty("coxswain-signing") && new File(project.property("coxswa
 }
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
         minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 31
-        versionName "3.1"
+        targetSdkVersion 24
+        versionCode 32
+        versionName "3.2"
     }
     buildTypes {
         release {
@@ -26,8 +26,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v13:23.1.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:support-v13:24.2.1'
     compile 'com.google.android.gms:play-services-fitness:8.4.0'
     testCompile 'junit:junit:4.12'
     testCompile('org.robolectric:robolectric:3.0') {

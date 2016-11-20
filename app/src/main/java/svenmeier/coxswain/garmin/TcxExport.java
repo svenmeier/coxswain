@@ -2,6 +2,7 @@ package svenmeier.coxswain.garmin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -30,18 +31,18 @@ public class TcxExport implements Export {
 
 	public static final String SUFFIX = ".tcx";
 
-	private Activity activity;
+	private Context context;
 
 	private Handler handler = new Handler();
 
 	private final Gym gym;
 
-	public TcxExport(Activity activity) {
-		this.activity = activity;
+	public TcxExport(Context context) {
+		this.context = context;
 
 		this.handler = new Handler();
 
-		this.gym = Gym.instance(activity);
+		this.gym = Gym.instance(context);
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class TcxExport implements Export {
 		private final Workout workout;
 
 		public Writer(Workout workout) {
-			super(activity);
+			super(context);
 
 			this.workout = workout;
 
@@ -68,7 +69,7 @@ public class TcxExport implements Export {
 
 		@Override
 		public void run() {
-			toast(activity.getString(R.string.garmin_export_starting));
+			toast(context.getString(R.string.garmin_export_starting));
 
 			Match<Snapshot> snapshots = gym.getSnapshots(workout);
 
@@ -77,14 +78,14 @@ public class TcxExport implements Export {
 				file = write(snapshots);
 			} catch (IOException e) {
 				Log.e(Coxswain.TAG, "export failed", e);
-				toast(activity.getString(R.string.garmin_export_failed));
+				toast(context.getString(R.string.garmin_export_failed));
 				return;
 			}
 
 			// input media so file can be found via MTB
-			activity.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+			context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
-			toast(String.format(activity.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
+			toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
 		}
 
 		public String getFileName() {
@@ -120,7 +121,7 @@ public class TcxExport implements Export {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(activity, text, Toast.LENGTH_LONG).show();
+				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			}
 		});
 	}

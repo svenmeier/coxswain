@@ -264,8 +264,9 @@ public class Protocol4 implements IProtocol {
             }
 
             if (recognized == false && version == VERSION_UNKOWN) {
-                version = VERSION_UNSUPPORTED;
-                trace.comment("unsupported");
+// a pulse count "P01" may switch protocol prematurely
+//                version = VERSION_UNSUPPORTED;
+//                trace.comment("unsupported");
             }
         }
     }

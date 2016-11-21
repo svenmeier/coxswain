@@ -67,6 +67,7 @@
     <string name="calendar_export">Calendar</string>
 
     <string name="garmin_export">TCX</string>
+    <string name="garmin_export_share">Share TCX ...</string>
     <string name="garmin_export_starting">Exporting to TCX</string>
     <string name="garmin_export_finished">Exported to %s</string>
     <string name="garmin_export_failed">Export to TCX failed</string>

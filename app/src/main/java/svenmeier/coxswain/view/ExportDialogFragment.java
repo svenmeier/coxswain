@@ -25,7 +25,7 @@ public class ExportDialogFragment extends DialogFragment {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-		String[] exports = new String[]{getString(R.string.calendar_export), getString(R.string.garmin_export), getString(R.string.googlefit_export)};
+		String[] exports = new String[]{getString(R.string.calendar_export), getString(R.string.garmin_export), getString(R.string.garmin_export_share), getString(R.string.googlefit_export)};
 
 		builder.setTitle(R.string.action_share)
 				.setItems(exports, new DialogInterface.OnClickListener() {
@@ -35,9 +35,12 @@ public class ExportDialogFragment extends DialogFragment {
 								export = new CalendarExport(getActivity());
 								break;
 							case 1:
-								export = new TcxExport(getActivity());
+								export = new TcxExport(getActivity(), false);
 								break;
 							case 2:
+								export = new TcxExport(getActivity(), true);
+								break;
+							case 3:
 								export = new FitExport(getActivity());
 								break;
 							default:

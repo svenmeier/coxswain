@@ -31,14 +31,18 @@ public class TcxExport implements Export {
 
 	public static final String SUFFIX = ".tcx";
 
+	private final boolean share;
+
 	private Context context;
 
 	private Handler handler = new Handler();
 
 	private final Gym gym;
 
-	public TcxExport(Context context) {
+	public TcxExport(Context context, boolean share) {
 		this.context = context;
+
+		this.share = share;
 
 		this.handler = new Handler();
 
@@ -59,7 +63,7 @@ public class TcxExport implements Export {
 
 			this.workout = workout;
 
-			super.acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+			acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		}
 
 		@Override
@@ -85,7 +89,21 @@ public class TcxExport implements Export {
 			// input media so file can be found via MTB
 			context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
-			toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
+			if (share) {
+				share(file);
+			} else {
+				toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
+			}
+		}
+
+		private void share(File file) {
+			Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			Uri uri = Uri.fromFile(file);
+			shareIntent.setType("text/xml");
+			shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, file.getName());
+
+			context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.garmin_export)));
 		}
 
 		public String getFileName() {

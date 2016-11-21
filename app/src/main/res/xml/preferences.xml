@@ -127,6 +127,13 @@
             />
 
         <CheckBoxPreference
+            android:key="@string/preference_hardware_legacy"
+            android:title="@string/preference_hardware_legacy_title"
+            android:summary="@string/preference_hardware_legacy_summary"
+            android:defaultValue="false"
+        />
+
+        <CheckBoxPreference
             android:key="@string/preference_hardware_trace"
             android:title="@string/preference_hardware_trace_title"
             android:summary="@string/preference_hardware_trace_summary"

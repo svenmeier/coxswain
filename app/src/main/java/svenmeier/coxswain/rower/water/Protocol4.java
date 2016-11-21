@@ -241,8 +241,6 @@ public class Protocol4 implements IProtocol {
     private void input(Snapshot memory) {
         int length = transfer.bulkInput();
         if (length > 0) {
-            boolean recognized = false;
-
             byte[] buffer = transfer.buffer();
             StringBuilder response = new StringBuilder();
             for (int c = 0; c < length; c++) {
@@ -252,8 +250,8 @@ public class Protocol4 implements IProtocol {
                         String message = response.toString();
                         trace.onInput(message);
 
-                        if (inputField(memory, message)) {
-                            recognized = true;
+                        if (inputField(memory, message) == false) {
+                            trace.comment("unrecognized");
                         }
 
                         response.setLength(0);
@@ -261,12 +259,6 @@ public class Protocol4 implements IProtocol {
                 } else {
                     response.append(character);
                 }
-            }
-
-            if (recognized == false && version == VERSION_UNKOWN) {
-// a pulse count "P01" may switch protocol prematurely
-//                version = VERSION_UNSUPPORTED;
-//                trace.comment("unsupported");
             }
         }
     }

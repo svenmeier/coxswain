@@ -153,6 +153,10 @@
     <string name="preference_hardware_heart_sensor_title">Sensors</string>
     <string name="preference_hardware_heart_sensor_summary">Read heart rate from %s</string>
 
+    <string name="preference_hardware_legacy" translatable="false">preference_hardware_legacy</string>
+    <string name="preference_hardware_legacy_title">S3</string>
+    <string name="preference_hardware_legacy_summary">Use S3 protocol (experimental)</string>
+
     <string name="preference_hardware_trace" translatable="false">preference_hardware_trace</string>
     <string name="preference_hardware_trace_title">Trace</string>
     <string name="preference_hardware_trace_summary">Write protocol trace</string>

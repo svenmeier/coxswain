@@ -1,6 +1,5 @@
 package svenmeier.coxswain.calendar;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;

@@ -20,9 +20,12 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import svenmeier.coxswain.garmin.TcxImport;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.PerformanceFragment;
@@ -159,6 +163,20 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         checkUsbDevice(intent);
+
+        checkImport(intent);
+    }
+
+    private void checkImport(Intent intent) {
+        if (intent.getAction() == Intent.ACTION_SEND) {
+            try {
+                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+
+                new TcxImport(this).start(uri);
+            } catch (Exception ex) {
+                Log.e(Coxswain.TAG, ex.getMessage());
+            }
+        }
     }
 
     @Override

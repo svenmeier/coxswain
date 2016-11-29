@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
@@ -50,14 +51,14 @@ public class TcxExport implements Export {
 
 	@Override
 	public void start(Workout workout) {
-		new Writer(workout);
+		new Writing(workout);
 	}
 
-	private class Writer extends PermissionBlock implements Runnable {
+	private class Writing extends PermissionBlock implements Runnable {
 
 		private final Workout workout;
 
-		public Writer(Workout workout) {
+		public Writing(Workout workout) {
 			super(context);
 
 			this.workout = workout;
@@ -123,7 +124,7 @@ public class TcxExport implements Export {
 
 			File file = new File(dir, getFileName());
 
-			java.io.Writer writer = new BufferedWriter(new FileWriter(file));
+			Writer writer = new BufferedWriter(new FileWriter(file));
 			try {
 				new Workout2TCX(writer).document(workout, snapshots.list());
 			} finally {

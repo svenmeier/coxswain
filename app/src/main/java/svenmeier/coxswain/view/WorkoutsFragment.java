@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import propoid.db.LookupException;
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
@@ -102,6 +103,12 @@ public class WorkoutsFragment extends Fragment {
                     PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                     popup.getMenuInflater().inflate(R.menu.menu_workout_item, popup.getMenu());
 
+                    try {
+                        workout.program.get();
+                    } catch (LookupException programAlreadyDeleted) {
+                        popup.getMenu().findItem(R.id.action_repeat).setEnabled(false);
+                    }
+
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
@@ -114,9 +121,14 @@ public class WorkoutsFragment extends Fragment {
 
                                     return true;
                                 case R.id.action_repeat:
-                                    if (gym.select(workout)) {
-                                        WorkoutActivity.start(getActivity());
-                                    }
+                                    gym.repeat(workout);
+
+                                    WorkoutActivity.start(getActivity());
+                                    return true;
+                                case R.id.action_challenge:
+                                    gym.challenge(workout);
+
+                                    WorkoutActivity.start(getActivity());
                                     return true;
                                 default:
                                     return false;
@@ -133,7 +145,7 @@ public class WorkoutsFragment extends Fragment {
 
             TextView countsView = index.get(R.id.workout_counts);
             String counts = TextUtils.join(", ", new String[]{
-                    String.format(getString(R.string.duration_minutes), workout.duration.get() / 60),
+                    String.format(getString(R.string.duration_minutes), Math.round(workout.duration.get() / 60f)),
                     String.format(getString(R.string.distance_meters), workout.distance.get()),
                     String.format(getString(R.string.strokes_count), workout.strokes.get()),
                     String.format(getString(R.string.energy_calories), workout.energy.get())

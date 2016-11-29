@@ -3,6 +3,12 @@
     >
     <item android:maxLevel="0">
         <shape>
+            <solid android:color="#16909090"
+                />
+        </shape>
+    </item>
+    <item android:maxLevel="1">
+        <shape>
             <stroke
                 android:color="#FFBBEE00"
                 android:width="1dp"
@@ -11,7 +17,7 @@
                 />
         </shape>
     </item>
-    <item android:maxLevel="1">
+    <item android:maxLevel="2">
         <shape>
             <stroke
                 android:color="#FFEEEE00"
@@ -21,7 +27,7 @@
                 />
         </shape>
     </item>
-    <item android:maxLevel="2">
+    <item android:maxLevel="3">
         <shape>
             <stroke
                 android:color="#FFEEBB00"

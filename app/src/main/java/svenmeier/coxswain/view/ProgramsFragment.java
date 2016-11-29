@@ -139,7 +139,7 @@ public class ProgramsFragment extends Fragment {
 
         @Override
         protected void onItem(Program program, int position) {
-            gym.select(program);
+            gym.repeat(program);
 
             WorkoutActivity.start(getActivity());
         }

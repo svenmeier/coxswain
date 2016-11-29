@@ -20,6 +20,7 @@ import java.util.List;
 
 import propoid.core.Property;
 import propoid.core.Propoid;
+import propoid.db.aspect.Row;
 
 /**
  */
@@ -128,5 +129,14 @@ public class Program extends Propoid {
         program.getSegment(0).difficulty.set(difficulty);
 
         return program;
+    }
+
+	/**
+     * Create a new {@link Workout}, linking with this program if not transient.
+     *
+     * @return workout
+     */
+    public Workout newWorkout() {
+        return new Workout((Row.getID(this) == Row.TRANSIENT) ? null : this);
     }
 }

@@ -107,7 +107,7 @@ public class Gym {
 
         repository.insert(Program.strokes(String.format(context.getString(R.string.strokes_count), 500), 500, Difficulty.MEDIUM));
 
-        Program program = new Program(context.getString(R.string.segments));
+        Program program = new Program(context.getString(R.string.program_name_segments));
         program.getSegment(0).setDistance(1000);
         program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
         program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
@@ -149,6 +149,16 @@ public class Gym {
         return repository.lookup(reference);
     }
 
+    public void add(Workout workout, List<Snapshot> snapshots) {
+        repository.merge(workout);
+
+        for (Snapshot snapshot : snapshots) {
+            snapshot.workout.set(workout);
+
+            repository.merge(snapshot);
+        }
+    }
+
     public void mergeProgram(Program program) {
         repository.merge(program);
     }
@@ -187,7 +197,7 @@ public class Gym {
         fireChanged();
     }
 
-    public void select(Program program) {
+    public void repeat(Program program) {
         this.pace = null;
         this.program = program;
 
@@ -198,12 +208,14 @@ public class Gym {
         fireChanged();
     }
 
-    public boolean select(Workout pace) {
-        Program program;
+    public void repeat(Workout pace) {
+        Program program = null;
         try {
             program = pace.program.get();
         } catch (LookupException programAlreadyDeleted) {
-            return false;
+            // fall back to challenge
+            challenge(pace);
+            return;
         }
 
         this.pace = pace;
@@ -214,12 +226,17 @@ public class Gym {
         this.progress = null;
 
         fireChanged();
-
-        return true;
     }
 
-    public boolean isSelected(Program program) {
-        return this.program != null && Row.getID(this.program) == Row.getID(program);
+    public void challenge(Workout pace) {
+        this.pace = pace;
+        this.program = Program.meters(context.getString(R.string.action_challenge), pace.distance.get(), Difficulty.NONE);
+
+        this.snapshot = null;
+        this.current = null;
+        this.progress = null;
+
+        fireChanged();
     }
 
     public Event addSnapshot(Snapshot snapshot) {
@@ -235,7 +252,7 @@ public class Gym {
 
                 if (current == null) {
                     event = Event.PROGRAM_START;
-                    current = new Workout(program);
+                    current = program.newWorkout();
                     current.location.set(getLocation());
 
                     progress = new Progress(program.getSegment(0), 0, new Snapshot());

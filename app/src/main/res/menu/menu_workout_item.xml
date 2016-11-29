@@ -4,6 +4,8 @@
 
     <item android:id="@+id/action_repeat" android:title="@string/action_repeat"
           android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_challenge" android:title="@string/action_challenge"
+          android:orderInCategory="100" android:showAsAction="never" />
     <item android:id="@+id/action_share" android:title="@string/action_share"
           android:orderInCategory="100" android:showAsAction="never"/>
     <item android:id="@+id/action_delete" android:title="@string/action_delete"

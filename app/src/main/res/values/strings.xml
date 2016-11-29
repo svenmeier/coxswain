@@ -15,32 +15,33 @@
     <string name="action_insert_before">Insert before</string>
     <string name="action_insert_after">Insert after</string>
     <string name="action_repeat">Repeat</string>
+    <string name="action_challenge">Challenge</string>
     <string name="action_new">New</string>
 
     <string name="gym_notification_connected">Connected to %s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
 
-    <string name="distance_meters">%s meters</string>
+    <string name="distance_meters">%d meters</string>
     <string name="distance_label">DISTANCE</string>
     <string name="distance_pattern">00000</string>
-    <string name="duration_minutes">%s minutes</string>
+    <string name="duration_minutes">%d minutes</string>
     <string name="duration_label">DURATION</string>
     <string name="duration_pattern">0:60:60</string>
     <string name="duration_short_pattern">60:60</string>
-    <string name="strokes_count">%s strokes</string>
+    <string name="strokes_count">%d strokes</string>
     <string name="strokes_label">STROKES</string>
     <string name="strokes_pattern">0000</string>
-    <string name="energy_calories">%s kcal</string>
+    <string name="energy_calories">%d kcal</string>
     <string name="energy_label">ENERGY</string>
     <string name="energy_pattern">0000</string>
-    <string name="strokeRate_strokesPerMinute">%s strokes per minute</string>
+    <string name="strokeRate_strokesPerMinute">%d strokes per minute</string>
     <string name="strokeRate_label">STROKERATE</string>
     <string name="strokeRate_pattern">-00</string>
-    <string name="pulse_beatsPerMinute">%s beats per minute</string>
+    <string name="pulse_beatsPerMinute">%d beats per minute</string>
     <string name="pulse_label">PULSE</string>
     <string name="pulse_pattern">-000</string>
-    <string name="speed_metersPerSecond">%s meters per second</string>
+    <string name="speed_metersPerSecond">%d meters per second</string>
     <string name="speed_label">SPEED</string>
     <string name="speed_pattern">-0.00</string>
     <string name="strokeRatio_label">STROKERATIO</string>
@@ -62,15 +63,18 @@
     <string name="workouts">Workouts</string>
     <string name="performance">Performance</string>
 
-    <string name="segments">Segments</string>
+    <string name="program_name_segments">Segments</string>
 
     <string name="calendar_export">Calendar</string>
 
     <string name="garmin_export">TCX</string>
     <string name="garmin_export_share">Share TCX ...</string>
     <string name="garmin_export_starting">Exporting to TCX</string>
-    <string name="garmin_export_finished">Exported to %s</string>
+    <string name="garmin_export_finished">TCX Exported to %s</string>
     <string name="garmin_export_failed">Export to TCX failed</string>
+    <string name="garmin_import_starting">Importing from TCX</string>
+    <string name="garmin_import_finished">Imported from TCX</string>
+    <string name="garmin_import_failed">Import from TCX failed</string>
 
     <string name="googlefit_failed">Google Fit not available</string>
     <string name="googlefit_export">Google Fit</string>

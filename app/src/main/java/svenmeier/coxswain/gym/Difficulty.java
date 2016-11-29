@@ -22,11 +22,17 @@ import java.util.List;
  * Created by sven on 07.07.15.
  */
 public enum Difficulty {
-    EASY, MEDIUM, HARD;
+    NONE, EASY, MEDIUM, HARD;
 
     public Difficulty increase() {
         Difficulty[] values = values();
 
-        return values[(ordinal() + 1) % values.length];
+        int next = ordinal() + 1;
+        if (next == 4) {
+            // never NONE
+            next = 1;
+        }
+
+        return values[next];
     }
 }

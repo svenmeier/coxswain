@@ -77,4 +77,12 @@ public class Workout extends Propoid {
         }
         return name;
     }
+
+    public boolean canRepeat() {
+        try {
+            return (program.get() != null);
+        } catch (LookupException programAlreadyDeleted) {
+            return false;
+        }
+    }
 }

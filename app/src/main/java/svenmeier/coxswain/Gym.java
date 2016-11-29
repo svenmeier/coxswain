@@ -40,6 +40,7 @@ import svenmeier.coxswain.gym.Workout;
 import static propoid.db.Where.all;
 import static propoid.db.Where.greaterEqual;
 import static propoid.db.Where.lessThan;
+import static propoid.db.Where.unequal;
 
 public class Gym {
 
@@ -170,7 +171,11 @@ public class Gym {
     public Match<Workout> getWorkouts(long from, long to) {
         Workout propotype = new Workout();
 
-        return repository.query(propotype, all(greaterEqual(propotype.start, from), lessThan(propotype.start, to)));
+        return repository.query(propotype, all(
+                unequal(propotype.program, null),
+                greaterEqual(propotype.start, from),
+                lessThan(propotype.start, to))
+        );
     }
 
     public void delete(Propoid propoid) {

@@ -103,11 +103,7 @@ public class WorkoutsFragment extends Fragment {
                     PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                     popup.getMenuInflater().inflate(R.menu.menu_workout_item, popup.getMenu());
 
-                    try {
-                        workout.program.get();
-                    } catch (LookupException programAlreadyDeleted) {
-                        popup.getMenu().findItem(R.id.action_repeat).setEnabled(false);
-                    }
+                    popup.getMenu().findItem(R.id.action_repeat).setEnabled(workout.canRepeat());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem item) {

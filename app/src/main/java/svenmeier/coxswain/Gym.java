@@ -28,6 +28,7 @@ import propoid.db.Match;
 import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.db.Repository;
+import propoid.db.Transaction;
 import propoid.db.Where;
 import propoid.db.aspect.Row;
 import propoid.db.cascading.DefaultCascading;
@@ -150,14 +151,19 @@ public class Gym {
         return repository.lookup(reference);
     }
 
-    public void add(Workout workout, List<Snapshot> snapshots) {
-        repository.merge(workout);
+    public void add(final Workout workout, final List<Snapshot> snapshots) {
+        repository.transactional(new Transaction() {
+            @Override
+            public void doTransactional() {
+                repository.merge(workout);
 
-        for (Snapshot snapshot : snapshots) {
-            snapshot.workout.set(workout);
+                for (Snapshot snapshot : snapshots) {
+                    snapshot.workout.set(workout);
 
-            repository.merge(snapshot);
-        }
+                    repository.merge(snapshot);
+                }
+            }
+        });
     }
 
     public void mergeProgram(Program program) {

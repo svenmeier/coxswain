@@ -20,10 +20,12 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.UUID;
 
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
@@ -355,20 +357,21 @@ public class BluetoothHeart extends Heart {
 
 		private boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {
 			if (candidate.setCharacteristicNotification(characteristic, true) == false) {
-				return false;
+				Log.d(Coxswain.TAG, "setCharacteristicNotification returns false - continuing");
 			}
 
 			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
 			if (descriptor == null) {
+				Log.d(Coxswain.TAG, "get descriptor CLIENT_CHARACTERISTIC_DESCIPRTOR returns null - aborting");
 				return false;
 			}
 
 			if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == false) {
-				return false;
+				Log.d(Coxswain.TAG, "set ENABLE_NOTIFICATION_VALUE returns false - continuing");
 			}
 
 			if (candidate.writeDescriptor(descriptor) == false) {
-				return false;
+				Log.d(Coxswain.TAG, "write descriptor returns false - continuing");
 			}
 
 			return true;

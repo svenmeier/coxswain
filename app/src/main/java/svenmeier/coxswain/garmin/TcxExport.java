@@ -111,7 +111,7 @@ public class TcxExport implements Export {
 
 			name.append(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(workout.start.get()));
 			name.append('_');
-			name.append(workout.name("UNKNOWN"));
+			name.append(workout.name("UNKNOWN").replaceAll("[_\\/]", " "));
 			name.append(SUFFIX);
 
 			return name.toString();

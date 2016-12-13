@@ -73,43 +73,4 @@ public class Protocol4Test {
 
 		assertEquals("#protocol 4>USB", trace.toString());
 	}
-
-	@Test
-	public void unsupportedFirst() throws Exception {
-		Snapshot memory = new Snapshot();
-
-		TestTransfer transfer = new TestTransfer();
-		TestTrace trace = new TestTrace();
-
-		Protocol4 protocol = new Protocol4(transfer, trace);
-		protocol.setOutputThrottle(0);
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
-		protocol.transfer(memory);
-		assertEquals(Protocol4.VERSION_UNSUPPORTED, protocol.getVersion());
-
-		assertEquals("#protocol 4#unsupported", trace.toString());
-	}
-
-	@Test
-	public void unsupportedAfterOutput() throws Exception {
-		Snapshot memory = new Snapshot();
-
-		TestTransfer transfer = new TestTransfer();
-		TestTrace trace = new TestTrace();
-
-		Protocol4 protocol = new Protocol4(transfer, trace);
-		protocol.setOutputThrottle(0);
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		protocol.transfer(memory);
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
-		protocol.transfer(memory);
-		assertEquals(Protocol4.VERSION_UNSUPPORTED, protocol.getVersion());
-
-		assertEquals("#protocol 4>USB#unsupported", trace.toString());
-	}
 }

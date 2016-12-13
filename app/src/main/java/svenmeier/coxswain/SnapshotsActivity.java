@@ -23,7 +23,6 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -40,7 +39,6 @@ import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
-import svenmeier.coxswain.view.ExportDialogFragment;
 import svenmeier.coxswain.view.TimelineView;
 import svenmeier.coxswain.view.Utils;
 

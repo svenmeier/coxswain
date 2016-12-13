@@ -1,4 +1,4 @@
-package svenmeier.coxswain.garmin;
+package svenmeier.coxswain.io;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,15 +21,17 @@ import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.garmin.Workout2TCX;
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
  */
-public class TcxExport implements Export<Workout> {
+public class ProgramExport implements Export<Program> {
 
-	public static final String SUFFIX = ".tcx";
+	public static final String SUFFIX = ".coxswain";
 
 	private final boolean share;
 
@@ -39,7 +41,7 @@ public class TcxExport implements Export<Workout> {
 
 	private final Gym gym;
 
-	public TcxExport(Context context, boolean share) {
+	public ProgramExport(Context context, boolean share) {
 		this.context = context;
 
 		this.share = share;
@@ -50,25 +52,25 @@ public class TcxExport implements Export<Workout> {
 	}
 
 	@Override
-	public void start(Workout workout) {
-		new Writing(workout);
+	public void start(Program program) {
+		new Writing(program);
 	}
 
 	private class Writing extends PermissionBlock implements Runnable {
 
-		private final Workout workout;
+		private final Program program;
 
-		public Writing(Workout workout) {
+		public Writing(Program program) {
 			super(context);
 
-			this.workout = workout;
+			this.program = program;
 
 			acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 		}
 
 		@Override
 		protected void onRejected() {
-			toast(context.getString(R.string.garmin_export_failed));
+			toast(context.getString(R.string.program_export_failed));
 		}
 
 		@Override
@@ -78,16 +80,14 @@ public class TcxExport implements Export<Workout> {
 
 		@Override
 		public void run() {
-			toast(context.getString(R.string.garmin_export_starting));
-
-			Match<Snapshot> snapshots = gym.getSnapshots(workout);
+			toast(context.getString(R.string.program_export_starting));
 
 			File file;
 			try {
-				file = write(snapshots);
+				file = write();
 			} catch (IOException e) {
 				Log.e(Coxswain.TAG, "export failed", e);
-				toast(context.getString(R.string.garmin_export_failed));
+				toast(context.getString(R.string.program_export_failed));
 				return;
 			}
 
@@ -97,7 +97,7 @@ public class TcxExport implements Export<Workout> {
 			if (share) {
 				share(file);
 			} else {
-				toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
+				toast(String.format(context.getString(R.string.program_export_finished), file.getAbsolutePath()));
 			}
 		}
 
@@ -106,23 +106,21 @@ public class TcxExport implements Export<Workout> {
 			Uri uri = Uri.fromFile(file);
 			shareIntent.setType("text/xml");
 			shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, file.getName());
+			shareIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
 
-			context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.garmin_export)));
+			context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.program_export)));
 		}
 
 		public String getFileName() {
 			StringBuilder name = new StringBuilder();
 
-			name.append(new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(workout.start.get()));
-			name.append('_');
-			name.append(workout.name("UNKNOWN").replaceAll("[_\\/]", " "));
+			name.append(program.name.get().replaceAll("[\\/]", " "));
 			name.append(SUFFIX);
 
 			return name.toString();
 		}
 
-		private File write(Match<Snapshot> snapshots) throws IOException {
+		private File write() throws IOException {
 			File dir = Environment.getExternalStoragePublicDirectory(Coxswain.TAG);
 			dir.mkdirs();
 			dir.setReadable(true, false);
@@ -131,7 +129,7 @@ public class TcxExport implements Export<Workout> {
 
 			Writer writer = new BufferedWriter(new FileWriter(file));
 			try {
-				new Workout2TCX(writer).document(workout, snapshots.list());
+				new Program2Json(writer).document(program);
 			} finally {
 				writer.close();
 			}

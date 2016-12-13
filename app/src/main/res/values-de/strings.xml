@@ -1,6 +1,6 @@
 <resources>
     <string name="action_mock">Mock</string>
-    <string name="action_share">Teilen</string>
+    <string name="action_export">Exportieren</string>
     <string name="action_bind">Verknüpfen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_rename">Umbenennen</string>
@@ -65,14 +65,23 @@
 
     <string name="calendar_export">Kalender</string>
 
+    <string name="program_export">Datei</string>
+    <string name="program_export_share">Teilen ...</string>
+    <string name="program_export_starting">Exportiere Programm</string>
+    <string name="program_export_finished">Programm exportiert nach %s</string>
+    <string name="program_export_failed">Export des Programs gescheitert</string>
+    <string name="program_import_starting">Importiere Programm</string>
+    <string name="program_import_finished">Programm wurde importiert</string>
+    <string name="program_import_failed">Import des Programms gescheitert</string>
+
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_share">TCX mit ...</string>
-    <string name="garmin_export_starting">Exportiere nach TCX</string>
-    <string name="garmin_export_finished">TCX exportiert nach %s</string>
-    <string name="garmin_export_failed">Export nach TCX gescheitert</string>
-    <string name="garmin_import_starting">Importiere von TCX</string>
-    <string name="garmin_import_finished">Importiert von TCX</string>
-    <string name="garmin_import_failed">Import von TCX gescheitert</string>
+    <string name="garmin_export_share">TCX teilen ...</string>
+    <string name="garmin_export_starting">Exportiere Training</string>
+    <string name="garmin_export_finished">Training exportiert nach %s</string>
+    <string name="garmin_export_failed">Export des Trainings gescheitert</string>
+    <string name="garmin_import_starting">Importiere Training</string>
+    <string name="garmin_import_finished">Training wurde importiert</string>
+    <string name="garmin_import_failed">Import des Trainings gescheitert</string>
 
     <string name="googlefit_failed">Google Fit ist nicht verfügbar</string>
     <string name="googlefit_export">Google Fit</string>

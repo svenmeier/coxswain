@@ -122,6 +122,10 @@ public class ProgramsFragment extends Fragment {
                                 case R.id.action_edit:
                                     startActivity(ProgramActivity.createIntent(getActivity(), program));
                                     return true;
+                                case R.id.action_export:
+                                    ExportProgramDialogFragment.create(program).show(getFragmentManager(), "export");
+
+                                    return true;
                                 case R.id.action_delete:
                                     DeleteDialogFragment.create(program).show(getFragmentManager(), "delete");
 

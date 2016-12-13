@@ -1,4 +1,4 @@
-package svenmeier.coxswain.util;
+package svenmeier.coxswain.io;
 
 import android.util.JsonReader;
 
@@ -61,25 +61,25 @@ public class Json2Program {
 		while (reader.hasNext()) {
 			switch (reader.nextName()) {
 				case "distance":
-					segment.distance.set(reader.nextInt());
+					segment.setDistance(reader.nextInt());
 					break;
 				case "duration":
-					segment.duration.set(reader.nextInt());
+					segment.setDuration(reader.nextInt());
 					break;
 				case "strokes":
-					segment.strokes.set(reader.nextInt());
+					segment.setStrokes(reader.nextInt());
 					break;
 				case "energy":
-					segment.energy.set(reader.nextInt());
+					segment.setEnergy(reader.nextInt());
 					break;
 				case "speed":
-					segment.speed.set(reader.nextInt());
+					segment.setSpeed(reader.nextInt());
 					break;
 				case "strokeRate":
-					segment.strokeRate.set(reader.nextInt());
+					segment.setStrokeRate(reader.nextInt());
 					break;
 				case "pulse":
-					segment.pulse.set(reader.nextInt());
+					segment.setPulse(reader.nextInt());
 					break;
 			}
 		}

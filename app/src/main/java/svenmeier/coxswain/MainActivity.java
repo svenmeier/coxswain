@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import svenmeier.coxswain.garmin.TcxImport;
 import svenmeier.coxswain.gym.Program;
+import svenmeier.coxswain.io.ProgramImport;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
@@ -172,7 +173,12 @@ public class MainActivity extends AbstractActivity {
             try {
                 Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 
-                new TcxImport(this).start(uri);
+                String extension = uri.getLastPathSegment().substring(uri.getLastPathSegment().lastIndexOf('.'));
+                if (".tcx".equalsIgnoreCase(extension)) {
+                    new TcxImport(this).start(uri);
+                } else if (".coxswain".equalsIgnoreCase(extension)) {
+                    new ProgramImport(this).start(uri);
+                }
             } catch (Exception ex) {
                 Log.e(Coxswain.TAG, ex.getMessage());
             }

@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
-    <string name="action_share">Share</string>
+    <string name="action_export">Export</string>
     <string name="action_bind">Bind</string>
     <string name="action_settings">Settings</string>
     <string name="action_rename">Rename</string>
@@ -67,14 +67,23 @@
 
     <string name="calendar_export">Calendar</string>
 
+    <string name="program_export">File</string>
+    <string name="program_export_share">Share ...</string>
+    <string name="program_export_starting">Exporting to file</string>
+    <string name="program_export_finished">Program exported to %s</string>
+    <string name="program_export_failed">Exporting program failed</string>
+    <string name="program_import_starting">Importing program</string>
+    <string name="program_import_finished">Program imported</string>
+    <string name="program_import_failed">Importing program failed</string>
+
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_share">TCX with ...</string>
-    <string name="garmin_export_starting">Exporting to TCX</string>
-    <string name="garmin_export_finished">TCX Exported to %s</string>
-    <string name="garmin_export_failed">Export to TCX failed</string>
-    <string name="garmin_import_starting">Importing from TCX</string>
-    <string name="garmin_import_finished">Imported from TCX</string>
-    <string name="garmin_import_failed">Import from TCX failed</string>
+    <string name="garmin_export_share">Share TCX ...</string>
+    <string name="garmin_export_starting">Exporting workout</string>
+    <string name="garmin_export_finished">Workout exported to %s</string>
+    <string name="garmin_export_failed">Exporting workout failed</string>
+    <string name="garmin_import_starting">Importing workout</string>
+    <string name="garmin_import_finished">Workout imported</string>
+    <string name="garmin_import_failed">Import of workout failed</string>
 
     <string name="googlefit_failed">Google Fit not available</string>
     <string name="googlefit_export">Google Fit</string>

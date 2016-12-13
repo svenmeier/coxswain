@@ -1,4 +1,4 @@
-package svenmeier.coxswain.calendar;
+package svenmeier.coxswain.io;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import svenmeier.coxswain.gym.Workout;
 
 /**
  */
-public class CalendarExport implements Export {
+public class CalendarExport implements Export<Workout> {
 
 	private final Context context;
 

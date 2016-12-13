@@ -29,7 +29,6 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import propoid.db.LookupException;
 import propoid.db.Order;
 import propoid.ui.Index;
 import propoid.ui.list.MatchAdapter;
@@ -112,8 +111,8 @@ public class WorkoutsFragment extends Fragment {
                                     DeleteDialogFragment.create(workout).show(getFragmentManager(), "delete");
 
                                     return true;
-                                case R.id.action_share:
-                                    ExportDialogFragment.create(workout).show(getFragmentManager(), "export");
+                                case R.id.action_export:
+                                    ExportWorkoutDialogFragment.create(workout).show(getFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_repeat:

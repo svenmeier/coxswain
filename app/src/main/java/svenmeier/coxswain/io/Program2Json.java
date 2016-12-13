@@ -1,4 +1,4 @@
-package svenmeier.coxswain.util;
+package svenmeier.coxswain.io;
 
 import android.location.Location;
 import android.util.JsonWriter;
@@ -23,7 +23,7 @@ public class Program2Json {
 
 	public Program2Json(Writer writer) throws IOException {
 		this.writer = new JsonWriter(writer);
-//		this.writer.setIndent("  ");
+		this.writer.setIndent("  ");
 	}
 
 	public void document(Program program) throws IOException {

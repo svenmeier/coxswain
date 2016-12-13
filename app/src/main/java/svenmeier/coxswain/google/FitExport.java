@@ -30,7 +30,7 @@ import svenmeier.coxswain.gym.Workout;
 
 /**
  */
-public class FitExport implements Export {
+public class FitExport implements Export<Workout> {
 
 	private Context context;
 

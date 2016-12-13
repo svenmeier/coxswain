@@ -10,14 +10,14 @@ import propoid.db.Reference;
 import svenmeier.coxswain.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.calendar.CalendarExport;
+import svenmeier.coxswain.io.CalendarExport;
 import svenmeier.coxswain.garmin.TcxExport;
 import svenmeier.coxswain.google.FitExport;
 import svenmeier.coxswain.gym.Workout;
 
-public class ExportDialogFragment extends DialogFragment {
+public class ExportWorkoutDialogFragment extends DialogFragment {
 
-	private Export export;
+	private Export<Workout> export;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class ExportDialogFragment extends DialogFragment {
 
 		String[] exports = new String[]{getString(R.string.calendar_export), getString(R.string.garmin_export), getString(R.string.garmin_export_share), getString(R.string.googlefit_export)};
 
-		builder.setTitle(R.string.action_share)
+		builder.setTitle(R.string.action_export)
 				.setItems(exports, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
@@ -55,8 +55,8 @@ public class ExportDialogFragment extends DialogFragment {
 		return builder.create();
 	}
 
-	public static ExportDialogFragment create(Workout workout) {
-		ExportDialogFragment fragment = new ExportDialogFragment();
+	public static ExportWorkoutDialogFragment create(Workout workout) {
+		ExportWorkoutDialogFragment fragment = new ExportWorkoutDialogFragment();
 
 		fragment.setArguments(new Reference<>(workout).to(new Bundle()));
 

@@ -12,7 +12,7 @@ import java.io.Writer;
 import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
-import svenmeier.coxswain.util.Program2Json;
+import svenmeier.coxswain.io.Program2Json;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -35,6 +35,8 @@ public class Program2JsonTest {
 
 		new Program2Json(writer).document(program);
 
-		assertEquals("{\"name\":\"Test\",\"segments\":[{\"difficulty\":\"EASY\",\"distance\":1000},{\"difficulty\":\"HARD\",\"duration\":60}]}", writer.toString());
+		String actual = writer.toString().replaceAll("[\\s]", "");
+
+		assertEquals("{\"name\":\"Test\",\"segments\":[{\"difficulty\":\"EASY\",\"distance\":1000},{\"difficulty\":\"HARD\",\"duration\":60}]}", actual);
 	}
 }

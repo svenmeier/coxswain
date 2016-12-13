@@ -5,7 +5,7 @@ import svenmeier.coxswain.gym.Workout;
 /**
  * Created by sven on 27.05.16.
  */
-public interface Export {
+public interface Export<T> {
 
-	void start(Workout workout);
+	void start(T t);
 }

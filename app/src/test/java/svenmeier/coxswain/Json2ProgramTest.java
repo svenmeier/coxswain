@@ -8,14 +8,11 @@ import org.robolectric.annotation.Config;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 
 import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
-import svenmeier.coxswain.util.Json2Program;
-import svenmeier.coxswain.util.Program2Json;
+import svenmeier.coxswain.io.Json2Program;
 
 import static junit.framework.Assert.assertEquals;
 

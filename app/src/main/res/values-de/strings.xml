@@ -92,6 +92,10 @@
     <string name="sensors_heart_not_found">Kein Puls-Sensor gefunden</string>
     <string name="sensors_heart_reading">Lese Puls-Sensor</string>
 
+    <string name="ant_heart_dependency_not_installed">Ant+ ist nicht verfügbar</string>
+    <string name="ant_heart_not_found">Kein Puls über Ant+ gefunden</string>
+    <string name="ant_heart_reading">Lese Puls über Ant+</string>
+
     <string name="bluetooth_heart_no_bluetooth">Kein Bluetooth verfügbar</string>
     <string name="bluetooth_heart_no_bluetooth_le">Kein Bluetooth LE verfügbar</string>
     <string name="bluetooth_heart_no_location">Standortdienste müssen zum Zugriff auf Bluetooth aktiviert sein</string>

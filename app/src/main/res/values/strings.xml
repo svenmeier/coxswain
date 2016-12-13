@@ -94,6 +94,10 @@
     <string name="sensors_heart_not_found">No Heart rate sensor found</string>
     <string name="sensors_heart_reading">Reading heart rate sensor</string>
 
+    <string name="ant_heart_dependency_not_installed">Ant+ is not available</string>
+    <string name="ant_heart_not_found">No heart rate found via Ant+</string>
+    <string name="ant_heart_reading">Reading heart rate via Ant+</string>
+
     <string name="bluetooth_heart_no_bluetooth">No Bluetooth available</string>
     <string name="bluetooth_heart_no_bluetooth_le">No Bluetooth LE available</string>
     <string name="bluetooth_heart_no_location">Location services must be enabled to access Bluetooth</string>

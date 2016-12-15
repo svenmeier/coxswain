@@ -20,6 +20,8 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.MainThread;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -273,11 +275,16 @@ public class BluetoothHeart extends Heart {
 			handler.postDelayed(this, SCAN_TIMEOUT_MILLIS);
 		}
 
-		public synchronized void close() {
+		@SuppressWarnings("deprecation")
+		private void stopScan() {
 			if (adapter != null) {
 				adapter.stopLeScan(this);
 				adapter = null;
 			}
+		}
+
+		public void close() {
+			stopScan();
 
 			if (gatt != null) {
 				gatt.close();
@@ -285,6 +292,24 @@ public class BluetoothHeart extends Heart {
 			}
 		}
 
+		/**
+		 * Timeout, see {@link #SCAN_TIMEOUT_MILLIS}
+		 */
+		@MainThread
+		@Override
+		public void run() {
+			// still scanning?
+			if (adapter != null) {
+				if (gatt == null) {
+					// nothing found
+					toast(context.getString(R.string.bluetooth_heart_not_found));
+
+					stopScan();
+				}
+			}
+		}
+
+		@WorkerThread
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 			if (gatt != null) {
@@ -295,25 +320,7 @@ public class BluetoothHeart extends Heart {
 			device.connectGatt(context, false, this);
 		}
 
-		/**
-		 * Timeout, see {@link #SCAN_TIMEOUT_MILLIS}
-		 */
-		@Override
-		public void run() {
-			// still scanning?
-			if (adapter != null) {
-				if (gatt == null) {
-					toast(context.getString(R.string.bluetooth_heart_not_found));
-
-					close();
-				} else {
-					adapter.stopLeScan(this);
-					adapter = null;
-				}
-			}
-		}
-
-		// not called on main thread!
+		@WorkerThread
 		@Override
 		public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
 			if (adapter == null || gatt != null) {
@@ -321,12 +328,12 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			if (newState == BluetoothProfile.STATE_CONNECTED) {
+			if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
 				candidate.discoverServices();
 			}
 		}
 
-		// not called on main thread!
+		@WorkerThread
 		@Override
 		public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
 			if (adapter == null || gatt != null) {
@@ -334,20 +341,24 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
+			if (status == BluetoothGatt.GATT_SUCCESS) {
+				BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
+				if (service != null) {
+					BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
+					if (characteristic != null) {
+						if (enableNotification(candidate, characteristic)) {
+							gatt = candidate;
 
-			BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
-			if (service != null) {
-				BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
-				if (characteristic != null) {
-					if (enableNotification(candidate, characteristic)) {
-						gatt = candidate;
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								toast(context.getString(R.string.bluetooth_heart_reading));
-							}
-						});
-						return;
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									toast(context.getString(R.string.bluetooth_heart_reading));
+
+									stopScan();
+								}
+							});
+							return;
+						}
 					}
 				}
 			}
@@ -377,8 +388,8 @@ public class BluetoothHeart extends Heart {
 			return true;
 		}
 
-		// not called on main thread!
 		@Override
+		@WorkerThread
 		public synchronized void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			int format;
 			if ((characteristic.getProperties() & 0x01) == 0) {
@@ -391,7 +402,7 @@ public class BluetoothHeart extends Heart {
 		}
 	}
 
-	private static final UUID uuid(int id) {
+	public static final UUID uuid(int id) {
 		return UUID.fromString(String.format("%08X", id) + "-0000-1000-8000-00805f9b34fb");
 	}
 }

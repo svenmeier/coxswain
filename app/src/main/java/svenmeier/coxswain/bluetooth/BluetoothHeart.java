@@ -25,6 +25,8 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import svenmeier.coxswain.Coxswain;
@@ -258,7 +260,8 @@ public class BluetoothHeart extends Heart {
 
 		private BluetoothAdapter adapter;
 
-		private BluetoothGatt gatt;
+		private List<BluetoothGatt> pending = new ArrayList<>();
+		private BluetoothGatt selected;
 
 		@Override
 		public void open() {
@@ -275,20 +278,26 @@ public class BluetoothHeart extends Heart {
 			handler.postDelayed(this, SCAN_TIMEOUT_MILLIS);
 		}
 
+		@MainThread
 		@SuppressWarnings("deprecation")
 		private void stopScan() {
 			if (adapter != null) {
 				adapter.stopLeScan(this);
 				adapter = null;
 			}
+
+			for (BluetoothGatt gatt : pending) {
+				gatt.close();
+			}
+			pending.clear();
 		}
 
 		public void close() {
 			stopScan();
 
-			if (gatt != null) {
-				gatt.close();
-				gatt = null;
+			if (selected != null) {
+				selected.close();
+				selected = null;
 			}
 		}
 
@@ -300,7 +309,7 @@ public class BluetoothHeart extends Heart {
 		public void run() {
 			// still scanning?
 			if (adapter != null) {
-				if (gatt == null) {
+				if (selected == null) {
 					// nothing found
 					toast(context.getString(R.string.bluetooth_heart_not_found));
 
@@ -312,7 +321,7 @@ public class BluetoothHeart extends Heart {
 		@WorkerThread
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-			if (gatt != null) {
+			if (selected != null) {
 				// no more discovery
 				return;
 			}
@@ -323,12 +332,14 @@ public class BluetoothHeart extends Heart {
 		@WorkerThread
 		@Override
 		public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
-			if (adapter == null || gatt != null) {
+			if (adapter == null || selected != null) {
 				// no more discovery
 				return;
 			}
 
 			if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
+				pending.add(candidate);
+
 				candidate.discoverServices();
 			}
 		}
@@ -336,7 +347,7 @@ public class BluetoothHeart extends Heart {
 		@WorkerThread
 		@Override
 		public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
-			if (adapter == null || gatt != null) {
+			if (adapter == null || selected != null) {
 				// no more discovery
 				return;
 			}
@@ -347,7 +358,8 @@ public class BluetoothHeart extends Heart {
 					BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
 					if (characteristic != null) {
 						if (enableNotification(candidate, characteristic)) {
-							gatt = candidate;
+							selected = candidate;
+							pending.remove(candidate);
 
 							handler.post(new Runnable() {
 								@Override
@@ -362,8 +374,6 @@ public class BluetoothHeart extends Heart {
 					}
 				}
 			}
-
-			candidate.close();
 		}
 
 		private boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {

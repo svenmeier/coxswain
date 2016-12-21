@@ -8,6 +8,7 @@ import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
@@ -65,11 +66,13 @@ public class AntHeart extends Heart {
 
 	private class AntConnection implements Connection, AntPluginPcc.IDeviceStateChangeReceiver, AntPluginPcc.IPluginAccessResultReceiver<AntPlusHeartRatePcc>, AntPlusHeartRatePcc.IHeartRateDataReceiver {
 
+		private PccReleaseHandle<AntPlusHeartRatePcc> handle;
+
 		private AntPlusHeartRatePcc pcc;
 
 		@Override
 		public void open() {
-			AntPlusHeartRatePcc.requestAccess(context, FIRST_AVAILABLE_DEVICE, NO_PROXIMITY_SEARCH, this, this);
+			handle = AntPlusHeartRatePcc.requestAccess(context, FIRST_AVAILABLE_DEVICE, NO_PROXIMITY_SEARCH, this, this);
 		}
 
 		@Override
@@ -77,6 +80,11 @@ public class AntHeart extends Heart {
 			if (pcc != null) {
 				pcc.releaseAccess();
 				pcc = null;
+			}
+
+			if (handle != null) {
+				handle.close();
+				handle = null;
 			}
 		}
 

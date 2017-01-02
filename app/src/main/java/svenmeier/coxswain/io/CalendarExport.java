@@ -7,7 +7,6 @@ import android.provider.CalendarContract;
 import android.text.TextUtils;
 
 import propoid.db.mapping.LocationMapper;
-import svenmeier.coxswain.Export;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
 

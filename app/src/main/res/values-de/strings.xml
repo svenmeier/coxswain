@@ -63,6 +63,8 @@
 
     <string name="program_name_segments">Segmente</string>
 
+    <string name="import_unknown">Unbekanntes Import Format</string>
+
     <string name="calendar_export">Kalender</string>
 
     <string name="program_export">Datei</string>

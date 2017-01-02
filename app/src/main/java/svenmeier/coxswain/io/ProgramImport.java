@@ -24,7 +24,7 @@ import svenmeier.coxswain.gym.Workout;
 
 /**
  */
-public class ProgramImport {
+public class ProgramImport implements Import<Program> {
 
 	private Context context;
 

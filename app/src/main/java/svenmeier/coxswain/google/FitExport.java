@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.Export;
+import svenmeier.coxswain.io.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;

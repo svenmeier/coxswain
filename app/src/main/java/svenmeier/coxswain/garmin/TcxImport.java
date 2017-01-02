@@ -19,10 +19,11 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.io.Import;
 
 /**
  */
-public class TcxImport {
+public class TcxImport implements Import<Workout> {
 
 	private Context context;
 

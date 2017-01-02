@@ -65,6 +65,8 @@
 
     <string name="program_name_segments">Segments</string>
 
+    <string name="import_unknown">Unkown import format</string>
+
     <string name="calendar_export">Calendar</string>
 
     <string name="program_export">File</string>

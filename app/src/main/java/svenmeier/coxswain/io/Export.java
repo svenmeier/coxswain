@@ -1,4 +1,4 @@
-package svenmeier.coxswain;
+package svenmeier.coxswain.io;
 
 import svenmeier.coxswain.gym.Workout;
 

@@ -14,17 +14,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
 
-import propoid.db.Match;
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.garmin.Workout2TCX;
 import svenmeier.coxswain.gym.Program;
-import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**

@@ -137,7 +137,7 @@ public class MainActivity extends AbstractActivity {
      * @param intent possible USB device connect
      */
     private boolean checkUsbDevice(Intent intent) {
-        if ("USB_DEVICE_ATTACHED".equals(intent.getAction())) {
+        if (UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(intent.getAction())) {
             UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
             if (device != null) {
                 GymService.start(this, device);

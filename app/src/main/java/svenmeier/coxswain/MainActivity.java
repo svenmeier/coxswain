@@ -20,12 +20,9 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,11 +30,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import svenmeier.coxswain.garmin.TcxImport;
 import svenmeier.coxswain.gym.Program;
-import svenmeier.coxswain.io.ProgramImport;
-import svenmeier.coxswain.view.ProgramsFragment;
+import svenmeier.coxswain.io.ImportIntention;
 import svenmeier.coxswain.view.PerformanceFragment;
+import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
 
 
@@ -65,7 +61,7 @@ public class MainActivity extends AbstractActivity {
 
         setContentView(R.layout.layout_main);
 
-        checkUsbDevice(getIntent());
+        onNewIntent(getIntent());
 
         pager = (ViewPager) findViewById(R.id.main_pager);
         pager.setAdapter(new MainAdapter(getFragmentManager()));
@@ -140,49 +136,37 @@ public class MainActivity extends AbstractActivity {
      *
      * @param intent possible USB device connect
      */
-    private void checkUsbDevice(Intent intent) {
-        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-        if (device != null) {
-            GymService.start(this, device);
+    private boolean checkUsbDevice(Intent intent) {
+        if ("USB_DEVICE_ATTACHED".equals(intent.getAction())) {
+            UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+            if (device != null) {
+                GymService.start(this, device);
 
-            // removeBinding device so that a successive orientation changes
-            // do not trigger repeated service starts
-            intent.removeExtra(UsbManager.EXTRA_DEVICE);
-
-            if (gym.program == null) {
-                // try to unlock device - has no effect if this activity is already running :/
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            } else {
-                // program is already selected so restart workout
-                WorkoutActivity.start(this);
+                if (gym.program == null) {
+                    // try to unlock device - has no effect if this activity is already running :/
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+                } else {
+                    // program is already selected so restart workout
+                    WorkoutActivity.start(this);
+                }
             }
+
+            return true;
         }
+
+        return false;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         checkUsbDevice(intent);
 
-        checkImport(intent);
-    }
+        new ImportIntention(this).onIntent(intent);
 
-    private void checkImport(Intent intent) {
-        if (intent.getAction() == Intent.ACTION_SEND) {
-            try {
-                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-
-                String extension = uri.getLastPathSegment().substring(uri.getLastPathSegment().lastIndexOf('.'));
-                if (".tcx".equalsIgnoreCase(extension)) {
-                    new TcxImport(this).start(uri);
-                } else if (".coxswain".equalsIgnoreCase(extension)) {
-                    new ProgramImport(this).start(uri);
-                }
-            } catch (Exception ex) {
-                Log.e(Coxswain.TAG, ex.getMessage());
-            }
-        }
+        // consume intent
+        intent.setAction(null);
     }
 
     @Override

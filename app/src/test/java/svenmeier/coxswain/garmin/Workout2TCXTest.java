@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 
@@ -51,7 +52,11 @@ public class Workout2TCXTest {
 
 	@Test
 	public void snapshots() throws IOException {
+		Program program = new Program();
+		program.name.set("Test Program");
+
 		Workout workout = new Workout();
+		workout.program.set(program);
 		workout.start.set(Mon_Jun_15_2015 + (60 * 1000));
 		workout.duration.set(2);
 		workout.distance.set(6);

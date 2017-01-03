@@ -70,16 +70,17 @@ public class TcxImport implements Import<Workout> {
 
 		private void write() throws IOException, ParseException {
 
-			Pair<Workout, List<Snapshot>> pair;
+			TCX2Workout tcx2Workout;
 
 			Reader reader = new BufferedReader(new InputStreamReader(context.getContentResolver().openInputStream(uri)));
 			try {
-				pair = new TCX2Workout(reader).workout();
+				tcx2Workout = new TCX2Workout(reader);
+				tcx2Workout.workout();
 			} finally {
 				reader.close();
 			}
 
-			gym.add(pair.first, pair.second);
+			gym.add(tcx2Workout.getProgramName(), tcx2Workout.getWorkout(), tcx2Workout.getSnapshots());
 		}
 	}
 

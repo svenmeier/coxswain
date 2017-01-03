@@ -32,9 +32,9 @@ public class TCX2WorkoutTest {
 	public void snapshots() throws IOException, ParseException {
 		Reader reader = new InputStreamReader(getClass().getResourceAsStream("/snapshots.tcx"));
 
-		Pair<Workout, List<Snapshot>> pair = new TCX2Workout(reader).workout();
+		TCX2Workout to = new TCX2Workout(reader).workout();
 
-		Workout workout = pair.first;
+		Workout workout = to.getWorkout();
 
 		assertEquals(Mon_Jun_15_2015 + (60 * 1000), (long)workout.start.get());
 		assertEquals(3, (int)workout.duration.get());
@@ -42,7 +42,7 @@ public class TCX2WorkoutTest {
 		assertEquals(2, (int)workout.strokes.get());
 		assertEquals(3, (int)workout.energy.get());
 
-		List<Snapshot> snapshots = pair.second;
+		List<Snapshot> snapshots = to.getSnapshots();
 
 		assertEquals(3, snapshots.size());
 
@@ -66,5 +66,7 @@ public class TCX2WorkoutTest {
 		assertEquals(27, (int)snapshot.strokeRate.get());
 		assertEquals(6, (int)snapshot.distance.get());
 		assertEquals(0, (int)snapshot.strokes.get()); // trackpoints do not have steps
+
+		assertEquals("Test Program", to.getProgramName());
 	}
 }

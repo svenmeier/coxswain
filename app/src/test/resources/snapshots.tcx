@@ -63,7 +63,7 @@
       <Notes>Created by Coxswain</Notes>
       <Training VirtualPartner="true">
         <Plan Type="Workout" IntervalWorkout="true">
-          <Name>-</Name>
+          <Name>Test Program</Name>
         </Plan>
       </Training>
     </Activity>

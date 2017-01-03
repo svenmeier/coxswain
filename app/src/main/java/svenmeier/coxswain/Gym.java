@@ -151,10 +151,14 @@ public class Gym {
         return repository.lookup(reference);
     }
 
-    public void add(final Workout workout, final List<Snapshot> snapshots) {
+    public void add(final String programName, final Workout workout, final List<Snapshot> snapshots) {
+
         repository.transactional(new Transaction() {
             @Override
             public void doTransactional() {
+                Program example = new Program();
+
+                workout.program.set(repository.query(example, Where.equal(example.name, programName)).first());
                 repository.merge(workout);
 
                 for (Snapshot snapshot : snapshots) {

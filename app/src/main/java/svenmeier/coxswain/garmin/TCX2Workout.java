@@ -24,6 +24,12 @@ public class TCX2Workout {
 
 	private SimpleDateFormat dateFormat;
 
+	private Workout workout;
+
+	private List<Snapshot> snapshots;
+
+	private String programName;
+
 	public TCX2Workout(Reader reader) throws IOException {
 		navigator = new XmlNavigator(reader);
 
@@ -32,12 +38,24 @@ public class TCX2Workout {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
-	public Pair<Workout, List<Snapshot>> workout() throws IOException, ParseException {
+	public Workout getWorkout() {
+		return workout;
+	}
+
+	public List<Snapshot> getSnapshots() {
+		return snapshots;
+	}
+
+	public String getProgramName() {
+		return programName;
+	}
+
+	public TCX2Workout workout() throws IOException, ParseException {
 		if (navigator.descent("Activity") == false) {
 			throw new ParseException("<Activity> missing", navigator.offset());
 		}
 
-		Workout workout = new Workout();
+		this.workout = new Workout();
 
 		if (navigator.descent("Lap") == false) {
 			throw new ParseException("<Lap> missing", navigator.offset());
@@ -49,7 +67,7 @@ public class TCX2Workout {
 		workout.distance.set(Integer.parseInt(navigator.getText("DistanceMeters")));
 		workout.energy.set(Integer.parseInt(navigator.getText("Calories")));
 
-		List<Snapshot> snapshots = snapshots(workout);
+		this.snapshots = snapshots(workout);
 
 		workout.duration.set(snapshots.size());
 
@@ -62,9 +80,24 @@ public class TCX2Workout {
 		}
 
 		navigator.ascent();
+
+		training();
+
 		navigator.ascent();
 
-		return new Pair(workout, snapshots);
+		return this;
+	}
+
+	private void training() throws IOException {
+		if (navigator.descent("Training")) {
+			if (navigator.descent("Plan")) {
+				programName = navigator.getText("Name");
+
+				navigator.ascent();
+			}
+
+			navigator.ascent();
+		}
 	}
 
 	private List<Snapshot> snapshots(Workout workout) throws IOException {

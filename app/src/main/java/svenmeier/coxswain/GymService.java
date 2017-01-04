@@ -49,8 +49,6 @@ public class GymService extends Service {
 
     private Snapshot memory = new Snapshot();
 
-    private Preference<Boolean> headsup;
-
     private Preference<Boolean> openEnd;
 
     private Rowing rowing;
@@ -65,7 +63,6 @@ public class GymService extends Service {
         gym = Gym.instance(this);
 
         openEnd = Preference.getBoolean(this, R.string.preference_open_end);
-        headsup = Preference.getBoolean(this, R.string.preference_integration_headsup);
 
         foreground = new Foreground();
 
@@ -226,6 +223,8 @@ public class GymService extends Service {
 
     private class Foreground {
 
+        private Preference<Boolean> headsup;
+
         private boolean started;
 
         private String text;
@@ -237,6 +236,8 @@ public class GymService extends Service {
         private Notification.Builder builder;
 
         public Foreground() {
+            headsup = Preference.getBoolean(GymService.this, R.string.preference_integration_headsup);
+
             builder = new Notification.Builder(GymService.this)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.app_name))

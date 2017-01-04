@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain.rower.water;
 
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
@@ -50,7 +51,7 @@ public class Protocol3 implements IProtocol {
     }
 
     @Override
-    public boolean transfer(Rower rower) {
+    public boolean transfer(Measurement measurement) {
         int length = transfer.bulkInput();
 
         byte[] buffer = transfer.buffer();
@@ -63,22 +64,22 @@ public class Protocol3 implements IProtocol {
                     if (c + 1 < length) {
                         trace(buffer, c, 2);
 
-                        rower.pulse = buffer[++c] & 0xFF;
+                        measurement.pulse = buffer[++c] & 0xFF;
                     }
                     continue;
                 case (byte)0xFC:
                     trace(buffer, c, 1);
 
-                    rower.strokes = rower.strokes + 1;
+                    measurement.strokes = measurement.strokes + 1;
 
-                    ratioCalculator.recovering(rower, System.currentTimeMillis());
+                    ratioCalculator.recovering(measurement, System.currentTimeMillis());
 
                     continue;
                 case (byte)0xFD:
                     if (c + 2 < length) {
                         trace(buffer, c, 3);
 
-                        ratioCalculator.pulling(rower, System.currentTimeMillis());
+                        ratioCalculator.pulling(measurement, System.currentTimeMillis());
 
                         // voltage not used
                         c += 2;
@@ -90,15 +91,15 @@ public class Protocol3 implements IProtocol {
 
                         distanceInDecimeters += (buffer[++c] & 0xFF);
 
-                        rower.distance = distanceInDecimeters / 10;
+                        measurement.distance = distanceInDecimeters / 10;
                     }
                     continue;
                 case (byte)0xFF:
                     if (c + 2 < length) {
                         trace(buffer, c, 3);
 
-                        rower.strokeRate = buffer[++c] & 0xFF;
-                        rower.speed = (buffer[++c] & 0xFF) * 10;
+                        measurement.strokeRate = buffer[++c] & 0xFF;
+                        measurement.speed = (buffer[++c] & 0xFF) * 10;
                     }
                     continue;
             }

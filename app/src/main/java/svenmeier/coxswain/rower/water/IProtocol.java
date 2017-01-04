@@ -15,11 +15,12 @@
  */
 package svenmeier.coxswain.rower.water;
 
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.Rower;
 
 public interface IProtocol {
 
     void reset();
 
-    boolean transfer(Rower rower);
+    boolean transfer(Measurement measurement);
 }

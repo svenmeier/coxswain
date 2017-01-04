@@ -30,9 +30,9 @@ import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Transaction;
 import propoid.db.Where;
-import propoid.db.aspect.Row;
 import propoid.db.cascading.DefaultCascading;
 import svenmeier.coxswain.gym.Difficulty;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
@@ -69,9 +69,9 @@ public class Gym {
     public Workout current;
 
     /**
-     * The last snapshot.
+     * The last measurement.
      */
-    public Snapshot snapshot;
+    public Measurement measurement = new Measurement();
 
 	/**
      * Progress of current workout.
@@ -205,7 +205,7 @@ public class Gym {
         this.pace = null;
         this.program = null;
 
-        this.snapshot = null;
+        this.measurement = new Measurement();
         this.current = null;
         this.progress = null;
 
@@ -216,7 +216,7 @@ public class Gym {
         this.pace = null;
         this.program = program;
 
-        this.snapshot = null;
+        this.measurement = new Measurement();
         this.current = null;
         this.progress = null;
 
@@ -236,7 +236,7 @@ public class Gym {
         this.pace = pace;
         this.program = program;
 
-        this.snapshot = null;
+        this.measurement = new Measurement();
         this.current = null;
         this.progress = null;
 
@@ -247,22 +247,22 @@ public class Gym {
         this.pace = pace;
         this.program = Program.meters(context.getString(R.string.action_challenge), pace.distance.get(), Difficulty.NONE);
 
-        this.snapshot = null;
+        this.measurement = new Measurement();
         this.current = null;
         this.progress = null;
 
         fireChanged();
     }
 
-    public Event addSnapshot(Snapshot snapshot) {
+    public Event onMeasured(Measurement measurement) {
         Event event = Event.REJECTED;
 
-        this.snapshot = snapshot;
+        this.measurement = measurement;
 
         if (program != null) {
             // program is selected
 
-            if (snapshot.distance.get() > 0 || snapshot.strokes.get() > 0) {
+            if (measurement.distance > 0 || measurement.strokes > 0) {
                 event = Event.SNAPPED;
 
                 if (current == null) {
@@ -270,12 +270,13 @@ public class Gym {
                     current = program.newWorkout();
                     current.location.set(getLocation());
 
-                    progress = new Progress(program.getSegment(0), 0, new Snapshot());
+                    progress = new Progress(program.getSegment(0), new Measurement());
                 }
 
-                if (current.onSnapshot(snapshot)) {
+                if (current.onMeasured(measurement)) {
                     mergeWorkout(current);
 
+                    Snapshot snapshot = new Snapshot(measurement);
                     snapshot.workout.set(current);
                     repository.insert(snapshot);
                 }
@@ -289,7 +290,7 @@ public class Gym {
 
                         event = Event.PROGRAM_FINISHED;
                     } else {
-                        progress = new Progress(next, current.duration.get(), snapshot);
+                        progress = new Progress(next, measurement);
 
                         event = Event.SEGMENT_CHANGED;
                     }
@@ -334,17 +335,15 @@ public class Gym {
 
         public final Segment segment;
 
-        final int duration;
-
-		/**
-         * Start snapshot of the segment.
+        /**
+         * Measurement of start of segment
          */
-        final Snapshot start;
+        private final Measurement startMeasurement;
 
-        public Progress(Segment segment, int duration, Snapshot snapshot) {
+        public Progress(Segment segment, Measurement measurement) {
             this.segment = segment;
-            this.duration = duration;
-            this.start = snapshot;
+
+            this.startMeasurement = new Measurement(measurement);
         }
 
         public float completion() {
@@ -355,33 +354,28 @@ public class Gym {
         }
 
         public int achieved() {
-            int lastDuration = current.duration.get();
-            if (snapshot == null) {
-                return 0;
-            }
-
-            return achieved(snapshot, lastDuration) - achieved(start, duration);
+            return achieved(measurement) - achieved(startMeasurement);
         }
 
-        private int achieved(Snapshot snapshot, int duration) {
+        private int achieved(Measurement measurement) {
             if (segment.distance.get() > 0) {
-                return snapshot.distance.get();
+                return measurement.distance;
             } else if (segment.strokes.get() > 0) {
-                return snapshot.strokes.get();
+                return measurement.strokes;
             } else if (segment.energy.get() > 0) {
-                return snapshot.energy.get();
+                return measurement.energy;
             } else if (segment.duration.get() > 0){
-                return duration;
+                return measurement.duration;
             }
             return 0;
         }
 
         public boolean inLimit() {
-            if (snapshot.speed.get() < progress.segment.speed.get()) {
+            if (measurement.speed < progress.segment.speed.get()) {
                 return false;
-            } else if (snapshot.pulse.get() < progress.segment.pulse.get()) {
+            } else if (measurement.pulse < progress.segment.pulse.get()) {
                 return false;
-            } else if (snapshot.strokeRate.get() < progress.segment.strokeRate.get()) {
+            } else if (measurement.strokeRate < progress.segment.strokeRate.get()) {
                 return false;
             }
 

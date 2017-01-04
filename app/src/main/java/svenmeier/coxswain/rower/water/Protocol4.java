@@ -18,6 +18,7 @@ package svenmeier.coxswain.rower.water;
 import java.util.ArrayList;
 import java.util.List;
 
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 
@@ -67,7 +68,7 @@ public class Protocol4 implements IProtocol {
             }
 
             @Override
-            protected void onInput(String message, Rower rower) {
+            protected void onInput(String message, Measurement measurement) {
                 onHandshake();
 
                 trace.comment("handshake complete");
@@ -89,7 +90,7 @@ public class Protocol4 implements IProtocol {
             }
 
             @Override
-            protected void onInput(String message, Rower rower) {
+            protected void onInput(String message, Measurement measurement) {
                 version = message.substring(response.length());
 
                 trace.comment("version " + version);
@@ -98,81 +99,81 @@ public class Protocol4 implements IProtocol {
 
         fields.add(new Field(null, "PING") {
             @Override
-            protected void onInput(String message, Rower rower) {
+            protected void onInput(String message, Measurement measurement) {
             }
         });
 
         fields.add(new Field(null, "ERROR") {
             @Override
-            protected void onInput(String message, Rower rower) {
+            protected void onInput(String message, Measurement measurement) {
             }
         });
 
         fields.add(new Field(null, "SS") {
             @Override
-            protected void onInput(String message, Rower rower) {
-                ratioCalculator.pulling(rower, System.currentTimeMillis());
+            protected void onInput(String message, Measurement measurement) {
+                ratioCalculator.pulling(measurement, System.currentTimeMillis());
             }
         });
 
         fields.add(new Field(null, "SE") {
             @Override
-            protected void onInput(String message, Rower rower) {
-                ratioCalculator.recovering(rower, System.currentTimeMillis());
+            protected void onInput(String message, Measurement measurement) {
+                ratioCalculator.recovering(measurement, System.currentTimeMillis());
             }
         });
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.strokes = value;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.strokes = value;
             }
         });
 
         fields.add(new NumberField(0x057, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.distance = value;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.distance = value;
             }
         });
 
         fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.speed = value;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.speed = value;
             }
         });
 
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.strokeRate = value;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.strokeRate = value;
             }
         });
 
         fields.add(new NumberField(0x1A0, NumberField.SINGLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.pulse = value;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.pulse = value;
             }
         });
 
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
-                rower.energy = value / 1000;
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.energy = value / 1000;
             }
         });
 
         fields.add(new NumberField(0x1E1, NumberField.TRIPLE_BYTE) {
             @Override
-            protected void onUpdate(int value, Rower rower) {
+            protected void onUpdate(int value, Measurement measurement) {
                 int seconds = value & 0xFF;
                 value = value >> 8;
                 seconds += (value & 0xFF) * 60;
                 value = value >> 8;
                 seconds += (value & 0xFF) * (60 * 60);
 
-                rower.duration = seconds;
+                measurement.duration = seconds;
             }
         });
     }
@@ -201,10 +202,10 @@ public class Protocol4 implements IProtocol {
         return null;
     }
 
-    private boolean inputField(Rower rower, String message) {
+    private boolean inputField(Measurement measurement, String message) {
 
         for (int f = 0; f < fields.size(); f++) {
-            if (fields.get(f).input(message, rower)) {
+            if (fields.get(f).input(message, measurement)) {
                 return true;
             }
         }
@@ -212,9 +213,9 @@ public class Protocol4 implements IProtocol {
         return false;
     }
 
-    public boolean transfer(Rower rower) {
+    public boolean transfer(Measurement measurement) {
 
-        input(rower);
+        input(measurement);
 
         if (version == VERSION_UNSUPPORTED) {
             return false;
@@ -251,7 +252,7 @@ public class Protocol4 implements IProtocol {
         }
     }
 
-    private void input(Rower rower) {
+    private void input(Measurement measurement) {
         int length = transfer.bulkInput();
         if (length > 0) {
             byte[] buffer = transfer.buffer();
@@ -263,7 +264,7 @@ public class Protocol4 implements IProtocol {
                         String message = response.toString();
                         trace.onInput(message);
 
-                        if (inputField(rower, message) == false) {
+                        if (inputField(measurement, message) == false) {
                             trace.comment("unrecognized");
                         }
 

@@ -49,13 +49,13 @@ public class Snapshot extends Propoid {
         energy.set(0);
     }
 
-    public Snapshot(Rower rower) {
-        distance.set(rower.distance);
-        strokes.set(rower.strokes);
-        speed.set(rower.speed);
-        pulse.set(rower.pulse);
-        strokeRate.set(rower.strokeRate);
-        strokeRatio.set(rower.strokeRatio);
-        energy.set(rower.energy);
+    public Snapshot(Measurement measurement) {
+        distance.set(measurement.distance);
+        strokes.set(measurement.strokes);
+        speed.set(measurement.speed);
+        pulse.set(measurement.pulse);
+        strokeRate.set(measurement.strokeRate);
+        strokeRatio.set(measurement.strokeRatio);
+        energy.set(measurement.energy);
     }
 }

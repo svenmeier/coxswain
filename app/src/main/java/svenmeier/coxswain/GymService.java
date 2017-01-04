@@ -30,7 +30,6 @@ import android.os.IBinder;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Program;
-import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
 import svenmeier.coxswain.rower.Rower;
@@ -187,7 +186,7 @@ public class GymService extends Service {
                             }
                             foreground.workout(text, completion);
 
-                            Event event = gym.addSnapshot(new Snapshot(rower));
+                            Event event = gym.onMeasured(rower);
                             motivator.onEvent(event);
 
                             if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {

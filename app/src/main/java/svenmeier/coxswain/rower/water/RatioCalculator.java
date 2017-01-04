@@ -15,8 +15,7 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.gym.Measurement;
 
 public class RatioCalculator {
 
@@ -43,7 +42,7 @@ public class RatioCalculator {
         recoverDuration = 0;
     }
 
-    public void pulling(Rower rower, long now) {
+    public void pulling(Measurement measurement, long now) {
         if (pulling == false) {
             pulling = true;
 
@@ -52,7 +51,7 @@ public class RatioCalculator {
         }
     }
 
-    public void recovering(Rower rower, long now) {
+    public void recovering(Measurement measurement, long now) {
         if (pulling) {
             pulling = false;
 
@@ -60,7 +59,7 @@ public class RatioCalculator {
             start = now;
 
             int ratio = Math.min((int) (MULTIPLIER * recoverDuration / pullDuration), MAX);
-            rower.strokeRatio = ratio;
+            measurement.strokeRatio = ratio;
         }
     }
 }

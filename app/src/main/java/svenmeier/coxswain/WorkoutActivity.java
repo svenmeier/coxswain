@@ -30,6 +30,7 @@ import java.util.List;
 
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.BindingDialogFragment;
@@ -296,22 +297,22 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         @Override
-        public int getDistanceDelta(long elapsed, int currentDistance) {
+        public int getDistanceDelta(Measurement measurement) {
             if (snapshots.isEmpty()) {
                 return 0;
             }
 
-            int from = distanceAt(elapsed);
-            int to = distanceAt(elapsed + 1000);
+            int from = distanceAt(measurement.duration);
+            int to = distanceAt(measurement.duration + 1);
 
-            int paceDistance = from + ((to - from) * (currentDistance % 1000) / 1000);
+            int paceDistance = from + ((to - from) * (measurement.distance % 1000) / 1000);
 
-            return currentDistance - paceDistance;
+            return measurement.distance - paceDistance;
         }
 
-        private int distanceAt(long elapsed) {
+        private int distanceAt(int duration) {
             // increment by one, because first snapshot is written after one second only
-            int index = (int)(elapsed / 1000) - 1;
+            int index = duration - 1;
             if (index < 0) {
                 return 0;
             }
@@ -323,9 +324,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         @Override
-        public int getDurationDelta(long elapsed, int currentDistance) {
+        public int getDurationDelta(Measurement measurement) {
             while (this.duration < snapshots.size()) {
-                if (snapshots.get(this.duration).distance.get() >= currentDistance) {
+                if (snapshots.get(this.duration).distance.get() >= measurement.distance) {
                     break;
                 }
 
@@ -338,11 +339,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
                 int distance = snapshot.distance.get();
                 if (distance > 0) {
                     // estimate duration
-                    this.duration = snapshots.size() * currentDistance / distance;
+                    this.duration = snapshots.size() * measurement.distance / distance;
                 }
             }
 
-            return (int)(elapsed / 1000) - this.duration;
+            return measurement.duration - this.duration;
         }
 
         @Override
@@ -365,12 +366,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     private class SelfPaceBoat implements DismissablePaceBoat {
 
         @Override
-        public int getDistanceDelta(long elapsed, int distance) {
+        public int getDistanceDelta(Measurement measurement) {
             return 0;
         }
 
         @Override
-        public int getDurationDelta(long elapsed, int distance) {
+        public int getDurationDelta(Measurement measurement) {
             return 0;
         }
 

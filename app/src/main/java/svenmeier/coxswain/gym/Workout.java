@@ -53,15 +53,20 @@ public class Workout extends Propoid {
         this.start.set(System.currentTimeMillis());
     }
 
-    public boolean onSnapshot(Snapshot snapshot) {
-        this.distance.set(snapshot.distance.get());
-        this.strokes.set(snapshot.strokes.get());
-        this.energy.set(snapshot.energy.get());
+	/**
+     * Handle a new measurement.
+     *
+     * @param measurement
+     *
+     * @return {@code true} if this workout's duration changes because of the measurement
+     */
+    public boolean onMeasured(Measurement measurement) {
+        this.distance.set(measurement.distance);
+        this.strokes.set(measurement.strokes);
+        this.energy.set(measurement.energy);
 
-        int duration = Math.round((float)(System.currentTimeMillis() - start.get()) / 1000f);
-
-        if (duration != this.duration.get()) {
-            this.duration.set(duration);
+        if (measurement.duration != this.duration.get()) {
+            this.duration.set(measurement.duration);
 
             return true;
         } else {

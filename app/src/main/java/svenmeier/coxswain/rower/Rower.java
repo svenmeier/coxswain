@@ -16,27 +16,12 @@
 package svenmeier.coxswain.rower;
 
 import propoid.core.Property;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Workout;
 
 /**
  */
-public abstract class Rower {
-
-    public int duration;
-
-    public int distance;
-
-    public int strokes;
-
-    public int speed;
-
-    public int pulse;
-
-    public int strokeRate;
-
-    public int strokeRatio;
-
-    public int energy;
+public abstract class Rower extends Measurement {
 
     /**
      * Open the rower.
@@ -46,6 +31,7 @@ public abstract class Rower {
     public abstract boolean isOpen();
 
     public void reset() {
+        duration = 0;
         distance = 0;
         strokes = 0;
         speed = 0;

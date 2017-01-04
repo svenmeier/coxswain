@@ -24,6 +24,7 @@ import java.util.Calendar;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 
@@ -148,52 +149,44 @@ public class BindingView extends FrameLayout {
             limitPulse = segment.pulse.get();
         }
 
-        Snapshot snapshot = gym.snapshot;
-        if (snapshot == null) {
-            snapshot = new Snapshot();
-        }
-
-        long elapsed = 0;
-        if (gym.current != null) {
-            elapsed = System.currentTimeMillis() - gym.current.start.get();
-        }
+        Measurement measurement = gym.measurement;
 
         switch (binding) {
             case DURATION:
-                target((int)(elapsed / 1000), targetDuration, achieved);
+                target(measurement.duration, targetDuration, achieved);
                 break;
             case DISTANCE:
-                target(snapshot.distance.get(), targetDistance, achieved);
+                target(measurement.distance, targetDistance, achieved);
                 break;
             case STROKES:
-                target(snapshot.strokes.get(), targetStrokes, achieved);
+                target(measurement.strokes, targetStrokes, achieved);
                 break;
             case ENERGY:
-                target(snapshot.energy.get(), targetEnergy, achieved);
+                target(measurement.energy, targetEnergy, achieved);
                 break;
             case SPEED:
-                limit(snapshot.speed.get(), limitSpeed);
+                limit(measurement.speed, limitSpeed);
                 break;
             case PULSE:
-                limit(snapshot.pulse.get(), limitPulse);
+                limit(measurement.pulse, limitPulse);
                 break;
             case STROKE_RATE:
-                limit(snapshot.strokeRate.get(), limitStrokeRate);
+                limit(measurement.strokeRate, limitStrokeRate);
                 break;
             case STROKE_RATIO:
-                limit(snapshot.strokeRatio.get(), 0);
+                limit(measurement.strokeRatio, 0);
                 break;
             case SPLIT:
-                split(100f / snapshot.speed.get());
+                split(100f / measurement.speed);
                 break;
             case AVERAGE_SPLIT:
-                split(elapsed / 1000f / snapshot.distance.get());
+                split(measurement.duration * 1f / measurement.distance);
                 break;
             case DELTA_DISTANCE:
-                delta(paceBoat.getDistanceDelta(elapsed, snapshot.distance.get()), false);
+                delta(paceBoat.getDistanceDelta(measurement), false);
                 break;
             case DELTA_DURATION:
-                delta(paceBoat.getDurationDelta(elapsed, snapshot.distance.get()), true);
+                delta(paceBoat.getDurationDelta(measurement), true);
                 break;
         }
     }
@@ -270,17 +263,13 @@ public class BindingView extends FrameLayout {
     public interface PaceBoat {
 
 		/**
-         * @param elapsed elapsed milliseconds since start of workout
-         * @param distance current distance of workout
          * @return delta to pace duration
          */
-        int getDurationDelta(long elapsed, int distance);
+        int getDurationDelta(Measurement measurement);
 
         /**
-         * @param elapsed elapsed milliseconds since start of workout
-         * @param distance current distance of workout
          * @return delta to pace distance
          */
-        int getDistanceDelta(long elapsed, int distance);
+        int getDistanceDelta(Measurement measurement);
     }
 }

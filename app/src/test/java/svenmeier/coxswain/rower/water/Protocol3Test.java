@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 import static org.junit.Assert.assertEquals;
@@ -15,9 +16,35 @@ import static org.junit.Assert.assertEquals;
  */
 public class Protocol3Test {
 
+	Rower rower = new Rower() {
+		@Override
+		public boolean open() {
+			return false;
+		}
+
+		@Override
+		public boolean isOpen() {
+			return false;
+		}
+
+		@Override
+		public boolean row() {
+			return false;
+		}
+
+		@Override
+		public void close() {
+
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+	};
+
 	@Test
 	public void test() throws Exception {
-		Snapshot memory = new Snapshot();
 
 		TestTransfer transfer = new TestTransfer();
 		TestTrace trace = new TestTrace();
@@ -31,44 +58,44 @@ public class Protocol3Test {
 
 		// distance +2.5
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x19});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(2), memory.distance.get());
+		protocol.transfer(rower);
+		assertEquals(2, rower.distance);
 		// distance +0.5
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x05});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(3), memory.distance.get());
+		protocol.transfer(rower);
+		assertEquals(3, rower.distance);
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFC});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.strokes.get());
+		protocol.transfer(rower);
+		assertEquals(1, rower.strokes);
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFD, (byte) 0x01, (byte) 0x02});
-		protocol.transfer(memory);
+		protocol.transfer(rower);
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.pulse.get());
+		protocol.transfer(rower);
+		assertEquals(1, rower.pulse);
 
 		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.pulse.get());
+		protocol.transfer(rower);
+		assertEquals(1, rower.pulse);
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFF, (byte) 0x01, (byte) 0x02});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.strokeRate.get());
-		assertEquals(Integer.valueOf(20), memory.speed.get());
+		protocol.transfer(rower);
+		assertEquals(1, rower.strokeRate);
+		assertEquals(20, rower.speed);
 
 		transfer.setupInput(new byte[]{(byte) 0xFF, (byte) 0x01, (byte) 0x02});
-		protocol.transfer(memory);
-		assertEquals(Integer.valueOf(1), memory.strokeRate.get());
-		assertEquals(Integer.valueOf(20), memory.speed.get());
+		protocol.transfer(rower);
+		assertEquals(1, rower.strokeRate);
+		assertEquals(20, rower.speed);
 
 		transfer.setupInput(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
-		protocol.transfer(memory);
+		protocol.transfer(rower);
 
 		assertEquals("#protocol 3<FE 19<FE 05<FC<FD 01 02<FB 01<FB 01<FF 01 02<FF 01 02<01<02<03", trace.toString());
 	}
@@ -77,8 +104,6 @@ public class Protocol3Test {
 	public void trace() throws IOException {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/waterrower.trace")));
-
-		Snapshot memory = new Snapshot();
 
 		TestTransfer transfer = new TestTransfer();
 		TestTrace trace = new TestTrace();
@@ -97,10 +122,10 @@ public class Protocol3Test {
 					bytes[h] = (byte)Integer.parseInt(hexes[h], 16);
 				}
 				transfer.setupInput(bytes);
-				protocol.transfer(memory);
+				protocol.transfer(rower);
 			}
 		}
-		assertEquals(Integer.valueOf(363), memory.strokes.get());
-		assertEquals(Integer.valueOf(1510), memory.distance.get());
+		assertEquals(363, rower.strokes);
+		assertEquals(1510, rower.distance);
 	}
 }

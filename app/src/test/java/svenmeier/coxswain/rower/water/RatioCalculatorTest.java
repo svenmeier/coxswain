@@ -2,7 +2,7 @@ package svenmeier.coxswain.rower.water;
 
 import org.junit.Test;
 
-import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.Rower;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,54 +11,79 @@ import static org.junit.Assert.assertEquals;
  */
 public class RatioCalculatorTest {
 
+	Rower rower = new Rower() {
+		@Override
+		public boolean open() {
+			return false;
+		}
+
+		@Override
+		public boolean isOpen() {
+			return false;
+		}
+
+		@Override
+		public boolean row() {
+			return false;
+		}
+
+		@Override
+		public void close() {
+
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+	};
+
 	@Test
 	public void test() {
-		Snapshot snapshot = new Snapshot();
-
 		RatioCalculator calculator = new RatioCalculator();
 
 		long now = 100000;
-		calculator.recovering(snapshot, now);
-		calculator.recovering(snapshot, now + 200);
+		calculator.recovering(rower, now);
+		calculator.recovering(rower, now + 200);
 
 		now += 1000;
-		calculator.pulling(snapshot, now);
-		calculator.pulling(snapshot, now + 200);
+		calculator.pulling(rower, now);
+		calculator.pulling(rower, now + 200);
 
 		now += 1000;
-		calculator.recovering(snapshot, now);
-		calculator.recovering(snapshot, now + 200);
+		calculator.recovering(rower, now);
+		calculator.recovering(rower, now + 200);
 
-		assertEquals(Integer.valueOf(8), snapshot.strokeRatio.get());
+		assertEquals(8, rower.strokeRatio);
 
 		now += 2000;
-		calculator.pulling(snapshot, now);
-		calculator.pulling(snapshot, now + 200);
+		calculator.pulling(rower, now);
+		calculator.pulling(rower, now + 200);
 
 		now += 1000;
-		calculator.recovering(snapshot, now);
-		calculator.recovering(snapshot, now + 200);
+		calculator.recovering(rower, now);
+		calculator.recovering(rower, now + 200);
 
-		assertEquals(Integer.valueOf(16), snapshot.strokeRatio.get());
+		assertEquals(16, rower.strokeRatio);
 
 		now += 1500;
-		calculator.pulling(snapshot, now);
-		calculator.pulling(snapshot, now + 200);
+		calculator.pulling(rower, now);
+		calculator.pulling(rower, now + 200);
 
 		now += 1000;
-		calculator.recovering(snapshot, now);
-		calculator.recovering(snapshot, now + 500);
+		calculator.recovering(rower, now);
+		calculator.recovering(rower, now + 500);
 
-		assertEquals(Integer.valueOf(12), snapshot.strokeRatio.get());
+		assertEquals(12, rower.strokeRatio);
 
 		now += 500;
-		calculator.pulling(snapshot, now);
-		calculator.pulling(snapshot, now + 200);
+		calculator.pulling(rower, now);
+		calculator.pulling(rower, now + 200);
 
 		now += 1000;
-		calculator.recovering(snapshot, now);
-		calculator.recovering(snapshot, now + 200);
+		calculator.recovering(rower, now);
+		calculator.recovering(rower, now + 200);
 
-		assertEquals(Integer.valueOf(4), snapshot.strokeRatio.get());
+		assertEquals(4, rower.strokeRatio);
 	}
 }

@@ -37,13 +37,11 @@ import svenmeier.coxswain.rower.water.usb.ITransfer;
 import svenmeier.coxswain.rower.water.usb.UsbTransfer;
 
 /**
- * https://github.com/jamesnesfield/node-waterrower/blob/develop/Waterrower/index.js
+ * Waterrower rower.
  */
-public class WaterRower implements Rower {
+public class WaterRower extends Rower {
 
     private final Context context;
-
-    private final Snapshot memory;
 
     private final UsbDevice device;
 
@@ -59,10 +57,8 @@ public class WaterRower implements Rower {
 
     private ITrace trace;
 
-    public WaterRower(Context context, Snapshot memory, UsbDevice device) {
+    public WaterRower(Context context, UsbDevice device) {
         this.context = context;
-        this.memory = memory;
-
         this.device = device;
     }
 
@@ -138,6 +134,8 @@ public class WaterRower implements Rower {
 
     @Override
     public void reset() {
+        super.reset();
+
         protocol.reset();
     }
 
@@ -147,7 +145,7 @@ public class WaterRower implements Rower {
             return false;
         }
 
-        if (protocol.transfer(memory) == false) {
+        if (protocol.transfer(this) == false) {
             protocol = new Protocol3(transfer, trace);
         }
 

@@ -17,6 +17,7 @@ package svenmeier.coxswain.gym;
 
 import propoid.core.Property;
 import propoid.core.Propoid;
+import svenmeier.coxswain.rower.Rower;
 
 /**
  */
@@ -39,20 +40,6 @@ public class Snapshot extends Propoid {
     public final Property<Integer> energy = property();
 
     public Snapshot() {
-        clear();
-    }
-
-    public Snapshot(Snapshot snapshot) {
-        distance.set(snapshot.distance.get());
-        strokes.set(snapshot.strokes.get());
-        speed.set(snapshot.speed.get());
-        pulse.set(snapshot.pulse.get());
-        strokeRate.set(snapshot.strokeRate.get());
-        strokeRatio.set(snapshot.strokeRatio.get());
-        energy.set(snapshot.energy.get());
-    }
-
-    public void clear() {
         distance.set(0);
         strokes.set(0);
         speed.set(0);
@@ -60,5 +47,15 @@ public class Snapshot extends Propoid {
         strokeRate.set(0);
         strokeRatio.set(0);
         energy.set(0);
+    }
+
+    public Snapshot(Rower rower) {
+        distance.set(rower.distance);
+        strokes.set(rower.strokes);
+        speed.set(rower.speed);
+        pulse.set(rower.pulse);
+        strokeRate.set(rower.strokeRate);
+        strokeRatio.set(rower.strokeRatio);
+        energy.set(rower.energy);
     }
 }

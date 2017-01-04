@@ -15,7 +15,7 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.Rower;
 
 /**
  */
@@ -54,11 +54,11 @@ public abstract class NumberField extends Field {
     }
 
     @Override
-    protected void onInput(String message, Snapshot memory) {
-        onUpdate(fromAscii(message, response.length()), memory);
+    protected void onInput(String message, Rower rower) {
+        onUpdate(fromAscii(message, response.length()), rower);
     }
 
-    protected abstract void onUpdate(int value, Snapshot memory);
+    protected abstract void onUpdate(int value, Rower rower);
 
     private static int fromAscii(String ach, int start) {
         int total = 0;

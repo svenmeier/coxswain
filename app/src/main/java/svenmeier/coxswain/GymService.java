@@ -47,8 +47,6 @@ public class GymService extends Service {
 
     private Handler handler = new Handler();
 
-    private Snapshot memory = new Snapshot();
-
     private Preference<Boolean> openEnd;
 
     private Rowing rowing;
@@ -108,13 +106,11 @@ public class GymService extends Service {
 
     private void startRowing(UsbDevice device) {
 
-        memory.clear();
-
         Rower rower;
         if (device == null) {
-            rower = new MockRower(memory);
+            rower = new MockRower();
         } else {
-            rower = new WaterRower(this, memory, device);
+            rower = new WaterRower(this, device);
         }
 
         rowing = new Rowing(rower);
@@ -143,12 +139,10 @@ public class GymService extends Service {
 
         private Program program;
 
-        private long headsupSince;
-
         public Rowing(Rower rower) {
             this.rower = rower;
 
-            this.heart = Heart.create(GymService.this, memory);
+            this.heart = Heart.create(GymService.this, rower);
 
             this.motivator = new DefaultMotivator(GymService.this);
         }
@@ -160,7 +154,6 @@ public class GymService extends Service {
                         // program changed
                         program = gym.program;
 
-                        memory.clear();
                         rower.reset();
                     }
 
@@ -194,7 +187,7 @@ public class GymService extends Service {
                             }
                             foreground.workout(text, completion);
 
-                            Event event = gym.addSnapshot(new Snapshot(memory));
+                            Event event = gym.addSnapshot(new Snapshot(rower));
                             motivator.onEvent(event);
 
                             if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {

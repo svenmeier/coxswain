@@ -11,6 +11,7 @@ import android.widget.Toast;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
@@ -24,8 +25,8 @@ public class SensorsHeart extends Heart {
 
 	private int heartRate = -1;
 
-	public SensorsHeart(Context context, Snapshot memory) {
-		super(context, memory);
+	public SensorsHeart(Context context, Rower rower) {
+		super(context, rower);
 
 		connection = new Connection(context);
 		connection.open();
@@ -45,7 +46,7 @@ public class SensorsHeart extends Heart {
 			return;
 		}
 
-		memory.pulse.set(heartRate);
+		rower.pulse = heartRate;
 	}
 
 	private class Connection extends PermissionBlock implements SensorEventListener {

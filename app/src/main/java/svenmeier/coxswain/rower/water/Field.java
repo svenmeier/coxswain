@@ -16,6 +16,7 @@
 package svenmeier.coxswain.rower.water;
 
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.rower.Rower;
 
 /**
  */
@@ -33,9 +34,9 @@ public class Field {
         this.response = response;
     }
 
-    protected boolean input(String message, Snapshot memory) {
+    protected boolean input(String message, Rower rower) {
         if (this.response != null && message.startsWith(response)) {
-            onInput(message, memory);
+            onInput(message, rower);
 
             return true;
         }
@@ -43,7 +44,7 @@ public class Field {
         return false;
     }
 
-    protected void onInput(String message, Snapshot memory) {
+    protected void onInput(String message, Rower rower) {
 
     }
 

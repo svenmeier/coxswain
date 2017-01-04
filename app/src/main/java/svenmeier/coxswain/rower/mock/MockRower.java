@@ -15,27 +15,23 @@
  */
 package svenmeier.coxswain.rower.mock;
 
-import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 
 /**
  */
-public class MockRower implements Rower {
+public class MockRower extends Rower {
 
     private long resettedAt = 0;
 
-    private double speed;
+    private double speedTemp;
 
-    private double strokes;
+    private double strokesTemp;
 
-    private double energy;
-
-    private final Snapshot memory;
+    private double energyTemp;
 
     private boolean open;
 
-    public MockRower(Snapshot memory) {
-        this.memory = memory;
+    public MockRower() {
     }
 
     @Override
@@ -57,12 +53,13 @@ public class MockRower implements Rower {
 
     @Override
     public void reset() {
+        super.reset();
+
         resettedAt = System.currentTimeMillis();
 
-        speed = 2.5 + Math.random();
-
-        strokes = 0;
-        energy = 0;
+        speedTemp = 2.5 + Math.random();
+        strokesTemp = 0;
+        energyTemp = 0;
     }
 
     @Override
@@ -77,22 +74,24 @@ public class MockRower implements Rower {
             if (now > resettedAt + 2000) {
                 // delay before achieving anything
 
-                memory.distance.set((int)((now - resettedAt) / 1000 * speed));
+                duration = (int)(now - resettedAt) / 1000;
 
-                strokes += 0.04;
-                memory.strokes.set((int)strokes);
+                distance = (int)((now - resettedAt) * speedTemp) / 1000;
 
-                energy += 0.015;
-                memory.energy.set((int)energy);
+                strokesTemp += 0.04;
+                strokes = (int) strokesTemp;
+
+                energyTemp += 0.015;
+                energy = (int) energyTemp;
             }
 
-            memory.speed.set((int)(speed * 100));
+            speed = (int)(speedTemp * 100);
 
-            memory.strokeRate.set((int)(26 +  (Math.random() * 3)));
+            strokeRate = (int)(26 +  (Math.random() * 3));
 
-            memory.strokeRatio.set((int)(10 +  (Math.random() * 5)));
+            strokeRatio = (int)(10 +  (Math.random() * 5));
 
-            memory.pulse.set((int)(80 +  (Math.random() * 10)));
+            pulse = (int)(80 +  (Math.random() * 10));
 
             return true;
         } else {

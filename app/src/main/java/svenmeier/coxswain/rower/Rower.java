@@ -15,30 +15,57 @@
  */
 package svenmeier.coxswain.rower;
 
+import propoid.core.Property;
+import svenmeier.coxswain.gym.Workout;
+
 /**
  */
-public interface Rower {
+public abstract class Rower {
+
+    public int duration;
+
+    public int distance;
+
+    public int strokes;
+
+    public int speed;
+
+    public int pulse;
+
+    public int strokeRate;
+
+    public int strokeRatio;
+
+    public int energy;
 
     /**
      * Open the rower.
      */
-    boolean open();
+    public abstract boolean open();
 
-    boolean isOpen();
+    public abstract boolean isOpen();
 
-    void reset();
+    public void reset() {
+        distance = 0;
+        strokes = 0;
+        speed = 0;
+        pulse = 0;
+        strokeRate = 0;
+        strokeRatio = 0;
+        energy = 0;
+    }
 
     /**
      * Row.
      *
      * @return whether still rowing
      */
-    boolean row();
+    public abstract boolean row();
 
     /**
      * Close the rower.
      */
-    void close();
+    public abstract void close();
 
-    String getName();
+    public abstract String getName();
 }

@@ -32,7 +32,7 @@ public class CalendarExport implements Export<Workout> {
 			intent.putExtra(CalendarContract.Events.EVENT_LOCATION, LocationMapper.toString(workout.location.get(), Location.FORMAT_DEGREES, ','));
 		}
 
-		intent.putExtra(CalendarContract.Events.TITLE, context.getString(R.string.app_name) + ": " + workout.name("-"));
+		intent.putExtra(CalendarContract.Events.TITLE, context.getString(R.string.app_name) + ": " + workout.programName("-"));
 
 		String description = TextUtils.join("\n", new String[]{
 				String.format(context.getString(R.string.duration_minutes), workout.duration.get() / 60),

@@ -21,6 +21,8 @@ import svenmeier.coxswain.rower.Rower;
  */
 public class MockRower extends Rower {
 
+    public static MockRower openMock;
+
     private long startAt = 0;
 
     private double speedTemp;
@@ -37,6 +39,8 @@ public class MockRower extends Rower {
     @Override
     public boolean open() {
         open = true;
+
+        openMock = this;
 
         return true;
     }
@@ -102,5 +106,9 @@ public class MockRower extends Rower {
     @Override
     public void close() {
         open = false;
+
+        if (openMock == this) {
+            openMock = null;
+        }
     }
 }

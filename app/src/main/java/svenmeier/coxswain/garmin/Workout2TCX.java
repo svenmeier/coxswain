@@ -1,8 +1,6 @@
 package svenmeier.coxswain.garmin;
 
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -91,7 +89,7 @@ public class Workout2TCX {
 		serializer.attribute(null, "Type", "Workout");
 		serializer.attribute(null, "IntervalWorkout", "true");
 
-		tag(null, "Name", workout.name("-"));
+		tag(null, "Name", workout.programName("-"));
 
 		serializer.endTag(null, serializer.getName());
 	}

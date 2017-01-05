@@ -16,6 +16,7 @@
 package svenmeier.coxswain.gym;
 
 /**
+ * Measurement of rowing values.
  */
 public class Measurement {
 

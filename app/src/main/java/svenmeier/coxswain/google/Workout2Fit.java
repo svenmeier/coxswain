@@ -37,7 +37,7 @@ public class Workout2Fit {
 	public Session session(Workout workout) {
 
 		return new Session.Builder()
-				.setName(workout.name("UNKNOWN"))
+				.setName(workout.programName("UNKNOWN"))
 				.setIdentifier(dateFormat.format(workout.start.get()))
 				.setActivity(FitnessActivities.ROWING_MACHINE)
 				.setStartTime(timestamp(workout, 0), TimeUnit.MILLISECONDS)

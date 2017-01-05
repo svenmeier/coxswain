@@ -86,10 +86,10 @@ public class Gym {
 
         ((DefaultCascading) repository.cascading).setCascaded(new Program().segments);
 
-        Workout workout = new Workout();
-        repository.index(workout, false, Order.descending(workout.start));
-        Snapshot snapshot = new Snapshot();
-        repository.index(snapshot, false, Order.ascending(snapshot.workout));
+        Workout workoutIndex = new Workout();
+        repository.index(workoutIndex, false, Order.descending(workoutIndex.start));
+        Snapshot snapshotIndex = new Snapshot();
+        repository.index(snapshotIndex, false, Order.ascending(snapshotIndex.workout));
     }
 
     public void defaults() {
@@ -254,23 +254,29 @@ public class Gym {
         fireChanged();
     }
 
+	/**
+     * A new measurement.
+     *
+     * @param measurement
+     */
     public Event onMeasured(Measurement measurement) {
-        Event event = Event.REJECTED;
+        Event event = Event.ACKNOLEDGED;
 
         this.measurement = measurement;
 
         if (program != null) {
             // program is selected
 
-            if (measurement.distance > 0 || measurement.strokes > 0) {
-                event = Event.SNAPPED;
+            if (measurement.distance > 0 || measurement.duration > 0) {
+                // delay workout creation
 
                 if (current == null) {
-                    event = Event.PROGRAM_START;
                     current = program.newWorkout();
                     current.location.set(getLocation());
 
                     progress = new Progress(program.getSegment(0), new Measurement());
+
+                    event = Event.PROGRAM_START;
                 }
 
                 if (current.onMeasured(measurement)) {

@@ -136,7 +136,7 @@ public class WorkoutsFragment extends Fragment {
             });
 
             TextView nameView = index.get(R.id.workout_name);
-            nameView.setText(workout.name("-"));
+            nameView.setText(workout.programName("-"));
 
             TextView countsView = index.get(R.id.workout_counts);
             String counts = TextUtils.join(", ", new String[]{

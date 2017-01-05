@@ -82,7 +82,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     @Override
     public void onEvent(Event event) {
         if (initialized == false) {
-            if (this.pending == null || event != Event.SNAPPED) {
+            if (this.pending == null || event != Event.ACKNOLEDGED) {
                 this.pending = event;
             }
             return;
@@ -255,7 +255,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         }
 
         public void analyse(Event event, Gym.Progress progress) {
-            if (event != Event.SNAPPED || progress == null || speakLimitPreference.get() == false) {
+            if (event != Event.ACKNOLEDGED || progress == null || speakLimitPreference.get() == false) {
                 return;
             }
 

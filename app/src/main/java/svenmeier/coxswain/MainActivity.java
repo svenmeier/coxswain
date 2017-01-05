@@ -32,6 +32,7 @@ import android.widget.TextView;
 
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.io.ImportIntention;
+import svenmeier.coxswain.rower.mock.MockRower;
 import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
@@ -191,7 +192,11 @@ public class MainActivity extends AbstractActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_mock) {
-            GymService.start(this, null);
+            if (MockRower.openMock == null) {
+                GymService.start(this, null);
+            } else {
+                MockRower.openMock.close();
+            }
 
             return true;
         } else if (id == R.id.action_settings) {

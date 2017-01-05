@@ -58,7 +58,7 @@ public class Workout extends Propoid {
      *
      * @param measurement
      *
-     * @return {@code true} if this workout's duration changes because of the measurement
+     * @return {@code true} if this workout's duration changed because of the measurement
      */
     public boolean onMeasured(Measurement measurement) {
         this.distance.set(measurement.distance);
@@ -74,7 +74,12 @@ public class Workout extends Propoid {
         }
     }
 
-    public String name(String fallback) {
+    /**
+     * Get the name of this workout's program.
+     *
+     * @param fallback name to use if program no longer exists
+     */
+    public String programName(String fallback) {
         String name = fallback;
         try {
             name = program.get().name.get();
@@ -83,6 +88,9 @@ public class Workout extends Propoid {
         return name;
     }
 
+	/**
+     * Can this workout be repeated, i.e. does its program still exist.
+     */
     public boolean canRepeat() {
         try {
             return (program.get() != null);

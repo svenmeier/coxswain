@@ -93,9 +93,6 @@ public class GymService extends Service {
 
         if (this.rowing != null) {
             endRowing();
-            if (device == null) {
-                return START_NOT_STICKY;
-            }
         }
 
         startRowing(device);
@@ -116,13 +113,13 @@ public class GymService extends Service {
         new Thread(rowing).start();
     }
 
-    private void endRowing() {
-        this.rowing = null;
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private void endRowing() {
+        this.rowing = null;
     }
 
     /**
@@ -149,6 +146,10 @@ public class GymService extends Service {
         public void run() {
             if (rower.open()) {
                 while (true) {
+                    if (GymService.this.rowing != this) {
+                        break;
+                    }
+
                     if (gym.program != program) {
                         // program changed
                         program = gym.program;
@@ -156,7 +157,13 @@ public class GymService extends Service {
                         rower.reset();
                     }
 
-                    if (GymService.this.rowing != this|| rower.row() == false) {
+                    if (rower.row() == false) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                gym.deselect();
+                            }
+                        });
                         break;
                     }
 

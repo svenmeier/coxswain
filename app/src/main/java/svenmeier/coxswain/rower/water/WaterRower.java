@@ -28,10 +28,9 @@ import android.hardware.usb.UsbManager;
 import android.util.Log;
 
 import propoid.util.content.Preference;
-import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.BuildConfig;
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 import svenmeier.coxswain.rower.water.usb.UsbTransfer;

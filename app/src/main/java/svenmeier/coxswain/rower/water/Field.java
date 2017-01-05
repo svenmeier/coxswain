@@ -16,8 +16,6 @@
 package svenmeier.coxswain.rower.water;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.Rower;
 
 /**
  */

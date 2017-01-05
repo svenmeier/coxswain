@@ -15,8 +15,6 @@
  */
 package svenmeier.coxswain.rower.water;
 
-import svenmeier.coxswain.gym.Snapshot;
-
 public interface ITrace {
 
     void comment(CharSequence string);

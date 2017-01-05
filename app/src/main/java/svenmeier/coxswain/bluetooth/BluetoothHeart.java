@@ -32,8 +32,7 @@ import java.util.UUID;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
@@ -59,8 +58,8 @@ public class BluetoothHeart extends Heart {
 
 	private int heartRate = -1;
 
-	public BluetoothHeart(Context context, Rower rower) {
-		super(context, rower);
+	public BluetoothHeart(Context context, Measurement measurement) {
+		super(context, measurement);
 
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			toast(context.getString(R.string.bluetooth_heart_no_bluetooth));
@@ -91,7 +90,7 @@ public class BluetoothHeart extends Heart {
 		}
 		lastPulse = now;
 
-		rower.pulse = heartRate;
+		measurement.pulse = heartRate;
 	}
 
 	private void toast(String text) {

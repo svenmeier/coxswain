@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import propoid.util.content.Preference;
-import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.Rower;
 
 /**
@@ -13,11 +13,11 @@ public class Heart {
 
 	protected final Context context;
 
-	protected final Rower rower;
+	protected final Measurement measurement;
 
-	protected Heart(Context context, Rower rower) {
+	protected Heart(Context context, Measurement measurement) {
 		this.context = context;
-		this.rower = rower;
+		this.measurement = measurement;
 	}
 
 	public void destroy() {
@@ -31,7 +31,7 @@ public class Heart {
 
 		String name = sensors.get();
 		try {
-			return (Heart) Class.forName(name).getConstructor(Context.class, Snapshot.class).newInstance(context, rower);
+			return (Heart) Class.forName(name).getConstructor(Context.class, Measurement.class).newInstance(context, rower);
 		} catch (Exception ex) {
 			Log.e(Coxswain.TAG, "cannot create sensor " + name);
 			return new Heart(context, rower);

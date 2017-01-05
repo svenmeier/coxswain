@@ -2,7 +2,6 @@ package svenmeier.coxswain.rower.water;
 
 import org.junit.Test;
 
-import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 import svenmeier.coxswain.rower.water.usb.UsbTransfer;
 

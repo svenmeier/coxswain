@@ -15,8 +15,7 @@ import java.util.EnumSet;
 
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.gym.Snapshot;
-import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.gym.Measurement;
 
 /**
  * Created by sven on 13.12.16.
@@ -31,8 +30,8 @@ public class AntHeart extends Heart {
 
 	private Connection connection;
 
-	public AntHeart(Context context, Rower rower) {
-		super(context, rower);
+	public AntHeart(Context context, Measurement measurement) {
+		super(context, measurement);
 
 		this.connection = new AntConnection();
 		this.connection.open();
@@ -44,7 +43,7 @@ public class AntHeart extends Heart {
 			return;
 		}
 
-		rower.pulse = heartRate;
+		measurement.pulse = heartRate;
 	}
 
 	@Override

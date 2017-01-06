@@ -21,12 +21,12 @@ import svenmeier.coxswain.gym.Measurement;
  */
 public abstract class NumberField extends Field {
 
-    private static final int CODEPOINT_0 = 48;
-    private static final int CODEPOINT_A = 65;
-
     public static final int SINGLE_BYTE = 1;
     public static final int DOUBLE_BYTE = 2;
     public static final int TRIPLE_BYTE = 3;
+
+    protected static final int CODEPOINT_0 = 48;
+    protected static final int CODEPOINT_A = 65;
 
     /**
      * @param address memory address
@@ -37,16 +37,16 @@ public abstract class NumberField extends Field {
 
         switch (size) {
             case 1:
-            this.request = "IRS" + ach;
-            this.response = "IDS" + ach;
+                this.request = "IRS" + ach;
+                this.response = "IDS" + ach;
                 break;
             case 2:
-            this.request = "IRD" + ach;
-            this.response = "IDD" + ach;
+                this.request = "IRD" + ach;
+                this.response = "IDD" + ach;
                 break;
             case 3:
-            this.request = "IRT" + ach;
-            this.response = "IDT" + ach;
+                this.request = "IRT" + ach;
+                this.response = "IDT" + ach;
                 break;
             default:
                 throw new IllegalArgumentException("unkown size " + size);
@@ -60,13 +60,13 @@ public abstract class NumberField extends Field {
 
     protected abstract void onUpdate(int value, Measurement measurement);
 
-    private static int fromAscii(String ach, int start) {
+    protected int fromAscii(String data, int start) {
         int total = 0;
 
-        for (int c = start; c < ach.length(); c++) {
+        for (int c = start; c < data.length(); c++) {
             total *= 16;
 
-            int codepoint = ach.codePointAt(c);
+            int codepoint = (int)data.charAt(c);
             int digit = codepoint - CODEPOINT_0;
             if (digit > 9) {
                 digit = 10 + (codepoint - CODEPOINT_A);
@@ -78,7 +78,7 @@ public abstract class NumberField extends Field {
         return total;
     }
 
-    private static String toAscii(int value, int length, int base) {
+    protected String toAscii(int value, int length, int base) {
         String s = Integer.toString(value, base).toUpperCase();
 
         while (s.length() < length) {

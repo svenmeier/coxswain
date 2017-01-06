@@ -165,15 +165,28 @@ public class Protocol4 implements IProtocol {
         });
 
         fields.add(new NumberField(0x1E1, NumberField.TRIPLE_BYTE) {
+			/**
+			 * Duration is sent in decimal representation.
+             */
+            @Override
+            protected int fromAscii(String data, int start) {
+                int total = 0;
+
+                for (int c = start; c < data.length(); c++) {
+                    total *= c % 2 == 0 ? 6 : 10;
+
+                    int codepoint = (int)data.charAt(c);
+                    int digit = codepoint - CODEPOINT_0;
+
+                    total += digit;
+                }
+
+                return total;
+            }
+
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                int seconds = value & 0xFF;
-                value = value >> 8;
-                seconds += (value & 0xFF) * 60;
-                value = value >> 8;
-                seconds += (value & 0xFF) * (60 * 60);
-
-                measurement.duration = seconds;
+                measurement.duration = value;
             }
         });
     }

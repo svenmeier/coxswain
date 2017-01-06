@@ -41,34 +41,10 @@ public class Protocol4Test {
 		protocol.transfer(measurement);
 		assertEquals("42020", protocol.getVersion());
 
-		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x01});
+		transfer.setupInput("IDT1E1151515\r\n");
 		protocol.transfer(measurement);
-		assertEquals("42020", protocol.getVersion());
+		assertEquals(((15 * 60) + 15)*60 +15, measurement.duration);
 
-		assertEquals("#protocol 4>USB<_WR_#handshake complete>IV?<IV42020#version 42020>IRD140>IRD057", trace.toString());
-	}
-
-	@Test
-	public void unknown() throws Exception {
-		TestTransfer transfer = new TestTransfer();
-		TestTrace trace = new TestTrace();
-
-		Protocol4 protocol = new Protocol4(transfer, trace);
-		protocol.setOutputThrottle(0);
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		protocol.transfer(measurement);
-		transfer.assertOutput("USB\r\n");
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		protocol.transfer(measurement);
-		transfer.assertOutput("");
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		protocol.transfer(measurement);
-		transfer.assertOutput("");
-		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
-
-		assertEquals("#protocol 4>USB", trace.toString());
+		assertEquals("#protocol 4>USB<_WR_#handshake complete>IV?<IV42020#version 42020>IRD140<IDT1E1151515>IRD057", trace.toString());
 	}
 }

@@ -6,6 +6,8 @@
           android:orderInCategory="100" android:showAsAction="never" />
     <item android:id="@+id/action_challenge" android:title="@string/action_challenge"
           android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_evaluate" android:title="@string/action_evaluate"
+          android:orderInCategory="100" android:showAsAction="never" android:checkable="true"/>
     <item android:id="@+id/action_export" android:title="@string/action_export"
           android:orderInCategory="100" android:showAsAction="never"/>
     <item android:id="@+id/action_delete" android:title="@string/action_delete"

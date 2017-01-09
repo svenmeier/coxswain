@@ -39,11 +39,14 @@ public class Workout extends Propoid {
 
     public final Property<Integer> energy = property();
 
+    public final Property<Boolean> evaluate = property();
+
     public Workout() {
         this.duration.set(0);
         this.distance.set(0);
         this.strokes.set(0);
         this.energy.set(0);
+        this.evaluate.set(true);
     }
 
     public Workout(Program program) {

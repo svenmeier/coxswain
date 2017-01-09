@@ -29,7 +29,6 @@ import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Transaction;
-import propoid.db.Where;
 import propoid.db.cascading.DefaultCascading;
 import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Measurement;
@@ -39,9 +38,9 @@ import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
 
 import static propoid.db.Where.all;
+import static propoid.db.Where.equal;
 import static propoid.db.Where.greaterEqual;
 import static propoid.db.Where.lessThan;
-import static propoid.db.Where.unequal;
 
 public class Gym {
 
@@ -158,7 +157,10 @@ public class Gym {
             public void doTransactional() {
                 Program example = new Program();
 
-                workout.program.set(repository.query(example, Where.equal(example.name, programName)).first());
+                // imported workouts are not evaluated by default
+                workout.evaluate.set(false);
+
+                workout.program.set(repository.query(example, equal(example.name, programName)).first());
                 repository.merge(workout);
 
                 for (Snapshot snapshot : snapshots) {
@@ -181,8 +183,9 @@ public class Gym {
     public Match<Workout> getWorkouts(long from, long to) {
         Workout propotype = new Workout();
 
+        // evaluated workouts only
         return repository.query(propotype, all(
-                unequal(propotype.program, null),
+                equal(propotype.evaluate, true),
                 greaterEqual(propotype.start, from),
                 lessThan(propotype.start, to))
         );
@@ -191,7 +194,7 @@ public class Gym {
     public void delete(Propoid propoid) {
         if (propoid instanceof Workout) {
             Snapshot prototype = new Snapshot();
-            repository.query(prototype, Where.equal(prototype.workout, (Workout) propoid)).delete();
+            repository.query(prototype, equal(prototype.workout, (Workout) propoid)).delete();
         }
 
         repository.delete(propoid);
@@ -312,7 +315,7 @@ public class Gym {
     public Match<Snapshot> getSnapshots(Workout workout) {
         Snapshot prototype = new Snapshot();
 
-        return repository.query(prototype, Where.equal(prototype.workout, workout));
+        return repository.query(prototype, equal(prototype.workout, workout));
     }
 
     public Location getLocation() {

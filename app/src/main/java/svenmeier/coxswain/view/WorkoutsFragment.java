@@ -102,6 +102,8 @@ public class WorkoutsFragment extends Fragment {
                     PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                     popup.getMenuInflater().inflate(R.menu.menu_workout_item, popup.getMenu());
 
+                    popup.getMenu().findItem(R.id.action_evaluate).setChecked(workout.evaluate.get());
+
                     popup.getMenu().findItem(R.id.action_repeat).setEnabled(workout.canRepeat());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -109,6 +111,12 @@ public class WorkoutsFragment extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.action_delete:
                                     DeleteDialogFragment.create(workout).show(getFragmentManager(), "delete");
+
+                                    return true;
+                                case R.id.action_evaluate:
+                                    workout.evaluate.set(!workout.evaluate.get());
+
+                                    gym.mergeWorkout(workout);
 
                                     return true;
                                 case R.id.action_export:

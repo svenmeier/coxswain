@@ -40,7 +40,7 @@ import svenmeier.coxswain.util.PermissionBlock;
  */
 public class BluetoothHeart extends Heart {
 
-	private static final int SCAN_TIMEOUT_MILLIS = 10000;
+	private static final int SCAN_TIMEOUT_MILLIS = 60000;
 
 	private static final long PULSE_TIMEOUT_MILLIS = 5000;
 

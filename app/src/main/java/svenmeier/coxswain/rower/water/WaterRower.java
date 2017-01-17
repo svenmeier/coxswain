@@ -97,7 +97,7 @@ public class WaterRower extends Rower {
             protocol = new Protocol3(transfer, trace);
         } else {
             Protocol4 protocol4 = new Protocol4(transfer, trace);
-            protocol4.energyCalculator.setWeight(Preference.getInt(context, R.string.preference_weight).get());
+            protocol4.energyCalculator.setWeight(Preference.getInt(context, R.string.preference_weight).fallback(90).get());
             protocol = protocol4;
         }
 

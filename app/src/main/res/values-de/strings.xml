@@ -110,6 +110,9 @@
 
     <string name="preference_training_title">Training</string>
 
+    <string name="preference_weight_title">Körpergewicht</string>
+    <string name="preference_weight_summary">Energie für %s kg Körpergewicht anpassen</string>
+
     <string name="preference_split_distance_title">Split</string>
     <string name="preference_split_distance_summary">Zeit pro %s Meter</string>
 

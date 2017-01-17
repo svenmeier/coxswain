@@ -22,5 +22,5 @@ public interface IProtocol {
 
     void reset();
 
-    boolean transfer(Measurement measurement);
+    void transfer(Measurement measurement);
 }

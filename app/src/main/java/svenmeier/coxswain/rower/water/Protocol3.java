@@ -49,7 +49,7 @@ public class Protocol3 implements IProtocol {
     }
 
     @Override
-    public boolean transfer(Measurement measurement) {
+    public void transfer(Measurement measurement) {
         int length = transfer.bulkInput();
 
         byte[] buffer = transfer.buffer();
@@ -104,8 +104,6 @@ public class Protocol3 implements IProtocol {
 
             trace(buffer, c, 1);
         }
-
-        return true;
     }
 
     private void trace(byte[] buffer, int start, int length) {

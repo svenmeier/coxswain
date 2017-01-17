@@ -96,7 +96,9 @@ public class WaterRower extends Rower {
         if (Preference.getBoolean(context, R.string.preference_hardware_legacy).get()) {
             protocol = new Protocol3(transfer, trace);
         } else {
-            protocol = new Protocol4(transfer, trace);
+            Protocol4 protocol4 = new Protocol4(transfer, trace);
+            protocol4.energyCalculator.setWeight(Preference.getInt(context, R.string.preference_weight).get());
+            protocol = protocol4;
         }
 
         return true;
@@ -144,9 +146,7 @@ public class WaterRower extends Rower {
             return false;
         }
 
-        if (protocol.transfer(this) == false) {
-            protocol = new Protocol3(transfer, trace);
-        }
+        protocol.transfer(this);
 
         return true;
     }

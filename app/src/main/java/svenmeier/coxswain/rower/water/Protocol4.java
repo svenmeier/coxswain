@@ -19,14 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 
 public class Protocol4 implements IProtocol {
 
     public static final String VERSION_UNKOWN = null;
-
-    public static final String VERSION_UNSUPPORTED = "";
 
     private static final int TIMEOUT = 50;
 
@@ -38,7 +35,9 @@ public class Protocol4 implements IProtocol {
 
     private List<Field> fields = new ArrayList<>();
 
-    private RatioCalculator ratioCalculator = new RatioCalculator();
+    public final RatioCalculator ratioCalculator = new RatioCalculator();
+
+    public final EnergyCalculator energyCalculator = new EnergyCalculator();
 
     private int cycle = 0;
 
@@ -160,7 +159,7 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.energy = value / 1000;
+                measurement.energy = energyCalculator.energy(value);
             }
         });
 
@@ -226,17 +225,11 @@ public class Protocol4 implements IProtocol {
         return false;
     }
 
-    public boolean transfer(Measurement measurement) {
+    public void transfer(Measurement measurement) {
 
         input(measurement);
 
-        if (version == VERSION_UNSUPPORTED) {
-            return false;
-        } else {
-            output();
-
-            return true;
-        }
+        output();
     }
 
     private void output() {

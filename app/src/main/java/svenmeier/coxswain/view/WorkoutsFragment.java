@@ -38,6 +38,8 @@ import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Workout;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 
 public class WorkoutsFragment extends Fragment {
 
@@ -148,7 +150,7 @@ public class WorkoutsFragment extends Fragment {
 
             TextView countsView = index.get(R.id.workout_counts);
             String counts = TextUtils.join(", ", new String[]{
-                    String.format(getString(R.string.duration_minutes), Math.round(workout.duration.get() / 60f)),
+                    asHoursMinutesSeconds(workout.duration.get()),
                     String.format(getString(R.string.distance_meters), workout.distance.get()),
                     String.format(getString(R.string.strokes_count), workout.strokes.get()),
                     String.format(getString(R.string.energy_calories), workout.energy.get())
@@ -160,5 +162,9 @@ public class WorkoutsFragment extends Fragment {
         protected void onItem(Workout workout, int position) {
             startActivity(SnapshotsActivity.createIntent(getActivity(), workout));
         }
+    }
+
+    private static String asHoursMinutesSeconds(int seconds) {
+        return String.format("%d:%02d:%02d", SECONDS.toHours(seconds), SECONDS.toMinutes(seconds) % 60, seconds % 60);
     }
 }

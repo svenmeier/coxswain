@@ -93,8 +93,7 @@ public class ProgramsFragment extends Fragment {
             nameTextView.setText(program.name.get());
 
             TextView durationTextView = index.get(R.id.program_duration);
-            int duration = program.asDuration();
-            durationTextView.setText(String.format("%d:%02d", SECONDS.toHours(duration), SECONDS.toMinutes(duration) % 60));
+            durationTextView.setText(asHoursMinutes(program.asDuration()));
 
             SegmentsView segmentsView = index.get(R.id.program_segments);
             segmentsView.setData(new SegmentsData(program));
@@ -147,5 +146,9 @@ public class ProgramsFragment extends Fragment {
 
             WorkoutActivity.start(getActivity());
         }
+    }
+
+    private static String asHoursMinutes(int seconds) {
+        return String.format("%d:%02d", SECONDS.toHours(seconds), SECONDS.toMinutes(seconds) % 60);
     }
 }

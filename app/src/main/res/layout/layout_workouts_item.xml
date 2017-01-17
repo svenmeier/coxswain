@@ -30,17 +30,21 @@
                 android:id="@+id/workout_start"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:textSize="32dp"
                 android:text="Start"
                 />
 
+            <!-- aligned right on single line capped -->
             <TextView
                 android:id="@+id/workout_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:textSize="16dp"
                 android:text="Name"
+
+                android:layout_weight="1"
+                android:gravity="right"
+                android:inputType="text"
                 />
         </LinearLayout>
 

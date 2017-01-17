@@ -222,8 +222,6 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
 
     private class PerformancePeriods implements TimelineView.Periods {
 
-        private NumberFormat numberFormat = NumberFormat.getNumberInstance();
-
         private Paint paint = new Paint();
 
         private Paint.FontMetrics metrics = new Paint.FontMetrics();
@@ -289,16 +287,16 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
                 String what;
                 switch (highlight) {
                     case 0:
-                        what = numberFormat.format(performance.duration / 60);
+                        what = String.format(getString(R.string.duration_minutes), performance.duration / 60);
                         break;
                     case 1:
-                        what = numberFormat.format(performance.distance);
+                        what = String.format(getString(R.string.distance_meters), performance.distance);
                         break;
                     case 2:
-                        what = numberFormat.format(performance.strokes);
+                        what = String.format(getString(R.string.strokes_count), performance.strokes);
                         break;
                     case 3:
-                        what = numberFormat.format(performance.energy);
+                        what = String.format(getString(R.string.energy_calories), performance.energy);
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

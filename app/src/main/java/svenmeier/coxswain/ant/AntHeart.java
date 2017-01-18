@@ -73,6 +73,8 @@ public class AntHeart extends Heart {
 		@Override
 		public void open() {
 			handle = AntPlusHeartRatePcc.requestAccess(context, FIRST_AVAILABLE_DEVICE, NO_PROXIMITY_SEARCH, this, this);
+
+			toast(context.getString(R.string.ant_heart_searching));
 		}
 
 		@Override

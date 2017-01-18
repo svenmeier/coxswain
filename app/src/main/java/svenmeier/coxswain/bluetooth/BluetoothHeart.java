@@ -287,6 +287,7 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
+			toast(context.getString(R.string.bluetooth_heart_searching));
 			handler.postDelayed(this, SCAN_TIMEOUT_MILLIS);
 		}
 

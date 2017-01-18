@@ -30,8 +30,11 @@ public class EnergyCalculator {
 
     private int weight;
 
+	/**
+     * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust energy.
+     */
     public EnergyCalculator() {
-        this(90);
+        this(DEFAULT_WEIGHT);
     }
 
     public EnergyCalculator(int weight) {

@@ -15,6 +15,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Build;
@@ -132,7 +134,7 @@ public class BluetoothHeart extends Heart {
 		private boolean registered;
 
 		public void open() {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (isRequired()) {
 				if (isEnabled() == false) {
 					toast(context.getString(R.string.bluetooth_heart_no_location));
 
@@ -150,6 +152,16 @@ public class BluetoothHeart extends Heart {
 			}
 
 			proceed();
+		}
+
+		/**
+		 * Location services must be enabled for Apps built for M and running on M or later.
+		 */
+		private boolean isRequired() {
+			boolean builtForM = context.getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
+			boolean runningOnM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+
+			return builtForM && runningOnM;
 		}
 
 		private boolean isEnabled() {

@@ -28,7 +28,7 @@ public class Protocol3 implements IProtocol {
 
     private int distanceInDecimeters;
 
-    private RatioCalculator ratioCalculator = new RatioCalculator();
+    public final RatioCalculator ratioCalculator = new RatioCalculator();
 
     public Protocol3(ITransfer transfer, ITrace trace) {
         this.transfer = transfer;

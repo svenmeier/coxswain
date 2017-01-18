@@ -31,7 +31,7 @@ public class EnergyCalculator {
     private int weight;
 
 	/**
-     * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust energy.
+     * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust.
      */
     public EnergyCalculator() {
         this(DEFAULT_WEIGHT);
@@ -53,10 +53,19 @@ public class EnergyCalculator {
         this.weight = weight;
     }
 
-    public int energy(int kcal) {
+	/**
+     * Energy in kcal.
+     *
+     * @param carolies
+     * @return kcal adjusted to weight
+     */
+    public int energy(int carolies) {
 
         int delta = this.weight - DEFAULT_WEIGHT;
+        if (delta != 0) {
+            carolies += (int)(carolies * delta * FACTOR);
+        }
 
-        return (kcal + (int)(kcal * delta * FACTOR)) / 1000;
+        return carolies / 1000;
     }
 }

@@ -68,7 +68,7 @@ public class Workout extends Propoid {
         this.strokes.set(measurement.strokes);
         this.energy.set(measurement.energy);
 
-        if (measurement.duration != this.duration.get()) {
+        if (this.duration.get() != measurement.duration) {
             this.duration.set(measurement.duration);
 
             return true;

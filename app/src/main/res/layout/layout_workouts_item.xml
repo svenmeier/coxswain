@@ -44,7 +44,8 @@
 
                 android:layout_weight="1"
                 android:gravity="right"
-                android:inputType="text"
+                android:singleLine="true"
+                android:ellipsize="end"
                 />
         </LinearLayout>
 

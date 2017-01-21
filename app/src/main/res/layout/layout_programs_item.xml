@@ -35,7 +35,8 @@
                 android:text="Name"
 
                 android:layout_weight="1"
-                android:inputType="text"
+                android:singleLine="true"
+                android:ellipsize="end"
                 />
             <TextView
                 android:id="@+id/program_duration"

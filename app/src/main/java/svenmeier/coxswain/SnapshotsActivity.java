@@ -27,7 +27,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,8 +154,6 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
 
         private SimpleDateFormat dateFormat;
 
-        private NumberFormat numberFormat;
-
         private Paint paint = new Paint();
 
         private Paint.FontMetrics metrics = new Paint.FontMetrics();
@@ -172,8 +169,6 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
         public SnapshotPeriods() {
             dateFormat = new SimpleDateFormat("H:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-            numberFormat = NumberFormat.getNumberInstance();
         }
 
         @Override
@@ -234,19 +229,13 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                 String what;
                 switch (highlight) {
                     case 0:
-                        numberFormat.setMaximumFractionDigits(2);
-                        numberFormat.setMinimumFractionDigits(2);
-                        what = numberFormat.format(snapshot.speed.get() / 100f);
+                        what = String.format(getString(R.string.speed_metersPerSecond_abbr), snapshot.speed.get() / 100f);
                         break;
                     case 1:
-                        numberFormat.setMaximumFractionDigits(0);
-                        numberFormat.setMinimumFractionDigits(0);
-                        what = numberFormat.format(snapshot.pulse.get());
+                        what = String.format(getString(R.string.pulse_beatsPerMinute_abbr), snapshot.pulse.get());
                         break;
                     case 2:
-                        numberFormat.setMaximumFractionDigits(0);
-                        numberFormat.setMinimumFractionDigits(0);
-                        what = numberFormat.format(snapshot.strokeRate.get());
+                        what = String.format(getString(R.string.strokeRate_strokesPerMinute_abbr), snapshot.strokeRate.get());
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

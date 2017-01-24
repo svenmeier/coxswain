@@ -36,13 +36,16 @@
     <string name="energy_calories">%d kcal</string>
     <string name="energy_label">ENERGY</string>
     <string name="energy_pattern">0000</string>
+    <string name="strokeRate_strokesPerMinute_abbr">%d spm</string>
     <string name="strokeRate_strokesPerMinute">%d strokes per minute</string>
     <string name="strokeRate_label">STROKERATE</string>
     <string name="strokeRate_pattern">-00</string>
+    <string name="pulse_beatsPerMinute_abbr">%d bpm</string>
     <string name="pulse_beatsPerMinute">%d beats per minute</string>
     <string name="pulse_label">PULSE</string>
     <string name="pulse_pattern">-000</string>
-    <string name="speed_metersPerSecond">%d meters per second</string>
+    <string name="speed_metersPerSecond_abbr">%.2f m/s</string>
+    <string name="speed_metersPerSecond">%.2f meters per second</string>
     <string name="speed_label">SPEED</string>
     <string name="speed_pattern">-0.00</string>
     <string name="strokeRatio_label">STROKERATIO</string>

@@ -28,7 +28,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import svenmeier.coxswain.Coxswain;
@@ -272,7 +276,7 @@ public class BluetoothHeart extends Heart {
 
 		private BluetoothAdapter adapter;
 
-		private List<BluetoothGatt> pending = new ArrayList<>();
+		private Map<String, BluetoothGatt> pending = new HashMap<>();
 		private BluetoothGatt selected;
 
 		@Override
@@ -299,7 +303,7 @@ public class BluetoothHeart extends Heart {
 				adapter = null;
 			}
 
-			for (BluetoothGatt gatt : pending) {
+			for (BluetoothGatt gatt : pending.values()) {
 				gatt.close();
 			}
 			pending.clear();
@@ -339,6 +343,8 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
+			Log.d(Coxswain.TAG, "bluetooth device discovered " + device.getAddress());
+
 			device.connectGatt(context, false, this);
 		}
 
@@ -350,8 +356,13 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED) {
-				pending.add(candidate);
+			String address = candidate.getDevice().getAddress();
+
+			if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED
+					&& pending.containsKey(address) == false) {
+				Log.d(Coxswain.TAG, "bluetooth gatt connected " + address);
+
+				pending.put(address, candidate);
 
 				candidate.discoverServices();
 			}
@@ -366,13 +377,19 @@ public class BluetoothHeart extends Heart {
 			}
 
 			if (status == BluetoothGatt.GATT_SUCCESS) {
+				Log.d(Coxswain.TAG, "bluetooth services discovered " + candidate.getDevice().getName());
+
 				BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
 				if (service != null) {
+					Log.d(Coxswain.TAG, "bluetooth heart rate service acquired");
+
 					BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_HEART_RATE);
 					if (characteristic != null) {
+						Log.d(Coxswain.TAG, "bluetooth heart rate characteristic acquired");
+
 						if (enableNotification(candidate, characteristic)) {
 							selected = candidate;
-							pending.remove(candidate);
+							pending.remove(candidate.getDevice().getAddress());
 
 							handler.post(new Runnable() {
 								@Override
@@ -390,25 +407,25 @@ public class BluetoothHeart extends Heart {
 		}
 
 		private boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {
-			if (candidate.setCharacteristicNotification(characteristic, true) == false) {
-				Log.d(Coxswain.TAG, "setCharacteristicNotification returns false - continuing");
-			}
+			boolean info;
+
+			info = candidate.setCharacteristicNotification(characteristic, true);
+			Log.d(Coxswain.TAG, "bluetooth characteristic notification set " + info);
 
 			BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
 			if (descriptor == null) {
-				Log.d(Coxswain.TAG, "get descriptor CLIENT_CHARACTERISTIC_DESCIPRTOR returns null - aborting");
 				return false;
-			}
+			} else {
+				Log.d(Coxswain.TAG, "bluetooth characteristic descriptor acquired");
 
-			if (descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) == false) {
-				Log.d(Coxswain.TAG, "set ENABLE_NOTIFICATION_VALUE returns false - continuing");
-			}
+				info = descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+				Log.d(Coxswain.TAG, "bluetooth descriptor notification set " + info);
 
-			if (candidate.writeDescriptor(descriptor) == false) {
-				Log.d(Coxswain.TAG, "write descriptor returns false - continuing");
-			}
+				info = candidate.writeDescriptor(descriptor);
+				Log.d(Coxswain.TAG, "bluetooth descriptor written " + info);
 
-			return true;
+				return true;
+			}
 		}
 
 		@Override

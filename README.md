@@ -15,4 +15,4 @@ You'll need
 
 This app is under development. Please report problems and ideas.
 
-Install from http://play.google.com/store/apps/details?id=svenmeier.coxswain
+[<img alt="Get it on Google Play" height="70" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" />](http://play.google.com/store/apps/details?id=svenmeier.coxswain) [<img alt="Donate" src="https://www.paypalobjects.com/en_US/DE/i/btn/btn_donateCC_LG.gif" />](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CC3QC76CKCCRY)

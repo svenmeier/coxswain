@@ -33,7 +33,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public int getCount() {
-                return 60;
+                return 60 + 2;
             }
 
             @Override
@@ -43,12 +43,30 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public int getValue(int index) {
-                return (index + 1) * 60;
+                if (index == 0) {
+                    return 30;
+                } else if (index == 1) {
+                    return 60;
+                } else if (index == 2) {
+                    return 90;
+                } else {
+                    return (index - 1) * 60;
+                }
             }
 
             @Override
             public int segmentToIndex(Segment segment) {
-                return segment.duration.get() / 60 - 1;
+                int duration = segment.duration.get();
+
+                if (duration >= 120) {
+                    return duration / 60 + 1;
+                } else if (duration >= 90) {
+                    return 2;
+                } else if (duration >= 60) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
 
             @Override

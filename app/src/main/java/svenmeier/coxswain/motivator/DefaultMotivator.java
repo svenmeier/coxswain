@@ -176,6 +176,8 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
      */
     private class Change extends Analyser {
 
+        private Preference<Boolean> ringtonesPreference = Preference.getBoolean(context, R.string.preference_audio_ringtones);
+
         private Preference<String> ringtoneEasyPreference = Preference.getString(context, R.string.preference_audio_ringtone_easy);
         private Preference<String> ringtoneMediumPreference = Preference.getString(context, R.string.preference_audio_ringtone_medium);
         private Preference<String> ringtoneHardPreference = Preference.getString(context, R.string.preference_audio_ringtone_hard);
@@ -184,9 +186,11 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         @Override
         public void init() {
-            addRingtone(ringtoneEasyPreference, key(Difficulty.EASY));
-            addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM));
-            addRingtone(ringtoneHardPreference, key(Difficulty.HARD));
+            if (ringtonesPreference.get()) {
+                addRingtone(ringtoneEasyPreference, key(Difficulty.EASY));
+                addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM));
+                addRingtone(ringtoneHardPreference, key(Difficulty.HARD));
+            }
         }
 
         private String key(Difficulty difficulty) {

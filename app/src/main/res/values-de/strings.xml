@@ -127,8 +127,11 @@
     <string name="preference_workout_bindings_reset_title">Verknüpfungen zurücksetzen</string>
     <string name="preference_workout_bindings_reset_summary">Verknüpfungen für Training auf Standard zurücksetzen</string>
 
-    <string name="preference_audio_title">Töne</string>
+    <string name="preference_audio_title">Audio</string>
     <string name="preference_audio_none">Keine</string>
+
+    <string name="preference_audio_ringtones_title">Töne</string>
+    <string name="preference_audio_ringtones_summary">Für Segments Töne abspielen</string>
 
     <string name="preference_audio_ringtone_easy_title">Einfaches Segment</string>
     <string name="preference_audio_ringtone_easy_summary">%s</string>

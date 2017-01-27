@@ -136,8 +136,12 @@
     <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
     <string name="preference_workout_binding_pace" translatable="false">preference_workout_binding_pace</string>
 
-    <string name="preference_audio_title">Sounds</string>
+    <string name="preference_audio_title">Audio</string>
     <string name="preference_audio_none">None</string>
+
+    <string name="preference_audio_ringtones" translatable="false">preference_audio_ringtones</string>
+    <string name="preference_audio_ringtones_title">Sounds</string>
+    <string name="preference_audio_ringtones_summary">Play sounds for segments</string>
 
     <string name="preference_audio_ringtone_easy" translatable="false">preference_audio_ringtone_easy</string>
     <string name="preference_audio_ringtone_easy_title">Easy segment</string>

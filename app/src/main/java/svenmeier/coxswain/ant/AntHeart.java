@@ -26,8 +26,6 @@ public class AntHeart extends Heart {
 
 	private static final int NO_PROXIMITY_SEARCH = 0;
 
-	private int heartRate = -1;
-
 	private Connection connection;
 
 	public AntHeart(Context context, Measurement measurement) {
@@ -35,15 +33,6 @@ public class AntHeart extends Heart {
 
 		this.connection = new AntConnection();
 		this.connection.open();
-	}
-
-	@Override
-	public void pulse() {
-		if (heartRate == -1) {
-			return;
-		}
-
-		measurement.pulse = heartRate;
 	}
 
 	@Override
@@ -92,9 +81,6 @@ public class AntHeart extends Heart {
 
 		@Override
 		public void onDeviceStateChange(DeviceState deviceState) {
-			if (deviceState == DeviceState.DEAD || deviceState == DeviceState.CLOSED) {
-				heartRate = 0;
-			}
 		}
 
 		@Override
@@ -114,7 +100,7 @@ public class AntHeart extends Heart {
 
 		@Override
 		public void onNewHeartRateData(long timestamp, EnumSet<EventFlag> flags, int heartRate, long heartBeatCount, BigDecimal heartBeatEventTime, AntPlusHeartRatePcc.DataState dataState) {
-			AntHeart.this.heartRate = heartRate;
+			onHeartRate(heartRate);
 		}
 	}
 }

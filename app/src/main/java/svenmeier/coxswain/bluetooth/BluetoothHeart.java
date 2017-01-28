@@ -15,8 +15,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Build;
@@ -27,12 +25,8 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import svenmeier.coxswain.Coxswain;
@@ -48,8 +42,6 @@ public class BluetoothHeart extends Heart {
 
 	private static final int SCAN_TIMEOUT_MILLIS = 60000;
 
-	private static final long PULSE_TIMEOUT_MILLIS = 5000;
-
 	private static final UUID SERVICE_HEART_RATE = uuid(0x180D);
 
 	private static final UUID CHARACTERISTIC_HEART_RATE = uuid(0x2A37);
@@ -59,10 +51,6 @@ public class BluetoothHeart extends Heart {
 	private Handler handler = new Handler();
 
 	private Connection connection;
-
-	private long lastPulse;
-
-	private int heartRate = -1;
 
 	public BluetoothHeart(Context context, Measurement measurement) {
 		super(context, measurement);
@@ -82,21 +70,6 @@ public class BluetoothHeart extends Heart {
 			connection.close();
 			connection = null;
 		}
-	}
-
-	@Override
-	public void pulse() {
-		if (heartRate == -1) {
-			return;
-		}
-
-		long now = System.currentTimeMillis();
-		if (now - lastPulse > PULSE_TIMEOUT_MILLIS) {
-			heartRate = 0;
-		}
-		lastPulse = now;
-
-		measurement.pulse = heartRate;
 	}
 
 	private void toast(String text) {
@@ -438,7 +411,7 @@ public class BluetoothHeart extends Heart {
 				format = BluetoothGattCharacteristic.FORMAT_UINT16;
 			}
 
-			heartRate = characteristic.getIntValue(format, 1);
+			onHeartRate(characteristic.getIntValue(format, 1));
 		}
 	}
 

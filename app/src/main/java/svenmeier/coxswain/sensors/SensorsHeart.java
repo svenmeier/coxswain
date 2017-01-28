@@ -22,8 +22,6 @@ public class SensorsHeart extends Heart {
 
 	private Connection connection;
 
-	private int heartRate = -1;
-
 	public SensorsHeart(Context context, Measurement measurement) {
 		super(context, measurement);
 
@@ -37,15 +35,6 @@ public class SensorsHeart extends Heart {
 			connection.close();
 			connection = null;
 		}
-	}
-
-	@Override
-	public void pulse() {
-		if (heartRate == -1) {
-			return;
-		}
-
-		measurement.pulse = heartRate;
 	}
 
 	private class Connection extends PermissionBlock implements SensorEventListener {
@@ -91,7 +80,7 @@ public class SensorsHeart extends Heart {
 		@Override
 		public void onSensorChanged(SensorEvent event) {
 			if (event.values != null && event.values.length > 0) {
-				heartRate = Math.round(event.values[0]);
+				onHeartRate(Math.round(event.values[0]));
 			}
 		}
 

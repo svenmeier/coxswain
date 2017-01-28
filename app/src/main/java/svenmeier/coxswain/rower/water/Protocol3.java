@@ -15,6 +15,8 @@
  */
 package svenmeier.coxswain.rower.water;
 
+import android.icu.text.SymbolTable;
+
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.water.usb.ITransfer;
 
@@ -25,6 +27,8 @@ public class Protocol3 implements IProtocol {
     private final ITrace trace;
 
     private final ITransfer transfer;
+
+    private long start;
 
     private int distanceInDecimeters;
 
@@ -45,7 +49,9 @@ public class Protocol3 implements IProtocol {
     public void reset() {
         distanceInDecimeters = 0;
 
-        ratioCalculator.clear(System.currentTimeMillis());
+        this.start = System.currentTimeMillis();
+
+        ratioCalculator.clear(start);
     }
 
     @Override
@@ -104,6 +110,8 @@ public class Protocol3 implements IProtocol {
 
             trace(buffer, c, 1);
         }
+
+        measurement.duration = (int)(System.currentTimeMillis() - start) / 1000;
     }
 
     private void trace(byte[] buffer, int start, int length) {

@@ -58,14 +58,16 @@ public class TargetDialogFragment extends AbstractValueFragment {
             public int segmentToIndex(Segment segment) {
                 int duration = segment.duration.get();
 
-                if (duration >= 120) {
-                    return duration / 60 + 1;
-                } else if (duration >= 90) {
-                    return 2;
-                } else if (duration >= 60) {
-                    return 1;
-                } else {
+                if (duration == 0) {
+                    return -1;
+                } else if (duration <= 30) {
                     return 0;
+                } else if (duration <= 60) {
+                    return 1;
+                } else if (duration <= 90) {
+                    return 2;
+                } else {
+                    return duration / 60 + 1;
                 }
             }
 

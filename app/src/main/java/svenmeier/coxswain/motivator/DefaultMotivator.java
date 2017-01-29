@@ -227,11 +227,15 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         private static final String KEY = "[FINISHED]";
 
+        private Preference<Boolean> ringtonesPreference = Preference.getBoolean(context, R.string.preference_audio_ringtones);
+
         private Preference<String> ringtoneFinishPreference = Preference.getString(context, R.string.preference_audio_ringtone_finish);
 
         @Override
         public void init() {
-            addRingtone(ringtoneFinishPreference, KEY);
+            if (ringtonesPreference.get()) {
+                addRingtone(ringtoneFinishPreference, KEY);
+            }
         }
 
         public void analyse(Event event, Gym.Progress progress) {

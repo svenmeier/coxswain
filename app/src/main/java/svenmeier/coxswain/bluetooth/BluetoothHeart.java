@@ -273,7 +273,6 @@ public class BluetoothHeart extends Heart {
 		private void stopScan() {
 			if (adapter != null) {
 				adapter.stopLeScan(this);
-				adapter = null;
 			}
 
 			for (BluetoothGatt gatt : pending.values()) {
@@ -324,8 +323,22 @@ public class BluetoothHeart extends Heart {
 		@WorkerThread
 		@Override
 		public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
-			if (adapter == null || selected != null) {
+			if (adapter == null) {
 				// no more discovery
+				return;
+			}
+
+			if (selected != null) {
+				if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+					// link loss?
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							toast(context.getString(R.string.bluetooth_heart_link_loss));
+						}
+					});
+				}
+				// already selected
 				return;
 			}
 
@@ -345,7 +358,7 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
 			if (adapter == null || selected != null) {
-				// no more discovery
+				// no more discovery or alreaddy selected
 				return;
 			}
 

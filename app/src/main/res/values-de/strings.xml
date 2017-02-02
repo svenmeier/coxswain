@@ -109,6 +109,7 @@
     <string name="bluetooth_heart_searching">Suche Puls über Bluetooth ...</string>
     <string name="bluetooth_heart_not_found">Kein Puls über Bluetooth gefunden</string>
     <string name="bluetooth_heart_reading">Lese Puls über Bluetooth</string>
+    <string name="bluetooth_heart_link_loss">Verbindung zu Puls über Bluetooth verloren</string>
 
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>

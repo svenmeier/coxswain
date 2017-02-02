@@ -111,6 +111,7 @@
     <string name="bluetooth_heart_searching">Searching for heart rate via Bluetooth ...</string>
     <string name="bluetooth_heart_not_found">No heart rate found via Bluetooth</string>
     <string name="bluetooth_heart_reading">Reading heart rate via Bluetooth</string>
+    <string name="bluetooth_heart_link_loss">Lost link to heart rate via Bluetooth</string>
 
     <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
     <string name="preference_theme_dark_title">Dark theme</string>

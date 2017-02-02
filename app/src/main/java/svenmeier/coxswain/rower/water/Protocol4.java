@@ -25,7 +25,7 @@ public class Protocol4 implements IProtocol {
 
     public static final String VERSION_UNKOWN = null;
 
-    private static final long PULSE_TIMEOUT_MILLIS = 5000;
+    private static final long PULSE_TIMEOUT_MILLIS = 2000;
 
     private static final long DEFAULT_OUTPUT_THROTTLE = 25;
 
@@ -44,6 +44,8 @@ public class Protocol4 implements IProtocol {
     private long outputThrottle = DEFAULT_OUTPUT_THROTTLE;
 
     private long lastOutput = 0;
+
+    private long lastPulse = 0;
 
     private String version = VERSION_UNKOWN;
 
@@ -121,6 +123,14 @@ public class Protocol4 implements IProtocol {
                 ratioCalculator.recovering(measurement, System.currentTimeMillis());
             }
         });
+
+        fields.add(new Field(null, "P") {
+            @Override
+            protected void onInput(String message, Measurement measurement) {
+                lastPulse = System.currentTimeMillis();
+            }
+        });
+
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
@@ -152,7 +162,17 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x1A0, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.pulse = value;
+                if (lastPulse > 0) {
+                    // Waterrower is sending pulse
+                    long now = System.currentTimeMillis();
+                    if (now - lastPulse > PULSE_TIMEOUT_MILLIS) {
+                        // pulse has timed out, discard value
+                        lastPulse = 0;
+                        measurement.pulse = 0;
+                    } else {
+                        measurement.pulse = value;
+                    }
+                }
             }
         });
 

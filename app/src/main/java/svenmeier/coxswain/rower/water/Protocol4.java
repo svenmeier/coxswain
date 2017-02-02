@@ -45,8 +45,6 @@ public class Protocol4 implements IProtocol {
 
     private long lastOutput = 0;
 
-    private long pulseTime;
-
     private String version = VERSION_UNKOWN;
 
     public Protocol4(ITransfer transfer, ITrace aTrace) {
@@ -155,8 +153,6 @@ public class Protocol4 implements IProtocol {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
                 measurement.pulse = value;
-
-                pulseTime = System.currentTimeMillis();
             }
         });
 
@@ -234,11 +230,6 @@ public class Protocol4 implements IProtocol {
         input(measurement);
 
         output();
-
-        long now = System.currentTimeMillis();
-        if (now - pulseTime > PULSE_TIMEOUT_MILLIS) {
-            measurement.pulse = 0;
-        }
     }
 
     private void output() {

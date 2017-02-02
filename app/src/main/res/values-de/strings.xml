@@ -42,8 +42,8 @@
     <string name="pulse_beatsPerMinute">%d Schläge in der Minute</string>
     <string name="pulse_label">PULS</string>
     <string name="pulse_pattern">-000</string>
-    <string name="speed_metersPerSecond_abbr">%.2f m/s</string>
-    <string name="speed_metersPerSecond">%.2f Meter in der Sekunde</string>
+    <string name="speed_metersPerSecond_abbr">%.1f m/s</string>
+    <string name="speed_metersPerSecond">%.1f Meter in der Sekunde</string>
     <string name="speed_label">TEMPO</string>
     <string name="speed_pattern">-0,00</string>
     <string name="strokeRatio_label">TEILZAHL</string>

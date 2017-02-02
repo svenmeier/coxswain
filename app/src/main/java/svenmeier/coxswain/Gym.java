@@ -412,7 +412,7 @@ public class Gym {
             if (segment.strokeRate.get() > 0) {
                 limit = String.format(context.getString(R.string.strokeRate_strokesPerMinute), segment.strokeRate.get());
             } else if (segment.speed.get() > 0) {
-                limit = String.format(context.getString(R.string.speed_metersPerSecond), Math.round(segment.speed.get() / 100f));
+                limit = String.format(context.getString(R.string.speed_metersPerSecond), segment.speed.get() / 100f);
             } else if (segment.pulse.get() > 0){
                  limit = String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get());
             }

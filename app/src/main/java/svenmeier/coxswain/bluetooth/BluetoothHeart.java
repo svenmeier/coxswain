@@ -249,7 +249,8 @@ public class BluetoothHeart extends Heart {
 
 		private BluetoothAdapter adapter;
 
-		private Map<String, BluetoothGatt> pending = new HashMap<>();
+		private Map<String, BluetoothDevice> connecting = new HashMap<>();
+		private Map<String, BluetoothGatt> discovering = new HashMap<>();
 		private BluetoothGatt selected;
 
 		@Override
@@ -275,10 +276,12 @@ public class BluetoothHeart extends Heart {
 				adapter.stopLeScan(this);
 			}
 
-			for (BluetoothGatt gatt : pending.values()) {
+			for (BluetoothGatt gatt : discovering.values()) {
 				gatt.close();
 			}
-			pending.clear();
+			discovering.clear();
+
+			connecting.clear();
 		}
 
 		public void close() {
@@ -288,6 +291,8 @@ public class BluetoothHeart extends Heart {
 				selected.close();
 				selected = null;
 			}
+
+			adapter = null;
 		}
 
 		/**
@@ -315,9 +320,15 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			Log.d(Coxswain.TAG, "bluetooth device discovered " + device.getAddress());
+			String address = device.getAddress();
 
-			device.connectGatt(context, false, this);
+			if (connecting.containsKey(address) == false) {
+				Log.d(Coxswain.TAG, "bluetooth found " + address);
+
+				connecting.put(address, device);
+
+				device.connectGatt(context, false, this);
+			}
 		}
 
 		@WorkerThread
@@ -329,7 +340,8 @@ public class BluetoothHeart extends Heart {
 			}
 
 			if (selected != null) {
-				if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+				if (newState == BluetoothProfile.STATE_DISCONNECTED
+						&& selected.getDevice().getAddress().equals(candidate.getDevice().getAddress())) {
 					// link loss?
 					handler.post(new Runnable() {
 						@Override
@@ -345,10 +357,10 @@ public class BluetoothHeart extends Heart {
 			String address = candidate.getDevice().getAddress();
 
 			if (status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED
-					&& pending.containsKey(address) == false) {
+					&& discovering.containsKey(address) == false) {
 				Log.d(Coxswain.TAG, "bluetooth gatt connected " + address);
 
-				pending.put(address, candidate);
+				discovering.put(address, candidate);
 
 				candidate.discoverServices();
 			}
@@ -375,7 +387,7 @@ public class BluetoothHeart extends Heart {
 
 						if (enableNotification(candidate, characteristic)) {
 							selected = candidate;
-							pending.remove(candidate.getDevice().getAddress());
+							discovering.remove(candidate.getDevice().getAddress());
 
 							handler.post(new Runnable() {
 								@Override

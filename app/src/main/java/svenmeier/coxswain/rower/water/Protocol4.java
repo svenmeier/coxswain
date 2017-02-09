@@ -183,6 +183,13 @@ public class Protocol4 implements IProtocol {
             }
         });
 
+        fields.add(new NumberField(0x1E0, NumberField.SINGLE_BYTE) {
+            @Override
+            protected void onUpdate(int value, Measurement measurement) {
+                // duration hundredth
+            }
+        });
+
         fields.add(new NumberField(0x1E1, NumberField.TRIPLE_BYTE) {
 			/**
 			 * Duration is sent in decimal representation.

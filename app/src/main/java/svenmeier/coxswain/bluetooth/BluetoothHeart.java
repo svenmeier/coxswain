@@ -323,7 +323,7 @@ public class BluetoothHeart extends Heart {
 			String address = device.getAddress();
 
 			if (connecting.containsKey(address) == false) {
-				Log.d(Coxswain.TAG, "bluetooth found " + address);
+				Log.d(Coxswain.TAG, "bluetooth gatt connecting " + address);
 
 				connecting.put(address, device);
 

@@ -1,3 +1,5 @@
+package svenmeier.coxswain.bluetooth;
+
 import org.junit.Test;
 
 import java.util.UUID;
@@ -7,7 +9,7 @@ import svenmeier.coxswain.bluetooth.BluetoothHeart;
 import static junit.framework.Assert.assertEquals;
 
 /**
- * Created by sven on 14.12.16.
+ * Test for {@link BluetoothHeart}.
  */
 public class BluetoothHeartTest {
 

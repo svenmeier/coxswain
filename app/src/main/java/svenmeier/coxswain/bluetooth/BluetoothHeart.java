@@ -25,6 +25,8 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import svenmeier.coxswain.Coxswain;
@@ -245,9 +247,11 @@ public class BluetoothHeart extends Heart {
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	private class GattConnection extends BluetoothGattCallback implements BluetoothAdapter.LeScanCallback, Runnable, Connection {
 
-		private BluetoothAdapter adapter;
+		private BluetoothAdapter scanner;
 
-		private GattDeviceQueue pending = new GattDeviceQueue();
+		private List<String> connecting = new ArrayList<>();
+
+		private GattDeviceQueue pendingDiscovery = new GattDeviceQueue();
 
 		private BluetoothGatt discovering;
 
@@ -256,9 +260,9 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public void open() {
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-			adapter = manager.getAdapter();
+			scanner = manager.getAdapter();
 
-			if (adapter.startLeScan(this) == false) {
+			if (scanner.startLeScan(this) == false) {
 				toast(context.getString(R.string.bluetooth_heart_no_bluetooth_le));
 
 				close();
@@ -272,12 +276,12 @@ public class BluetoothHeart extends Heart {
 		public void close() {
 			stopScan();
 
+			connecting.clear();
+
 			if (selected != null) {
 				selected.close();
 				selected = null;
 			}
-
-			adapter = null;
 		}
 
 		/**
@@ -287,7 +291,7 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public void run() {
 			// still scanning?
-			if (adapter != null) {
+			if (scanner != null) {
 				if (selected == null) {
 					// nothing found
 					toast(context.getString(R.string.bluetooth_heart_not_found));
@@ -300,11 +304,12 @@ public class BluetoothHeart extends Heart {
 		@MainThread
 		@SuppressWarnings("deprecation")
 		private synchronized void stopScan() {
-			if (adapter != null) {
-				adapter.stopLeScan(this);
+			if (scanner != null) {
+				scanner.stopLeScan(this);
+				scanner = null;
 			}
 
-			pending.close();
+			pendingDiscovery.close();
 
 			discovering = null;
 		}
@@ -318,39 +323,50 @@ public class BluetoothHeart extends Heart {
 			}
 
 			String address = device.getAddress();
-			Log.d(Coxswain.TAG, "bluetooth gatt connecting " + address);
-			device.connectGatt(context, true, this);
+			if (connecting.contains(address) == false) {
+				Log.d(Coxswain.TAG, "bluetooth gatt connecting " + address);
+
+				connecting.add(address);
+				device.connectGatt(context, true, this);
+			}
 		}
 
 		@WorkerThread
 		@Override
 		public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
-			if (adapter == null) {
+			if (scanner == null) {
 				// no more discovery
 				return;
 			}
 
-			if (selected == null) {
-				if (newState == BluetoothProfile.STATE_CONNECTED) {
-					Log.d(Coxswain.TAG, "bluetooth gatt connected " + candidate.getDevice().getAddress());
-					pending.add(candidate);
+			String address = candidate.getDevice().getAddress();
+
+			if (newState == BluetoothProfile.STATE_CONNECTED) {
+				Log.d(Coxswain.TAG, "bluetooth gatt connected " + address);
+
+				if (selected == null) {
+					Log.d(Coxswain.TAG, "bluetooth gatt discovery pending " + address);
+					pendingDiscovery.add(candidate);
 
 					discoverNext();
 				}
-			} else {
-				if (newState == BluetoothProfile.STATE_DISCONNECTED
-						&& selected.getDevice().getAddress().equals(candidate.getDevice().getAddress())) {
+			} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+				// link loss?
+				Log.d(Coxswain.TAG, "bluetooth gatt disconnected " + address);
 
-					// link loss?
-					Log.d(Coxswain.TAG, "bluetooth gatt disconnected " + candidate.getDevice().getAddress());
-					pending.remove(candidate);
+				if (selected == null) {
+					connecting.remove(address);
 
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							toast(context.getString(R.string.bluetooth_heart_link_loss));
-						}
-					});
+					pendingDiscovery.remove(candidate);
+				} else {
+					if (selected.getDevice().getAddress().equals(address)) {
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								toast(context.getString(R.string.bluetooth_heart_link_loss));
+							}
+						});
+					}
 				}
 			}
 		}
@@ -362,7 +378,7 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			discovering = pending.poll();
+			discovering = pendingDiscovery.poll();
 
 			if (discovering != null) {
 				Log.d(Coxswain.TAG, "bluetooth gatt discovering " + discovering.getDevice().getAddress());
@@ -374,11 +390,6 @@ public class BluetoothHeart extends Heart {
 		@WorkerThread
 		@Override
 		public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
-			if (discovering != candidate) {
-				// wrong device
-				return;
-			}
-
 			if (status == BluetoothGatt.GATT_SUCCESS) {
 				Log.d(Coxswain.TAG, "bluetooth services discovered " + candidate.getDevice().getAddress());
 
@@ -409,7 +420,7 @@ public class BluetoothHeart extends Heart {
 
 			Log.d(Coxswain.TAG, "bluetooth heart rate not discovered " + candidate.getDevice().getAddress());
 
-			pending.add(discovering);
+			pendingDiscovery.add(discovering);
 			discovering = null;
 			discoverNext();
 		}

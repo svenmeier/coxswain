@@ -20,13 +20,17 @@ package svenmeier.coxswain.rower.water;
  */
 public class EnergyCalculator {
 
-    private static final int WEIGHT_MIN = 55;
+    private static final int WEIGHT_MIN = 40;
 
-    private static final int WEIGHT_MAX = 125;
+    private static final int WEIGHT_MAX = 160;
 
-    private static final int DEFAULT_WEIGHT = 90;
+    private static final int DEFAULT_WEIGHT = 69;
 
-    private static final float FACTOR = 0.012f;
+    private static final double S4_CALORIES_FOR_WEIGHT = 257.1;
+
+    private static final double CALORIES_FACTOR = 1.714;
+
+    private static final double KG_TO_POUNDS = 2.20462;
 
     private int weight;
 
@@ -56,16 +60,15 @@ public class EnergyCalculator {
 	/**
      * Energy in kcal.
      *
-     * @param carolies
-     * @return kcal adjusted to weight
+     * @param calories
+     * @return kilo calories adjusted to weight
      */
-    public int energy(int carolies) {
+    public int energy(int calories) {
 
-        int delta = this.weight - DEFAULT_WEIGHT;
-        if (delta != 0) {
-            carolies += (int)(carolies * delta * FACTOR);
-        }
+        double kiloCalories = (double)calories / 1000d;
 
-        return carolies / 1000;
+        double adjusted = kiloCalories - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
+
+        return (int)(adjusted);
     }
 }

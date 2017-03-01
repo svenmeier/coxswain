@@ -316,6 +316,7 @@ public class BluetoothHeart extends Heart {
 		@Override
 		protected void onLost(BluetoothGatt candidate) {
 			if (selected != null && selected.getDevice().getAddress().equals(candidate.getDevice().getAddress())) {
+				selected.close();
 				selected = null;
 
 				handler.post(new Runnable() {
@@ -323,7 +324,9 @@ public class BluetoothHeart extends Heart {
 					public void run() {
 						toast(context.getString(R.string.bluetooth_heart_link_loss));
 
-						open();
+						if (connection == GattConnection.this) {
+							open();
+						}
 					}
 				});
 			}

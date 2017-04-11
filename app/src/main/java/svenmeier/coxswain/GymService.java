@@ -38,10 +38,6 @@ import svenmeier.coxswain.rower.water.WaterRower;
 
 public class GymService extends Service {
 
-    public static final String ACTION_STOP = "svenmeier.coxswain.GYM_STOP";
-
-    private BroadcastReceiver receiver;
-
     private Gym gym;
 
     private Handler handler = new Handler();
@@ -62,18 +58,6 @@ public class GymService extends Service {
         openEnd = Preference.getBoolean(this, R.string.preference_open_end);
 
         foreground = new Foreground();
-
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if (ACTION_STOP.equals(action)) {
-                    Gym.instance(GymService.this).deselect();
-                }
-            }
-        };
-        registerReceiver(receiver, new IntentFilter(ACTION_STOP));
     }
 
     @Override
@@ -81,9 +65,6 @@ public class GymService extends Service {
         if (this.rowing != null) {
             endRowing();
         }
-
-        unregisterReceiver(receiver);
-        receiver = null;
     }
 
     @Override
@@ -238,7 +219,7 @@ public class GymService extends Service {
             headsup = Preference.getBoolean(GymService.this, R.string.preference_integration_headsup);
 
             builder = new Notification.Builder(GymService.this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.notification)
                     .setContentTitle(getString(R.string.app_name))
                     .setOngoing(true);
         }

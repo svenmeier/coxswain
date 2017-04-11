@@ -5,13 +5,13 @@ if (project.hasProperty("coxswain-signing") && new File(project.property("coxswa
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 41
         versionName "4.1"
     }

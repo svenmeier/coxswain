@@ -1,3 +1,5 @@
+![Feature](/doc/google-play/feature.png?raw)
+
 Coxswain helps you organize your rowing: Connect your Android device to your Waterrower and choose your training program. 
 
 - record your workout while watching Youtube videos or other media (choose an intent to be executed on training start)

@@ -112,8 +112,9 @@ public class ProgramsFragment extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.action_new:
-                                    Gym.instance(getActivity()).mergeProgram(new Program("Program"));
+                                    Program newProgram = Gym.instance(getActivity()).newProgram();
 
+                                    startActivity(ProgramActivity.createIntent(getActivity(), newProgram));
                                     return true;
                                 case R.id.action_rename:
                                     NameDialogFragment.create(program).show(getFragmentManager(), "name");

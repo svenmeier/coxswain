@@ -31,14 +31,26 @@ public class Workout extends Propoid {
 
     public final Property<Long> start = property();
 
+    /**
+     * seconds
+     */
     public final Property<Integer> duration = property();
 
+    /**
+     * meters
+     */
     public final Property<Integer> distance = property();
 
     public final Property<Integer> strokes = property();
 
+    /**
+     * Calories
+     */
     public final Property<Integer> energy = property();
 
+    /**
+     * evaluate in performance
+     */
     public final Property<Boolean> evaluate = property();
 
     public Workout() {

@@ -20,20 +20,38 @@ package svenmeier.coxswain.gym;
  */
 public class Measurement {
 
+    /**
+     * seconds
+     */
     public int duration;
 
+    /**
+     * meters
+     */
     public int distance;
 
     public int strokes;
 
+    /**
+     * centimeters per seconds
+     */
     public int speed;
 
+    /**
+     * beats per second
+     */
     public int pulse;
 
+    /**
+     * strokes per second
+     */
     public int strokeRate;
 
     public int strokeRatio;
 
+    /**
+     * kilo calories
+     */
     public int energy;
 
     public Measurement() {

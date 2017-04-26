@@ -95,7 +95,7 @@ public class Program extends Propoid {
         segments.get().add(index + 1, new Segment(Difficulty.EASY));
     }
 
-    public static Program calories(String name, int kcal, Difficulty difficulty) {
+    public static Program kilocalories(String name, int kcal, Difficulty difficulty) {
         Program program = new Program(name);
 
         program.getSegment(0).setEnergy(kcal);

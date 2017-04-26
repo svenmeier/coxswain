@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import propoid.db.mapping.LocationMapper;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.rower.Energy;
 
 /**
  */
@@ -38,7 +39,7 @@ public class CalendarExport implements Export<Workout> {
 				String.format(context.getString(R.string.duration_minutes), workout.duration.get() / 60),
 				String.format(context.getString(R.string.distance_meters), workout.distance.get()),
 				String.format(context.getString(R.string.strokes_count), workout.strokes.get()),
-				String.format(context.getString(R.string.energy_calories), workout.energy.get())
+				Energy.kcal(context, workout.energy.get()).formatted()
 				// new Reference(workout).toString() // propoid URI is not recognized as link as 'http://' is :/
 		});
 		intent.putExtra(CalendarContract.Events.DESCRIPTION, description);

@@ -37,6 +37,7 @@ import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.rower.Energy;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -149,11 +150,11 @@ public class WorkoutsFragment extends Fragment {
             nameView.setText(workout.programName("-"));
 
             TextView countsView = index.get(R.id.workout_counts);
-            String counts = TextUtils.join(", ", new String[]{
+			String counts = TextUtils.join(", ", new String[]{
                     asHoursMinutesSeconds(workout.duration.get()),
                     String.format(getString(R.string.distance_meters), workout.distance.get()),
                     String.format(getString(R.string.strokes_count), workout.strokes.get()),
-                    String.format(getString(R.string.energy_calories), workout.energy.get())
+                    Energy.kcal(getActivity(), workout.energy.get()).formatted()
             });
             countsView.setText(counts);
         }

@@ -30,11 +30,11 @@ import propoid.ui.list.GenericAdapter;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.AbstractValueFragment;
+import svenmeier.coxswain.view.BindingView;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.LimitDialogFragment;
 import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueBinding;
-import svenmeier.coxswain.view.BindingView;
 
 
 public class ProgramActivity extends AbstractActivity implements AbstractValueFragment.Callback {

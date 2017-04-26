@@ -30,6 +30,15 @@
             android:defaultValue="500"
         />
 
+        <ListPreference
+            android:key="@string/preference_energy_unit"
+            android:title="@string/preference_energy_unit_title"
+            android:summary="@string/preference_energy_unit_summary"
+            android:defaultValue="kcal"
+            android:entries="@array/energy_units"
+            android:entryValues="@array/energy_units"
+        />
+
         <CheckBoxPreference
             android:key="@string/preference_open_end"
             android:title="@string/preference_open_end_title"
@@ -143,8 +152,8 @@
             android:title="@string/preference_hardware_heart_sensor_title"
             android:summary="@string/preference_hardware_heart_sensor_summary"
             android:defaultValue="svenmeier.coxswain.Heart"
-            android:entries="@array/sensors"
-            android:entryValues="@array/sensor_values"
+            android:entries="@array/heart_sensors"
+            android:entryValues="@array/heart_sensor_values"
             />
 
         <CheckBoxPreference

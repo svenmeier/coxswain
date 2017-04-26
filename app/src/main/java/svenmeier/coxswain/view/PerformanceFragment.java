@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,7 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.rower.Energy;
 
 
 public class PerformanceFragment extends Fragment implements View.OnClickListener {
@@ -296,7 +296,7 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
                         what = String.format(getString(R.string.strokes_count), performance.strokes);
                         break;
                     case 3:
-                        what = String.format(getString(R.string.energy_calories), performance.energy);
+                        what = Energy.kcal(getActivity(), performance.energy).formatted();
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

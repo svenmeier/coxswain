@@ -26,6 +26,7 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Segment;
+import svenmeier.coxswain.rower.Energy;
 
 /**
  */

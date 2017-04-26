@@ -58,16 +58,16 @@ public class EnergyCalculator {
     }
 
 	/**
-     * Energy in kcal.
+     * Energy in Calories.
      *
      * @param calories
-     * @return kilo calories adjusted to weight
+     * @return Calories adjusted to weight
      */
     public int energy(int calories) {
 
-        double kiloCalories = (double)calories / 1000d;
+        double thousandth = (double)calories / 1000d;
 
-        double adjusted = kiloCalories - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
+        double adjusted = thousandth - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
 
         return (int)(adjusted);
     }

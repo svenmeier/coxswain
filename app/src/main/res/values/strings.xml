@@ -23,17 +23,19 @@
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
 
-    <string name="distance_meters">%d meters</string>
+    <string name="distance_meters">%,d meters</string>
     <string name="distance_label">DISTANCE</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d minutes</string>
     <string name="duration_label">DURATION</string>
     <string name="duration_pattern">0:60:60</string>
     <string name="duration_short_pattern">60:60</string>
-    <string name="strokes_count">%d strokes</string>
+    <string name="strokes_count">%,d strokes</string>
     <string name="strokes_label">STROKES</string>
     <string name="strokes_pattern">0000</string>
-    <string name="energy_calories">%d kcal</string>
+    <string name="energy_kilocalories">%,d kcal</string>
+    <string name="energy_watthours">%,d Wh</string>
+    <string name="energy_kilojoules">%,d kJ</string>
     <string name="energy_label">ENERGY</string>
     <string name="energy_pattern">0000</string>
     <string name="strokeRate_strokesPerMinute_abbr">%d spm</string>
@@ -67,6 +69,7 @@
     <string name="workouts">Workouts</string>
     <string name="performance">Performance</string>
 
+    <string name="program_name_new">Program</string>
     <string name="program_name_segments">Segments</string>
 
     <string name="import_unknown">Unkown import format</string>
@@ -122,6 +125,10 @@
     <string name="preference_weight" translatable="false">preference_weight</string>
     <string name="preference_weight_title">Body weight</string>
     <string name="preference_weight_summary">Adjust energy to %s kg body weight</string>
+
+    <string name="preference_energy_unit" translatable="false">preference_energy_unit</string>
+    <string name="preference_energy_unit_title">Energy</string>
+    <string name="preference_energy_unit_summary">Energy unit %s</string>
 
     <string name="preference_split_distance" translatable="false">preference_split_distance</string>
     <string name="preference_split_distance_title">Split</string>

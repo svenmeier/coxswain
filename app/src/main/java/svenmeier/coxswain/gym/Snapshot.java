@@ -25,18 +25,33 @@ public class Snapshot extends Propoid {
 
     public final Property<Workout> workout = property();
 
+    /**
+     * meters
+     */
     public final Property<Integer> distance = property();
 
     public final Property<Integer> strokes = property();
 
+    /**
+     * centimeters per second
+     */
     public final Property<Integer> speed = property();
 
+    /**
+     * beats per minute
+     */
     public final Property<Integer> pulse = property();
 
+    /**
+     * strokes per minute
+     */
     public final Property<Integer> strokeRate = property();
 
     public final Property<Integer> strokeRatio = property();
 
+    /**
+     * kilo calories
+     */
     public final Property<Integer> energy = property();
 
     public Snapshot() {

@@ -69,7 +69,7 @@
     <string name="workouts">Workouts</string>
     <string name="performance">Performance</string>
 
-    <string name="program_name_new">Program</string>
+    <string name="program_name_new">New program</string>
     <string name="program_name_segments">Segments</string>
 
     <string name="import_unknown">Unkown import format</string>

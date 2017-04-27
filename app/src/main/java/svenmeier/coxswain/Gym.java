@@ -341,7 +341,7 @@ public class Gym {
     }
 
     public Program newProgram() {
-        Program program = new Program(context.getString(R.string.program_name_segments));
+        Program program = new Program(context.getString(R.string.program_name_new));
         mergeProgram(program);
         return program;
     }

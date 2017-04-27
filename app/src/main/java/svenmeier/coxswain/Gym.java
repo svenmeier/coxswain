@@ -29,6 +29,7 @@ import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Transaction;
+import propoid.db.Where;
 import propoid.db.cascading.DefaultCascading;
 import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Measurement;
@@ -193,11 +194,19 @@ public class Gym {
 
     public void delete(Propoid propoid) {
         if (propoid instanceof Workout) {
+            // delete all snapshots of workout
             Snapshot prototype = new Snapshot();
             repository.query(prototype, equal(prototype.workout, (Workout) propoid)).delete();
         }
 
         repository.delete(propoid);
+
+        if (propoid instanceof Program) {
+            // keep one program at least
+            if (repository.query(propoid).count() == 0) {
+                newProgram();
+            }
+        }
     }
 
     public void mergeWorkout(Workout workout) {

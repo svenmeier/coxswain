@@ -23,20 +23,18 @@ import svenmeier.coxswain.util.PermissionBlock;
 
 /**
  */
-public class ProgramExport implements Export<Program> {
+public class ProgramExport extends Export<Program> {
 
 	public static final String SUFFIX = ".coxswain";
 
 	private final boolean share;
-
-	private Context context;
 
 	private Handler handler = new Handler();
 
 	private final Gym gym;
 
 	public ProgramExport(Context context, boolean share) {
-		this.context = context;
+		super(context);
 
 		this.share = share;
 

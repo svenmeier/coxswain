@@ -1,11 +1,60 @@
 package svenmeier.coxswain.io;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import propoid.util.content.Preference;
+import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
 
 /**
- * Created by sven on 27.05.16.
  */
-public interface Export<T> {
+public abstract class Export<T> {
 
-	void start(T t);
+	protected final Context context;
+
+	protected Export(Context context) {
+		this.context = context;
+	}
+
+	public abstract void start(T t);
+
+	/**
+	 * Start an automatic export for the given {@link Workout}.
+	 *
+	 * @param context context
+	 * @param workout workout
+	 */
+	public static void start(Context context, Workout workout) {
+		Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
+
+		Export<Workout> export;
+
+		String name = last.get();
+		try {
+			export = (Export) Class.forName(name).getConstructor(Context.class).newInstance(context);
+		} catch (Exception ex) {
+			Toast.makeText(context, context.getString(R.string.preference_integration_export_auto_reminder), Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		export.start(workout);
+	}
+
+	/**
+	 * Start a specific export for the given {@link Workout}, enabling it for any successive automatic
+	 * export.
+	 *
+	 * @param context context
+	 * @param workout workout
+	 */
+	public static void start(Context context, Export<Workout> export, Workout workout) {
+		Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
+
+		last.set(export.getClass().getName());
+
+		export.start(workout);
+	}
 }

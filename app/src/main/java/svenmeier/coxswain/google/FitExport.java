@@ -22,17 +22,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.io.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.io.Export;
 
 /**
  */
-public class FitExport implements Export<Workout> {
-
-	private Context context;
+public class FitExport extends Export<Workout> {
 
 	private Handler handler = new Handler();
 
@@ -43,7 +41,7 @@ public class FitExport implements Export<Workout> {
 	private Connection connection;
 
 	public FitExport(Context context) {
-		this.context = context;
+		super(context);
 
 		this.handler = new Handler();
 
@@ -70,6 +68,8 @@ public class FitExport implements Export<Workout> {
 
 		private final GoogleApiClient client;
 
+		private final int REQUEST_CODE = 1;
+
 		public Connection() {
 			client = new GoogleApiClient.Builder(context)
 					.addApi(Fitness.SESSIONS_API)
@@ -88,7 +88,7 @@ public class FitExport implements Export<Workout> {
 		public void onConnectionFailed(ConnectionResult result) {
 			if (result.hasResolution() && context instanceof Activity) {
 				try {
-					result.startResolutionForResult((Activity) context, 1);
+					result.startResolutionForResult((Activity) context, REQUEST_CODE);
 					return;
 				} catch (IntentSender.SendIntentException e) {
 				}
@@ -98,10 +98,10 @@ public class FitExport implements Export<Workout> {
 		}
 
 		/**
-		 * TODO who calls this
+		 * TODO activity should delegate results
 		 */
-		public void onResolutionResult(int resultCode) {
-			if (resultCode == Activity.RESULT_OK) {
+		public void onResult(int requestCode, int resultCode) {
+			if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 				if (client.isConnecting() == false && client.isConnected() == false) {
 					client.connect();
 				}

@@ -177,6 +177,13 @@
 
     <string name="preference_integration_title">Integration</string>
 
+    <string name="preference_integration_export_auto" translatable="false">preference_integration_export_auto</string>
+    <string name="preference_integration_export_auto_title">Export</string>
+    <string name="preference_integration_export_auto_summary">Export each workout automatically</string>
+    <string name="preference_integration_export_auto_reminder">First export a workout to determine automatic exports</string>
+
+    <string name="preference_integration_export_last" translatable="false">preference_integration_export_last</string>
+
     <string name="preference_integration_headsup" translatable="false">preference_integration_headsup</string>
     <string name="preference_integration_headsup_title">Notification</string>
     <string name="preference_integration_headsup_summary">Show heads-up notification while other Apps (>= Android 4.1)</string>

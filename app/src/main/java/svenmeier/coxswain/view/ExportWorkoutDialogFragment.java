@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import propoid.db.Reference;
+import propoid.util.content.Preference;
+import svenmeier.coxswain.garmin.TcxShareExport;
 import svenmeier.coxswain.io.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
@@ -35,10 +37,10 @@ public class ExportWorkoutDialogFragment extends DialogFragment {
 								export = new CalendarExport(getActivity());
 								break;
 							case 1:
-								export = new TcxExport(getActivity(), false);
+								export = new TcxExport(getActivity());
 								break;
 							case 2:
-								export = new TcxExport(getActivity(), true);
+								export = new TcxShareExport(getActivity());
 								break;
 							case 3:
 								export = new FitExport(getActivity());
@@ -47,7 +49,7 @@ public class ExportWorkoutDialogFragment extends DialogFragment {
 								throw new IndexOutOfBoundsException();
 						}
 
-						export.start(workout);
+						Export.start(getActivity(), export, workout);
 					}
 				});
 

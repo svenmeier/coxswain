@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.UiThread;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,31 +19,25 @@ import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.io.Export;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.io.Export;
 import svenmeier.coxswain.util.PermissionBlock;
 
 /**
  */
-public class TcxExport implements Export<Workout> {
+public class TcxExport extends Export<Workout> {
 
 	public static final String SUFFIX = ".tcx";
-
-	private final boolean share;
-
-	private Context context;
 
 	private Handler handler = new Handler();
 
 	private final Gym gym;
 
-	public TcxExport(Context context, boolean share) {
-		this.context = context;
-
-		this.share = share;
+	public TcxExport(Context context) {
+		super(context.getApplicationContext());
 
 		this.handler = new Handler();
 
@@ -52,6 +47,11 @@ public class TcxExport implements Export<Workout> {
 	@Override
 	public void start(Workout workout) {
 		new Writing(workout);
+	}
+
+	@UiThread
+	protected void onWritten(File file) {
+		Toast.makeText(context, String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()), Toast.LENGTH_LONG).show();
 	}
 
 	private class Writing extends PermissionBlock implements Runnable {
@@ -82,7 +82,7 @@ public class TcxExport implements Export<Workout> {
 
 			Match<Snapshot> snapshots = gym.getSnapshots(workout);
 
-			File file;
+			final File file;
 			try {
 				file = write(snapshots);
 			} catch (IOException e) {
@@ -94,21 +94,12 @@ public class TcxExport implements Export<Workout> {
 			// input media so file can be found via MTB
 			context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
 
-			if (share) {
-				share(file);
-			} else {
-				toast(String.format(context.getString(R.string.garmin_export_finished), file.getAbsolutePath()));
-			}
-		}
-
-		private void share(File file) {
-			Intent shareIntent = new Intent(Intent.ACTION_SEND);
-			Uri uri = Uri.fromFile(file);
-			shareIntent.setType("text/xml");
-			shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-			shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, file.getName());
-
-			context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.garmin_export)));
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					onWritten(file);
+				}
+			});
 		}
 
 		public String getFileName() {

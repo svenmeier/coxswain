@@ -160,6 +160,10 @@
 
     <string name="preference_integration_title">Integration</string>
 
+    <string name="preference_integration_export_auto_title">Export</string>
+    <string name="preference_integration_export_auto_summary">Exportiere jedes Training automatisch</string>
+    <string name="preference_integration_export_auto_reminder">Exportiere zuerst ein Training um automatisches Exportieren festzulegen</string>
+
     <string name="preference_integration_headsup_title">Notifikation</string>
     <string name="preference_integration_headsup_summary">Heads-up Notifikation während anderer Apps (>= Android 4.1)</string>
 

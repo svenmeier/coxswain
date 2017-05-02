@@ -13,12 +13,10 @@ import svenmeier.coxswain.rower.Energy;
 
 /**
  */
-public class CalendarExport implements Export<Workout> {
-
-	private final Context context;
+public class CalendarExport extends Export<Workout> {
 
 	public CalendarExport(Context context) {
-		this.context = context;
+		super(context);
 	}
 
 	@Override

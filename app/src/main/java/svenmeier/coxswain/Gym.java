@@ -37,6 +37,7 @@ import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.io.Export;
 
 import static propoid.db.Where.all;
 import static propoid.db.Where.equal;
@@ -214,6 +215,10 @@ public class Gym {
     }
 
     public void deselect() {
+        if (current != null) {
+            Export.start(context, current);
+        }
+
         this.pace = null;
         this.program = null;
 

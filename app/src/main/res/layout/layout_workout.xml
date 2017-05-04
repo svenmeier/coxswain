@@ -1,56 +1,64 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:coxswain="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="horizontal"
-    >
+    android:orientation="vertical"
+>
 
-    <FrameLayout
-        android:layout_width="0dp"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:coxswain="http://schemas.android.com/apk/res-auto"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
         >
-        <svenmeier.coxswain.view.SegmentsView
-            android:id="@+id/workout_segments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            coxswain:drawable="@drawable/segment"
-            coxswain:orientation="vertical"
-            />
-        <svenmeier.coxswain.view.LevelView
-            android:id="@+id/workout_progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/progress"
-            />
-    </FrameLayout>
 
-    <svenmeier.coxswain.view.DashLayout
-        android:id="@+id/workout_dash"
-        android:layout_width="0dp"
-        android:layout_weight="6"
-        android:layout_height="match_parent"
-        coxswain:columns="1"
-    >
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-            />
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-        />
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-        />
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-        />
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-        />
-        <svenmeier.coxswain.view.BindingView
-            style="@style/BindingView"
-        />
-    </svenmeier.coxswain.view.DashLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            >
+            <svenmeier.coxswain.view.SegmentsView
+                android:id="@+id/workout_segments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                coxswain:drawable="@drawable/segment"
+                coxswain:orientation="vertical"
+                />
+            <svenmeier.coxswain.view.LevelView
+                android:id="@+id/workout_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/progress"
+                />
+        </FrameLayout>
 
+        <svenmeier.coxswain.view.DashLayout
+            android:id="@+id/workout_dash"
+            android:layout_width="0dp"
+            android:layout_weight="6"
+            android:layout_height="match_parent"
+            coxswain:columns="1"
+        >
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+                />
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+            />
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+            />
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+            />
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+            />
+            <svenmeier.coxswain.view.BindingView
+                style="@style/BindingView"
+            />
+        </svenmeier.coxswain.view.DashLayout>
+
+    </LinearLayout>
 </LinearLayout>

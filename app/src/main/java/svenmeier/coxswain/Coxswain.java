@@ -1,7 +1,7 @@
 package svenmeier.coxswain;
 
 import android.app.Application;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 
 import propoid.util.content.Preference;
 

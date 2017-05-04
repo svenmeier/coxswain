@@ -15,13 +15,14 @@
  */
 package svenmeier.coxswain;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,7 +66,10 @@ public class MainActivity extends AbstractActivity {
         onNewIntent(getIntent());
 
         pager = (ViewPager) findViewById(R.id.main_pager);
-        pager.setAdapter(new MainAdapter(getFragmentManager()));
+        pager.setAdapter(new MainAdapter(getSupportFragmentManager()));
+
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(pager);
 
         programView = (ViewGroup) findViewById(R.id.main_program);
         programView.setOnClickListener(new View.OnClickListener() {

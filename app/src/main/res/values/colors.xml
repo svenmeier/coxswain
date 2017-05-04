@@ -1,5 +1,7 @@
 <resources>
 
-    <color name="foooooo">#66000000</color>
+    <color name="primary">#ff3567ed</color>
+    <color name="primary_dark">#ff1547ad</color>
+    <color name="accent">#FFEEBB00</color>
 
 </resources>

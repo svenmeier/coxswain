@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -41,6 +42,8 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
     private Gym gym;
 
+    private EditText nameView;
+
     private ListView segmentsView;
     private SegmentsAdapter segmentsAdapter;
 
@@ -52,9 +55,9 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
         gym = Gym.instance(this);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         setContentView(R.layout.layout_program);
+
+        nameView = (EditText) findViewById(R.id.toolbar_edit);
 
         segmentsView = (ListView) findViewById(R.id.program_segments);
 
@@ -64,21 +67,20 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         if (program == null) {
             finish();
         } else {
+            nameView.setText(program.name.get());
+
             segmentsAdapter = new SegmentsAdapter();
             segmentsAdapter.install(segmentsView);
-
-            setTitle(program.name.get());
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    protected void onPause() {
+        super.onPause();
+
+        if (program != null) {
+            program.name.set(nameView.getText().toString());
+            Gym.instance(ProgramActivity.this).mergeProgram(program);
         }
     }
 
@@ -117,7 +119,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                     boolean was = segmentsView.isItemChecked(position);
                     segmentsView.setItemChecked(position, true);
 
-                    new TargetDialogFragment().show(getFragmentManager(), "changed");
+                    new TargetDialogFragment().show(getSupportFragmentManager(), "changed");
                 }
             });
 
@@ -140,7 +142,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                 public void onClick(View v) {
                     segmentsView.setItemChecked(position, true);
 
-                    new LimitDialogFragment().show(getFragmentManager(), "changed");
+                    new LimitDialogFragment().show(getSupportFragmentManager(), "changed");
                 }
             });
 

@@ -18,20 +18,19 @@ package svenmeier.coxswain.view;
 import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceScreen;
 
 import java.util.Collection;
 
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.rower.water.usb.Lister;
 
-public class DevicesFragment extends PreferenceFragment {
+public class DevicesFragment extends PreferenceFragmentCompat {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
 

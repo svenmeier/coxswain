@@ -1,13 +1,37 @@
 <resources>
 
-    <style name="LightTheme" parent="@android:style/Theme.Holo.Light">
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
         <item name="icon_more">@drawable/ic_more_vert_black_24dp</item>
         <item name="icon_share">@drawable/ic_share_black_24dp</item>
     </style>
 
-    <style name="DarkTheme" parent="@android:style/Theme.Holo">
+    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
         <item name="icon_more">@drawable/ic_more_vert_white_24dp</item>
         <item name="icon_share">@drawable/ic_share_white_24dp</item>
+    </style>
+
+    <style name="Toolbar" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="elevation">4dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="TabLayout" parent="Base.Widget.Design.TabLayout">
+        <item name="tabIndicatorHeight">4dp</item>
+        <item name="tabGravity">fill</item>
     </style>
 
     <style name="TimelineView">
@@ -35,23 +59,11 @@
         <item name="font">fonts/coxswain.ttf</item>
     </style>
 
-    <style name="MenuButton" parent="@android:style/Widget.Holo.Light.Button.Borderless.Small">
+    <style name="MenuButton" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">#16909090</item>
     </style>
-
-    <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
-    <style name="ButtonBar">
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingRight">2dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:background">@android:drawable/bottom_bar</item>
-    </style>
-
-    <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
-    <style name="ButtonBarButton" />
 
 </resources>

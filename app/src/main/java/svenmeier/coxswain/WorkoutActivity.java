@@ -93,8 +93,6 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
         gym = Gym.instance(this);
 
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         super.onCreate(savedInstanceState);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |

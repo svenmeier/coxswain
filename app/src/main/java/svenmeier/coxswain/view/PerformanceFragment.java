@@ -15,12 +15,13 @@
  */
 package svenmeier.coxswain.view;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,12 +60,12 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
     private Preference<Long> windowPreference;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        gym = Gym.instance(activity);
+        gym = Gym.instance(context);
 
-        windowPreference = Preference.getLong(activity, R.string.preference_performance_window).fallback(28 * TimelineView.DAY);
+        windowPreference = Preference.getLong(context, R.string.preference_performance_window).fallback(28 * TimelineView.DAY);
     }
 
     @Override
@@ -75,6 +76,11 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         updateTitle();
 
         timelineView = (TimelineView) root.findViewById(R.id.performance_timeline);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // required for CoordinatorLayout :/
+            timelineView.setNestedScrollingEnabled(true);
+        }
+
         timelineView.setWindow(24 * TimelineView.DAY);
         timelineView.setPeriods(new PerformancePeriods());
         timelineView.setOnClickListener(this);

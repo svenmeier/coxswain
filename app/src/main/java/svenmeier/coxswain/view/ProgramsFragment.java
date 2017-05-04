@@ -15,9 +15,10 @@
  */
 package svenmeier.coxswain.view;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,12 +46,11 @@ public class ProgramsFragment extends Fragment {
 
     private ProgramsAdapter adapter;
 
-
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        gym = Gym.instance(activity);
+        gym = Gym.instance(context);
     }
 
     @Override
@@ -58,6 +58,10 @@ public class ProgramsFragment extends Fragment {
         View root = inflater.inflate(R.layout.layout_programs, container, false);
 
         programsView = (ListView) root.findViewById(R.id.programs);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // required for CoordinatorLayout :/
+            programsView.setNestedScrollingEnabled(true);
+        }
         adapter = new ProgramsAdapter();
         adapter.install(programsView);
 
@@ -115,9 +119,6 @@ public class ProgramsFragment extends Fragment {
                                     Program newProgram = Gym.instance(getActivity()).newProgram();
 
                                     startActivity(ProgramActivity.createIntent(getActivity(), newProgram));
-                                    return true;
-                                case R.id.action_rename:
-                                    NameDialogFragment.create(program).show(getFragmentManager(), "name");
                                     return true;
                                 case R.id.action_edit:
                                     startActivity(ProgramActivity.createIntent(getActivity(), program));

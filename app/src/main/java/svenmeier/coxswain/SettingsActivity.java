@@ -19,19 +19,22 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 
 import svenmeier.coxswain.view.SettingsFragment;
 
 
 public class SettingsActivity extends AbstractActivity {
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+        setContentView(R.layout.layout_settings);
+
+        // must add fragment via transaction, otherwise is can not be replaced
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.settings_fragment, new SettingsFragment(), "settings");
+        transaction.commit();
     }
 
     public static Intent createIntent(Context context) {

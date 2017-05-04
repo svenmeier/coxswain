@@ -16,8 +16,9 @@
 package svenmeier.coxswain.view;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -62,6 +63,10 @@ public class WorkoutsFragment extends Fragment {
         View root = inflater.inflate(R.layout.layout_workouts, container, false);
 
         workoutsView = (ListView) root.findViewById(R.id.workouts);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // required for CoordinatorLayout :/
+            workoutsView.setNestedScrollingEnabled(true);
+        }
         adapter = new WorkoutsAdapter();
         adapter.install(workoutsView);
 

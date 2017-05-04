@@ -80,8 +80,6 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
             setTitle(DateUtils.formatDateTime(this, workout.start.get(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
         }
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         setContentView(R.layout.layout_snapshots);
 
         titleView = (TextView) findViewById(R.id.snapshots_title);

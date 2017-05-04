@@ -7,6 +7,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 
 import svenmeier.coxswain.R;
@@ -17,7 +18,7 @@ import svenmeier.coxswain.motivator.DefaultMotivator;
  * An specialization that substitutes the current ringtone into the summary (as ListPreference does it
  * too).
  */
-public class RingtonePreference extends android.preference.RingtonePreference {
+public class RingtonePreference extends Preference {
 
 	private Uri defaultRingtone;
 
@@ -44,6 +45,10 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 	}
 
 	@Override
+	protected void onClick() {
+	}
+/*
+	@Override
 	protected void onPrepareRingtonePickerIntent(Intent ringtonePickerIntent) {
 		super.onPrepareRingtonePickerIntent(ringtonePickerIntent);
 
@@ -59,7 +64,7 @@ public class RingtonePreference extends android.preference.RingtonePreference {
 		// input summary
 		notifyChanged();
 	}
-
+*/
 	@Override
 	public CharSequence getSummary() {
 		CharSequence summary = super.getSummary();

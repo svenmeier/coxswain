@@ -16,24 +16,23 @@
 package svenmeier.coxswain.view;
 
 import android.Manifest;
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import java.util.ArrayList;
 
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.util.PermissionBlock;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        addPreferencesFromResource(R.xml.preferences);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
 
         Preference bindings = findPreference(getString(R.string.preference_workout_bindings_reset));
         bindings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -63,10 +62,9 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(android.R.id.content, new DevicesFragment());
+                transaction.replace(R.id.settings_fragment, new DevicesFragment());
                 transaction.addToBackStack(null);
                 transaction.commit();
-
                 return true;
             }
         });

@@ -20,11 +20,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import propoid.util.content.Preference;
 
 
-public class AbstractActivity extends Activity {
+public class AbstractActivity extends AppCompatActivity {
 
     protected Preference<Boolean> theme;
 
@@ -41,6 +46,33 @@ public class AbstractActivity extends Activity {
         darkWhenCreated = theme.get();
         if (darkWhenCreated) {
             setTheme(R.style.DarkTheme);
+        }
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+
+            if ((this instanceof MainActivity) == false) {
+                ActionBar actionBar = getSupportActionBar();
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeButtonEnabled(true);
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

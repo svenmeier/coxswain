@@ -28,19 +28,22 @@ public abstract class Export<T> {
 	 * @param workout workout
 	 */
 	public static void start(Context context, Workout workout) {
-		Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
+		Preference<Boolean> auto = Preference.getBoolean(context, R.string.preference_integration_export_auto);
+		if (auto.get()) {
+			Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
 
-		Export<Workout> export;
+			Export<Workout> export;
 
-		String name = last.get();
-		try {
-			export = (Export) Class.forName(name).getConstructor(Context.class).newInstance(context);
-		} catch (Exception ex) {
-			Toast.makeText(context, context.getString(R.string.preference_integration_export_auto_reminder), Toast.LENGTH_LONG).show();
-			return;
+			String name = last.get();
+			try {
+				export = (Export) Class.forName(name).getConstructor(Context.class).newInstance(context);
+			} catch (Exception ex) {
+				Toast.makeText(context, context.getString(R.string.preference_integration_export_auto_reminder), Toast.LENGTH_LONG).show();
+				return;
+			}
+
+			export.start(workout);
 		}
-
-		export.start(workout);
 	}
 
 	/**

@@ -83,7 +83,6 @@
             android:title="@string/preference_audio_ringtone_easy_title"
             android:summary="@string/preference_audio_ringtone_easy_summary"
             android:defaultValue="android.resource://svenmeier.coxswain/raw/whistle_long"
-            android:ringtoneType="notification"
             android:dependency="@string/preference_audio_ringtones"
             />
 
@@ -92,7 +91,6 @@
             android:title="@string/preference_audio_ringtone_medium_title"
             android:summary="@string/preference_audio_ringtone_medium_summary"
             android:defaultValue="android.resource://svenmeier.coxswain/raw/whistle_long"
-            android:ringtoneType="notification"
             android:dependency="@string/preference_audio_ringtones"
             />
 
@@ -101,7 +99,6 @@
             android:title="@string/preference_audio_ringtone_hard_title"
             android:summary="@string/preference_audio_ringtone_hard_summary"
             android:defaultValue="android.resource://svenmeier.coxswain/raw/whistle_long"
-            android:ringtoneType="notification"
             android:dependency="@string/preference_audio_ringtones"
             />
 
@@ -110,7 +107,6 @@
             android:title="@string/preference_audio_ringtone_finish_title"
             android:summary="@string/preference_audio_ringtone_finish_summary"
             android:defaultValue="android.resource://svenmeier.coxswain/raw/whistle_double"
-            android:ringtoneType="notification"
             android:dependency="@string/preference_audio_ringtones"
             />
     </PreferenceCategory>

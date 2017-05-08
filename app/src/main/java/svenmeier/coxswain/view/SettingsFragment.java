@@ -19,16 +19,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.util.PermissionBlock;
+import svenmeier.coxswain.view.preference.ResultPreference;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    private Map<ResultPreference, Integer> requestCodes = new HashMap<>();
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -68,5 +72,45 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference instanceof ResultPreference) {
+            ResultPreference resultPreference = (ResultPreference) preference;
+
+            Intent intent = resultPreference.getRequest();
+
+            int requestCode = requestCode(resultPreference);
+            startActivityForResult(intent, requestCode);
+
+            return true;
+        }
+
+        return super.onPreferenceTreeClick(preference);
+    }
+
+    private int requestCode(ResultPreference preference) {
+        Integer code = requestCodes.get(preference);
+        if (code == null) {
+            code = requestCodes.size();
+            requestCodes.put(preference, code);
+        }
+
+        return code;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode != 0) {
+            for (Map.Entry<ResultPreference, Integer> entry : requestCodes.entrySet()) {
+                if (entry.getValue() == requestCode) {
+                    entry.getKey().onResult(intent);
+                    return;
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 }

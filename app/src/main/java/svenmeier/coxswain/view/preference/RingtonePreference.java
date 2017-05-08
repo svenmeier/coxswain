@@ -6,28 +6,36 @@ import android.content.res.TypedArray;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.SettingsActivity;
-import svenmeier.coxswain.motivator.DefaultMotivator;
 
 /**
  * An specialization that substitutes the current ringtone into the summary (as ListPreference does it
  * too).
+ * Additionally the support library doesn't support it yet :/.
  */
-public class RingtonePreference extends Preference {
+public class RingtonePreference extends ResultPreference {
 
-	private Uri defaultRingtone;
+	private String defaultValue;
 
 	public RingtonePreference(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+
+		init(context, attrs);
+	}
+
+	private void init(Context context, AttributeSet attrs) {
+
+		TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.Preference);
+
+		this.defaultValue = array.getString(R.styleable.Preference_android_defaultValue);
 	}
 
 	public RingtonePreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
+
+		init(context, attrs);
 	}
 
 	public RingtonePreference(Context context) {
@@ -35,36 +43,37 @@ public class RingtonePreference extends Preference {
 	}
 
 	@Override
-	protected Object onGetDefaultValue(TypedArray a, int index) {
-		Object value = super.onGetDefaultValue(a, index);
+	public Intent getRequest() {
+		Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+		intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Uri.parse(defaultValue));
 
-		if (value != null) {
-			defaultRingtone = Uri.parse(value.toString());
+		String existingValue = getPersistedString(null);
+		if (existingValue != null) {
+			intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(existingValue));
 		}
-		return value;
+
+		return intent;
 	}
 
 	@Override
-	protected void onClick() {
-	}
-/*
-	@Override
-	protected void onPrepareRingtonePickerIntent(Intent ringtonePickerIntent) {
-		super.onPrepareRingtonePickerIntent(ringtonePickerIntent);
-
-		if (defaultRingtone != null) {
-			ringtonePickerIntent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, defaultRingtone);
+	public void onResult(Intent intent) {
+		Uri ringtone = null;
+		if (intent != null) {
+			ringtone = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
 		}
-	}
 
-	@Override
-	protected void onSaveRingtone(Uri ringtoneUri) {
-		super.onSaveRingtone(ringtoneUri);
+		String value = null;
+		if (ringtone != null) {
+			value = ringtone.toString();
+		}
 
-		// input summary
+		persistString(value);
 		notifyChanged();
 	}
-*/
+
 	@Override
 	public CharSequence getSummary() {
 		CharSequence summary = super.getSummary();

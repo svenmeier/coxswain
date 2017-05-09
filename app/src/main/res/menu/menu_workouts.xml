@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto" tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_sort" android:title="@string/action_sort"
+        android:orderInCategory="100" app:showAsAction="always"
+        android:icon="@drawable/ic_sort_white_24dp"
+    />
+</menu>

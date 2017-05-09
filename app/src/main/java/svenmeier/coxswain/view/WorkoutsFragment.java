@@ -15,13 +15,15 @@
  */
 package svenmeier.coxswain.view;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +53,35 @@ public class WorkoutsFragment extends Fragment {
 
     private WorkoutsAdapter adapter;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    private int sort = 0;
 
-        gym = Gym.instance(activity);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        gym = Gym.instance(context);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_workouts, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_sort) {
+            sort = (sort + 1) % 4;
+
+            adapter.sort(sort);
+            adapter.restartLoader(0, this);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -92,7 +118,24 @@ public class WorkoutsFragment extends Fragment {
         public WorkoutsAdapter() {
             super(R.layout.layout_workouts_item, Gym.instance(getActivity()).getWorkouts());
 
-            setOrder(Order.descending(getMatch().getPrototype().start));
+            sort(sort);
+        }
+
+        public void sort(int index) {
+            switch (index) {
+                case 0:
+                    setOrder(Order.descending(getMatch().getPrototype().start));
+                    break;
+                case 1:
+                    setOrder(Order.descending(getMatch().getPrototype().duration));
+                    break;
+                case 2:
+                    setOrder(Order.descending(getMatch().getPrototype().distance));
+                    break;
+                case 3:
+                    setOrder(Order.descending(getMatch().getPrototype().energy));
+                    break;
+            }
         }
 
         @Override

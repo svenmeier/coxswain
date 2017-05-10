@@ -1,6 +1,5 @@
 package svenmeier.coxswain.garmin;
 
-import android.location.Location;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -23,6 +22,8 @@ public class Workout2TCX {
 
 	private SimpleDateFormat dateFormat;
 
+	private Track path;
+
 	public Workout2TCX(Writer writer) throws IOException {
 		serializer = Xml.newSerializer();
 		serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
@@ -34,6 +35,7 @@ public class Workout2TCX {
 	}
 
 	public void document(Workout workout, List<Snapshot> snaoshots) throws IOException {
+
 		serializer.startDocument("UTF-8", true);
 
 		trainingCenterDatabase(workout, snaoshots);
@@ -117,6 +119,8 @@ public class Workout2TCX {
 	private void track(Workout workout, List<Snapshot> snapshots) throws IOException {
 		serializer.startTag(null, "Track");
 
+		path = new Track(workout.location.get());
+
 		for (int index = 0; index < snapshots.size(); index++) {
 			trackpoint(workout, snapshots.get(index), index);
 		}
@@ -129,9 +133,7 @@ public class Workout2TCX {
 
 		tag(null, "Time", dateFormat.format(workout.start.get() + index * 1000));
 
-		if (index == 0) {
-			position(workout.location.get());
-		}
+		position();
 
 		tag(null, "DistanceMeters", snapshot.distance.get().toString());
 
@@ -144,17 +146,11 @@ public class Workout2TCX {
 		serializer.endTag(null, serializer.getName());
 	}
 
-	private void position(Location location) throws IOException {
-		if (location == null) {
-			location = new Location("");
-			location.setLatitude(0d);
-			location.setLongitude(0d);
-		}
-
+	private void position() throws IOException {
 		serializer.startTag(null, "Position");
 
-		tag(null, "LatitudeDegrees", Double.toString(location.getLatitude()));
-		tag(null, "LongitudeDegrees", Double.toString(location.getLongitude()));
+		tag(null, "LatitudeDegrees", Double.toString(path.getLatitude()));
+		tag(null, "LongitudeDegrees", Double.toString(path.getLongitude()));
 
 		serializer.endTag(null, serializer.getName());
 	}

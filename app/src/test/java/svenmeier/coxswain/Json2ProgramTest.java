@@ -2,7 +2,7 @@ package svenmeier.coxswain;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
@@ -18,8 +18,8 @@ import static junit.framework.Assert.assertEquals;
 
 /**
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = svenmeier.coxswain.BuildConfig.class, sdk = 18)
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = svenmeier.coxswain.BuildConfig.class)
 public class Json2ProgramTest {
 
 	@Test

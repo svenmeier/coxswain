@@ -1,17 +1,14 @@
 package svenmeier.coxswain.garmin;
 
-import android.util.Pair;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Snapshot;
@@ -22,8 +19,8 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test for {@link TCX2Workout}.
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = svenmeier.coxswain.BuildConfig.class, sdk = 18)
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = svenmeier.coxswain.BuildConfig.class)
 public class TCX2WorkoutTest {
 
 	private static final long Mon_Jun_15_2015 = 1434326400000l;

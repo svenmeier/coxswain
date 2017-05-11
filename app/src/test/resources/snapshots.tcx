@@ -13,8 +13,8 @@
           <Trackpoint>
             <Time>2015-06-15T00:01:00.000Z</Time>
             <Position>
-              <LatitudeDegrees>51.4826</LatitudeDegrees>
-              <LongitudeDegrees>0.0077</LongitudeDegrees>
+              <LatitudeDegrees>51.4777910337765</LatitudeDegrees>
+              <LongitudeDegrees>-8.0E-4</LongitudeDegrees>
             </Position>
             <DistanceMeters>2</DistanceMeters>
             <HeartRateBpm>
@@ -30,8 +30,8 @@
           <Trackpoint>
             <Time>2015-06-15T00:01:01.000Z</Time>
             <Position>
-              <LatitudeDegrees>51.4826</LatitudeDegrees>
-              <LongitudeDegrees>0.0077</LongitudeDegrees>
+              <LatitudeDegrees>51.477773067553</LatitudeDegrees>
+              <LongitudeDegrees>-8.0E-4</LongitudeDegrees>
             </Position>
             <DistanceMeters>4</DistanceMeters>
             <HeartRateBpm>
@@ -47,8 +47,8 @@
           <Trackpoint>
             <Time>2015-06-15T00:01:02.000Z</Time>
             <Position>
-              <LatitudeDegrees>51.4826</LatitudeDegrees>
-              <LongitudeDegrees>0.0077</LongitudeDegrees>
+              <LatitudeDegrees>51.4777551013295</LatitudeDegrees>
+              <LongitudeDegrees>-8.0E-4</LongitudeDegrees>
             </Position>
             <DistanceMeters>6</DistanceMeters>
             <HeartRateBpm>

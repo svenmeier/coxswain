@@ -14,8 +14,8 @@ public class Track {
 		if (location == null) {
 			// Greenwich
 			location = new Location("");
-			location.setLatitude(51.4826d);
-			location.setLongitude(0.0077d);
+			location.setLatitude(51.477809);
+			location.setLongitude(-0.000800);
 		}
 
 		this.location = location;
@@ -29,11 +29,19 @@ public class Track {
 		return location.getLatitude() + (meters / M_PER_LATITUDE);
 	}
 
-	public void goToEquator(int meters) {
+	public void addDistance(int meters) {
 		if (location.getLatitude() > 0) {
 			this.meters -= meters;
 		} else {
 			this.meters += meters;
+		}
+	}
+
+	public void setDistance(int meters) {
+		if (location.getLatitude() > 0) {
+			this.meters = -meters;
+		} else {
+			this.meters = +meters;
 		}
 	}
 }

@@ -23,11 +23,11 @@ public class TrackTest {
 
 		assertEquals(51.4826d, path.getLatitude(), 0.001d);
 
-		path.goToEquator(111320);
+		path.addDistance(111320);
 
 		assertEquals(50.4826, path.getLatitude(), 0.001d);
 
-		path.goToEquator(1113200);
+		path.addDistance(1113200);
 
 		assertEquals(40.4826, path.getLatitude(), 0.001d);
 	}
@@ -43,11 +43,11 @@ public class TrackTest {
 
 		assertEquals(-66.57d, path.getLatitude(), 0.001d);
 
-		path.goToEquator(111320);
+		path.addDistance(111320);
 
 		assertEquals(-65.57d, path.getLatitude(), 0.001d);
 
-		path.goToEquator(1113200);
+		path.addDistance(1113200);
 
 		assertEquals(-55.57d, path.getLatitude(), 0.001d);
 	}
@@ -63,11 +63,11 @@ public class TrackTest {
 
 		assertEquals(66.57d, path.getLatitude(), 0.001d);
 
-		path.goToEquator(111320);
+		path.addDistance(111320);
 
 		assertEquals(65.57d, path.getLatitude(), 0.001d);
 
-		path.goToEquator(1113200);
+		path.addDistance(1113200);
 
 		assertEquals(55.57d, path.getLatitude(), 0.001d);
 	}

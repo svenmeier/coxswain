@@ -133,7 +133,7 @@ public class Workout2TCX {
 
 		tag(null, "Time", dateFormat.format(workout.start.get() + index * 1000));
 
-		position();
+		position(snapshot);
 
 		tag(null, "DistanceMeters", snapshot.distance.get().toString());
 
@@ -146,8 +146,10 @@ public class Workout2TCX {
 		serializer.endTag(null, serializer.getName());
 	}
 
-	private void position() throws IOException {
+	private void position(Snapshot snapshot) throws IOException {
 		serializer.startTag(null, "Position");
+
+		path.setDistance(snapshot.distance.get());
 
 		tag(null, "LatitudeDegrees", Double.toString(path.getLatitude()));
 		tag(null, "LongitudeDegrees", Double.toString(path.getLongitude()));

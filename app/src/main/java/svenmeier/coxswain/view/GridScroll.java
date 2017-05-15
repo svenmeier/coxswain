@@ -15,30 +15,31 @@
  */
 package svenmeier.coxswain.view;
 
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AbsListView;
 
 /**
- * Created by sven on 06.09.15.
  */
-public class GridScroll implements AbsListView.OnScrollListener {
+public class GridScroll extends RecyclerView.OnScrollListener {
+
     @Override
-    public void onScrollStateChanged(AbsListView listView, int scrollState) {
-        if (scrollState == SCROLL_STATE_IDLE) {
-            View child = listView.getChildAt(0);
+    public void onScrollStateChanged(RecyclerView recyclerView, int scrollState) {
+        if (scrollState == RecyclerView.SCROLL_STATE_IDLE) {
+            View child = recyclerView.getChildAt(0);
 
             int top = child.getTop();
             int height = child.getHeight();
 
+            LinearLayoutManager layoutManager = ((LinearLayoutManager)recyclerView.getLayoutManager());
+            int firstVisiblePosition = layoutManager.findFirstVisibleItemPosition();
+
             if (top < -height / 2) {
-                listView.smoothScrollToPosition(listView.getFirstVisiblePosition() + 1);
+                recyclerView.smoothScrollToPosition(firstVisiblePosition + 1);
             } else {
-                listView.smoothScrollToPosition(listView.getFirstVisiblePosition());
+                recyclerView.smoothScrollToPosition(firstVisiblePosition);
             }
         }
-    }
-
-    @Override
-    public void onScroll(AbsListView listView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
 }

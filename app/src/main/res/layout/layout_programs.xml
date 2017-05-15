@@ -1,10 +1,9 @@
-<ListView
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
     android:id="@+id/programs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:choiceMode="singleChoice"
     >
-</ListView>
+</android.support.v7.widget.RecyclerView>

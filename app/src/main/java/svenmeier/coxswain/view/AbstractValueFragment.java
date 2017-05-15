@@ -20,12 +20,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +47,6 @@ public abstract class AbstractValueFragment extends DialogFragment {
         pager = (ViewPager) view.findViewById(R.id.tabs_pager);
         pager.setAdapter(new MyFragmentAdapter());
 
-        View titlesView = view.findViewById(R.id.tabs_titles);
-        titlesView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeSegment();
-            }
-        });
-
         return view;
     }
 
@@ -71,12 +62,11 @@ public abstract class AbstractValueFragment extends DialogFragment {
         }
     }
 
-    private void changeSegment() {
+    private void changeSegment(int position) {
         Segment segment = getCallback().getSegment();
 
         Tab tab = tabs.get(pager.getCurrentItem());
-        ListView listView = (ListView) pager.findViewWithTag(tab);
-        tab.indexToSegment(segment, listView.getFirstVisiblePosition());
+        tab.indexToSegment(segment, position);
 
         getCallback().setSegment(segment);
 
@@ -116,19 +106,16 @@ public abstract class AbstractValueFragment extends DialogFragment {
             ViewGroup root = (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.layout_values, container, false);
             container.addView(root);
 
-            ListView listView = (ListView) root.findViewById(R.id.values);
-            listView.setTag(tab);
-            listView.setOnScrollListener(new GridScroll());
-            listView.setAdapter(new BaseAdapter() {
+            RecyclerView valuesView = (RecyclerView) root.findViewById(R.id.values);
+            valuesView.setTag(tab);
+            valuesView.setLayoutManager(new LinearLayoutManager(getContext()));
+            valuesView.setHasFixedSize(true);
+            valuesView.addOnScrollListener(new GridScroll());
+            valuesView.setAdapter(new RecyclerView.Adapter<ValueHolder>() {
 
                 @Override
-                public int getCount() {
+                public int getItemCount() {
                     return tab.getCount();
-                }
-
-                @Override
-                public Integer getItem(int index) {
-                    return tab.getValue(index);
                 }
 
                 @Override
@@ -137,28 +124,22 @@ public abstract class AbstractValueFragment extends DialogFragment {
                 }
 
                 @Override
-                public View getView(int index, View view, ViewGroup parent) {
-                    if (view == null) {
-                        view = getActivity().getLayoutInflater().inflate(R.layout.layout_values_item, parent, false);
-                    }
+                public ValueHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                    View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_values_item, parent, false);
 
-                    ValueView valueView = (ValueView) view.findViewById(R.id.values_value);
-                    valueView.setPattern(tab.getPattern());
-                    valueView.setValue(tab.getValue(index));
-                    return view;
+                    return new ValueHolder(v, tab.getPattern());
                 }
-            });
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    changeSegment();
+                public void onBindViewHolder(ValueHolder holder, int position) {
+                    holder.onBind(tab.getValue(position));
                 }
             });
 
             Segment segment = getCallback().getSegment();
             int index = tab.segmentToIndex(segment);
             if (index >= 0) {
-                listView.setSelection(index);
+                valuesView.scrollToPosition(index);
             }
 
             return root;
@@ -174,6 +155,29 @@ public abstract class AbstractValueFragment extends DialogFragment {
             container.removeView((View) object);
         }
 
+    }
+
+    private class ValueHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private final ValueView valueView;
+
+        public ValueHolder(View view, String pattern) {
+            super(view);
+
+            valueView = (ValueView) view.findViewById(R.id.values_value);
+            valueView.setPattern(pattern);
+
+            valueView.setOnClickListener(this);
+        }
+
+        public void onBind(int value) {
+            valueView.setValue(value);
+        }
+
+        @Override
+        public void onClick(View v) {
+            changeSegment(getAdapterPosition());
+        }
     }
 
     private Callback getCallback() {

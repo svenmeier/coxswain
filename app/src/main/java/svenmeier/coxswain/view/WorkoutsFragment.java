@@ -16,9 +16,10 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -28,13 +29,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import propoid.db.Order;
-import propoid.ui.Index;
-import propoid.ui.list.MatchAdapter;
+import propoid.ui.list.GenericRecyclerAdapter;
+import propoid.ui.list.MatchRecyclerAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
@@ -49,7 +49,7 @@ public class WorkoutsFragment extends Fragment {
 
     private Gym gym;
 
-    private ListView workoutsView;
+    private RecyclerView workoutsView;
 
     private WorkoutsAdapter adapter;
 
@@ -88,13 +88,10 @@ public class WorkoutsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_workouts, container, false);
 
-        workoutsView = (ListView) root.findViewById(R.id.workouts);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // required for CoordinatorLayout :/
-            workoutsView.setNestedScrollingEnabled(true);
-        }
-        adapter = new WorkoutsAdapter();
-        adapter.install(workoutsView);
+        workoutsView = (RecyclerView) root.findViewById(R.id.workouts);
+        workoutsView.setLayoutManager(new LinearLayoutManager(getContext()));
+        workoutsView .setHasFixedSize(true);
+        workoutsView.setAdapter(adapter = new WorkoutsAdapter());
 
         return root;
     }
@@ -113,7 +110,7 @@ public class WorkoutsFragment extends Fragment {
         adapter.destroy(0, this);
     }
 
-    private class WorkoutsAdapter extends MatchAdapter<Workout> {
+    private class WorkoutsAdapter extends MatchRecyclerAdapter<Workout> {
 
         public WorkoutsAdapter() {
             super(R.layout.layout_workouts_item, Gym.instance(getActivity()).getWorkouts());
@@ -139,13 +136,32 @@ public class WorkoutsFragment extends Fragment {
         }
 
         @Override
-        protected void bind(int position, View view, final Workout workout) {
-            Index index = Index.get(view);
+        protected GenericHolder createHolder(View v) {
+            return new WorkoutHolder(v);
+        }
+    }
 
-            TextView startView = index.get(R.id.workout_start);
-            startView.setText(DateUtils.formatDateTime(getActivity(), workout.start.get(), DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+    private class WorkoutHolder extends GenericRecyclerAdapter.GenericHolder<Workout> implements View.OnClickListener{
 
-            final ImageButton menuButton = index.get(R.id.workout_menu);
+
+        private final TextView startView;
+        private final TextView nameView;
+        private final TextView countsView;
+        private final ImageButton menuButton;
+
+        public WorkoutHolder(View v) {
+            super(v);
+
+            startView = (TextView) v.findViewById(R.id.workout_start);
+            nameView = (TextView) v.findViewById(R.id.workout_name);
+            countsView = (TextView) v.findViewById(R.id.workout_counts);
+            menuButton = (ImageButton) v.findViewById(R.id.workout_menu);
+        }
+
+        @Override
+        protected void onBind() {
+            startView.setText(DateUtils.formatDateTime(getActivity(), item.start.get(), DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+
             menuButton.setFocusable(false);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,34 +169,34 @@ public class WorkoutsFragment extends Fragment {
                     PopupMenu popup = new PopupMenu(getActivity(), menuButton);
                     popup.getMenuInflater().inflate(R.menu.menu_workout_item, popup.getMenu());
 
-                    popup.getMenu().findItem(R.id.action_evaluate).setChecked(workout.evaluate.get());
+                    popup.getMenu().findItem(R.id.action_evaluate).setChecked(item.evaluate.get());
 
-                    popup.getMenu().findItem(R.id.action_repeat).setEnabled(workout.canRepeat());
+                    popup.getMenu().findItem(R.id.action_repeat).setEnabled(item.canRepeat());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
                                 case R.id.action_delete:
-                                    DeleteDialogFragment.create(workout).show(getFragmentManager(), "delete");
+                                    DeleteDialogFragment.create(item).show(getFragmentManager(), "delete");
 
                                     return true;
                                 case R.id.action_evaluate:
-                                    workout.evaluate.set(!workout.evaluate.get());
+                                    item.evaluate.set(!item.evaluate.get());
 
-                                    gym.mergeWorkout(workout);
+                                    gym.mergeWorkout(item);
 
                                     return true;
                                 case R.id.action_export:
-                                    ExportWorkoutDialogFragment.create(workout).show(getFragmentManager(), "export");
+                                    ExportWorkoutDialogFragment.create(item).show(getFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_repeat:
-                                    gym.repeat(workout);
+                                    gym.repeat(item);
 
                                     WorkoutActivity.start(getActivity());
                                     return true;
                                 case R.id.action_challenge:
-                                    gym.challenge(workout);
+                                    gym.challenge(item);
 
                                     WorkoutActivity.start(getActivity());
                                     return true;
@@ -194,22 +210,20 @@ public class WorkoutsFragment extends Fragment {
                 }
             });
 
-            TextView nameView = index.get(R.id.workout_name);
-            nameView.setText(workout.programName("-"));
+            nameView.setText(item.programName("-"));
 
-            TextView countsView = index.get(R.id.workout_counts);
 			String counts = TextUtils.join(", ", new String[]{
-                    asHoursMinutesSeconds(workout.duration.get()),
-                    String.format(getString(R.string.distance_meters), workout.distance.get()),
-                    String.format(getString(R.string.strokes_count), workout.strokes.get()),
-                    Energy.kcal(getActivity(), workout.energy.get()).formatted()
+                    asHoursMinutesSeconds(item.duration.get()),
+                    String.format(getString(R.string.distance_meters), item.distance.get()),
+                    String.format(getString(R.string.strokes_count), item.strokes.get()),
+                    Energy.kcal(getActivity(), item.energy.get()).formatted()
             });
             countsView.setText(counts);
         }
 
         @Override
-        protected void onItem(Workout workout, int position) {
-            startActivity(SnapshotsActivity.createIntent(getActivity(), workout));
+        public void onClick(View v) {
+            startActivity(SnapshotsActivity.createIntent(getActivity(), item));
         }
     }
 

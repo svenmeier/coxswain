@@ -18,16 +18,16 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 
 import propoid.db.Reference;
-import propoid.ui.Index;
-import propoid.ui.list.GenericAdapter;
+import propoid.ui.list.GenericRecyclerAdapter;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.AbstractValueFragment;
@@ -44,7 +44,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
     private EditText nameView;
 
-    private ListView segmentsView;
+    private RecyclerView segmentsView;
     private SegmentsAdapter segmentsAdapter;
 
     private Program program;
@@ -59,7 +59,9 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
         nameView = (EditText) findViewById(R.id.toolbar_edit);
 
-        segmentsView = (ListView) findViewById(R.id.program_segments);
+        segmentsView = (RecyclerView) findViewById(R.id.program_segments);
+        segmentsView.setLayoutManager(new LinearLayoutManager(this));
+        segmentsView.setHasFixedSize(true);
 
         Reference<Program> reference = Reference.from(getIntent());
 
@@ -69,8 +71,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         } else {
             nameView.setText(program.name.get());
 
-            segmentsAdapter = new SegmentsAdapter();
-            segmentsAdapter.install(segmentsView);
+            segmentsView.setAdapter(segmentsAdapter = new SegmentsAdapter());
         }
     }
 
@@ -84,55 +85,68 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         }
     }
 
-    private class SegmentsAdapter extends GenericAdapter<Segment> {
+    private class SegmentsAdapter extends GenericRecyclerAdapter<Segment> {
 
         public SegmentsAdapter() {
             super(R.layout.layout_segments_item, program.getSegments());
         }
 
         @Override
-        public boolean isEnabled(int position) {
-            return false;
+        protected GenericHolder createHolder(View v) {
+            return new SegmentHolder(v);
+        }
+    }
+
+    private class SegmentHolder extends GenericRecyclerAdapter.GenericHolder<Segment> {
+
+        private final BindingView targetView;
+        private final BindingView limitView;
+        private final LevelView difficultyView;
+        private final ImageButton menuButton;
+
+        public SegmentHolder(View v) {
+            super(v);
+
+            targetView = (BindingView) v.findViewById(R.id.segments_item_target);
+            limitView = (BindingView) v.findViewById(R.id.segments_item_limit);
+            difficultyView = (LevelView) v.findViewById(R.id.segments_difficulty);
+
+            menuButton = (ImageButton) v.findViewById(R.id.segment_menu);
         }
 
         @Override
-        protected void bind(final int position, View view, final Segment segment) {
-            Index index = Index.get(view);
-
-            BindingView targetView = index.get(R.id.segments_item_target);
-            if (segment.duration.get() > 0) {
+        protected void onBind() {
+            if (item.duration.get() > 0) {
                 targetView.setBinding(ValueBinding.DURATION_SHORT);
-                targetView.changed(segment.duration.get());
-            } else if (segment.distance.get() > 0) {
+                targetView.changed(item.duration.get());
+            } else if (item.distance.get() > 0) {
                 targetView.setBinding(ValueBinding.DISTANCE);
-                targetView.changed(segment.distance.get());
-            } else if (segment.strokes.get() > 0) {
+                targetView.changed(item.distance.get());
+            } else if (item.strokes.get() > 0) {
                 targetView.setBinding(ValueBinding.STROKES);
-                targetView.changed(segment.strokes.get());
-            } else if (segment.energy.get() > 0) {
+                targetView.changed(item.strokes.get());
+            } else if (item.energy.get() > 0) {
                 targetView.setBinding(ValueBinding.ENERGY);
-                targetView.changed(segment.energy.get());
+                targetView.changed(item.energy.get());
             }
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean was = segmentsView.isItemChecked(position);
-                    segmentsView.setItemChecked(position, true);
+                    segmentsView.setTag(item);
 
                     new TargetDialogFragment().show(getSupportFragmentManager(), "changed");
                 }
             });
 
-            BindingView limitView = index.get(R.id.segments_item_limit);
-            if (segment.speed.get() > 0) {
+            if (item.speed.get() > 0) {
                 limitView.setBinding(ValueBinding.SPEED);
-                limitView.changed(segment.speed.get());
-            } else if (segment.pulse.get() > 0) {
+                limitView.changed(item.speed.get());
+            } else if (item.pulse.get() > 0) {
                 limitView.setBinding(ValueBinding.PULSE);
-                limitView.changed(segment.pulse.get());
-            } else if (segment.strokeRate.get() > 0) {
+                limitView.changed(item.pulse.get());
+            } else if (item.strokeRate.get() > 0) {
                 limitView.setBinding(ValueBinding.STROKE_RATE);
-                limitView.changed(segment.strokeRate.get());
+                limitView.changed(item.strokeRate.get());
             } else {
                 limitView.setBinding(ValueBinding.NONE);
                 limitView.changed(0);
@@ -140,26 +154,24 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             limitView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    segmentsView.setItemChecked(position, true);
+                    segmentsView.setTag(0, item);
 
                     new LimitDialogFragment().show(getSupportFragmentManager(), "changed");
                 }
             });
 
-            LevelView difficultyView = (LevelView) index.get(R.id.segments_difficulty);
-            difficultyView.setLevel(segment.difficulty.get().ordinal());
+            difficultyView.setLevel(item.difficulty.get().ordinal());
             difficultyView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    segment.difficulty.set(segment.difficulty.get().increase());
+                    item.difficulty.set(item.difficulty.get().increase());
 
                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                    notifyChanged();
+                    segmentsAdapter.notifyDataSetChanged();
                 }
             });
 
-            final ImageButton menuButton = (ImageButton) index.get(R.id.segment_menu);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -167,28 +179,28 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                     popup.getMenuInflater().inflate(R.menu.menu_segments_item, popup.getMenu());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
                                 case R.id.action_delete:
-                                    program.removeSegment(segment);
+                                    program.removeSegment(item);
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    notifyChanged();
+                                    segmentsAdapter.notifyDataSetChanged();
                                     return true;
                                 case R.id.action_insert_before:
-                                    program.createSegmentBefore(segment);
+                                    program.createSegmentBefore(item);
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    notifyChanged();
+                                    segmentsAdapter.notifyDataSetChanged();
                                     return true;
                                 case R.id.action_insert_after:
-                                    program.createSegmentAfter(segment);
+                                    program.createSegmentAfter(item);
 
                                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    notifyChanged();
+                                    segmentsAdapter.notifyDataSetChanged();
                                     return true;
                                 default:
                                     return false;
@@ -204,13 +216,14 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
     @Override
     public Segment getSegment() {
-        return (Segment) segmentsView.getAdapter().getItem(segmentsView.getCheckedItemPosition());
+        return (Segment) segmentsView.getTag();
     }
 
+    @Override
     public void setSegment(Segment segment) {
         Gym.instance(this).mergeProgram(program);
 
-        segmentsAdapter.notifyChanged();
+        segmentsAdapter.notifyDataSetChanged();
     }
 
     public static Intent createIntent(Context context, Program program) {

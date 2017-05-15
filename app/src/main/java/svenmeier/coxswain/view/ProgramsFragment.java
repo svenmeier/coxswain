@@ -19,17 +19,19 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import propoid.ui.Index;
-import propoid.ui.list.MatchAdapter;
+import propoid.ui.list.GenericRecyclerAdapter;
+import propoid.ui.list.MatchRecyclerAdapter;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.ProgramActivity;
 import svenmeier.coxswain.R;
@@ -42,7 +44,7 @@ public class ProgramsFragment extends Fragment {
 
     private Gym gym;
 
-    private ListView programsView;
+    private RecyclerView programsView;
 
     private ProgramsAdapter adapter;
 
@@ -57,13 +59,10 @@ public class ProgramsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_programs, container, false);
 
-        programsView = (ListView) root.findViewById(R.id.programs);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // required for CoordinatorLayout :/
-            programsView.setNestedScrollingEnabled(true);
-        }
-        adapter = new ProgramsAdapter();
-        adapter.install(programsView);
+        programsView = (RecyclerView) root.findViewById(R.id.programs);
+        programsView.setLayoutManager(new LinearLayoutManager(getContext()));
+        programsView.setHasFixedSize(true);
+        programsView.setAdapter(adapter = new ProgramsAdapter());
 
         return root;
     }
@@ -82,27 +81,45 @@ public class ProgramsFragment extends Fragment {
         adapter.destroy(0, this);
     }
 
-    private class ProgramsAdapter extends MatchAdapter<Program> {
+    private class ProgramsAdapter extends MatchRecyclerAdapter<Program> {
 
         public ProgramsAdapter() {
             super(R.layout.layout_programs_item, gym.getPrograms());
         }
 
         @Override
-        protected void bind(final int position, View view, final Program program) {
+        protected GenericHolder createHolder(View v) {
+            return new ProgramHolder(v);
+        }
+    }
 
-            Index index = Index.get(view);
+    private class ProgramHolder extends GenericRecyclerAdapter.GenericHolder<Program> implements View.OnClickListener{
 
-            TextView nameTextView = index.get(R.id.program_name);
-            nameTextView.setText(program.name.get());
+        private final TextView nameTextView;
+        private final TextView durationTextView;
+        private final SegmentsView segmentsView;
+        private final ImageButton menuButton;
 
-            TextView durationTextView = index.get(R.id.program_duration);
-            durationTextView.setText(asHoursMinutes(program.asDuration()));
+        public ProgramHolder(View view) {
+            super(view);
 
-            SegmentsView segmentsView = index.get(R.id.program_segments);
-            segmentsView.setData(new SegmentsData(program));
+            view.setOnClickListener(this);
 
-            final ImageButton menuButton = index.get(R.id.program_menu);
+            nameTextView = (TextView) view.findViewById(R.id.program_name);
+            durationTextView = (TextView) view.findViewById(R.id.program_duration);
+            segmentsView = (SegmentsView) view.findViewById(R.id.program_segments);
+
+            menuButton = (ImageButton) view.findViewById(R.id.program_menu);
+        }
+
+        @Override
+        protected void onBind() {
+            nameTextView.setText(item.name.get());
+
+            durationTextView.setText(asHoursMinutes(item.asDuration()));
+
+            segmentsView.setData(new SegmentsData(item));
+
             menuButton.setFocusable(false);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -113,22 +130,22 @@ public class ProgramsFragment extends Fragment {
                     popup.getMenuInflater().inflate(R.menu.menu_programs_item, popup.getMenu());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
                                 case R.id.action_new:
                                     Program newProgram = Gym.instance(getActivity()).newProgram();
 
                                     startActivity(ProgramActivity.createIntent(getActivity(), newProgram));
                                     return true;
                                 case R.id.action_edit:
-                                    startActivity(ProgramActivity.createIntent(getActivity(), program));
+                                    startActivity(ProgramActivity.createIntent(getActivity(), item));
                                     return true;
                                 case R.id.action_export:
-                                    ExportProgramDialogFragment.create(program).show(getFragmentManager(), "export");
+                                    ExportProgramDialogFragment.create(item).show(getFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_delete:
-                                    DeleteDialogFragment.create(program).show(getFragmentManager(), "delete");
+                                    DeleteDialogFragment.create(item).show(getFragmentManager(), "delete");
 
                                     return true;
                                 default:
@@ -143,8 +160,8 @@ public class ProgramsFragment extends Fragment {
         }
 
         @Override
-        protected void onItem(Program program, int position) {
-            gym.repeat(program);
+        public void onClick(View v) {
+            gym.repeat(item);
 
             WorkoutActivity.start(getActivity());
         }

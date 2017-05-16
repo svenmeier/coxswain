@@ -178,6 +178,10 @@ public class Gym {
         repository.merge(program);
     }
 
+    public void mergeSegment(Segment segment) {
+        repository.merge(segment);
+    }
+
     public Match<Workout> getWorkouts() {
         return repository.query(new Workout());
     }

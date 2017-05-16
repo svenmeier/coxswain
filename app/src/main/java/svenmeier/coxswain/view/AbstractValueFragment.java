@@ -17,24 +17,34 @@ package svenmeier.coxswain.view;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.preference.DialogPreference;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import propoid.db.Reference;
+import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Segment;
 
 /**
  */
 public abstract class AbstractValueFragment extends DialogFragment {
+
+    private Gym gym;
+
+    private Segment segment;
 
     private List<Tab> tabs = new ArrayList<>();
 
@@ -51,11 +61,20 @@ public abstract class AbstractValueFragment extends DialogFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        gym = Gym.instance(getContext());
+
+        segment = gym.get(Reference.<Segment>from(getArguments()));
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         for (Tab tab : tabs) {
-            if (tab.segmentToIndex(getCallback().getSegment()) >= 0) {
+            if (tab.segmentToIndex(segment) >= 0) {
                 pager.setCurrentItem(tabs.indexOf(tab));
                 break;
             }
@@ -63,14 +82,14 @@ public abstract class AbstractValueFragment extends DialogFragment {
     }
 
     private void changeSegment(int position) {
-        Segment segment = getCallback().getSegment();
-
         Tab tab = tabs.get(pager.getCurrentItem());
         tab.indexToSegment(segment, position);
 
-        getCallback().setSegment(segment);
+        gym.mergeSegment(segment);
 
         AbstractValueFragment.this.dismiss();
+
+        Utils.getCallback(this, Callback.class).onChanged(segment);
     }
 
     @Override
@@ -136,7 +155,6 @@ public abstract class AbstractValueFragment extends DialogFragment {
                 }
             });
 
-            Segment segment = getCallback().getSegment();
             int index = tab.segmentToIndex(segment);
             if (index >= 0) {
                 valuesView.scrollToPosition(index);
@@ -180,10 +198,6 @@ public abstract class AbstractValueFragment extends DialogFragment {
         }
     }
 
-    private Callback getCallback() {
-        return Utils.getParent(this, Callback.class);
-    }
-
     public interface Tab {
         CharSequence getTitle();
 
@@ -199,8 +213,28 @@ public abstract class AbstractValueFragment extends DialogFragment {
     }
 
     public interface Callback {
-        public Segment getSegment();
 
-        public void setSegment(Segment segment);
+        void onChanged(Segment segment);
+    }
+
+    public static AbstractValueFragment createTarget(Segment segment) {
+
+        TargetDialogFragment fragment = new TargetDialogFragment();
+
+        Bundle args = new Bundle();
+        new Reference<Segment>(segment).to(args);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static AbstractValueFragment createLimit(Segment segment) {
+        LimitDialogFragment fragment = new LimitDialogFragment();
+
+        Bundle args = new Bundle();
+        new Reference<Segment>(segment).to(args);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 }

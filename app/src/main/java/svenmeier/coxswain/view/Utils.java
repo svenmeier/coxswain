@@ -16,6 +16,7 @@
 package svenmeier.coxswain.view;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
@@ -34,21 +35,10 @@ public class Utils {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    public static <T> void collect(Class<? extends T> t, View view, List<T> list) {
-        if (t.isInstance(view)) {
-            list.add((T) view);
-        } else if (view instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) {
-                collect(t, group.getChildAt(i), list);
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    public static <T> T getParent(Fragment fragment, Class<T> t) {
+    public static <T> T getCallback(Fragment fragment, Class<T> callback) {
         while (true) {
-            if (t.isInstance(fragment)) {
+            if (callback.isInstance(fragment)) {
                 return (T) fragment;
             }
 
@@ -59,11 +49,20 @@ public class Utils {
             fragment = parentFragment;
         }
 
-        Activity activity = fragment.getActivity();
-        if (activity != null && t.isInstance(activity)) {
+        return getCallback(fragment.getActivity(), callback);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getCallback(Activity activity, Class<T> callback) {
+        if (activity != null && callback.isInstance(activity)) {
             return (T) activity;
         }
 
-        throw new IllegalStateException("fragment does not have requested parent " + t.getSimpleName());
+        Application application = activity.getApplication();
+        if (application != null && callback.isInstance(application)) {
+            return (T) application;
+        }
+
+        throw new IllegalStateException("no requested parental callback " + callback.getSimpleName());
     }
 }

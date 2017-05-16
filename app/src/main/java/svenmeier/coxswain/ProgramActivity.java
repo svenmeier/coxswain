@@ -26,15 +26,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import java.util.List;
+
 import propoid.db.Reference;
+import propoid.db.aspect.Row;
 import propoid.ui.list.GenericRecyclerAdapter;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.AbstractValueFragment;
 import svenmeier.coxswain.view.BindingView;
 import svenmeier.coxswain.view.LevelView;
-import svenmeier.coxswain.view.LimitDialogFragment;
-import svenmeier.coxswain.view.TargetDialogFragment;
 import svenmeier.coxswain.view.ValueBinding;
 
 
@@ -132,9 +133,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             targetView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    segmentsView.setTag(item);
-
-                    new TargetDialogFragment().show(getSupportFragmentManager(), "changed");
+                    AbstractValueFragment.createTarget(item).show(getSupportFragmentManager(), "changed");
                 }
             });
 
@@ -154,9 +153,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             limitView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    segmentsView.setTag(0, item);
-
-                    new LimitDialogFragment().show(getSupportFragmentManager(), "changed");
+                    AbstractValueFragment.createLimit(item).show(getSupportFragmentManager(), "changed");
                 }
             });
 
@@ -215,13 +212,17 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
     }
 
     @Override
-    public Segment getSegment() {
-        return (Segment) segmentsView.getTag();
-    }
+    public void onChanged(Segment segment) {
+        List<Segment> segments = program.getSegments();
 
-    @Override
-    public void setSegment(Segment segment) {
-        Gym.instance(this).mergeProgram(program);
+        int index = 0;
+        for (Segment candidate : segments) {
+            if (Row.getID(candidate) == Row.getID(segment)) {
+                segments.set(index, segment);
+                break;
+            }
+            index++;
+        }
 
         segmentsAdapter.notifyDataSetChanged();
     }

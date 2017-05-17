@@ -110,16 +110,6 @@ public class ProgramsFragment extends Fragment {
             segmentsView = (SegmentsView) view.findViewById(R.id.program_segments);
 
             menuButton = (ImageButton) view.findViewById(R.id.program_menu);
-        }
-
-        @Override
-        protected void onBind() {
-            nameTextView.setText(item.name.get());
-
-            durationTextView.setText(asHoursMinutes(item.asDuration()));
-
-            segmentsView.setData(new SegmentsData(item));
-
             menuButton.setFocusable(false);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -157,6 +147,15 @@ public class ProgramsFragment extends Fragment {
                     popup.show();
                 }
             });
+        }
+
+        @Override
+        protected void onBind() {
+            nameTextView.setText(item.name.get());
+
+            durationTextView.setText(asHoursMinutes(item.asDuration()));
+
+            segmentsView.setData(new SegmentsData(item));
         }
 
         @Override

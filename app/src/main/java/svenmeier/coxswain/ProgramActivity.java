@@ -113,6 +113,45 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             difficultyView = (LevelView) v.findViewById(R.id.segments_difficulty);
 
             menuButton = (ImageButton) v.findViewById(R.id.segment_menu);
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popup = new PopupMenu(ProgramActivity.this, menuButton);
+                    popup.getMenuInflater().inflate(R.menu.menu_segments_item, popup.getMenu());
+
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.action_delete:
+                                    program.removeSegment(item);
+
+                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+                                    segmentsAdapter.notifyDataSetChanged();
+                                    return true;
+                                case R.id.action_insert_before:
+                                    program.createSegmentBefore(item);
+
+                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+                                    segmentsAdapter.notifyDataSetChanged();
+                                    return true;
+                                case R.id.action_insert_after:
+                                    program.createSegmentAfter(item);
+
+                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+                                    segmentsAdapter.notifyDataSetChanged();
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+                    });
+
+                    popup.show();
+                }
+            });
         }
 
         @Override
@@ -166,46 +205,6 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
                     segmentsAdapter.notifyDataSetChanged();
-                }
-            });
-
-            menuButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(ProgramActivity.this, menuButton);
-                    popup.getMenuInflater().inflate(R.menu.menu_segments_item, popup.getMenu());
-
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()) {
-                                case R.id.action_delete:
-                                    program.removeSegment(item);
-
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
-
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                case R.id.action_insert_before:
-                                    program.createSegmentBefore(item);
-
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
-
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                case R.id.action_insert_after:
-                                    program.createSegmentAfter(item);
-
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
-
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-
-                    popup.show();
                 }
             });
         }

@@ -141,7 +141,7 @@ public class WorkoutsFragment extends Fragment {
         }
     }
 
-    private class WorkoutHolder extends GenericRecyclerAdapter.GenericHolder<Workout> implements View.OnClickListener{
+    private class WorkoutHolder extends GenericRecyclerAdapter.GenericHolder<Workout> implements View.OnClickListener {
 
 
         private final TextView startView;
@@ -149,19 +149,16 @@ public class WorkoutsFragment extends Fragment {
         private final TextView countsView;
         private final ImageButton menuButton;
 
-        public WorkoutHolder(View v) {
-            super(v);
+        public WorkoutHolder(View view) {
+            super(view);
 
-            startView = (TextView) v.findViewById(R.id.workout_start);
-            nameView = (TextView) v.findViewById(R.id.workout_name);
-            countsView = (TextView) v.findViewById(R.id.workout_counts);
-            menuButton = (ImageButton) v.findViewById(R.id.workout_menu);
-        }
+            view.setOnClickListener(this);
 
-        @Override
-        protected void onBind() {
-            startView.setText(DateUtils.formatDateTime(getActivity(), item.start.get(), DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
+            startView = (TextView) view.findViewById(R.id.workout_start);
+            nameView = (TextView) view.findViewById(R.id.workout_name);
+            countsView = (TextView) view.findViewById(R.id.workout_counts);
 
+            menuButton = (ImageButton) view.findViewById(R.id.workout_menu);
             menuButton.setFocusable(false);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -209,6 +206,11 @@ public class WorkoutsFragment extends Fragment {
                     popup.show();
                 }
             });
+        }
+
+        @Override
+        protected void onBind() {
+            startView.setText(DateUtils.formatDateTime(getActivity(), item.start.get(), DateUtils.FORMAT_ABBREV_ALL | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
 
             nameView.setText(item.programName("-"));
 

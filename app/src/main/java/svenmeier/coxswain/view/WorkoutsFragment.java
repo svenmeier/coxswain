@@ -17,6 +17,7 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -97,17 +98,10 @@ public class WorkoutsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         adapter.initLoader(0, this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        adapter.destroy(0, this);
     }
 
     private class WorkoutsAdapter extends MatchRecyclerAdapter<Workout> {

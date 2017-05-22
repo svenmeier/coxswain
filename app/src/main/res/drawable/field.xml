@@ -5,45 +5,27 @@
     <item coxswain:value_low="true">
         <inset>
             <shape>
-                <stroke
-                    android:color="#FFAA0000"
-                    android:width="2dp"
-                    />
-                <solid android:color="#80AA0000"
-                    />
-                <corners
-                    android:radius="8dp"
-                    />
+                <solid
+                    android:color="#80AA0000"
+                />
             </shape>
         </inset>
     </item>
     <item coxswain:value_high="true">
         <inset>
             <shape>
-                <stroke
-                    android:color="#FF28AA00"
-                    android:width="2dp"
-                    />
-                <solid android:color="#8028FF00"
-                    />
-                <corners
-                    android:radius="8dp"
-                    />
+                <solid
+                    android:color="#8028FF00"
+                />
             </shape>
         </inset>
     </item>
     <item coxswain:value_target="true">
         <inset>
             <shape>
-                <stroke
-                    android:color="#803567ed"
-                    android:width="2dp"
-                    />
-                <solid android:color="#403567ed"
-                    />
-                <corners
-                    android:radius="8dp"
-                    />
+                <solid
+                    android:color="#403567ed"
+                />
             </shape>
         </inset>
     </item>

@@ -22,8 +22,13 @@
         <item name="icon_share">@drawable/ic_share_white_24dp</item>
     </style>
 
+    <style name="AppBar">
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="Toolbar" parent="Base.Widget.AppCompat.Toolbar">
-        <item name="elevation">4dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>

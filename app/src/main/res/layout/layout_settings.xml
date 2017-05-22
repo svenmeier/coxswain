@@ -5,7 +5,7 @@
     android:orientation="vertical"
     >
 
-    <include layout="@layout/layout_toolbar" />
+    <include layout="@layout/layout_appbar" />
 
     <FrameLayout
         android:id="@+id/settings_fragment"

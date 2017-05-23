@@ -48,7 +48,7 @@ public class DashLayout extends ViewGroup {
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 
 		int width = (right - left) - getPaddingLeft() - getPaddingRight();
-		int height = (bottom - top) - getPaddingTop() + getPaddingBottom();
+		int height = (bottom - top) - getPaddingTop() - getPaddingBottom();
 
 		int rows = (getChildCount() + (columns - 1)) / columns;
 

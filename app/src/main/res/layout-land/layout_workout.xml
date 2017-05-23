@@ -12,6 +12,8 @@
         android:layout_height="0dp"
         android:layout_weight="6"
         coxswain:columns="2"
+        android:padding="8dp"
+        android:clipToPadding="false"
     >
         <svenmeier.coxswain.view.BindingView
             style="@style/BindingView"

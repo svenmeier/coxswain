@@ -6,8 +6,9 @@
         <inset>
             <shape>
                 <solid
-                    android:color="#80AA0000"
+                    android:color="#e4b0b0"
                 />
+                <corners android:radius="5dp" />
             </shape>
         </inset>
     </item>
@@ -15,8 +16,9 @@
         <inset>
             <shape>
                 <solid
-                    android:color="#8028FF00"
+                    android:color="#bcffb0"
                 />
+                <corners android:radius="5dp" />
             </shape>
         </inset>
     </item>
@@ -24,8 +26,9 @@
         <inset>
             <shape>
                 <solid
-                    android:color="#403567ed"
+                    android:color="#c0cff9"
                 />
+                <corners android:radius="5dp" />
             </shape>
         </inset>
     </item>

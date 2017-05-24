@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -46,6 +48,8 @@ public class MainActivity extends AbstractActivity {
     private Gym gym;
 
     private ViewPager pager;
+
+    private AppBarLayout appBar;
 
     private ViewGroup programView;
 
@@ -70,6 +74,8 @@ public class MainActivity extends AbstractActivity {
 
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(pager);
+
+        appBar = (AppBarLayout) findViewById(R.id.main_appbar);
 
         programView = (ViewGroup) findViewById(R.id.main_program);
         programView.setOnClickListener(new View.OnClickListener() {
@@ -118,13 +124,18 @@ public class MainActivity extends AbstractActivity {
     }
 
     private void updateProgram() {
+        // AppBarLayout messes up its layout when a child changes to
+        // Visibility.GONE, so we remove programView instead
+
         Program program = gym.program;
         if (program == null) {
-            programView.setVisibility(View.GONE);
-            programView.setEnabled(false);
+            if (programView.getParent() != null) {
+                appBar.removeView(programView);;
+            }
         } else {
-            programView.setVisibility(View.VISIBLE);
-            programView.setEnabled(true);
+            if (programView.getParent() == null) {
+                appBar.addView(programView, 1); //
+            }
 
             programNameView.setText(gym.program.name.get());
 

@@ -1,19 +1,16 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:coxswain="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
     >
 
-    <svenmeier.coxswain.view.DashLayout
-        android:id="@+id/workout_dash"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/workout_grid"
         android:layout_height="0dp"
         android:layout_weight="6"
-        coxswain:columns="2"
-        android:padding="8dp"
-        android:clipToPadding="false"
+        android:layout_width="match_parent"
     >
         <svenmeier.coxswain.view.BindingView
             style="@style/BindingView"
@@ -33,7 +30,7 @@
         <svenmeier.coxswain.view.BindingView
             style="@style/BindingView"
         />
-    </svenmeier.coxswain.view.DashLayout>
+    </android.support.v7.widget.GridLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -44,8 +41,8 @@
             android:id="@+id/workout_segments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            coxswain:drawable="@drawable/segment"
-            coxswain:orientation="horizontal"
+            app:drawable="@drawable/segment"
+            app:segments_orientation="horizontal"
             />
         <svenmeier.coxswain.view.LevelView
             android:id="@+id/workout_progress"

@@ -80,7 +80,7 @@ public class SegmentsView extends View {
         try {
             drawable = a.getDrawable(R.styleable.SegmentsView_drawable);
 
-            orientation = a.getInt(R.styleable.SegmentsView_orientation, 0);
+            orientation = a.getInt(R.styleable.SegmentsView_segments_orientation, 0);
         } finally {
             a.recycle();
         }

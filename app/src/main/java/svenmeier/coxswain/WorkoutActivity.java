@@ -17,11 +17,13 @@ package svenmeier.coxswain;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayout;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.BindingView;
-import svenmeier.coxswain.view.DashLayout;
 import svenmeier.coxswain.view.LevelView;
 import svenmeier.coxswain.view.SegmentsData;
 import svenmeier.coxswain.view.SegmentsView;
@@ -75,7 +76,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
     private Preference<ValueBinding> bindingPreference;
 
-    private DashLayout dashView;
+    private GridLayout gridhView;
 
     private SegmentsView segmentsView;
 
@@ -106,7 +107,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
         segmentsView.setData(new SegmentsData(gym.program));
         progressView = (LevelView) findViewById(R.id.workout_progress);
-        dashView = (DashLayout)findViewById(R.id.workout_dash);
+        gridhView = (GridLayout)findViewById(R.id.workout_grid);
 
         List<ValueBinding> defaultBinding;
         if (gym.pace == null) {
@@ -122,21 +123,32 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
         }
 
         try {
-            writeToDash(bindingPreference.getList());
+            writeToGrid(bindingPreference.getList());
         } catch (Exception ex) {
-            writeToDash(defaultBinding);
+            writeToGrid(defaultBinding);
         }
     }
 
-    private void writeToDash(List<ValueBinding> binding) {
+    private void writeToGrid(List<ValueBinding> binding) {
         if (binding == null || binding.isEmpty()) {
             throw new IllegalArgumentException("binding must not be empty");
         }
 
-        for (int b = 0; b < Math.min(binding.size(), dashView.getChildCount()); b++) {
+        int columns;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            columns = binding.size() <= 3 ? 1 : 2;
+        } else {
+            columns = binding.size() <= 6 ? 1 : 2;
+        }
+        gridhView.removeAllViews();
+        gridhView.setColumnCount(columns);
+
+        for (int b = 0; b < binding.size(); b++) {
             ValueBinding temp = binding.get(b);
 
-            final BindingView bindingView = (BindingView) dashView.getChildAt(b);
+            final BindingView bindingView = (BindingView) getLayoutInflater().inflate(R.layout.layout_workout_binding, gridhView, false);
+            gridhView.addView(bindingView);
+
             bindingView.setBinding(temp);
 
             final int index = b;
@@ -154,21 +166,21 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
             });
         }
 
-        dashView.requestLayout();
+        gridhView.requestLayout();
     }
 
     @NonNull
-    private List<ValueBinding> readFromDash() {
+    private List<ValueBinding> readFromGrid() {
         List<ValueBinding> bindings = new ArrayList<>();
-        for (int v = 0; v < dashView.getChildCount(); v++) {
-            bindings.add(((BindingView)dashView.getChildAt(v)).getBinding());
+        for (int v = 0; v < gridhView.getChildCount(); v++) {
+            bindings.add(((BindingView) gridhView.getChildAt(v)).getBinding());
         }
         return bindings;
     }
 
     @Override
     protected void onDestroy() {
-        List<ValueBinding> bindings = readFromDash();
+        List<ValueBinding> bindings = readFromGrid();
         bindingPreference.setList(bindings);
 
         if (paceBoat != null) {
@@ -211,9 +223,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     }
 
     private void updateBindings() {
-        int count = dashView.getChildCount();
+        int count = gridhView.getChildCount();
         for (int v = 0; v < count; v++) {
-            ((BindingView)dashView.getChildAt(v)).changed(gym, paceBoat);
+            ((BindingView) gridhView.getChildAt(v)).changed(gym, paceBoat);
         }
     }
 
@@ -239,7 +251,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
     @Override
     public void onBinding(int index, ValueBinding binding) {
         if (binding != null) {
-            ((BindingView)dashView.getChildAt(index)).setBinding(binding);
+            ((BindingView) gridhView.getChildAt(index)).setBinding(binding);
         }
 
         leanBack(true);

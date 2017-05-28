@@ -5,9 +5,8 @@
     <item coxswain:value_low="true">
         <inset>
             <shape>
-                <!--80AA0000 on white-->
                 <solid
-                    android:color="#e4b0b0"
+                    android:color="#80AA0000"
                 />
                 <corners android:radius="5dp" />
             </shape>
@@ -16,9 +15,8 @@
     <item coxswain:value_high="true">
         <inset>
             <shape>
-                <!--8028FF00 on white-->
                 <solid
-                    android:color="#bcffb0"
+                    android:color="#8028FF00"
                 />
                 <corners android:radius="5dp" />
             </shape>
@@ -27,9 +25,8 @@
     <item coxswain:value_target="true">
         <inset>
             <shape>
-                <!--403567ed on white-->
                 <solid
-                    android:color="#c0cff9"
+                    android:color="#403567ed"
                 />
                 <corners android:radius="5dp" />
             </shape>

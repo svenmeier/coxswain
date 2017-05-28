@@ -8,7 +8,6 @@
 
         <item name="icon_more">@drawable/ic_more_vert_black_24dp</item>
         <item name="icon_share">@drawable/ic_share_black_24dp</item>
-        <item name="drawable_field">@drawable/field</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -20,7 +19,6 @@
 
         <item name="icon_more">@drawable/ic_more_vert_white_24dp</item>
         <item name="icon_share">@drawable/ic_share_white_24dp</item>
-        <item name="drawable_field">@drawable/field_dark</item>
     </style>
 
     <style name="AppBar">
@@ -52,7 +50,7 @@
     </style>
 
     <style name="BindingView">
-        <item name="android:background">?attr/drawable_field</item>
+        <item name="drawable_field">@drawable/field</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
         <item name="layout_columnWeight">1</item>

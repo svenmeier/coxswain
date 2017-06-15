@@ -46,16 +46,28 @@ public class BindingDialogFragment extends DialogFragment {
 			items[b] = getString(bindings.get(b).label);
 		}
 
-		builder.setTitle(R.string.action_bind)
-				.setSingleChoiceItems(items, bindings.indexOf(binding), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						ValueBinding binding = bindings.get(which);
+		builder.setTitle(R.string.action_bind);
+		builder.setSingleChoiceItems(items, bindings.indexOf(binding), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				ValueBinding binding = bindings.get(which);
 
-						getCallback().onBinding(index, binding);
+				getCallback().onBinding(index, binding);
 
-						dismiss();
-					}
-				});
+				dismiss();
+			}
+		});
+		builder.setNegativeButton(R.string.workout_binding_decrease, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				getCallback().onDecrease(index);
+			}
+		});
+		builder.setPositiveButton(R.string.workout_binding_increase, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				getCallback().onIncrease(index);
+			}
+		});
 
 		return builder.create();
 	}
@@ -88,5 +100,9 @@ public class BindingDialogFragment extends DialogFragment {
 
 	public interface Callback {
 		void onBinding(int index, ValueBinding binding);
+
+		void onDecrease(int index);
+
+		void onIncrease(int index);
 	}
 }

@@ -255,6 +255,31 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		leanBack(true);
 	}
 
+	@Override
+	public void onIncrease(int index) {
+		List<ValueBinding> list = readFromGrid();
+
+		list.add(index, ValueBinding.NONE);
+
+		writeToGrid(list);
+
+		leanBack(true);
+	}
+
+	@Override
+	public void onDecrease(int index) {
+		List<ValueBinding> list = readFromGrid();
+
+		list.remove(index);
+		if (list.isEmpty()) {
+			list.add(ValueBinding.NONE);
+		}
+
+		writeToGrid(list);
+
+		leanBack(true);
+	}
+
 	private void leanBack(boolean yes) {
 		if (yes) {
 			getWindow().getDecorView().postDelayed(returnToLeanBack, 3000);

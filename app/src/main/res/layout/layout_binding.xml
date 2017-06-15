@@ -1,9 +1,8 @@
-<LinearLayout
+<svenmeier.coxswain.view.BindingView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
+    style="@style/BindingView"
     android:orientation="vertical"
-    >
+>
     <svenmeier.coxswain.view.ValueView
         android:id="@+id/value"
         android:layout_width="match_parent"
@@ -12,7 +11,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="2dp"
         style="@style/ValueView"
-        />
+    />
     <svenmeier.coxswain.view.LabelView
         android:id="@+id/label"
         android:layout_width="match_parent"
@@ -21,5 +20,5 @@
         android:paddingTop="2dp"
         android:paddingBottom="8dp"
         style="@style/LabelView"
-        />
-</LinearLayout>
+    />
+</svenmeier.coxswain.view.BindingView>

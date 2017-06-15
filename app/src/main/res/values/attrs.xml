@@ -29,10 +29,10 @@
     </declare-styleable>
 
     <declare-styleable name="BindingView">
-        <attr name="value_normal" format="boolean"/>
-        <attr name="value_low" format="boolean"/>
-        <attr name="value_high" format="boolean"/>
-        <attr name="value_target" format="boolean"/>
+        <attr name="binding_normal" format="boolean"/>
+        <attr name="binding_limit_low" format="boolean"/>
+        <attr name="binding_limit_high" format="boolean"/>
+        <attr name="binding_target" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="DashLayout">

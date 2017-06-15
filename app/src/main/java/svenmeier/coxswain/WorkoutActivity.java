@@ -77,7 +77,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
 	private Preference<ValueBinding> bindingPreference;
 
-	private GridLayout gridhView;
+	private GridLayout gridView;
 
 	private SegmentsView segmentsView;
 
@@ -108,7 +108,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
 		segmentsView.setData(new SegmentsData(gym.program));
 		progressView = (LevelView) findViewById(R.id.workout_progress);
-		gridhView = (GridLayout) findViewById(R.id.workout_grid);
+		gridView = (GridLayout) findViewById(R.id.workout_grid);
 
 		List<ValueBinding> defaultBinding;
 		if (gym.pace == null) {
@@ -141,14 +141,14 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		} else {
 			columns = binding.size() <= 6 ? 1 : 2;
 		}
-		gridhView.removeAllViews();
-		gridhView.setColumnCount(columns);
+		gridView.removeAllViews();
+		gridView.setColumnCount(columns);
 
 		for (int b = 0; b < binding.size(); b++) {
 			ValueBinding temp = binding.get(b);
 
-			final BindingView bindingView = (BindingView) getLayoutInflater().inflate(R.layout.layout_workout_binding, gridhView, false);
-			gridhView.addView(bindingView);
+			final BindingView bindingView = (BindingView) getLayoutInflater().inflate(R.layout.layout_binding, gridView, false);
+			gridView.addView(bindingView);
 
 			bindingView.setBinding(temp);
 
@@ -167,14 +167,14 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 			});
 		}
 
-		gridhView.requestLayout();
+		gridView.requestLayout();
 	}
 
 	@NonNull
 	private List<ValueBinding> readFromGrid() {
 		List<ValueBinding> bindings = new ArrayList<>();
-		for (int v = 0; v < gridhView.getChildCount(); v++) {
-			bindings.add(((BindingView) gridhView.getChildAt(v)).getBinding());
+		for (int v = 0; v < gridView.getChildCount(); v++) {
+			bindings.add(((BindingView) gridView.getChildAt(v)).getBinding());
 		}
 		return bindings;
 	}
@@ -221,9 +221,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	private void updateBindings() {
-		int count = gridhView.getChildCount();
+		int count = gridView.getChildCount();
 		for (int v = 0; v < count; v++) {
-			((BindingView) gridhView.getChildAt(v)).changed(gym, paceBoat);
+			((BindingView) gridView.getChildAt(v)).changed(gym, paceBoat);
 		}
 	}
 
@@ -249,7 +249,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	@Override
 	public void onBinding(int index, ValueBinding binding) {
 		if (binding != null) {
-			((BindingView) gridhView.getChildAt(index)).setBinding(binding);
+			((BindingView) gridView.getChildAt(index)).setBinding(binding);
 		}
 
 		leanBack(true);

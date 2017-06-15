@@ -18,6 +18,7 @@ package svenmeier.coxswain.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import java.util.Calendar;
 
@@ -26,13 +27,12 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Segment;
-import svenmeier.coxswain.rower.Energy;
 
 /**
  */
-public class BindingView extends FrameLayout {
+public class BindingView extends LinearLayout {
 
-    private int state = R.attr.value_normal;
+    private int state = R.attr.binding_normal;
 
     private ValueBinding binding;
 
@@ -57,13 +57,6 @@ public class BindingView extends FrameLayout {
     }
 
     private void init() {
-        inflate(getContext(), R.layout.layout_binding, this);
-
-        valueView = (ValueView)findViewById(R.id.value);
-        labelView = (LabelView)findViewById(R.id.label);
-
-        setBinding(ValueBinding.DISTANCE);
-
         splitDistance = Preference.getInt(getContext(), R.string.preference_split_distance).fallback(500).get();
     }
 
@@ -73,7 +66,14 @@ public class BindingView extends FrameLayout {
         }
         this.binding = binding;
 
+        if (labelView == null) {
+            labelView = (LabelView)findViewById(R.id.label);
+        }
         labelView.setText(getContext().getString(binding.label));
+
+        if (valueView == null) {
+            valueView = (ValueView)findViewById(R.id.value);
+        }
         valueView.setPattern(getContext().getString(binding.pattern));
 
         changed(0);
@@ -96,23 +96,25 @@ public class BindingView extends FrameLayout {
     }
 
     private void initBinding() {
-        switch (binding) {
-            case TIME:
-                timer = new Runnable() {
-                    @Override
-                    public void run() {
-                        if (timer == this && binding == ValueBinding.TIME) {
-                            Calendar calendar = Calendar.getInstance();
-                            int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                            limit(minutes, 0);
+        if (binding == null) {
+            binding = ValueBinding.NONE;
+        } else if (binding == ValueBinding.TIME) {
+            timer = new Runnable() {
+                @Override
+                public void run() {
+                    if (timer == this && binding == ValueBinding.TIME) {
+                        Calendar calendar = Calendar.getInstance();
+                        int minutes = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
+                        limit(minutes, 0);
 
-                            postDelayed(timer, 1000);
-                        }
+                        postDelayed(timer, 1000);
                     }
-                };
-                timer.run();
-                break;
+                }
+            };
+            timer.run();
         }
+
+        setBinding(binding);
     }
 
     public ValueBinding getBinding() {
@@ -120,7 +122,7 @@ public class BindingView extends FrameLayout {
     }
 
     public void changed(int value) {
-        setState(R.attr.value_normal);
+        setState(R.attr.binding_normal);
         valueView.setValue(value);
     }
 
@@ -192,7 +194,7 @@ public class BindingView extends FrameLayout {
     }
 
     private void split(float inverseSpeed) {
-        setState(R.attr.value_normal);
+        setState(R.attr.binding_normal);
 
         float duration = splitDistance * inverseSpeed;
 
@@ -201,22 +203,22 @@ public class BindingView extends FrameLayout {
 
     private void delta(int delta, boolean positiveIsLow) {
         if (delta == 0) {
-            setState(R.attr.value_normal);
+            setState(R.attr.binding_normal);
         } else if ((delta < 0) ^ positiveIsLow) {
-            setState(R.attr.value_low);
+            setState(R.attr.binding_limit_low);
         } else {
-            setState(R.attr.value_high);
+            setState(R.attr.binding_limit_high);
         }
         valueView.setValue(delta);
     }
 
     private void target(int value, int target, int achieved) {
         if (target > 0) {
-            setState(R.attr.value_target);
+            setState(R.attr.binding_target);
 
             valueView.setValue(Math.max(0, target - achieved));
         } else {
-            setState(R.attr.value_normal);
+            setState(R.attr.binding_normal);
 
             valueView.setValue(value);
         }
@@ -226,15 +228,15 @@ public class BindingView extends FrameLayout {
         if (limit > 0) {
             int difference = value - limit;
             if (difference < 0) {
-                setState(R.attr.value_low);
+                setState(R.attr.binding_limit_low);
             } else {
-                setState(R.attr.value_high);
+                setState(R.attr.binding_limit_high);
             }
 
             valueView.setPattern(valueView.getPattern().replace('-', '+'));
             valueView.setValue(difference);
         } else {
-            setState(R.attr.value_normal);
+            setState(R.attr.binding_normal);
 
             valueView.setPattern(valueView.getPattern().replace('+', '-'));
             valueView.setValue(value);

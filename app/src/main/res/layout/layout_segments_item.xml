@@ -11,21 +11,19 @@
         style="@style/MenuButton"
         />
 
-    <svenmeier.coxswain.view.BindingView
-        android:id="@+id/segments_item_target"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        style="@style/BindingView"
-        />
+    <include android:id="@+id/segments_item_target"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="1"
+             layout="@layout/layout_binding"
+    />
 
-    <svenmeier.coxswain.view.BindingView
-        android:id="@+id/segments_item_limit"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        style="@style/BindingView"
-        />
+    <include android:id="@+id/segments_item_limit"
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="1"
+             layout="@layout/layout_binding"
+    />
 
     <svenmeier.coxswain.view.LevelView
         android:id="@+id/segments_difficulty"

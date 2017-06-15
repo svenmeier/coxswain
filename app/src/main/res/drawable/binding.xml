@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:coxswain="http://schemas.android.com/apk/res-auto"
     >
-    <item coxswain:value_low="true">
+    <item coxswain:binding_limit_low="true">
         <inset>
             <shape>
                 <solid
@@ -12,7 +12,7 @@
             </shape>
         </inset>
     </item>
-    <item coxswain:value_high="true">
+    <item coxswain:binding_limit_high="true">
         <inset>
             <shape>
                 <solid
@@ -22,7 +22,7 @@
             </shape>
         </inset>
     </item>
-    <item coxswain:value_target="true">
+    <item coxswain:binding_target="true">
         <inset>
             <shape>
                 <solid

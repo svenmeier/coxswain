@@ -97,8 +97,9 @@ public class BindingView extends LinearLayout {
 
     private void initBinding() {
         if (binding == null) {
-            binding = ValueBinding.NONE;
-        } else if (binding == ValueBinding.TIME) {
+            setBinding(ValueBinding.NONE);
+        }
+        if (binding == ValueBinding.TIME) {
             timer = new Runnable() {
                 @Override
                 public void run() {
@@ -113,8 +114,6 @@ public class BindingView extends LinearLayout {
             };
             timer.run();
         }
-
-        setBinding(binding);
     }
 
     public ValueBinding getBinding() {

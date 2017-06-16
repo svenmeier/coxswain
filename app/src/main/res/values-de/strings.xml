@@ -70,6 +70,9 @@
     <string name="program_name_new">Neues Programm</string>
     <string name="program_name_segments">Segmente</string>
 
+    <string name="workout_binding_decrease">Entfernen</string>
+    <string name="workout_binding_increase">Hinzufügen</string>
+
     <string name="import_unknown">Unbekanntes Import Format</string>
 
     <string name="calendar_export">Kalender</string>

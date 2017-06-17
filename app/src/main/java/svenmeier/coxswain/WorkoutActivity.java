@@ -135,12 +135,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 			throw new IllegalArgumentException("binding must not be empty");
 		}
 
-		int columns;
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			columns = binding.size() <= 3 ? 1 : 2;
-		} else {
-			columns = binding.size() <= 6 ? 1 : 2;
-		}
+		int columns = columnCount(binding.size());
 		gridView.removeAllViews();
 		gridView.setColumnCount(columns);
 
@@ -168,6 +163,29 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		}
 
 		gridView.requestLayout();
+	}
+
+	private int columnCount(int size) {
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			if (size <= 3) {
+				return 1;
+			}
+			if (size <= 8) {
+				return 2;
+			}
+			if (size <= 15) {
+				return 3;
+			}
+			return 4;
+		} else {
+			if (size <= 8) {
+				return 1;
+			}
+			if (size <= 24) {
+				return 2;
+			}
+			return 3;
+		}
 	}
 
 	@NonNull

@@ -10,6 +10,8 @@
         android:layout_weight="5"
         android:paddingTop="8dp"
         android:paddingBottom="2dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
         style="@style/ValueView"
     />
     <svenmeier.coxswain.view.LabelView

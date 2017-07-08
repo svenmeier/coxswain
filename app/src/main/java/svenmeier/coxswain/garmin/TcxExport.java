@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
@@ -36,12 +37,16 @@ public class TcxExport extends Export<Workout> {
 
 	private final Gym gym;
 
+	private Preference<Boolean> generateLocations;
+
 	public TcxExport(Context context) {
 		super(context.getApplicationContext());
 
 		this.handler = new Handler();
 
 		this.gym = Gym.instance(context);
+
+		this.generateLocations = Preference.getBoolean(context, R.string.preference_export_track);
 	}
 
 	@Override
@@ -122,7 +127,13 @@ public class TcxExport extends Export<Workout> {
 
 			Writer writer = new BufferedWriter(new FileWriter(file));
 			try {
-				new Workout2TCX(writer).document(workout, snapshots.list());
+				Workout2TCX workout2TCX = new Workout2TCX(writer);
+
+				if (generateLocations.get()) {
+					workout2TCX.track(new ArtificialTrack(workout.location.get()));
+				}
+
+				workout2TCX.document(workout, snapshots.list());
 			} finally {
 				writer.close();
 			}

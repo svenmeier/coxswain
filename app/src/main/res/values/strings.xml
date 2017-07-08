@@ -125,9 +125,17 @@
 
     <string name="preference_training_title">Training</string>
 
+    <string name="preference_adjust_energy" translatable="false">preference_adjust_energy</string>
+    <string name="preference_adjust_energy_title">Energy</string>
+    <string name="preference_adjust_energy_summary">Adjust emergy calculation</string>
+
     <string name="preference_weight" translatable="false">preference_weight</string>
     <string name="preference_weight_title">Body weight</string>
     <string name="preference_weight_summary">Adjust energy to %s kg body weight</string>
+
+    <string name="preference_adjust_speed" translatable="false">preference_adjust_speed</string>
+    <string name="preference_adjust_speed_title">Speed</string>
+    <string name="preference_adjust_speed_summary">Adjust speed calculation</string>
 
     <string name="preference_energy_unit" translatable="false">preference_energy_unit</string>
     <string name="preference_energy_unit_title">Energy</string>
@@ -178,14 +186,19 @@
     <string name="preference_audio_speak_limit_title">Segment limit</string>
     <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled</string>
 
+    <string name="preference_export_title">Export</string>
+
+    <string name="preference_export_auto" translatable="false">preference_integration_export_auto</string>
+    <string name="preference_export_last" translatable="false">preference_integration_export_last</string>
+    <string name="preference_export_auto_title">Automatic</string>
+    <string name="preference_export_auto_summary">Export each workout automatically</string>
+    <string name="preference_export_auto_reminder">First export a workout to determine automatic exports</string>
+
+    <string name="preference_export_track" translatable="false">preference_export_track</string>
+    <string name="preference_export_track_title">Generate track locations</string>
+    <string name="preference_export_track_summary">Generate artificial track locations</string>
+
     <string name="preference_integration_title">Integration</string>
-
-    <string name="preference_integration_export_auto" translatable="false">preference_integration_export_auto</string>
-    <string name="preference_integration_export_auto_title">Export</string>
-    <string name="preference_integration_export_auto_summary">Export each workout automatically</string>
-    <string name="preference_integration_export_auto_reminder">First export a workout to determine automatic exports</string>
-
-    <string name="preference_integration_export_last" translatable="false">preference_integration_export_last</string>
 
     <string name="preference_integration_headsup" translatable="false">preference_integration_headsup</string>
     <string name="preference_integration_headsup_title">Notification</string>

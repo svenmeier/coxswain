@@ -19,17 +19,17 @@ public class TrackTest {
 	@Test
 	public void startGreenwich() {
 
-		Track path = new Track(null);
+		ITrack path = new ArtificialTrack(null);
 
-		assertEquals(51.4826d, path.getLatitude(), 0.001d);
+		assertEquals(51.477809d, path.getLatitude(), 0.00d);
 
-		path.addDistance(111320);
+		path.setDistance(111320 * 1);
 
-		assertEquals(50.4826, path.getLatitude(), 0.001d);
+		assertEquals(50.48d, path.getLatitude(), 0.01d);
 
-		path.addDistance(1113200);
+		path.setDistance(1113200 * 2);
 
-		assertEquals(40.4826, path.getLatitude(), 0.001d);
+		assertEquals(31.48d, path.getLatitude(), 0.01d);
 	}
 
 	@Test
@@ -39,17 +39,17 @@ public class TrackTest {
 		location.setLongitude(0);
 		location.setLatitude(-66.57d);
 
-		Track path = new Track(location);
+		ITrack path = new ArtificialTrack(location);
 
-		assertEquals(-66.57d, path.getLatitude(), 0.001d);
+		assertEquals(-66.57d, path.getLatitude(), 0.01d);
 
-		path.addDistance(111320);
+		path.setDistance(111320 * 1);
 
-		assertEquals(-65.57d, path.getLatitude(), 0.001d);
+		assertEquals(-65.57d, path.getLatitude(), 0.01d);
 
-		path.addDistance(1113200);
+		path.setDistance(1113200 * 2);
 
-		assertEquals(-55.57d, path.getLatitude(), 0.001d);
+		assertEquals(-46.57d, path.getLatitude(), 0.001d);
 	}
 
 	@Test
@@ -59,16 +59,16 @@ public class TrackTest {
 		location.setLongitude(0);
 		location.setLatitude(66.57d);
 
-		Track path = new Track(location);
+		ITrack path = new ArtificialTrack(location);
 
-		assertEquals(66.57d, path.getLatitude(), 0.001d);
+		assertEquals(66.57d, path.getLatitude(), 0.01d);
 
-		path.addDistance(111320);
+		path.setDistance(111320 * 1);
 
-		assertEquals(65.57d, path.getLatitude(), 0.001d);
+		assertEquals(65.57d, path.getLatitude(), 0.01d);
 
-		path.addDistance(1113200);
+		path.setDistance(1113200 * 2);
 
-		assertEquals(55.57d, path.getLatitude(), 0.001d);
+		assertEquals(46.57d, path.getLatitude(), 0.01d);
 	}
 }

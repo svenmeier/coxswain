@@ -1,11 +1,9 @@
 package svenmeier.coxswain.io;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import propoid.util.content.Preference;
-import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
 
@@ -28,9 +26,9 @@ public abstract class Export<T> {
 	 * @param workout workout
 	 */
 	public static void start(Context context, Workout workout) {
-		Preference<Boolean> auto = Preference.getBoolean(context, R.string.preference_integration_export_auto);
+		Preference<Boolean> auto = Preference.getBoolean(context, R.string.preference_export_auto);
 		if (auto.get()) {
-			Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
+			Preference<String> last = Preference.getString(context, R.string.preference_export_last);
 
 			Export<Workout> export;
 
@@ -38,7 +36,7 @@ public abstract class Export<T> {
 			try {
 				export = (Export) Class.forName(name).getConstructor(Context.class).newInstance(context);
 			} catch (Exception ex) {
-				Toast.makeText(context, context.getString(R.string.preference_integration_export_auto_reminder), Toast.LENGTH_LONG).show();
+				Toast.makeText(context, context.getString(R.string.preference_export_auto_reminder), Toast.LENGTH_LONG).show();
 				return;
 			}
 
@@ -54,7 +52,7 @@ public abstract class Export<T> {
 	 * @param workout workout
 	 */
 	public static void start(Context context, Export<Workout> export, Workout workout) {
-		Preference<String> last = Preference.getString(context, R.string.preference_integration_export_last);
+		Preference<String> last = Preference.getString(context, R.string.preference_export_last);
 
 		last.set(export.getClass().getName());
 

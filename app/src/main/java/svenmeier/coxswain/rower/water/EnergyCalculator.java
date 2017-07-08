@@ -18,13 +18,13 @@ package svenmeier.coxswain.rower.water;
 /**
  * Calculator of energy relative to a weight.
  */
-public class EnergyCalculator {
+public class EnergyCalculator implements IEnergyCalculator {
 
     private static final int WEIGHT_MIN = 40;
 
     private static final int WEIGHT_MAX = 160;
 
-    private static final int DEFAULT_WEIGHT = 69;
+    private static final int DEFAULT_WEIGHT = 68;
 
     private static final double S4_CALORIES_FOR_WEIGHT = 257.1;
 
@@ -42,10 +42,6 @@ public class EnergyCalculator {
     }
 
     public EnergyCalculator(int weight) {
-        setWeight(weight);
-    }
-
-    public void setWeight(int weight) {
         if (weight < WEIGHT_MIN) {
             weight = WEIGHT_MIN;
         }
@@ -63,6 +59,7 @@ public class EnergyCalculator {
      * @param calories
      * @return Calories adjusted to weight
      */
+	@Override
     public int energy(int calories) {
 
         double thousandth = (double)calories / 1000d;

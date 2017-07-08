@@ -22,7 +22,7 @@ public class Workout2TCX {
 
 	private SimpleDateFormat dateFormat;
 
-	private Track path;
+	private ITrack track;
 
 	public Workout2TCX(Writer writer) throws IOException {
 		serializer = Xml.newSerializer();
@@ -32,6 +32,10 @@ public class Workout2TCX {
 		// time for trackpoints must be in UTC
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
+
+	public void track(ITrack track) {
+		this.track = track;
 	}
 
 	public void document(Workout workout, List<Snapshot> snaoshots) throws IOException {
@@ -119,7 +123,9 @@ public class Workout2TCX {
 	private void track(Workout workout, List<Snapshot> snapshots) throws IOException {
 		serializer.startTag(null, "Track");
 
-		path = new Track(workout.location.get());
+		if (track == null) {
+			track = new StationaryTrack(workout.location.get());
+		}
 
 		for (int index = 0; index < snapshots.size(); index++) {
 			trackpoint(workout, snapshots.get(index), index);
@@ -149,10 +155,10 @@ public class Workout2TCX {
 	private void position(Snapshot snapshot) throws IOException {
 		serializer.startTag(null, "Position");
 
-		path.setDistance(snapshot.distance.get());
+		track.setDistance(snapshot.distance.get());
 
-		tag(null, "LatitudeDegrees", Double.toString(path.getLatitude()));
-		tag(null, "LongitudeDegrees", Double.toString(path.getLongitude()));
+		tag(null, "LatitudeDegrees", Double.toString(track.getLatitude()));
+		tag(null, "LongitudeDegrees", Double.toString(track.getLongitude()));
 
 		serializer.endTag(null, serializer.getName());
 	}

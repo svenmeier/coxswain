@@ -35,9 +35,16 @@ public class Protocol4 implements IProtocol {
 
     private List<Field> fields = new ArrayList<>();
 
-    public final RatioCalculator ratioCalculator = new RatioCalculator();
+    private boolean adjustSpeed;
 
-    public final EnergyCalculator energyCalculator = new EnergyCalculator();
+    private RatioCalculator ratioCalculator = new RatioCalculator();
+
+    private IEnergyCalculator energyCalculator = new IEnergyCalculator() {
+        @Override
+        public int energy(int value) {
+            return value;
+        }
+    };
 
     private int cycle = 0;
 
@@ -145,12 +152,39 @@ public class Protocol4 implements IProtocol {
             }
         });
 
-        fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
-            @Override
-            protected void onUpdate(int value, Measurement measurement) {
-                measurement.speed = value;
-            }
-        });
+        if (adjustSpeed) {
+            fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
+
+                private long lastNonZero;
+
+                @Override
+                protected void onUpdate(int value, Measurement measurement) {
+                    long now = System.currentTimeMillis();
+
+                    if (value == 0) {
+                        if ((now - lastNonZero) < 1000) {
+                            // ignore intermittent zeroes send by S4
+                            return;
+                        }
+                    }
+
+                    lastNonZero = now;
+
+                    // magic formula see:
+                    // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
+                    float mps = 0.709492f * (float) Math.pow(value, 1d / 3d);
+
+                    measurement.speed = Math.round(mps * 100);
+                }
+            });
+        } else {
+            fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
+                @Override
+                protected void onUpdate(int value, Measurement measurement) {
+                    measurement.speed = value;
+                }
+            });
+        }
 
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
@@ -326,5 +360,13 @@ public class Protocol4 implements IProtocol {
         cycle = fields.indexOf(reset);
 
         ratioCalculator.clear(System.currentTimeMillis());
+    }
+
+    public void adjustSpeed(boolean calculate) {
+        this.adjustSpeed = calculate;
+    }
+
+    public void adjustEnergy(IEnergyCalculator calculator) {
+        this.energyCalculator = calculator;
     }
 }

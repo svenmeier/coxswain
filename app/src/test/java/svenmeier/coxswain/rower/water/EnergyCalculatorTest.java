@@ -11,7 +11,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class EnergyCalculatorTest {
 
-	Measurement measurement = new Measurement();
+	@Test
+	public void test() {
+		assertEquals(0, new EnergyCalculator(68).energy(0));
+	}
 
 	@Test
 	public void test26minutes() {

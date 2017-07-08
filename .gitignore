@@ -1,7 +1,11 @@
-.adb-wifi-connect.last
+*.iml
 .gradle
 /local.properties
+/.idea
 /.idea
 .DS_Store
 /build
 /captures
+.externalNativeBuild
+shell.nix
+/.android

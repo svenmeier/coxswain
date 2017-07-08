@@ -16,8 +16,12 @@ android {
         versionName "4.5"
     }
     buildTypes {
+        debug {
+            debuggable true
+        }
         release {
-            minifyEnabled false
+            debuggable false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -25,13 +29,18 @@ android {
     }
 }
 
+ext {
+    supportLibraryVersion = '25.3.1'
+    playServicesVersion = '8.4.0'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:gridlayout-v7:25.3.1'
-    compile 'com.android.support:support-v13:25.3.1'
-    compile 'com.android.support:preference-v14:25.3.1'
-    compile 'com.google.android.gms:play-services-fitness:8.4.0'
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:gridlayout-v7:$supportLibraryVersion"
+    compile "com.android.support:support-v13:$supportLibraryVersion"
+    compile "com.android.support:preference-v14:$supportLibraryVersion"
+    compile "com.google.android.gms:play-services-fitness:$playServicesVersion"
     testCompile 'junit:junit:4.12'
     testCompile('org.robolectric:robolectric:3.3.2') {
         exclude group: 'commons-logging', module: 'commons-logging'

@@ -4,8 +4,8 @@ include ':propoid-db'
 include ':propoid-validation'
 include ':propoid-ui'
 include ':propoid-util'
-project(':propoid-core').projectDir = new File('/home/sven/projects/propoid/propoid-core')
-project(':propoid-db').projectDir = new File('/home/sven/projects/propoid/propoid-db')
-project(':propoid-validation').projectDir = new File('/home/sven/projects/propoid/propoid-validation')
-project(':propoid-ui').projectDir = new File('/home/sven/projects/propoid/propoid-ui')
-project(':propoid-util').projectDir = new File('/home/sven/projects/propoid/propoid-util')
+project(':propoid-core').projectDir = new File('../propoid/propoid-core')
+project(':propoid-db').projectDir = new File('../propoid/propoid-db')
+project(':propoid-validation').projectDir = new File('../propoid/propoid-validation')
+project(':propoid-ui').projectDir = new File('../propoid/propoid-ui')
+project(':propoid-util').projectDir = new File('../propoid/propoid-util')

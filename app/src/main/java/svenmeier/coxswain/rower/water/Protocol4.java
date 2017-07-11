@@ -155,20 +155,18 @@ public class Protocol4 implements IProtocol {
         if (adjustSpeed) {
             fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
 
-                private long lastNonZero;
+                private long valueAcceptedInStroke;
 
                 @Override
                 protected void onUpdate(int value, Measurement measurement) {
-                    long now = System.currentTimeMillis();
-
                     if (value == 0) {
-                        if ((now - lastNonZero) < 1000) {
-                            // ignore intermittent zeroes send by S4
+                        if (measurement.strokes < valueAcceptedInStroke + 1) {
+                            // S4 sends watts once per stroke only, so ignore
+                            // zero values until next stroke
                             return;
                         }
                     }
-
-                    lastNonZero = now;
+                    valueAcceptedInStroke = measurement.strokes;
 
                     // magic formula see:
                     // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator

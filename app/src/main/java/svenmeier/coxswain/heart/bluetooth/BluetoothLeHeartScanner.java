@@ -56,14 +56,10 @@ public class BluetoothLeHeartScanner {
      */
     public Destroyable scan(final BluetoothHeartDiscoveryListener handler) {
         final OnDevice listener = new OnDevice(handler);
-Log.i(Coxswain.TAG, "Scan 1");
          final Optional<BluetoothAdapter> adapter = getBluetoothAdapter();
-        Log.i(Coxswain.TAG, "Scan 2");
          if (adapter.isPresent()) {
              final BluetoothLeScanner scanner = adapter.get().getBluetoothLeScanner();
-             Log.i(Coxswain.TAG, "Scan 3");
              scanner.startScan(DEVICES_FILTER, DISCOVERY_SCAN, listener);
-             Log.i(Coxswain.TAG, "Scan 4");
              return new ScanDestroyer(scanner, listener);
          } else {
              return Destroyable.NULL;

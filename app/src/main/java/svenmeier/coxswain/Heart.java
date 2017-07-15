@@ -1,6 +1,7 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.LinkedList;
@@ -80,11 +81,15 @@ public class Heart implements HeartRateListener {
 	}
 
 	protected void updateConnectionStatus(final ConnectionStatus connectionStatus) {
+		updateConnectionStatus(connectionStatus, null, null);
+	}
+
+	protected void updateConnectionStatus(final ConnectionStatus connectionStatus, final @Nullable String deviceName, final @Nullable String message) {
 		if (this.connectionStatus != connectionStatus) {
 			this.connectionStatus = connectionStatus;
 			Log.i(Coxswain.TAG, "Update connection status of " + this.getClass().getSimpleName() + " to " + connectionStatus);
 			for (ConnectionStatusListener listener : connectionStatusListeners) {
-				listener.onConnectionStatusChange(this, connectionStatus);
+				listener.onConnectionStatusChange(this, connectionStatus, deviceName, message);
 			}
 		}
 	}

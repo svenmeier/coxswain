@@ -3,6 +3,7 @@ package svenmeier.coxswain.heart.bluetooth;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -10,15 +11,23 @@ import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
+import svenmeier.coxswain.heart.ToastConnectionStatusListener;
 import svenmeier.coxswain.heart.bluetooth.device.BluetoothHeartDevice;
 import svenmeier.coxswain.util.Destroyable;
 
+/**
+ *  Provides the new implementation in the format of the previous Heart-readings
+ */
+@SuppressWarnings("unused") // Initialized through reflection
 public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscoveryListener {
     final Destroyable currentScan;
     Destroyable heartRateListener = null;
+    private @Nullable String deviceName;
 
     public BluetoothHeartAdapter(Context context, Measurement measurement) {
         super(context, measurement);
+
+        registerConnectionStatusListener(new ToastConnectionStatusListener(context));
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             Log.i(Coxswain.TAG, "Start bluetooth-scan...");
@@ -35,7 +44,8 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onDiscovered(BluetoothDevice device, int SignalStrength, boolean supportsConnectionLess) {
-        updateConnectionStatus(ConnectionStatus.CONNECTING);
+        deviceName = device.getName();
+        updateConnectionStatus(ConnectionStatus.CONNECTING, device.getName(), null);
         Log.i(Coxswain.TAG, "Using first discovered device: " + device.getAddress() + " -> " + device.getName());
         currentScan.destroy();
         // TODO: Does not cover connection-less as we have to scan again using scanner.find()
@@ -46,7 +56,13 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
 
     @Override
     public void onLost(String deviceId) {
+        updateConnectionStatus(ConnectionStatus.CONNECTING, deviceName, "Lost connectivity to bluetooth device");
+    }
 
+    @Override
+    public void onHeartRate(int heartRate) {
+        updateConnectionStatus(ConnectionStatus.CONNECTED, deviceName, null);
+        super.onHeartRate(heartRate);
     }
 
     @Override

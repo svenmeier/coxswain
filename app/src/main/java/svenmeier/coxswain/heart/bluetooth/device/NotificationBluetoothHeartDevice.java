@@ -8,12 +8,11 @@ import android.support.annotation.RequiresApi;
 import android.util.ArraySet;
 import android.util.Log;
 
-import java.util.List;
 import java.util.Set;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.GattHeartRateMeasurement;
+import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 

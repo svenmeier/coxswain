@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartServices;
+import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
 import static android.bluetooth.le.ScanSettings.CALLBACK_TYPE_ALL_MATCHES;
@@ -49,7 +50,7 @@ public class BluetoothLeConnectionlessDevice implements BluetoothHeartDevice {
     }
 
     @Override
-    public Destroyable watch(final Consumer<Integer> heartRateConsumer) {
+    public Destroyable watch(final HeartRateListener heartRateConsumer) {
         final OnRead listener = new OnRead(heartRateConsumer);
 
         final BluetoothLeScanner scanner =
@@ -73,9 +74,9 @@ public class BluetoothLeConnectionlessDevice implements BluetoothHeartDevice {
     }
 
     private static class OnRead extends ScanCallback {
-        private final Consumer<Integer> heartRateConsumer;
+        private final HeartRateListener heartRateConsumer;
 
-        public OnRead(Consumer<Integer> heartRateConsumer) {
+        public OnRead(HeartRateListener heartRateConsumer) {
             this.heartRateConsumer = heartRateConsumer;
         }
 
@@ -86,7 +87,7 @@ public class BluetoothLeConnectionlessDevice implements BluetoothHeartDevice {
                 case CALLBACK_TYPE_FIRST_MATCH:
                     final byte[] heartRate = result.getScanRecord().getServiceData(BluetoothHeartServices.HEART_RATE.getParcelUuid());
                     if (heartRate != null && heartRate.length == 1) {
-                        heartRateConsumer.accept(Integer.valueOf(heartRate[0]));
+                        heartRateConsumer.onHeartRate(Integer.valueOf(heartRate[0]));
                     }
                     break;
                 case CALLBACK_TYPE_MATCH_LOST:

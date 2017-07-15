@@ -17,6 +17,9 @@ import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.constants.GattHeartRateMeasurement;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.BytesToBoolean;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.BytesToHeart;
+import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -29,11 +32,11 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
 
     public Future<Boolean> canUseBluetoothNotifications() {
         return queryNotificationSupport(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT)
-                .handle(this::bytesToBoolean);
+                .handle(new BytesToBoolean());
     }
 
     @Override
-    public Destroyable watch(final Consumer<Integer> heartRateConsumer) {
+    public Destroyable watch(final HeartRateListener heartRateConsumer) {
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         final AtomicBoolean keepGoing = new AtomicBoolean(true);
         executor.execute(makeWatcher(heartRateConsumer, keepGoing));
@@ -41,14 +44,17 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
         return new Destructor(executor, keepGoing);
     }
 
-    private Runnable makeWatcher(final Consumer<Integer> heartRateConsumer, final AtomicBoolean keepGoing) {
-        return () -> {
-            while (keepGoing.get()) {
-                try {
-                    Thread.sleep(1000);
-                    heartRateConsumer.accept(getNextHeartRateReading().get().getHeartBpm());
-                } catch (Exception e) {
-                    Log.e(Coxswain.TAG, "Error watching heart-rate", e);
+    private Runnable makeWatcher(final HeartRateListener heartRateConsumer, final AtomicBoolean keepGoing) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                while (keepGoing.get()) {
+                    try {
+                        Thread.sleep(1000);
+                        heartRateConsumer.onHeartRate(getNextHeartRateReading().get().getHeartBpm());
+                    } catch (Exception e) {
+                        Log.e(Coxswain.TAG, "Error watching heart-rate", e);
+                    }
                 }
             }
         };
@@ -56,7 +62,7 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
 
     public Future<GattHeartRateMeasurement> getNextHeartRateReading() {
         return query(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT)
-                .handle((val, exc) -> new GattHeartRateMeasurement(val));
+                .handle(new BytesToHeart());
     }
 
     @Override
@@ -64,7 +70,7 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
         super.destroy();
     }
 
-    private class Destructor implements Destroyable {
+    class Destructor implements Destroyable {
         private final AtomicBoolean keepGoing;
         private final ExecutorService executor;
 

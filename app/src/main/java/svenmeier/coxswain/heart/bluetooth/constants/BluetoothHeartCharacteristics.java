@@ -45,8 +45,11 @@ public enum BluetoothHeartCharacteristics {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static Optional<BluetoothHeartCharacteristics> byUuid(UUID uuid) {
-        return Arrays.stream(values())
-                .filter(e -> e.getUuid().equals(uuid))
-                .findAny();
+        for (BluetoothHeartCharacteristics candidate : values()) {
+            if (candidate.getUuid().equals(uuid)) {
+                return Optional.of(candidate);
+            }
+        }
+        return Optional.empty();
     }
 }

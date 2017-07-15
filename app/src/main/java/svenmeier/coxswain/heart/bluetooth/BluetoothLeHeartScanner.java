@@ -1,6 +1,7 @@
 package svenmeier.coxswain.heart.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -9,7 +10,6 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartServices;
@@ -56,11 +57,14 @@ public class BluetoothLeHeartScanner {
     public Destroyable scan(final BluetoothHeartDiscoveryListener handler) {
         final OnDevice listener = new OnDevice(handler);
 
-        return getBluetoothAdapter()
-                .map(BluetoothAdapter::getBluetoothLeScanner)
-                .map(scanner -> { scanner.startScan(DEVICES_FILTER, DISCOVERY_SCAN, listener); return scanner; })
-                .map(scanner -> (Destroyable) new ScanDestroyer(scanner, listener))
-                .orElse(() -> {});
+         final Optional<BluetoothAdapter> adapter = getBluetoothAdapter();
+         if (adapter.isPresent()) {
+             final BluetoothLeScanner scanner = adapter.get().getBluetoothLeScanner();
+             scanner.startScan(DEVICES_FILTER, DISCOVERY_SCAN, listener);
+             return new ScanDestroyer(scanner, listener);
+         } else {
+             return Destroyable.NULL;
+         }
     }
 
     /**
@@ -76,11 +80,22 @@ public class BluetoothLeHeartScanner {
         final BluetoothHeartDeviceFactory deviceFactory = new BluetoothHeartDeviceFactory(context);
 
         if (adapter.isPresent()) {
-            final OnDevice listener = new OnDevice((device, signalStrength, supportsConnectionLess) ->
-                    future.complete(
-                            (supportsConnectionLess) ?
+            final OnDevice listener = new OnDevice(
+                    new BluetoothHeartDiscoveryListener() {
+                        @Override
+                        public void onDiscovered(BluetoothDevice device, int SignalStrength, boolean supportsConnectionLess) {
+                            future.complete(
+                                (supportsConnectionLess) ?
                                     deviceFactory.makeConnectionLess(device) :
-                                    deviceFactory.make(device)));
+                                    deviceFactory.make(device));
+                        }
+
+                        @Override
+                        public void onLost(String deviceId) {
+
+                        }
+                    });
+
             final BluetoothLeScanner scanner = adapter.get().getBluetoothLeScanner();
 
             scanner.startScan(
@@ -136,13 +151,17 @@ public class BluetoothLeHeartScanner {
                     return true;
                 }
             };
-        future.whenCompleteAsync((dev, exception) -> {
-            if (dev != null) {
-                ret.complete(dev);
-            } else {
-                ret.completeExceptionally(exception);
+        future.whenCompleteAsync(new BiConsumer<T, Throwable>() {
+            @Override
+            public void accept(T dev, Throwable exception) {
+                if (dev != null) {
+                    ret.complete(dev);
+                } else {
+                    ret.completeExceptionally(exception);
+                }
             }
         });
+
         return ret;
     }
 

@@ -46,10 +46,10 @@ import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_NOTIFY;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevice {
     private final Conversation conversation;
-    private final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners;
+    private final Map<UUID, List<BluetoothNotificationListener>> notificationListeners;
 
     public AbstractBluetoothHeartDevice(final Context context, final BluetoothDevice delegate) {
-        this(new Conversation(context, delegate, new ConcurrentHashMap<>(2)));
+        this(new Conversation(context, delegate, new ConcurrentHashMap<UUID, List<BluetoothNotificationListener>>(2)));
     }
 
     public AbstractBluetoothHeartDevice(final Conversation conversation) {
@@ -81,9 +81,9 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         return response;
     }
 
-    protected CompletableFuture<List<Byte>> enableNotifications(final BluetoothHeartCharacteristics characteristic, final Consumer<List<Byte>> listener) {
+    protected CompletableFuture<List<Byte>> enableNotifications(final BluetoothHeartCharacteristics characteristic, final BluetoothNotificationListener listener) {
         final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
-        notificationListeners.computeIfAbsent(characteristic.getUuid(), k -> new ArrayList<>(1));
+        notificationListeners.putIfAbsent(characteristic.getUuid(), new ArrayList<BluetoothNotificationListener>(1));
         notificationListeners.get(characteristic.getUuid()).add(listener);
         final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{1},
                 ConversationItemType.SET_NOTIFY);
@@ -97,21 +97,6 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                 ConversationItemType.SET_NOTIFY);
         conversation.accept(item);
         return response;
-    }
-
-    protected Integer convertRawToReading(List<Byte> bytes, Throwable throwable) {
-        if (bytes == null || bytes.size() != 1) {
-            Log.w(Coxswain.TAG, "Error converting byte-array to int-value: " + bytes);
-            return null;
-        } else {
-            return bytes.get(0).intValue();
-        }
-    }
-
-    public boolean bytesToBoolean(List<Byte> bytes, Throwable throwable) {
-        return bytes != null &&
-                bytes.size() == 1 &&
-                bytes.get(0) > 0;
     }
 
     public Conversation getConversation() {
@@ -134,10 +119,12 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
 
     @Override
     public void destroy() {
-        notificationListeners.keySet().stream()
-                .map(BluetoothHeartCharacteristics::byUuid)
-                .filter(Optional::isPresent).map(Optional::get)
-                .forEach(uuid -> disableNotifications(uuid));
+        for (UUID uuid : notificationListeners.keySet()) {
+            final Optional<BluetoothHeartCharacteristics> chr = BluetoothHeartCharacteristics.byUuid(uuid);
+            if (chr.isPresent()) {
+                disableNotifications(chr.get());
+            }
+        }
 
         conversation.destroy();
     }
@@ -148,10 +135,10 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
     public static class Conversation extends BluetoothGattCallback implements Destroyable {
         final Queue<ConversationItem> requests;
         final BluetoothGatt gatt;
-        private final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners;
+        private final Map<UUID, List<BluetoothNotificationListener>> notificationListeners;
         volatile boolean isConnected;
 
-        public Conversation(final Context context, final BluetoothDevice device, final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners) {
+        public Conversation(final Context context, final BluetoothDevice device, final Map<UUID, List<BluetoothNotificationListener>> notificationListeners) {
             this.gatt = device.connectGatt(context, true, this);
             this.requests = new ArrayBlockingQueue<>(10);
             this.notificationListeners = notificationListeners;
@@ -288,9 +275,11 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                     && (currentRequest.characteristic.getUuid().equals(characteristic.getUuid()))) {
                 requests.poll();
             }
-            notificationListeners
-                    .getOrDefault(characteristic.getUuid(), Collections.emptyList())
-                    .forEach(listener -> listener.accept(Bytes.asList(characteristic.getValue())));
+            if (notificationListeners.containsKey(characteristic.getUuid())) {
+                for (BluetoothNotificationListener listener: notificationListeners.get(characteristic.getUuid())) {
+                    listener.onNotification(Bytes.asList(characteristic.getValue()));
+                }
+            }
         }
 
         private void handleIncomingData(final BluetoothGattCharacteristic characteristic, final byte[] value, final int status) {

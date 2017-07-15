@@ -1,9 +1,8 @@
 package svenmeier.coxswain.heart.bluetooth.device;
 
-import java.util.function.Consumer;
-
+import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
 public interface BluetoothHeartDevice extends Destroyable {
-    Destroyable watch(Consumer<Integer> heartRateConsumer);
+    Destroyable watch(HeartRateListener heartRateConsumer);
 }

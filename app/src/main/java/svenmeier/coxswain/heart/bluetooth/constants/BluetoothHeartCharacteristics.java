@@ -12,7 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public enum BluetoothHeartCharacteristics {
-    HEART_RATE_MEASUREMENT(BluetoothHeartServices.HEART_RATE, "2A37-0000-1000-8000-00805f9b34fb");
+    HEART_RATE_MEASUREMENT(BluetoothHeartServices.HEART_RATE, "2A37-0000-1000-8000-00805f9b34fb"),
+    BODY_SENSOR_LOCATION(BluetoothHeartServices.HEART_RATE, "2A38-0000-1000-8000-00805f9b34fb"),
+    BATTERY_STATUS(BluetoothHeartServices.BATTERY, "2A19-0000-1000-8000-00805f9b34fb");
 
     private final BluetoothHeartServices service;
     private final ParcelUuid uuid;

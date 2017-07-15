@@ -1,7 +1,7 @@
 package svenmeier.coxswain.heart.bluetooth.device;
 
-import java.util.List;
+import android.bluetooth.BluetoothGattCharacteristic;
 
 public interface BluetoothNotificationListener {
-    void onNotification(final List<Byte> bytes);
+    void onNotification(final BluetoothGattCharacteristic chr);
 }

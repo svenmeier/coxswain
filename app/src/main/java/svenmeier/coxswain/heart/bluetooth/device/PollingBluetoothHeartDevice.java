@@ -10,29 +10,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
-import svenmeier.coxswain.heart.bluetooth.constants.GattHeartRateMeasurement;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.BytesToBoolean;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.BytesToHeart;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.GattHeartRateMeasurement;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeart;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
-    final AtomicInteger lastReading = new AtomicInteger(Heart.UNKNOWN_READING);
+    private static final int POLLING_INTERVAL_MS = 1000;
 
     public PollingBluetoothHeartDevice(Context context, BluetoothDevice delegate) {
         super(context, delegate);
     }
 
     public Future<Boolean> canUseBluetoothNotifications() {
-        return queryNotificationSupport(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT)
-                .handle(new BytesToBoolean());
+        return queryNotificationSupport(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT);
     }
 
     @Override
@@ -50,7 +45,7 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
             public void run() {
                 while (keepGoing.get()) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(POLLING_INTERVAL_MS);
                         heartRateConsumer.onHeartRate(getNextHeartRateReading().get().getHeartBpm());
                     } catch (Exception e) {
                         Log.e(Coxswain.TAG, "Error watching heart-rate", e);
@@ -62,7 +57,7 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
 
     public Future<GattHeartRateMeasurement> getNextHeartRateReading() {
         return query(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT)
-                .handle(new BytesToHeart());
+                .handle(CharacteristicToHeart.INSTANCE);
     }
 
     @Override

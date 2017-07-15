@@ -11,11 +11,9 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Bytes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,11 +22,11 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartDescriptors;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToNotificationSupport;
 import svenmeier.coxswain.util.Destroyable;
 
 import static android.bluetooth.BluetoothGatt.GATT_CONNECTION_CONGESTED;
@@ -41,7 +39,6 @@ import static android.bluetooth.BluetoothGatt.GATT_READ_NOT_PERMITTED;
 import static android.bluetooth.BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED;
 import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 import static android.bluetooth.BluetoothGatt.GATT_WRITE_NOT_PERMITTED;
-import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_NOTIFY;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevice {
@@ -57,32 +54,33 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         this.notificationListeners = conversation.notificationListeners;
     }
 
-    protected CompletableFuture<List<Byte>> query(final BluetoothHeartCharacteristics characteristic) {
-        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+    protected CompletableFuture<BluetoothGattCharacteristic> query(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<BluetoothGattCharacteristic> response = new CompletableFuture<>();
         final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{},
             ConversationItemType.READ);
         conversation.accept(item);
         return response;
     }
 
-    protected CompletableFuture<List<Byte>> queryNotificationSupport(final BluetoothHeartCharacteristics characteristic) {
-        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+    protected CompletableFuture<Boolean> queryNotificationSupport(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<BluetoothGattCharacteristic> response = new CompletableFuture<>();
         final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{},
             ConversationItemType.QUERY_NOTIFICATION_SUPPORT);
         conversation.accept(item);
-        return response;
+        return response
+                .handle(CharacteristicToNotificationSupport.INSTANCE);
     }
 
-    protected CompletableFuture<List<Byte>> write(final BluetoothHeartCharacteristics characteristic, final byte[] value) {
-        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+    protected CompletableFuture<BluetoothGattCharacteristic> write(final BluetoothHeartCharacteristics characteristic, final byte[] value) {
+        final CompletableFuture<BluetoothGattCharacteristic> response = new CompletableFuture<>();
         final ConversationItem item = new ConversationItem(response, characteristic, value,
                 ConversationItemType.WRITE);
         conversation.accept(item);
         return response;
     }
 
-    protected CompletableFuture<List<Byte>> enableNotifications(final BluetoothHeartCharacteristics characteristic, final BluetoothNotificationListener listener) {
-        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+    protected CompletableFuture<BluetoothGattCharacteristic> enableNotifications(final BluetoothHeartCharacteristics characteristic, final BluetoothNotificationListener listener) {
+        final CompletableFuture<BluetoothGattCharacteristic> response = new CompletableFuture<>();
         notificationListeners.putIfAbsent(characteristic.getUuid(), new ArrayList<BluetoothNotificationListener>(1));
         notificationListeners.get(characteristic.getUuid()).add(listener);
         final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{1},
@@ -91,8 +89,8 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         return response;
     }
 
-    protected CompletableFuture<List<Byte>> disableNotifications(final BluetoothHeartCharacteristics characteristic) {
-        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+    protected CompletableFuture<BluetoothGattCharacteristic> disableNotifications(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<BluetoothGattCharacteristic> response = new CompletableFuture<>();
         final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{0},
                 ConversationItemType.SET_NOTIFY);
         conversation.accept(item);
@@ -104,12 +102,12 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
     }
 
     private static class ConversationItem {
-        final CompletableFuture<List<Byte>> future;
+        final CompletableFuture<BluetoothGattCharacteristic> future;
         final BluetoothHeartCharacteristics characteristic;
         final byte[] value;
         final ConversationItemType type;
 
-        public ConversationItem(CompletableFuture<List<Byte>> future, BluetoothHeartCharacteristics characteristic, byte[] value, ConversationItemType type) {
+        public ConversationItem(CompletableFuture<BluetoothGattCharacteristic> future, BluetoothHeartCharacteristics characteristic, byte[] value, ConversationItemType type) {
             this.future = future;
             this.characteristic = characteristic;
             this.value = value;
@@ -185,9 +183,7 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                         break;
                     case QUERY_NOTIFICATION_SUPPORT:
                         requests.poll();    // Remove head
-                        final boolean isSupported = (currentRequest.characteristic.lookup(gatt).getProperties() & PROPERTY_NOTIFY) != 0;
-                        Log.i(Coxswain.TAG, "Notification support for " + currentRequest.characteristic + " is " + isSupported);
-                        currentRequest.future.complete(ImmutableList.of(isSupported ? (byte) 1 : (byte) 0));
+                        currentRequest.future.complete(currentRequest.characteristic.lookup(gatt));
                         break;
                     case READ:
                         Log.d(Coxswain.TAG, "Reading characteristic " + currentRequest.characteristic);
@@ -277,7 +273,7 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
             }
             if (notificationListeners.containsKey(characteristic.getUuid())) {
                 for (BluetoothNotificationListener listener: notificationListeners.get(characteristic.getUuid())) {
-                    listener.onNotification(Bytes.asList(characteristic.getValue()));
+                    listener.onNotification(characteristic);
                 }
             }
         }
@@ -303,7 +299,9 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                 } else if (currentRequest.characteristic.getUuid() == characteristic.getUuid()) {
                     requests.poll();    // Remove head
                     Log.d(Coxswain.TAG, "Replying to " + currentRequest.characteristic + ": " + value);
-                    currentRequest.future.complete(Bytes.asList(value));
+                    final BluetoothGattCharacteristic ret = new BluetoothGattCharacteristic(characteristic.getUuid(), characteristic.getProperties(), characteristic.getPermissions());
+                    ret.setValue(value);
+                    currentRequest.future.complete(ret);
                     handleCurrentRequest();
                 } else {
                     Log.e(Coxswain.TAG, "Response does not match the request");

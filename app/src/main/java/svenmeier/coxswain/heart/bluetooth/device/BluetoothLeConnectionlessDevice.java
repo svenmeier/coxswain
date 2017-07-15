@@ -29,6 +29,8 @@ import static android.bluetooth.le.ScanSettings.SCAN_MODE_LOW_POWER;
 
 /**
  *  Some devices provide data in their scan-advertisements. We'll handle these here.
+ *
+ *  This code is untested: I have no such device
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class BluetoothLeConnectionlessDevice implements BluetoothHeartDevice {

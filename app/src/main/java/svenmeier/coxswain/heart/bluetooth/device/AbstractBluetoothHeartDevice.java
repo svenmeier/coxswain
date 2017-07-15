@@ -11,8 +11,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.google.common.primitives.Bytes;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
 import svenmeier.coxswain.Coxswain;
@@ -32,7 +29,6 @@ import svenmeier.coxswain.heart.bluetooth.reading.GattBatteryStatus;
 import svenmeier.coxswain.heart.bluetooth.reading.GattBodySensorLocation;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToBattery;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToBodySensorLocation;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeart;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToNotificationSupport;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.util.Destroyable;
@@ -123,30 +119,6 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         }
     }
 
-    @Override
-    public CompletableFuture<GattBatteryStatus> readBattery() {
-        return query(BluetoothHeartCharacteristics.BATTERY_STATUS)
-                .handle(CharacteristicToBattery.INSTANCE);
-    }
-
-    @Override
-    public void readBattery(final BatteryStatusListener listener) {
-        readBattery().whenComplete(new BiConsumer<GattBatteryStatus, Throwable>() {
-            @Override
-            public void accept(GattBatteryStatus gattBatteryStatus, Throwable throwable) {
-                final Integer p = gattBatteryStatus.getBatteryPercent();
-                if (p != null) {
-                    listener.onBatteryStatus(p);
-                }
-            }
-        });
-    }
-
-    @Override
-    public CompletableFuture<GattBodySensorLocation> readBodySensorLocation() {
-        return query(BluetoothHeartCharacteristics.BATTERY_STATUS)
-                .handle(CharacteristicToBodySensorLocation.INSTANCE);
-    }
 
     @Override
     public void destroy() {
@@ -244,7 +216,9 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
 
         private void readNow(final BluetoothHeartCharacteristics characteristic) {
             final BluetoothGattCharacteristic chr = characteristic.lookup(gatt);
-            if ((chr.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) == 0) {
+            if (chr == null) {
+                failCurrentRequest("Characteristic " + characteristic + " not resolvable!");
+            } else if ((chr.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) == 0) {
                 failCurrentRequest("Characteristic " + characteristic + " (" + chr.getUuid() + ") is not readable!");
             } else {
                 int attempts = 0;
@@ -329,7 +303,7 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                     Log.i(Coxswain.TAG, "Services discovered");
                     requests.poll();    // Remove head
                     handleCurrentRequest();
-                } else if (currentRequest.characteristic.getUuid() == characteristic.getUuid()) {
+                } else if (currentRequest.characteristic.getUuid().equals(characteristic.getUuid())) {
                     requests.poll();    // Remove head
                     Log.d(Coxswain.TAG, "Replying to " + currentRequest.characteristic + ": " + value);
                     final BluetoothGattCharacteristic ret = new BluetoothGattCharacteristic(characteristic.getUuid(), characteristic.getProperties(), characteristic.getPermissions());
@@ -337,7 +311,12 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                     currentRequest.future.complete(ret);
                     handleCurrentRequest();
                 } else {
-                    Log.e(Coxswain.TAG, "Response does not match the request");
+                    failCurrentRequest("Response does not match the request! Expected: "
+                        + currentRequest.characteristic + "(" + currentRequest.characteristic.getParcelUuid() + ")" +
+                       " but got "
+                        + BluetoothHeartCharacteristics.byUuid(characteristic.getUuid())
+                        + "(" + characteristic.getUuid() + ")"
+                    );
                 }
             } else if (
                     status == GATT_CONNECTION_CONGESTED ||

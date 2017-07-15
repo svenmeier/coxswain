@@ -13,7 +13,7 @@ import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
 import svenmeier.coxswain.heart.ToastConnectionStatusListener;
-import svenmeier.coxswain.heart.bluetooth.device.BluetoothHeartDevice;
+import svenmeier.coxswain.heart.bluetooth.device.AbstractBluetoothHeartAdditionalReadingsDevice;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.util.Destroyable;
 
@@ -52,8 +52,11 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
         currentScan.destroy();
         // TODO: Does not cover connection-less as we have to scan again using scanner.find()
 
-        final BluetoothHeartDevice dev = new BluetoothHeartDeviceFactory(context).make(device);
+        final AbstractBluetoothHeartAdditionalReadingsDevice dev = new BluetoothHeartDeviceFactory(context).make(device);
         dev.readBattery(this);
+        dev.readAnarobicHeartRateLowerLimit();
+        dev.readAnarobicHeartRateUpperLimit();
+
         heartRateListener = dev.watch(this);
     }
 

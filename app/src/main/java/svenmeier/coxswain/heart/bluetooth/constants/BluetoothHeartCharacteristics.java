@@ -14,7 +14,17 @@ import java.util.UUID;
 public enum BluetoothHeartCharacteristics {
     HEART_RATE_MEASUREMENT(BluetoothHeartServices.HEART_RATE, "2A37-0000-1000-8000-00805f9b34fb"),
     BODY_SENSOR_LOCATION(BluetoothHeartServices.HEART_RATE, "2A38-0000-1000-8000-00805f9b34fb"),
-    BATTERY_STATUS(BluetoothHeartServices.BATTERY, "2A19-0000-1000-8000-00805f9b34fb");
+    BATTERY_STATUS(BluetoothHeartServices.BATTERY, "2A19-0000-1000-8000-00805f9b34fb"),
+
+    // Service is most likely wrong
+    AEROBIC_HEART_RATE_LOWER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A7E-0000-1000-8000-00805f9b34fb"),
+    AEROBIC_HEART_RATE_UPPER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A84-0000-1000-8000-00805f9b34fb"),
+    ANAEROBIC_HEART_RATE_LOWER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A81-0000-1000-8000-00805f9b34fb"),
+    ANAEROBIC_HEART_RATE_UPPER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A82-0000-1000-8000-00805f9b34fb"),
+    FAT_BURN_HEART_RATE_LOWER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A88-0000-1000-8000-00805f9b34fb"),
+    FAT_BURN_HEART_RATE_UPPER_LIMIT(BluetoothHeartServices.HEART_RATE, "2A89-0000-1000-8000-00805f9b34fb"),
+    RESTING_HEART_RATE(BluetoothHeartServices.HEART_RATE, "A92-0000-1000-8000-00805f9b34fb")
+    ;
 
     private final BluetoothHeartServices service;
     private final ParcelUuid uuid;

@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.Set;
 
 import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
@@ -20,7 +21,7 @@ import svenmeier.coxswain.util.Destroyable;
  *  A heart-rate monitor, where we subscribe to updates of the measurement.
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartDevice implements BluetoothHeartDevice, BluetoothNotificationListener {
+public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice implements BluetoothHeartDevice, BluetoothNotificationListener {
     private Set<HeartRateListener> listeners = new ArraySet<>(1);
 
     public NotificationBluetoothHeartDevice(Context context, BluetoothDevice device) {
@@ -41,11 +42,13 @@ public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartDevi
     @Override
     public void onNotification(final BluetoothGattCharacteristic chr) {
         final GattHeartRateMeasurement reading = new GattHeartRateMeasurement(chr);
-        Log.d(Coxswain.TAG, "Reading: " + reading);
-        if (reading != null) {
-            for (HeartRateListener listener: listeners) {
-                // TODO: We could also supply other characteristics
+
+        for (HeartRateListener listener: listeners) {
+            // TODO: We could also expose other readings from the characteristic
+            if (reading.getContactStatus() != GattHeartRateMeasurement.ContactStatus.NO_SKIN_CONTACT) {
                 listener.onHeartRate(reading.getHeartBpm());
+            } else {
+                listener.onHeartRate(Heart.UNKNOWN_READING);
             }
         }
     }

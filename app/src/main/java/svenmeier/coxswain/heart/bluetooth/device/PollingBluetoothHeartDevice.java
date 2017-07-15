@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.GattHeartRateMeasurement;
+import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeart;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;

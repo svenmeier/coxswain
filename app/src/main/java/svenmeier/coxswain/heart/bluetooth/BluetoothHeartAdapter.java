@@ -36,7 +36,7 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
             currentScan = scanner.scan(this);
         } else {
             Log.w(Coxswain.TAG, "New bluetooth unavailable: Needs Nougat!");
-            updateConnectionStatus(ConnectionStatus.UNAVAILABLE_ON_SYSTEM);
+            updateConnectionStatus(ConnectionStatus.UNAVAILABLE_ON_SYSTEM, null, "Requires Android Nougat");
             currentScan = null;
         }
     }

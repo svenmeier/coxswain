@@ -10,7 +10,7 @@ import java.util.function.Function;
 import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public enum CharacteristicToHeart implements BiFunction<BluetoothGattCharacteristic, Throwable, GattHeartRateMeasurement> {
+public enum CharacteristicToHeartRateMeasurement implements BiFunction<BluetoothGattCharacteristic, Throwable, GattHeartRateMeasurement> {
     INSTANCE;
 
     @Override

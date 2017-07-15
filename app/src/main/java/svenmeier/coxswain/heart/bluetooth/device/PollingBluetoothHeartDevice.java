@@ -12,14 +12,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
-import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeart;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeartRateMeasurement;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
+public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice {
     private static final int POLLING_INTERVAL_MS = 1000;
 
     public PollingBluetoothHeartDevice(Context context, BluetoothDevice delegate) {
@@ -46,7 +47,12 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
                 while (keepGoing.get()) {
                     try {
                         Thread.sleep(POLLING_INTERVAL_MS);
-                        heartRateConsumer.onHeartRate(getNextHeartRateReading().get().getHeartBpm());
+                        final GattHeartRateMeasurement reading = getNextHeartRateReading().get();
+                        if (reading.getContactStatus() != GattHeartRateMeasurement.ContactStatus.NO_SKIN_CONTACT) {
+                            heartRateConsumer.onHeartRate(reading.getHeartBpm());
+                        } else {
+                            heartRateConsumer.onHeartRate(Heart.UNKNOWN_READING);
+                        }
                     } catch (Exception e) {
                         Log.e(Coxswain.TAG, "Error watching heart-rate", e);
                     }
@@ -57,7 +63,7 @@ public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartDevice {
 
     public Future<GattHeartRateMeasurement> getNextHeartRateReading() {
         return query(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT)
-                .handle(CharacteristicToHeart.INSTANCE);
+                .handle(CharacteristicToHeartRateMeasurement.INSTANCE);
     }
 
     @Override

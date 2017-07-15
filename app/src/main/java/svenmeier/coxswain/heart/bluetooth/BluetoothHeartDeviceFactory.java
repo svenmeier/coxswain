@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.concurrent.ExecutionException;
 
 import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.heart.bluetooth.device.AbstractBluetoothHeartAdditionalReadingsDevice;
 import svenmeier.coxswain.heart.bluetooth.device.BluetoothHeartDevice;
 import svenmeier.coxswain.heart.bluetooth.device.BluetoothLeConnectionlessDevice;
 import svenmeier.coxswain.heart.bluetooth.device.NotificationBluetoothHeartDevice;
@@ -22,7 +23,7 @@ public class BluetoothHeartDeviceFactory {
         this.context = context;
     }
 
-    public BluetoothHeartDevice make(final BluetoothDevice device) {
+    public AbstractBluetoothHeartAdditionalReadingsDevice make(final BluetoothDevice device) {
         final PollingBluetoothHeartDevice dev = new PollingBluetoothHeartDevice(context, device);
 
         try {

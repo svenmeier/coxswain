@@ -41,6 +41,7 @@ dependencies {
     compile "com.android.support:support-v13:$supportLibraryVersion"
     compile "com.android.support:preference-v14:$supportLibraryVersion"
     compile "com.google.android.gms:play-services-fitness:$playServicesVersion"
+    compile 'com.google.guava:guava:22.0-android'
     testCompile 'junit:junit:4.12'
     testCompile('org.robolectric:robolectric:3.3.2') {
         exclude group: 'commons-logging', module: 'commons-logging'

@@ -1,0 +1,397 @@
+package svenmeier.coxswain.heart.bluetooth.device;
+
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothProfile;
+import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Bytes;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+
+import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
+import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartDescriptors;
+import svenmeier.coxswain.util.Destroyable;
+
+import static android.bluetooth.BluetoothGatt.GATT_CONNECTION_CONGESTED;
+import static android.bluetooth.BluetoothGatt.GATT_FAILURE;
+import static android.bluetooth.BluetoothGatt.GATT_INSUFFICIENT_AUTHENTICATION;
+import static android.bluetooth.BluetoothGatt.GATT_INSUFFICIENT_ENCRYPTION;
+import static android.bluetooth.BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH;
+import static android.bluetooth.BluetoothGatt.GATT_INVALID_OFFSET;
+import static android.bluetooth.BluetoothGatt.GATT_READ_NOT_PERMITTED;
+import static android.bluetooth.BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED;
+import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
+import static android.bluetooth.BluetoothGatt.GATT_WRITE_NOT_PERMITTED;
+import static android.bluetooth.BluetoothGattCharacteristic.PROPERTY_NOTIFY;
+
+@RequiresApi(api = Build.VERSION_CODES.N)
+public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevice {
+    private final Conversation conversation;
+    private final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners;
+
+    public AbstractBluetoothHeartDevice(final Context context, final BluetoothDevice delegate) {
+        this(new Conversation(context, delegate, new ConcurrentHashMap<>(2)));
+    }
+
+    public AbstractBluetoothHeartDevice(final Conversation conversation) {
+        this.conversation = conversation;
+        this.notificationListeners = conversation.notificationListeners;
+    }
+
+    protected CompletableFuture<List<Byte>> query(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+        final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{},
+            ConversationItemType.READ);
+        conversation.accept(item);
+        return response;
+    }
+
+    protected CompletableFuture<List<Byte>> queryNotificationSupport(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+        final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{},
+            ConversationItemType.QUERY_NOTIFICATION_SUPPORT);
+        conversation.accept(item);
+        return response;
+    }
+
+    protected CompletableFuture<List<Byte>> write(final BluetoothHeartCharacteristics characteristic, final byte[] value) {
+        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+        final ConversationItem item = new ConversationItem(response, characteristic, value,
+                ConversationItemType.WRITE);
+        conversation.accept(item);
+        return response;
+    }
+
+    protected CompletableFuture<List<Byte>> enableNotifications(final BluetoothHeartCharacteristics characteristic, final Consumer<List<Byte>> listener) {
+        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+        notificationListeners.computeIfAbsent(characteristic.getUuid(), k -> new ArrayList<>(1));
+        notificationListeners.get(characteristic.getUuid()).add(listener);
+        final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{1},
+                ConversationItemType.SET_NOTIFY);
+        conversation.accept(item);
+        return response;
+    }
+
+    protected CompletableFuture<List<Byte>> disableNotifications(final BluetoothHeartCharacteristics characteristic) {
+        final CompletableFuture<List<Byte>> response = new CompletableFuture<>();
+        final ConversationItem item = new ConversationItem(response, characteristic, new byte[]{0},
+                ConversationItemType.SET_NOTIFY);
+        conversation.accept(item);
+        return response;
+    }
+
+    protected Integer convertRawToReading(List<Byte> bytes, Throwable throwable) {
+        if (bytes == null || bytes.size() != 1) {
+            Log.w(Coxswain.TAG, "Error converting byte-array to int-value: " + bytes);
+            return null;
+        } else {
+            return bytes.get(0).intValue();
+        }
+    }
+
+    public boolean bytesToBoolean(List<Byte> bytes, Throwable throwable) {
+        return bytes != null &&
+                bytes.size() == 1 &&
+                bytes.get(0) > 0;
+    }
+
+    public Conversation getConversation() {
+        return conversation;
+    }
+
+    private static class ConversationItem {
+        final CompletableFuture<List<Byte>> future;
+        final BluetoothHeartCharacteristics characteristic;
+        final byte[] value;
+        final ConversationItemType type;
+
+        public ConversationItem(CompletableFuture<List<Byte>> future, BluetoothHeartCharacteristics characteristic, byte[] value, ConversationItemType type) {
+            this.future = future;
+            this.characteristic = characteristic;
+            this.value = value;
+            this.type = type;
+        }
+    }
+
+    @Override
+    public void destroy() {
+        notificationListeners.keySet().stream()
+                .map(BluetoothHeartCharacteristics::byUuid)
+                .filter(Optional::isPresent).map(Optional::get)
+                .forEach(uuid -> disableNotifications(uuid));
+
+        conversation.destroy();
+    }
+
+    /**
+     *  Ensures, that only one characteristic is queried at a time
+     */
+    public static class Conversation extends BluetoothGattCallback implements Destroyable {
+        final Queue<ConversationItem> requests;
+        final BluetoothGatt gatt;
+        private final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners;
+        volatile boolean isConnected;
+
+        public Conversation(final Context context, final BluetoothDevice device, final Map<UUID, List<Consumer<List<Byte>>>> notificationListeners) {
+            this.gatt = device.connectGatt(context, true, this);
+            this.requests = new ArrayBlockingQueue<>(10);
+            this.notificationListeners = notificationListeners;
+            isConnected = false;
+        }
+
+        public void accept(ConversationItem item) {
+            ensureServicesDiscovered();
+            if (requests.isEmpty()) {
+                requests.add(item);
+                handleCurrentRequest();
+            } else {
+                requests.add(item);
+            }
+        }
+
+        private void ensureServicesDiscovered() {
+            if (! gatt.getServices().isEmpty()) {
+                return;
+            } else {
+                requests.add(new ConversationItem(null, null, null, ConversationItemType.SERVICE_DISCOVERY));
+                handleCurrentRequest();
+            }
+        }
+
+        private void handleCurrentRequest() {
+            if (! isConnected) {
+                connect();
+                return; // The connection-state listener will invoke this method again
+            }
+            final ConversationItem currentRequest = requests.peek();
+            if (currentRequest != null) {
+                switch (currentRequest.type) {
+                    case SERVICE_DISCOVERY:
+                        if (!gatt.getServices().isEmpty()) {
+                            Log.i(Coxswain.TAG, "Services already discovered, skipping");
+                            requests.poll();
+                            handleCurrentRequest();
+                        } else if (gatt.discoverServices()) {
+                            Log.i(Coxswain.TAG, "Service discovery on " + gatt.getDevice().getName() + " started...");
+                        } else {
+                            Log.w(Coxswain.TAG, "Error starting service discovery");
+                        }
+                        break;
+                    case QUERY_NOTIFICATION_SUPPORT:
+                        requests.poll();    // Remove head
+                        final boolean isSupported = (currentRequest.characteristic.lookup(gatt).getProperties() & PROPERTY_NOTIFY) != 0;
+                        Log.i(Coxswain.TAG, "Notification support for " + currentRequest.characteristic + " is " + isSupported);
+                        currentRequest.future.complete(ImmutableList.of(isSupported ? (byte) 1 : (byte) 0));
+                        break;
+                    case READ:
+                        Log.d(Coxswain.TAG, "Reading characteristic " + currentRequest.characteristic);
+                        readNow(currentRequest.characteristic);
+                        break;
+                    case WRITE:
+                        Log.d(Coxswain.TAG, "Writing characteristic " + currentRequest.characteristic);
+                        writeNow(currentRequest.characteristic, currentRequest.value);
+                        break;
+                    case SET_NOTIFY:
+                        Log.d(Coxswain.TAG, "Setting notifications on characteristic " + currentRequest.characteristic);
+                        enableNotificationNow(currentRequest.characteristic, currentRequest.value[0] > 0);
+                        break;
+                }
+            }
+        }
+
+
+
+        private void writeNow(final BluetoothHeartCharacteristics characteristic, byte[] value) {
+            final BluetoothGattCharacteristic chr = characteristic.lookup(gatt);
+            chr.setValue(value);
+            gatt.writeCharacteristic(chr);
+        }
+
+        private void readNow(final BluetoothHeartCharacteristics characteristic) {
+            final BluetoothGattCharacteristic chr = characteristic.lookup(gatt);
+            if ((chr.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) == 0) {
+                failCurrentRequest("Characteristic " + characteristic + " (" + chr.getUuid() + ") is not readable!");
+            } else {
+                int attempts = 0;
+                while (! gatt.readCharacteristic(chr)) {
+                    attempts++;
+                    if (attempts < 3) {
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            failCurrentRequest(e.getMessage());
+                            return;
+                        }
+                    } else {
+                        failCurrentRequest("Request wasn't accepted after 3 attempts!");
+                    }
+                }
+            }
+        }
+
+        private void enableNotificationNow(final BluetoothHeartCharacteristics characteristic, boolean enable) {
+            final BluetoothGattCharacteristic chr = characteristic.lookup(gatt);
+            gatt.setCharacteristicNotification(chr, enable);
+            final BluetoothGattDescriptor desc = chr.getDescriptor(BluetoothHeartDescriptors.CLIENT_CHARACTERISTIC_CONFIGURATION.getUuid());
+            desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            gatt.writeDescriptor(desc);
+        }
+
+
+        @Override
+        public void onCharacteristicWrite(final BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic, final int status) {
+            handleIncomingData(characteristic, characteristic.getValue(), status);
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            handleIncomingData(characteristic, characteristic.getValue(), status);
+        }
+
+        @Override
+        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            handleIncomingData(descriptor.getCharacteristic(), descriptor.getValue(), status);
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.i(Coxswain.TAG, "Service discovery returned " + status);
+            handleIncomingData(null, null, status);
+        }
+
+        /**
+         *  Called when notifications are enabled
+         */
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            final ConversationItem currentRequest = requests.peek();
+            if ((currentRequest == null) && (currentRequest.type == ConversationItemType.SET_NOTIFY)
+                    && (currentRequest.characteristic.getUuid().equals(characteristic.getUuid()))) {
+                requests.poll();
+            }
+            notificationListeners
+                    .getOrDefault(characteristic.getUuid(), Collections.emptyList())
+                    .forEach(listener -> listener.accept(Bytes.asList(characteristic.getValue())));
+        }
+
+        private void handleIncomingData(final BluetoothGattCharacteristic characteristic, final byte[] value, final int status) {
+            if (
+                    status == GATT_SUCCESS ||
+                    status == GATT_READ_NOT_PERMITTED ||
+                    status == GATT_WRITE_NOT_PERMITTED ||
+                    status == GATT_INSUFFICIENT_AUTHENTICATION ||
+                    status == GATT_REQUEST_NOT_SUPPORTED ||
+                    status == GATT_INSUFFICIENT_ENCRYPTION ||
+                    status == GATT_INVALID_OFFSET ||
+                    status == GATT_INVALID_ATTRIBUTE_LENGTH) {
+
+                final ConversationItem currentRequest = requests.peek();
+                if (currentRequest == null) {
+                    Log.w(Coxswain.TAG, "Request vanished");
+                } else if (currentRequest.type == ConversationItemType.SERVICE_DISCOVERY) {
+                    Log.i(Coxswain.TAG, "Services discovered");
+                    requests.poll();    // Remove head
+                    handleCurrentRequest();
+                } else if (currentRequest.characteristic.getUuid() == characteristic.getUuid()) {
+                    requests.poll();    // Remove head
+                    Log.d(Coxswain.TAG, "Replying to " + currentRequest.characteristic + ": " + value);
+                    currentRequest.future.complete(Bytes.asList(value));
+                    handleCurrentRequest();
+                } else {
+                    Log.e(Coxswain.TAG, "Response does not match the request");
+                }
+            } else if (
+                    status == GATT_CONNECTION_CONGESTED ||
+                    status == GATT_FAILURE) {
+               Log.i(Coxswain.TAG, "Communication issue, retrying command");
+               handleCurrentRequest();
+            } else {
+                Log.e(Coxswain.TAG, "Unknown error, skipping bluetooth command");
+                requests.poll();
+                handleCurrentRequest();
+            }
+        }
+
+        private void failCurrentRequest(final String message) {
+            Log.w(Coxswain.TAG, message);
+            final ConversationItem currentRequest = requests.poll();    // Remove head
+            if (currentRequest != null) {
+                currentRequest.future.completeExceptionally(new IllegalStateException(message));
+            }
+            handleCurrentRequest();
+        }
+
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            super.onDescriptorWrite(gatt, descriptor, status);
+        }
+
+
+        // ----------------------------------------------------------------------------------------
+        //
+        //   Connection-stuff follows...
+        //
+
+        /**
+         *  Connects if required
+         */
+        private void connect() {
+            if (! isConnected) {
+                Log.i(Coxswain.TAG, "Ensure connected: triggering connection...");
+                int attempts = 0;
+                while (! gatt.connect()) {
+                    if (attempts++ > 4) {
+                        Log.w(Coxswain.TAG, "Connection to " + gatt.getDevice().getName() +
+                                " was unsuccessful after " + attempts + " attempts. Giving up!");
+                        return;
+                    }
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+        }
+
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.i(Coxswain.TAG, "Connected to GATT server.");
+                isConnected = true;
+                handleCurrentRequest();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.i("", "Disconnected from GATT server.");
+                isConnected = false;
+            }
+        }
+
+        @Override
+        public void destroy() {
+            gatt.disconnect();
+            gatt.close();    // TODO: Should we close?!
+            requests.clear();
+        }
+    }
+
+    private enum ConversationItemType {
+        READ, WRITE, SET_NOTIFY, QUERY_NOTIFICATION_SUPPORT, SERVICE_DISCOVERY
+    }
+}

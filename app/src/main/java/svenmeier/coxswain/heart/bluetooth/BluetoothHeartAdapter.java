@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.widget.Toast;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
@@ -13,13 +14,14 @@ import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
 import svenmeier.coxswain.heart.ToastConnectionStatusListener;
 import svenmeier.coxswain.heart.bluetooth.device.BluetoothHeartDevice;
+import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.util.Destroyable;
 
 /**
  *  Provides the new implementation in the format of the previous Heart-readings
  */
 @SuppressWarnings("unused") // Initialized through reflection
-public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscoveryListener {
+public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscoveryListener, BatteryStatusListener {
     final Destroyable currentScan;
     Destroyable heartRateListener = null;
     private @Nullable String deviceName;
@@ -51,6 +53,7 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
         // TODO: Does not cover connection-less as we have to scan again using scanner.find()
 
         final BluetoothHeartDevice dev = new BluetoothHeartDeviceFactory(context).make(device);
+        dev.readBattery(this);
         heartRateListener = dev.watch(this);
     }
 
@@ -63,6 +66,13 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
     public void onHeartRate(int heartRate) {
         updateConnectionStatus(ConnectionStatus.CONNECTED, deviceName, null);
         super.onHeartRate(heartRate);
+    }
+
+    @Override
+    public void onBatteryStatus(int percentageLeft) {
+        if (percentageLeft < 20) {
+            Toast.makeText(context, "Battery of " + deviceName +": " + percentageLeft + "%", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

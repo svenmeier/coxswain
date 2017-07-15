@@ -22,11 +22,19 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartDescriptors;
+import svenmeier.coxswain.heart.bluetooth.reading.GattBatteryStatus;
+import svenmeier.coxswain.heart.bluetooth.reading.GattBodySensorLocation;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToBattery;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToBodySensorLocation;
+import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeart;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToNotificationSupport;
+import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.util.Destroyable;
 
 import static android.bluetooth.BluetoothGatt.GATT_CONNECTION_CONGESTED;
@@ -113,6 +121,31 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
             this.value = value;
             this.type = type;
         }
+    }
+
+    @Override
+    public CompletableFuture<GattBatteryStatus> readBattery() {
+        return query(BluetoothHeartCharacteristics.BATTERY_STATUS)
+                .handle(CharacteristicToBattery.INSTANCE);
+    }
+
+    @Override
+    public void readBattery(final BatteryStatusListener listener) {
+        readBattery().whenComplete(new BiConsumer<GattBatteryStatus, Throwable>() {
+            @Override
+            public void accept(GattBatteryStatus gattBatteryStatus, Throwable throwable) {
+                final Integer p = gattBatteryStatus.getBatteryPercent();
+                if (p != null) {
+                    listener.onBatteryStatus(p);
+                }
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<GattBodySensorLocation> readBodySensorLocation() {
+        return query(BluetoothHeartCharacteristics.BATTERY_STATUS)
+                .handle(CharacteristicToBodySensorLocation.INSTANCE);
     }
 
     @Override

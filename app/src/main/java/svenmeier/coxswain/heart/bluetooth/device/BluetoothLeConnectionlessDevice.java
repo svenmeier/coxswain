@@ -15,10 +15,14 @@ import android.util.Log;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartServices;
+import svenmeier.coxswain.heart.bluetooth.reading.GattBatteryStatus;
+import svenmeier.coxswain.heart.bluetooth.reading.GattBodySensorLocation;
+import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
@@ -120,5 +124,24 @@ public class BluetoothLeConnectionlessDevice implements BluetoothHeartDevice {
         public void destroy() {
             scanner.stopScan(handler);
         }
+    }
+
+    @Override
+    public CompletableFuture<GattBatteryStatus> readBattery() {
+        final CompletableFuture<GattBatteryStatus> ret = new CompletableFuture<>();
+        ret.completeExceptionally(new UnsupportedOperationException("Can't read battery status"));
+        return ret;
+    }
+
+    @Override
+    public CompletableFuture<GattBodySensorLocation> readBodySensorLocation() {
+        final CompletableFuture<GattBodySensorLocation> ret = new CompletableFuture<>();
+        ret.completeExceptionally(new UnsupportedOperationException("Can't read sensor location"));
+        return ret;
+    }
+
+    @Override
+    public void readBattery(BatteryStatusListener listener) {
+
     }
 }

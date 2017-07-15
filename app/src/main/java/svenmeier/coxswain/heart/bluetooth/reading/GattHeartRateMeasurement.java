@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ *  Interpret values according to GATT HRS spec 1.0
+ *
+ *  https://www.bluetooth.com/specifications/adopted-specifications#gattspec
+ */
 public class GattHeartRateMeasurement {
     public enum HeartResolution {
         UINT8, UINT16;

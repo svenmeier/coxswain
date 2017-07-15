@@ -4,19 +4,21 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.common.base.Strings;
 
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 
 public class ToastConnectionStatusListener implements ConnectionStatusListener {
     private final Context context;
-    private final Handler toastHadnler;
+    private final Handler toastHandler;
 
     public ToastConnectionStatusListener(Context context) {
         this.context = context;
-        this.toastHadnler = new Handler(Looper.getMainLooper());
+        this.toastHandler = null; // new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -53,11 +55,14 @@ public class ToastConnectionStatusListener implements ConnectionStatusListener {
     }
 
     private void toast(String text) {
+        /*
         if (isOnUiThread()) {
             toastNow(text);
         } else {
-            toastHadnler.post(makeDelayedToast(text));
-        }
+            // TODO: Send message to UI-thread
+            Log.w(Coxswain.TAG, "Skipped toast: " + text);
+            //toastHandler.post(makeDelayedToast(text));
+        }*/
     }
 
     private Runnable makeDelayedToast(final String text) {

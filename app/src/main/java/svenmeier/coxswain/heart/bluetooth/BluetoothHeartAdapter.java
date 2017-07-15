@@ -1,8 +1,6 @@
 package svenmeier.coxswain.heart.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -12,7 +10,6 @@ import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.device.BluetoothHeartDevice;
 import svenmeier.coxswain.util.Destroyable;
 
@@ -44,7 +41,12 @@ public class BluetoothHeartAdapter extends Heart implements BluetoothHeartDiscov
         // TODO: Does not cover connection-less as we have to scan again using scanner.find()
 
         final BluetoothHeartDevice dev = new BluetoothHeartDeviceFactory(context).make(device);
-        heartRateListener = dev.watch(this::onHeartRate);
+        heartRateListener = dev.watch(this);
+    }
+
+    @Override
+    public void onLost(String deviceId) {
+
     }
 
     @Override

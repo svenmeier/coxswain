@@ -3,34 +3,45 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.heart.generic.HeartRateListener;
+import svenmeier.coxswain.heart.ConnectionStatus;
+import svenmeier.coxswain.heart.ConnectionStatusListener;
 import svenmeier.coxswain.rower.Rower;
 
 /**
  */
-public class Heart {
+public class Heart implements HeartRateListener {
 
 	private static final long TIMEOUT_MILLIS = 5000;
+	public static final int UNKNOWN_READING = -1;
 
-	protected final Context context;
+    protected final Context context;
 
 	private final Measurement measurement;
 
 	private long heartRateTime;
 
 	private int heartRate = -1;
+	private ConnectionStatus connectionStatus;
+	private List<ConnectionStatusListener> connectionStatusListeners;
 
 	protected Heart(Context context, Measurement measurement) {
 		this.context = context;
 		this.measurement = measurement;
+		this.connectionStatus = ConnectionStatus.INITIAL;
+		this.connectionStatusListeners = new LinkedList<>();
 	}
 
 	public void destroy() {
 	}
 
 	public final void pulse() {
-		if (heartRate == -1) {
+		if (heartRate == UNKNOWN_READING) {
 			return;
 		}
 
@@ -42,7 +53,8 @@ public class Heart {
 		measurement.pulse = heartRate;
 	}
 
-	protected void onHeartRate(int heartRate) {
+	public void onHeartRate(int heartRate) {
+		updateConnectionStatus(ConnectionStatus.CONNECTED);
 		heartRateTime = System.currentTimeMillis();
 		this.heartRate = heartRate;
 	}
@@ -57,5 +69,33 @@ public class Heart {
 			Log.e(Coxswain.TAG, "cannot create sensor " + name);
 			return new Heart(context, rower);
 		}
+	}
+
+	public int getHeartRate() {
+		return heartRate;
+	}
+
+	public final ConnectionStatus getConnectionStatus() {
+		return this.connectionStatus;
+	}
+
+	protected void updateConnectionStatus(final ConnectionStatus connectionStatus) {
+		if (this.connectionStatus != connectionStatus) {
+			this.connectionStatus = connectionStatus;
+			Log.i(Coxswain.TAG, "Update connection status of " + this.getClass().getSimpleName() + " to " + connectionStatus);
+			for (ConnectionStatusListener listener : connectionStatusListeners) {
+				listener.onConnectionStatusChange(this, connectionStatus);
+			}
+		}
+	}
+
+	public void registerConnectionStatusListener(final ConnectionStatusListener listener) {
+		if (! connectionStatusListeners.contains(listener)) {
+			connectionStatusListeners.add(listener);
+		}
+	}
+
+	public void unregisterConnectionStatusListener(final ConnectionStatusListener listener) {
+		connectionStatusListeners.remove(listener);
 	}
 }

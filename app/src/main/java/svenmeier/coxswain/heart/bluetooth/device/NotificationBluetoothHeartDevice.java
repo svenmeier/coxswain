@@ -59,6 +59,7 @@ public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartAddi
 
     public void destroy() {
         disableNotifications(BluetoothHeartCharacteristics.HEART_RATE_MEASUREMENT);
+        listeners.clear();
         super.destroy();
     }
 }

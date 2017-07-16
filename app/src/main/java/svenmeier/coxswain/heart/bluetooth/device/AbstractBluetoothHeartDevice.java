@@ -146,6 +146,7 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         }
 
         conversation.destroy();
+        notificationListeners.clear();
     }
 
     /**
@@ -421,6 +422,7 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         public void destroy() {
             gatt.disconnect();
             gatt.close();    // TODO: Should we close?!
+            notificationListeners.clear();
             requests.clear();
         }
     }

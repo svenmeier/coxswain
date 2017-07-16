@@ -136,6 +136,9 @@ public class BluetoothHeartService extends Service implements BluetoothHeartDisc
             currentScan.destroy();
             currentScan = null;
         }
+        if (listener != null) {
+            listener.destroy();
+        }
     }
 
 

@@ -10,8 +10,8 @@ import java.util.List;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
-import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatusListener;
 import svenmeier.coxswain.rower.Rower;
 
 /**

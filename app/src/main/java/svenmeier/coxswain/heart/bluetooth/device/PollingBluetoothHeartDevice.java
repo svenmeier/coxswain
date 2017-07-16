@@ -22,7 +22,7 @@ import svenmeier.coxswain.util.Destroyable;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice {
-    private static final int POLLING_INTERVAL_MS = 1000;
+    private static final int POLLING_INTERVAL_MS = 1000; // Spec says approx 1 sec
 
     public PollingBluetoothHeartDevice(Context context, BluetoothDevice delegate, BluetoothHeartConnectionListener connectionListener) {
         super(context, delegate, connectionListener);

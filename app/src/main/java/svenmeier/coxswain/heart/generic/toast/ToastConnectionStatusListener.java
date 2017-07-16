@@ -9,8 +9,8 @@ import android.widget.Toast;
 import com.google.common.base.Strings;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatusListener;
 
 public class ToastConnectionStatusListener implements ConnectionStatusListener {
     private final Context context;

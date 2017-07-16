@@ -12,7 +12,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.heart.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
 import svenmeier.coxswain.heart.bluetooth.device.AbstractBluetoothHeartAdditionalReadingsDevice;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.heart.generic.HeartRateCommunication;

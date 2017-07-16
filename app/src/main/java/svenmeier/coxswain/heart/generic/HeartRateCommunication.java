@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
-
 public interface HeartRateCommunication {
     interface Reader {
 

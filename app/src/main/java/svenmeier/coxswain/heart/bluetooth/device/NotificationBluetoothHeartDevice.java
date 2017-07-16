@@ -20,6 +20,9 @@ import svenmeier.coxswain.util.Destroyable;
 
 /**
  *  A heart-rate monitor, where we subscribe to updates of the measurement.
+ *
+ *  This should be the default, as the specification outlines, that the HR readings should provide
+ *  notification-support.
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice implements BluetoothHeartDevice, BluetoothNotificationListener {

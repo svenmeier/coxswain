@@ -2,6 +2,12 @@ package svenmeier.coxswain.heart.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 
+/**
+ * Emitted by the BluetoothLeHeartScanner.
+ *
+ * @see BluetoothLeHeartScanner
+ * @see BluetoothHeartConnectionListener
+ */
 public interface BluetoothHeartDiscoveryListener {
     public static final int UNKNOWN_STRENGTH = -1;
 

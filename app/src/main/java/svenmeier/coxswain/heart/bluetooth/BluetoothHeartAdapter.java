@@ -13,7 +13,7 @@ import android.util.Log;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.heart.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
 import svenmeier.coxswain.heart.generic.HeartRateCommunication;
 import svenmeier.coxswain.heart.generic.toast.ToastBatteryStatusListener;
 import svenmeier.coxswain.heart.generic.toast.ToastConnectionStatusListener;

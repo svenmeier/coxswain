@@ -7,8 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 
-import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatusListener;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.heart.generic.HeartRateCommunication;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
@@ -88,7 +88,7 @@ public class HandlerCommunication implements HeartRateCommunication {
                         if (connectionStatusListener != null) {
                             final Bundle data = msg.getData();
                             connectionStatusListener.onConnectionStatusChange(
-                                    null,
+                                    (Class) data.getSerializable(IMPL),
                                     ConnectionStatus.valueOf(data.getString(CONNECTION_STATUS)),
                                     data.getString(DEVICE),
                                     data.getString(MESSAGE));
@@ -113,7 +113,7 @@ public class HandlerCommunication implements HeartRateCommunication {
         @Override
         public void acceptHeartRate(int bpm) {
             final Message message = Message.obtain();
-            message.arg1 = MessageTypes.HEART.ordinal();
+            message.arg1 = MessageTypes.HEART.getVal();
             message.arg2 = bpm;
             handler.sendMessage(message);
         }
@@ -121,7 +121,7 @@ public class HandlerCommunication implements HeartRateCommunication {
         @Override
         public void acceptBatteryStatus(int percent) {
             final Message message = Message.obtain();
-            message.arg1 = MessageTypes.BATTERY.ordinal();
+            message.arg1 = MessageTypes.BATTERY.getVal();
             message.arg2 = percent;
             handler.sendMessage(message);
         }
@@ -129,12 +129,13 @@ public class HandlerCommunication implements HeartRateCommunication {
         @Override
         public void acceptConnectionStatus(final Class impl, final ConnectionStatus connectionStatus, @Nullable String device, @Nullable String msg) {
             final Bundle payload = new Bundle(3);
+            payload.putSerializable(IMPL, impl);
             payload.putString(CONNECTION_STATUS, connectionStatus.name());
             payload.putString(DEVICE, device);
             payload.putString(MESSAGE, msg);
 
             final Message message = Message.obtain();
-            message.arg1 = MessageTypes.PROGRESS.ordinal();
+            message.arg1 = MessageTypes.PROGRESS.getVal();
             message.setData(payload);
 
             handler.sendMessage(message);

@@ -58,6 +58,11 @@ public class HandlerCommunication implements HeartRateCommunication {
         return new Writer();
     }
 
+    @Override
+    public void destroy() {
+        handler = null;
+    }
+
     private class Reader implements HeartRateCommunication.Reader {
         private final BatteryStatusListener batteryStatusListener;
         private final ConnectionStatusListener connectionStatusListener;
@@ -73,6 +78,11 @@ public class HandlerCommunication implements HeartRateCommunication {
         public Intent bind(final Context context) {
             handler = new ReaderHandler();
             return null;
+        }
+
+        @Override
+        public void destroy() {
+            handler = null;
         }
 
         private class ReaderHandler extends Handler {
@@ -108,6 +118,11 @@ public class HandlerCommunication implements HeartRateCommunication {
     private class Writer implements HeartRateCommunication.Writer {
         @Override
         public void bind(Context context) {
+        }
+
+        @Override
+        public void destroy() {
+
         }
 
         @Override

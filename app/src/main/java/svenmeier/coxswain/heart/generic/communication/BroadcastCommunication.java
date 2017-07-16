@@ -44,6 +44,11 @@ public class BroadcastCommunication implements HeartRateCommunication {
         return new BroadcastWriter();
     }
 
+    @Override
+    public void destroy() {
+
+    }
+
     public static class BroadcastWriter implements HeartRateCommunication.Writer {
         private Context context;
 
@@ -78,12 +83,18 @@ public class BroadcastCommunication implements HeartRateCommunication {
             broadcast.putExtra(MESSAGE, message);
             context.sendBroadcast(broadcast);
         }
+
+        @Override
+        public void destroy() {
+            context = null;
+        }
     }
 
     public static class BroadcastReader extends BroadcastReceiver implements HeartRateCommunication.Reader {
         private final BatteryStatusListener batteryStatusListener;
         private final ConnectionStatusListener connectionStatusListener;
         private final HeartRateListener heartRateListener;
+        private Context context;
 
         public BroadcastReader(final @Nullable BatteryStatusListener batteryStatusListener, final @Nullable ConnectionStatusListener connectionStatusListener, final @Nullable HeartRateListener heartRateListener) {
             this.batteryStatusListener = batteryStatusListener;
@@ -93,7 +104,14 @@ public class BroadcastCommunication implements HeartRateCommunication {
 
         @Override
         public Intent bind(final Context context) {
+            this.context = context;
             return context.registerReceiver(this, getIntentFilter());
+        }
+
+        @Override
+        public void destroy() {
+            context.unregisterReceiver(this);
+            context = null;
         }
 
         public IntentFilter getIntentFilter() {

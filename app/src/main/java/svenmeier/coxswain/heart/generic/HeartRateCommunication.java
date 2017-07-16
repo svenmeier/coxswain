@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public interface HeartRateCommunication {
-    interface Reader {
+import svenmeier.coxswain.util.Destroyable;
 
+public interface HeartRateCommunication extends Destroyable {
+    interface Reader extends Destroyable {
         Intent bind(Context context);
     }
 
-    interface Writer {
+    interface Writer extends Destroyable {
         void bind(Context context);
 
         void acceptHeartRate(final int bpm);

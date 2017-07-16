@@ -56,6 +56,12 @@ public class BluetoothHeartAdapter extends Heart {
     @Override
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void destroy() {
+        if (heartService != null) {
+            heartService.unbind();
+        }
+        if (communication != null) {
+            communication.destroy();
+        }
         super.destroy();
     }
 
@@ -82,6 +88,13 @@ public class BluetoothHeartAdapter extends Heart {
             if (! context.bindService(intent, this, BIND_AUTO_CREATE)) {
                 Log.e(Coxswain.TAG, "Unable to bind to " + BluetoothHeartService.class.getSimpleName());
             }
+        }
+
+        public void unbind() {
+            if (service != null) {
+                service.unbindService(this);
+            }
+            service = null;
         }
 
         @Nullable

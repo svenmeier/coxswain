@@ -89,7 +89,7 @@ public class Heart implements HeartRateListener {
 			this.connectionStatus = connectionStatus;
 			Log.i(Coxswain.TAG, "Update connection status of " + this.getClass().getSimpleName() + " to " + connectionStatus);
 			for (ConnectionStatusListener listener : connectionStatusListeners) {
-				listener.onConnectionStatusChange(this, connectionStatus, deviceName, message);
+				listener.onConnectionStatusChange(this.getClass(), connectionStatus, deviceName, message);
 			}
 		}
 	}

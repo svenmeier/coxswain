@@ -8,8 +8,12 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import svenmeier.coxswain.Coxswain;
+import svenmeier.coxswain.heart.bluetooth.BluetoothHeartConnectionListener;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartDescriptors;
 import svenmeier.coxswain.heart.bluetooth.reading.GattBatteryStatus;
@@ -44,16 +49,24 @@ import static android.bluetooth.BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED;
 import static android.bluetooth.BluetoothGatt.GATT_SUCCESS;
 import static android.bluetooth.BluetoothGatt.GATT_WRITE_NOT_PERMITTED;
 
+/**
+ *  Generic communication with a bluetooth device.
+ *
+ *  Ensures only one request is sent to the device at a time (Android does not allow for more).
+ *  It's tied to the constants defined in heart.bluetooth.constants, so not super-generic.
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevice {
     private final Conversation conversation;
     private final Map<UUID, List<BluetoothNotificationListener>> notificationListeners;
 
-    public AbstractBluetoothHeartDevice(final Context context, final BluetoothDevice delegate) {
-        this(new Conversation(context, delegate, new ConcurrentHashMap<UUID, List<BluetoothNotificationListener>>(2)));
+    public AbstractBluetoothHeartDevice(final @NonNull Context context, final @NonNull BluetoothDevice delegate, final @Nullable BluetoothHeartConnectionListener connectionListener) {
+        this(new Conversation(context, delegate, new ConcurrentHashMap<UUID, List<BluetoothNotificationListener>>(2), connectionListener));
     }
 
-    public AbstractBluetoothHeartDevice(final Conversation conversation) {
+    public AbstractBluetoothHeartDevice(final @NonNull Conversation conversation) {
+        Preconditions.checkNotNull(conversation);
+
         this.conversation = conversation;
         this.notificationListeners = conversation.notificationListeners;
     }
@@ -105,6 +118,9 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         return conversation;
     }
 
+    /**
+     *  Encapsulates all parameters required for a request to the device.
+     */
     private static class ConversationItem {
         final CompletableFuture<BluetoothGattCharacteristic> future;
         final BluetoothHeartCharacteristics characteristic;
@@ -139,15 +155,24 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
         final Queue<ConversationItem> requests;
         final BluetoothGatt gatt;
         private final Map<UUID, List<BluetoothNotificationListener>> notificationListeners;
+        private final @Nullable BluetoothHeartConnectionListener connectionListener;
         volatile boolean isConnected;
 
-        public Conversation(final Context context, final BluetoothDevice device, final Map<UUID, List<BluetoothNotificationListener>> notificationListeners) {
+        public Conversation(final Context context, final BluetoothDevice device, final Map<UUID, List<BluetoothNotificationListener>> notificationListeners, final @Nullable BluetoothHeartConnectionListener connectionListener) {
+            Preconditions.checkNotNull(context, "Need a context");
+            Preconditions.checkNotNull(device, "Need a delegate-device");
+            Preconditions.checkNotNull(notificationListeners);
+
             this.gatt = device.connectGatt(context, true, this);
             this.requests = new ArrayBlockingQueue<>(10);
             this.notificationListeners = notificationListeners;
+            this.connectionListener = connectionListener;
             isConnected = false;
         }
 
+        /**
+         *  Enqueues one request to be sent to the device
+         */
         public void accept(ConversationItem item) {
             ensureServicesDiscovered();
             if (requests.isEmpty()) {
@@ -311,6 +336,10 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
                     currentRequest.future.complete(ret);
                     handleCurrentRequest();
                 } else {
+                    // TODO: Tough decision - should we drop the current request?
+                    // Perhaps the correct response is still coming... this will then also
+                    // cause the next request to be invalid.
+                    // On the other hand: If we don't drop, we might get stuck
                     failCurrentRequest("Response does not match the request! Expected: "
                         + currentRequest.characteristic + "(" + currentRequest.characteristic.getParcelUuid() + ")" +
                        " but got "
@@ -375,10 +404,16 @@ public abstract class AbstractBluetoothHeartDevice implements BluetoothHeartDevi
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i(Coxswain.TAG, "Connected to GATT server.");
                 isConnected = true;
+                if (connectionListener != null) {
+                    connectionListener.onConnected(gatt.getDevice().getName(), gatt.getDevice().getAddress());
+                }
                 handleCurrentRequest();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i("", "Disconnected from GATT server.");
                 isConnected = false;
+                if (connectionListener != null) {
+                    connectionListener.onDisconnected(gatt.getDevice().getName(), gatt.getDevice().getAddress());
+                }
             }
         }
 

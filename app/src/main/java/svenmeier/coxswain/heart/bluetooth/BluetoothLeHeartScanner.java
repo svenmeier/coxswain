@@ -79,7 +79,7 @@ public class BluetoothLeHeartScanner {
     public Future<BluetoothHeartDevice> find(final String deviceId) {
         final CompletableFuture<BluetoothHeartDevice> future = new CompletableFuture<>();
         final Optional<BluetoothAdapter> adapter = getBluetoothAdapter();
-        final BluetoothHeartDeviceFactory deviceFactory = new BluetoothHeartDeviceFactory(context);
+        final BluetoothHeartDeviceFactory deviceFactory = new BluetoothHeartDeviceFactory(context, null);
 
         if (adapter.isPresent()) {
             final OnDevice listener = new OnDevice(
@@ -93,7 +93,7 @@ public class BluetoothLeHeartScanner {
                         }
 
                         @Override
-                        public void onLost(String deviceId) {
+                        public void onLost(String deviceId, String name) {
 
                         }
                     });
@@ -183,7 +183,7 @@ public class BluetoothLeHeartScanner {
                     handler.onDiscovered(result.getDevice(), result.getRssi(), heartRate != null);
                     break;
                 case CALLBACK_TYPE_MATCH_LOST:
-                    handler.onLost(result.getDevice().getAddress());
+                    handler.onLost(result.getDevice().getAddress(), result.getDevice().getName());
                     break;
                 default:
                     Log.e(Coxswain.TAG, "Ignoring unexpected callback-type " + callbackType);

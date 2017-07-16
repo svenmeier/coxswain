@@ -16,6 +16,7 @@ import svenmeier.coxswain.heart.generic.HeartRateListener;
 public class HandlerCommunication implements HeartRateCommunication {
     private Handler handler;
 
+    private static final String IMPL = "Impl";
     private static final String CONNECTION_STATUS = "ConnectionStatus";
     private static final String DEVICE = "Device";
     private static final String MESSAGE = "Message";
@@ -126,7 +127,7 @@ public class HandlerCommunication implements HeartRateCommunication {
         }
 
         @Override
-        public void acceptConnectionStatus(ConnectionStatus connectionStatus, @Nullable String device, @Nullable String msg) {
+        public void acceptConnectionStatus(final Class impl, final ConnectionStatus connectionStatus, @Nullable String device, @Nullable String msg) {
             final Bundle payload = new Bundle(3);
             payload.putString(CONNECTION_STATUS, connectionStatus.name());
             payload.putString(DEVICE, device);

@@ -3,10 +3,11 @@ package svenmeier.coxswain.heart.bluetooth;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -14,41 +15,48 @@ import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.ConnectionStatus;
 import svenmeier.coxswain.heart.bluetooth.device.AbstractBluetoothHeartAdditionalReadingsDevice;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
+import svenmeier.coxswain.heart.generic.HeartRateCommunication;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
 import svenmeier.coxswain.util.Destroyable;
 
+/**
+ *  Anything regarding the bluetooth HRM should go through this class.
+ *
+ *  The service will communicate through a HeartRateCommunication.Writer, which has to be provided
+ *  to the initialize-method. The writer needs to take care about the crossing of thread-boundaries.
+ *
+ *  @see BluetoothHeartAdapter
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class BluetoothHeartService extends Service implements BluetoothHeartDiscoveryListener, BatteryStatusListener, HeartRateListener {
-    public static final IntentFilter HEART_MEASUREMENT_FILTER = new IntentFilter("HeartMeasurement");
-    public static final IntentFilter BATTERY_FILTER = new IntentFilter("Battery");
-    public static final IntentFilter PROGRESS_FILTER = new IntentFilter("BtProgress");
-    public static final String CONNECTION_STATUS = "ConnectionStatus";
-
     private static final String TAG = Coxswain.TAG + "BT";
 
     private Destroyable currentScan;
     private final IBinder binder = new LocalBinder();
+    private HeartRateCommunication.Writer listener;
 
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
 
-    public void initialize() {
+    public void initialize(final @NonNull HeartRateCommunication.Writer writeTo) {
+        this.listener = writeTo;
+        this.listener.bind(this);
         scan();
     }
 
     private void scan() {
         Log.i(Coxswain.TAG, "Start bluetooth-scan...");
         final BluetoothLeHeartScanner scanner = new BluetoothLeHeartScanner(this);
-        publishProgress(ConnectionStatus.SCANNING);
+        publishProgress(ConnectionStatus.SCANNING, null, null);
         currentScan = scanner.scan(this);
         Log.i(Coxswain.TAG, "SCAN returned");
     }
 
     @Override
     public void onDiscovered(BluetoothDevice device, int SignalStrength, boolean supportsConnectionLess) {
-        publishProgress(ConnectionStatus.CONNECTING);
+        publishProgress(ConnectionStatus.CONNECTING, device.getName(), null);
         Log.i(TAG, "Using first discovered device: " + device.getAddress() + " -> " + device.getName());
 
         destroyCurrentScan();
@@ -75,30 +83,27 @@ public class BluetoothHeartService extends Service implements BluetoothHeartDisc
 
     @Override
     public void onLost(String deviceId) {
-        publishProgress(ConnectionStatus.CONNECTING);
+        publishProgress(ConnectionStatus.CONNECTING, deviceId, "Lost connection to " + deviceId);
     }
 
     @Override
     public void onBatteryStatus(final int percentageLeft) {
-        final String action = BATTERY_FILTER.getAction(0);
-        final Intent broadcast = new Intent(action);
-        broadcast.putExtra(action, percentageLeft);
-        sendBroadcast(broadcast);
+        if (listener != null) {
+            listener.acceptBatteryStatus(percentageLeft);
+        }
     }
 
     @Override
     public void onHeartRate(final int bpm) {
-        final String action = HEART_MEASUREMENT_FILTER.getAction(0);
-        final Intent broadcast = new Intent(action);
-        broadcast.putExtra(action, bpm);
-        sendBroadcast(broadcast);
+        if (listener != null) {
+            listener.acceptHeartRate(bpm);
+        }
     }
 
-    private void publishProgress(ConnectionStatus status) {
-        final String action = PROGRESS_FILTER.getAction(0);
-        final Intent broadcast = new Intent(action);
-        broadcast.putExtra(CONNECTION_STATUS, status.name());
-        sendBroadcast(broadcast);
+    private void publishProgress(final ConnectionStatus status, final @Nullable String device, final @Nullable String message) {
+        if (listener != null) {
+            listener.acceptConnectionStatus(status, device, message);
+        }
     }
 
 

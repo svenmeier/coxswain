@@ -15,6 +15,10 @@ import svenmeier.coxswain.heart.bluetooth.device.BluetoothLeConnectionlessDevice
 import svenmeier.coxswain.heart.bluetooth.device.NotificationBluetoothHeartDevice;
 import svenmeier.coxswain.heart.bluetooth.device.PollingBluetoothHeartDevice;
 
+/**
+ *  Creates the appropriate BluetoothHeartDevice based on the devices properties.
+ *  This will take some seconds, as the device needs to be connected to get the info.
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class BluetoothHeartDeviceFactory {
     final Context context;

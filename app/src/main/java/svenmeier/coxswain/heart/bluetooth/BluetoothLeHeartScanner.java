@@ -32,6 +32,9 @@ import static android.bluetooth.le.ScanSettings.CALLBACK_TYPE_FIRST_MATCH;
 import static android.bluetooth.le.ScanSettings.CALLBACK_TYPE_MATCH_LOST;
 import static android.bluetooth.le.ScanSettings.SCAN_MODE_LOW_LATENCY;
 
+/**
+ *  Searches for GATT enabled HRMs
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class BluetoothLeHeartScanner {
     final Context context;

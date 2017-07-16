@@ -1,7 +1,6 @@
-package svenmeier.coxswain.heart;
+package svenmeier.coxswain.heart.generic;
 
 import android.content.Context;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,14 +10,14 @@ import com.google.common.base.Strings;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
+import svenmeier.coxswain.heart.ConnectionStatus;
+import svenmeier.coxswain.heart.ConnectionStatusListener;
 
 public class ToastConnectionStatusListener implements ConnectionStatusListener {
     private final Context context;
-    private final Handler toastHandler;
 
     public ToastConnectionStatusListener(Context context) {
         this.context = context;
-        this.toastHandler = null; // new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -51,27 +50,20 @@ public class ToastConnectionStatusListener implements ConnectionStatusListener {
     }
 
     private String prettyPrint(final Heart impl) {
-        return impl.getClass().getSimpleName();
+        if (impl != null) {
+            return impl.getClass().getSimpleName();
+        } else {
+            return "UNKNOWN";
+        }
     }
 
     private void toast(String text) {
-        /*
         if (isOnUiThread()) {
             toastNow(text);
         } else {
             // TODO: Send message to UI-thread
             Log.w(Coxswain.TAG, "Skipped toast: " + text);
-            //toastHandler.post(makeDelayedToast(text));
-        }*/
-    }
-
-    private Runnable makeDelayedToast(final String text) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-            }
-        };
+        }
     }
 
     private void toastNow(String text) {

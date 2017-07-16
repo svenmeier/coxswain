@@ -1,10 +1,8 @@
 package svenmeier.coxswain.heart.bluetooth;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.IBinder;
@@ -18,9 +16,11 @@ import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
 import svenmeier.coxswain.heart.ConnectionStatusListener;
+import svenmeier.coxswain.heart.generic.HeartRateCommunication;
 import svenmeier.coxswain.heart.generic.ToastConnectionStatusListener;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
-import svenmeier.coxswain.heart.generic.HeartRateListener;
+import svenmeier.coxswain.heart.generic.communication.BroadcastCommunication;
+import svenmeier.coxswain.heart.generic.communication.HandlerCommunication;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -31,7 +31,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 public class BluetoothHeartAdapter extends Heart implements BatteryStatusListener {
     private final HeartServiceConnection heartService;
     private final ConnectionStatusListener connectionStatusListener;
-    private final HeartReceiver listener;
+    private final HeartRateCommunication communication;
 
     public BluetoothHeartAdapter(Context uiContext, Measurement measurement) {
         super(uiContext, measurement);
@@ -43,13 +43,15 @@ public class BluetoothHeartAdapter extends Heart implements BatteryStatusListene
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             Log.i(Coxswain.TAG, "Contacting bluetooth heart service...");
-            listener = new HeartReceiver(this, connectionStatusListener, this);
-            uiContext.registerReceiver(listener, listener.getIntentFilter());
-            heartService.bind(uiContext);
+            //communication = new BroadcastCommunication();   // TODO: DI this
+            communication = new HandlerCommunication();
+            final HeartRateCommunication.Reader listener = communication.makeReader(this, connectionStatusListener, this);
+            listener.bind(uiContext);
+            heartService.bind(uiContext, communication);
         } else {
             Log.w(Coxswain.TAG, "New bluetooth unavailable: Needs Nougat!");
             updateConnectionStatus(ConnectionStatus.UNAVAILABLE_ON_SYSTEM, null, "Requires Android Nougat");
-            listener = null;
+            communication = null;
         }
     }
 
@@ -75,12 +77,13 @@ public class BluetoothHeartAdapter extends Heart implements BatteryStatusListene
 
     private static class HeartServiceConnection implements ServiceConnection {
         private BluetoothHeartService service = null;
+        private HeartRateCommunication communication;
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             this.service = ((BluetoothHeartService.LocalBinder) binder).getService();
-            this.service.initialize();
+            this.service.initialize(communication.makeWriter());
         }
 
         @Override
@@ -89,7 +92,8 @@ public class BluetoothHeartAdapter extends Heart implements BatteryStatusListene
         }
 
         @RequiresApi(api = Build.VERSION_CODES.N)
-        public void bind(final Context context) {
+        public void bind(final Context context, final HeartRateCommunication communication) {
+            this.communication = communication;
             final Intent intent = new Intent(context, BluetoothHeartService.class);
             if (! context.bindService(intent, this, BIND_AUTO_CREATE)) {
                 Log.e(Coxswain.TAG, "Unable to bind to " + BluetoothHeartService.class.getSimpleName());
@@ -99,56 +103,6 @@ public class BluetoothHeartAdapter extends Heart implements BatteryStatusListene
         @Nullable
         public BluetoothHeartService getService() {
             return service;
-        }
-    }
-
-    private static class HeartReceiver extends BroadcastReceiver {
-        private final BatteryStatusListener batteryStatusListener;
-        private final ConnectionStatusListener connectionStatusListener;
-        private final HeartRateListener heartRateListener;
-
-        public HeartReceiver(final @Nullable BatteryStatusListener batteryStatusListener, final @Nullable ConnectionStatusListener connectionStatusListener, final @Nullable HeartRateListener heartRateListener) {
-            this.batteryStatusListener = batteryStatusListener;
-            this.connectionStatusListener = connectionStatusListener;
-            this.heartRateListener = heartRateListener;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        public IntentFilter getIntentFilter() {
-            final IntentFilter ret = new IntentFilter();
-            if (batteryStatusListener != null) {
-                ret.addAction(BluetoothHeartService.BATTERY_FILTER.getAction(0));
-            }
-            if (connectionStatusListener != null) {
-                ret.addAction(BluetoothHeartService.PROGRESS_FILTER.getAction(0));
-            }
-            if (heartRateListener != null) {
-                ret.addAction(BluetoothHeartService.HEART_MEASUREMENT_FILTER.getAction(0));
-            }
-            return ret;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.N)
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            final String action = intent.getAction();
-            //Log.d(Coxswain.TAG, "Received broadcast " + action);
-            if (BluetoothHeartService.BATTERY_FILTER.matchAction(action)) {
-                final int percentage = intent.getIntExtra(action, -1);
-                if ((percentage >= 0) && (batteryStatusListener != null)) {
-                    batteryStatusListener.onBatteryStatus(percentage);
-                }
-            } else if (BluetoothHeartService.PROGRESS_FILTER.matchAction(action)) {
-                final String connectionStatus = intent.getStringExtra(BluetoothHeartService.CONNECTION_STATUS);
-                if ((connectionStatus != null) && (connectionStatusListener != null)) {
-                    connectionStatusListener.onConnectionStatusChange(null, ConnectionStatus.valueOf(connectionStatus), null, null);
-                }
-            } else if (BluetoothHeartService.HEART_MEASUREMENT_FILTER.matchAction(action)) {
-                final int heartBpm = intent.getIntExtra(action, -1);
-                if ((heartBpm >= 0) && (heartRateListener != null)) {
-                    heartRateListener.onHeartRate(heartBpm);
-                }
-            }
         }
     }
 }

@@ -9,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
+import svenmeier.coxswain.heart.bluetooth.BluetoothHeartConnectionListener;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.reading.GattBatteryStatus;
 import svenmeier.coxswain.heart.bluetooth.reading.GattBodySensorLocation;
@@ -20,8 +21,8 @@ import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AbstractBluetoothHeartAdditionalReadingsDevice extends AbstractBluetoothHeartDevice {
-    public AbstractBluetoothHeartAdditionalReadingsDevice(Context context, BluetoothDevice delegate) {
-        super(context, delegate);
+    public AbstractBluetoothHeartAdditionalReadingsDevice(Context context, BluetoothDevice delegate, BluetoothHeartConnectionListener connectionListener) {
+        super(context, delegate, connectionListener);
     }
 
     public AbstractBluetoothHeartAdditionalReadingsDevice(Conversation conversation) {

@@ -22,13 +22,15 @@ import svenmeier.coxswain.heart.bluetooth.device.PollingBluetoothHeartDevice;
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class BluetoothHeartDeviceFactory {
     final Context context;
+    final BluetoothHeartConnectionListener connectionListener;
 
-    public BluetoothHeartDeviceFactory(Context context) {
+    public BluetoothHeartDeviceFactory(Context context, BluetoothHeartConnectionListener connectionListener) {
         this.context = context;
+        this.connectionListener = connectionListener;
     }
 
     public AbstractBluetoothHeartAdditionalReadingsDevice make(final BluetoothDevice device) {
-        final PollingBluetoothHeartDevice dev = new PollingBluetoothHeartDevice(context, device);
+        final PollingBluetoothHeartDevice dev = new PollingBluetoothHeartDevice(context, device, connectionListener);
 
         try {
             if (dev.canUseBluetoothNotifications().get()) {

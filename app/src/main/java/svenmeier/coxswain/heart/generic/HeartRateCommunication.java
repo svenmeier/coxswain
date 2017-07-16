@@ -19,7 +19,7 @@ public interface HeartRateCommunication {
 
         void acceptHeartRate(final int bpm);
         void acceptBatteryStatus(final int percent);
-        void acceptConnectionStatus(final ConnectionStatus connectionStatus, final @Nullable String device, final @Nullable String message);
+        void acceptConnectionStatus(final Class impl, @NonNull final ConnectionStatus connectionStatus, final @Nullable String device, final @Nullable String message);
     }
 
     Reader makeReader(@Nullable BatteryStatusListener batteryStatusListener, @Nullable ConnectionStatusListener connectionStatusListener, @Nullable HeartRateListener heartRateListener);

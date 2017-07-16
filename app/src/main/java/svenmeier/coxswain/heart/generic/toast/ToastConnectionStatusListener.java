@@ -1,4 +1,4 @@
-package svenmeier.coxswain.heart.generic;
+package svenmeier.coxswain.heart.generic.toast;
 
 import android.content.Context;
 import android.os.Looper;
@@ -9,7 +9,6 @@ import android.widget.Toast;
 import com.google.common.base.Strings;
 
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.heart.ConnectionStatus;
 import svenmeier.coxswain.heart.ConnectionStatusListener;
 
@@ -21,14 +20,14 @@ public class ToastConnectionStatusListener implements ConnectionStatusListener {
     }
 
     @Override
-    public void onConnectionStatusChange(final Heart impl, final ConnectionStatus newStatus, final @Nullable String deviceName, final @Nullable String msg) {
+    public void onConnectionStatusChange(final Class impl, final ConnectionStatus newStatus, final @Nullable String deviceName, final @Nullable String msg) {
         final String message = prettyPrint(impl, newStatus, deviceName, msg);
         if (!Strings.isNullOrEmpty(message)) {
             toast(message);
         }
     }
 
-    private String prettyPrint(final Heart impl, final ConnectionStatus newStatus, final @Nullable String deviceName, final @Nullable String message) {
+    private String prettyPrint(final Class impl, final ConnectionStatus newStatus, final @Nullable String deviceName, final @Nullable String message) {
         if (Strings.isNullOrEmpty(message)) {
             switch (newStatus) {
                 case INITIAL:
@@ -49,9 +48,9 @@ public class ToastConnectionStatusListener implements ConnectionStatusListener {
         }
     }
 
-    private String prettyPrint(final Heart impl) {
+    private String prettyPrint(final Class impl) {
         if (impl != null) {
-            return impl.getClass().getSimpleName();
+            return impl.getSimpleName();
         } else {
             return "UNKNOWN";
         }

@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
+import svenmeier.coxswain.heart.bluetooth.BluetoothHeartConnectionListener;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeartRateMeasurement;
@@ -23,8 +24,8 @@ import svenmeier.coxswain.util.Destroyable;
 public class PollingBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice {
     private static final int POLLING_INTERVAL_MS = 1000;
 
-    public PollingBluetoothHeartDevice(Context context, BluetoothDevice delegate) {
-        super(context, delegate);
+    public PollingBluetoothHeartDevice(Context context, BluetoothDevice delegate, BluetoothHeartConnectionListener connectionListener) {
+        super(context, delegate, connectionListener);
     }
 
     public Future<Boolean> canUseBluetoothNotifications() {

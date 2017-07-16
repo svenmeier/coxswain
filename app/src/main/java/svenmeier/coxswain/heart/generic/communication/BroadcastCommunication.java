@@ -29,7 +29,10 @@ public class BroadcastCommunication implements HeartRateCommunication {
     public static final IntentFilter BATTERY_FILTER = new IntentFilter(ACTION_BATTERY);
     public static final IntentFilter PROGRESS_FILTER = new IntentFilter(ACTION_PROGRESS);
 
-    public static final String CONNECTION_STATUS = "ConnectionStatus";
+    private static final String IMPL = "Impl";
+    private static final String CONNECTION_STATUS = "ConnectionStatus";
+    private static final String DEVICE = "Device";
+    private static final String MESSAGE = "Message";
 
     @Override
     public Reader makeReader(final @Nullable BatteryStatusListener batteryStatusListener, final @Nullable ConnectionStatusListener connectionStatusListener, final @Nullable HeartRateListener heartRateListener) {
@@ -66,10 +69,13 @@ public class BroadcastCommunication implements HeartRateCommunication {
         }
 
         @Override
-        public void acceptConnectionStatus(ConnectionStatus connectionStatus, @Nullable String device, @Nullable String message) {
+        public void acceptConnectionStatus(final Class impl, final ConnectionStatus connectionStatus, @Nullable String device, @Nullable String message) {
             Preconditions.checkNotNull(context, "Need to bind first");
             final Intent broadcast = new Intent(ACTION_PROGRESS);
+            broadcast.putExtra(IMPL, impl);
             broadcast.putExtra(CONNECTION_STATUS, connectionStatus.name());
+            broadcast.putExtra(DEVICE, device);
+            broadcast.putExtra(MESSAGE, message);
             context.sendBroadcast(broadcast);
         }
     }
@@ -115,9 +121,12 @@ public class BroadcastCommunication implements HeartRateCommunication {
                     batteryStatusListener.onBatteryStatus(percentage);
                 }
             } else if (PROGRESS_FILTER.matchAction(action)) {
+                final Class impl = (Class) intent.getSerializableExtra(IMPL);
                 final String connectionStatus = intent.getStringExtra(CONNECTION_STATUS);
+                final String device = intent.getStringExtra(DEVICE);
+                final String message = intent.getStringExtra(MESSAGE);
                 if ((connectionStatus != null) && (connectionStatusListener != null)) {
-                    connectionStatusListener.onConnectionStatusChange(null, ConnectionStatus.valueOf(connectionStatus), null, null);
+                    connectionStatusListener.onConnectionStatusChange(impl, ConnectionStatus.valueOf(connectionStatus), device, message);
                 }
             } else if (HEART_MEASUREMENT_FILTER.matchAction(action)) {
                 final int heartBpm = intent.getIntExtra(action, -1);

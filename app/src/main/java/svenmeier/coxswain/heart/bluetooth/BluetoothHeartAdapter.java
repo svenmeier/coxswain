@@ -9,17 +9,14 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
 import svenmeier.coxswain.heart.generic.HeartRateCommunication;
-import svenmeier.coxswain.heart.generic.ToastConnectionStatusListener;
-import svenmeier.coxswain.heart.generic.BatteryStatusListener;
-import svenmeier.coxswain.heart.generic.communication.BroadcastCommunication;
+import svenmeier.coxswain.heart.generic.toast.ToastBatteryStatusListener;
+import svenmeier.coxswain.heart.generic.toast.ToastConnectionStatusListener;
 import svenmeier.coxswain.heart.generic.communication.HandlerCommunication;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -28,15 +25,13 @@ import static android.content.Context.BIND_AUTO_CREATE;
  *  Provides the new implementation in the format of the previous Heart-readings
  */
 @SuppressWarnings("unused") // Initialized through reflection
-public class BluetoothHeartAdapter extends Heart implements BatteryStatusListener {
+public class BluetoothHeartAdapter extends Heart {
     private final HeartServiceConnection heartService;
-    private final ConnectionStatusListener connectionStatusListener;
     private final HeartRateCommunication communication;
 
     public BluetoothHeartAdapter(Context uiContext, Measurement measurement) {
         super(uiContext, measurement);
 
-        connectionStatusListener = new ToastConnectionStatusListener(uiContext);
         heartService = new HeartServiceConnection();
 
         registerConnectionStatusListener(new ToastConnectionStatusListener(uiContext));
@@ -45,27 +40,16 @@ public class BluetoothHeartAdapter extends Heart implements BatteryStatusListene
             Log.i(Coxswain.TAG, "Contacting bluetooth heart service...");
             //communication = new BroadcastCommunication();   // TODO: DI this
             communication = new HandlerCommunication();
-            final HeartRateCommunication.Reader listener = communication.makeReader(this, connectionStatusListener, this);
+            final HeartRateCommunication.Reader listener = communication.makeReader(
+                    new ToastBatteryStatusListener(uiContext),
+                    new ToastConnectionStatusListener(uiContext),
+                    this);
             listener.bind(uiContext);
             heartService.bind(uiContext, communication);
         } else {
             Log.w(Coxswain.TAG, "New bluetooth unavailable: Needs Nougat!");
             updateConnectionStatus(ConnectionStatus.UNAVAILABLE_ON_SYSTEM, null, "Requires Android Nougat");
             communication = null;
-        }
-    }
-
-    @Override
-    public void onHeartRate(int heartRate) {
-        updateConnectionStatus(ConnectionStatus.CONNECTED, null, null);
-        super.onHeartRate(heartRate);
-    }
-
-    @Override
-    public void onBatteryStatus(int percentageLeft) {
-        if (percentageLeft < 20) {
-            // TODO: Has to be on UI-thred
-            Toast.makeText(context, "Battery of HRM: " + percentageLeft + "%", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -28,7 +28,7 @@ import svenmeier.coxswain.util.Destroyable;
  *  @see BluetoothHeartAdapter
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class BluetoothHeartService extends Service implements BluetoothHeartDiscoveryListener, BatteryStatusListener, HeartRateListener {
+public class BluetoothHeartService extends Service implements BluetoothHeartDiscoveryListener, BluetoothHeartConnectionListener, BatteryStatusListener, HeartRateListener {
     private static final String TAG = Coxswain.TAG + "BT";
 
     private Destroyable currentScan;
@@ -68,7 +68,7 @@ public class BluetoothHeartService extends Service implements BluetoothHeartDisc
     private void connect(final BluetoothDevice device) {
         Log.i(TAG, "Connecting to heart " + device.getName());
 
-        final AbstractBluetoothHeartAdditionalReadingsDevice dev = new BluetoothHeartDeviceFactory(this).make(device);
+        final AbstractBluetoothHeartAdditionalReadingsDevice dev = new BluetoothHeartDeviceFactory(this, this).make(device);
         dev.readBattery(this);
         //dev.readAnarobicHeartRateLowerLimit();
         //dev.readAnarobicHeartRateUpperLimit();
@@ -81,9 +81,23 @@ public class BluetoothHeartService extends Service implements BluetoothHeartDisc
     //  Listeners, will broadcast to the subscribers...
     //
 
+
     @Override
-    public void onLost(String deviceId) {
-        publishProgress(ConnectionStatus.CONNECTING, deviceId, "Lost connection to " + deviceId);
+    public void onConnected(String deviceName, String deviceId) {
+        final String reportName = (deviceName != null) ? deviceName : deviceId;
+        publishProgress(ConnectionStatus.CONNECTED, reportName, null);
+    }
+
+    @Override
+    public void onDisconnected(String deviceName, String deviceId) {
+        final String reportName = (deviceName != null) ? deviceName : deviceId;
+        publishProgress(ConnectionStatus.CONNECTING, reportName, "Disconnected from " + reportName);
+    }
+
+    @Override
+    public void onLost(String deviceId, String name) {
+        final String reportName = (name != null) ? name : deviceId;
+        publishProgress(ConnectionStatus.CONNECTING, reportName, "Lost connection to " + reportName);
     }
 
     @Override
@@ -102,7 +116,7 @@ public class BluetoothHeartService extends Service implements BluetoothHeartDisc
 
     private void publishProgress(final ConnectionStatus status, final @Nullable String device, final @Nullable String message) {
         if (listener != null) {
-            listener.acceptConnectionStatus(status, device, message);
+            listener.acceptConnectionStatus(BluetoothHeartAdapter.class, status, device, message);
         }
     }
 

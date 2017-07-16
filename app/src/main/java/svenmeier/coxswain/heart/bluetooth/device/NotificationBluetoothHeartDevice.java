@@ -12,6 +12,7 @@ import java.util.Set;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
+import svenmeier.coxswain.heart.bluetooth.BluetoothHeartConnectionListener;
 import svenmeier.coxswain.heart.bluetooth.constants.BluetoothHeartCharacteristics;
 import svenmeier.coxswain.heart.bluetooth.reading.GattHeartRateMeasurement;
 import svenmeier.coxswain.heart.generic.HeartRateListener;
@@ -24,8 +25,8 @@ import svenmeier.coxswain.util.Destroyable;
 public class NotificationBluetoothHeartDevice extends AbstractBluetoothHeartAdditionalReadingsDevice implements BluetoothHeartDevice, BluetoothNotificationListener {
     private Set<HeartRateListener> listeners = new ArraySet<>(1);
 
-    public NotificationBluetoothHeartDevice(Context context, BluetoothDevice device) {
-        super(context, device);
+    public NotificationBluetoothHeartDevice(Context context, BluetoothDevice device, BluetoothHeartConnectionListener connectionListener) {
+        super(context, device, connectionListener);
     }
 
     public NotificationBluetoothHeartDevice(Conversation conversation) {

@@ -42,7 +42,7 @@ public class Protocol4 implements IProtocol {
     private IEnergyCalculator energyCalculator = new IEnergyCalculator() {
         @Override
         public int energy(int value) {
-            return value;
+            return value  / 1000;
         }
     };
 

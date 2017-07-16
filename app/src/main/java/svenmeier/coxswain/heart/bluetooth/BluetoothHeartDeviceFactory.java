@@ -3,6 +3,8 @@ package svenmeier.coxswain.heart.bluetooth;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -24,11 +26,14 @@ public class BluetoothHeartDeviceFactory {
     final Context context;
     final BluetoothHeartConnectionListener connectionListener;
 
-    public BluetoothHeartDeviceFactory(Context context, BluetoothHeartConnectionListener connectionListener) {
+    public BluetoothHeartDeviceFactory(@NonNull Context context, @Nullable BluetoothHeartConnectionListener connectionListener) {
         this.context = context;
         this.connectionListener = connectionListener;
     }
 
+    /**
+     *  Creates a Polling or Notification based device
+     */
     public AbstractBluetoothHeartAdditionalReadingsDevice make(final BluetoothDevice device) {
         final PollingBluetoothHeartDevice dev = new PollingBluetoothHeartDevice(context, device, connectionListener);
 
@@ -46,7 +51,7 @@ public class BluetoothHeartDeviceFactory {
         }
     }
 
-    public BluetoothHeartDevice makeConnectionLess(final BluetoothDevice device) {
+    public BluetoothHeartDevice makeConnectionless(final BluetoothDevice device) {
         return new BluetoothLeConnectionlessDevice(context, device);
     }
 }

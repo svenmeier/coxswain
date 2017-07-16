@@ -10,8 +10,8 @@ import android.support.annotation.RequiresApi;
 
 import com.google.common.base.Preconditions;
 
-import svenmeier.coxswain.heart.ConnectionStatus;
-import svenmeier.coxswain.heart.ConnectionStatusListener;
+import svenmeier.coxswain.heart.generic.ConnectionStatus;
+import svenmeier.coxswain.heart.generic.ConnectionStatusListener;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 import svenmeier.coxswain.heart.generic.HeartRateCommunication;
 import svenmeier.coxswain.heart.generic.HeartRateListener;

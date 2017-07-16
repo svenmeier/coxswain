@@ -19,6 +19,11 @@ import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToBodySens
 import svenmeier.coxswain.heart.bluetooth.typeconverter.CharacteristicToHeartRateValue;
 import svenmeier.coxswain.heart.generic.BatteryStatusListener;
 
+/**
+ *  Mixes in additional typical requests to the device.
+ *
+ *  A trait would actually be nice for that, but ... nehhh ... Java
+ */
 @RequiresApi(api = Build.VERSION_CODES.N)
 public abstract class AbstractBluetoothHeartAdditionalReadingsDevice extends AbstractBluetoothHeartDevice {
     public AbstractBluetoothHeartAdditionalReadingsDevice(Context context, BluetoothDevice delegate, BluetoothHeartConnectionListener connectionListener) {

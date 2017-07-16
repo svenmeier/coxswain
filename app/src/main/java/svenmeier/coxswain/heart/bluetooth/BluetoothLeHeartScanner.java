@@ -88,7 +88,7 @@ public class BluetoothLeHeartScanner {
                         public void onDiscovered(BluetoothDevice device, int SignalStrength, boolean supportsConnectionLess) {
                             future.complete(
                                 (supportsConnectionLess) ?
-                                    deviceFactory.makeConnectionLess(device) :
+                                    deviceFactory.makeConnectionless(device) :
                                     deviceFactory.make(device));
                         }
 

@@ -1,4 +1,4 @@
-package svenmeier.coxswain.heart;
+package svenmeier.coxswain.heart.generic;
 
 public enum ConnectionStatus {
     INITIAL,

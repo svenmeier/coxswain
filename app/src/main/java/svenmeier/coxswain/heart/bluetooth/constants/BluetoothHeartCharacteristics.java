@@ -11,6 +11,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ *  Lists readings to be obtained from the BT device.
+ */
 public enum BluetoothHeartCharacteristics {
     HEART_RATE_MEASUREMENT(BluetoothHeartServices.HEART_RATE, "2A37-0000-1000-8000-00805f9b34fb"),
     BODY_SENSOR_LOCATION(BluetoothHeartServices.HEART_RATE, "2A38-0000-1000-8000-00805f9b34fb"),

@@ -36,7 +36,7 @@ public class ImportIntention {
 		return importFrom(uri);
 	}
 
-	private boolean importFrom(Uri uri) {
+	public boolean importFrom(Uri uri) {
 		Import<?> importer = null;
 
 		try {

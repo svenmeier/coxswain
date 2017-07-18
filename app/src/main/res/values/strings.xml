@@ -4,6 +4,7 @@
     <string name="action_mock">Mock</string>
     <string name="action_evaluate">Evaluate</string>
     <string name="action_export">Export</string>
+    <string name="action_import">Import</string>
     <string name="action_bind">Bind</string>
     <string name="action_settings">Settings</string>
     <string name="action_sort">Sort</string>
@@ -75,6 +76,7 @@
     <string name="workout_binding_decrease">Remove</string>
     <string name="workout_binding_increase">Add</string>
 
+    <string name="import_chooser">Please install a file manager</string>
     <string name="import_unknown">Unkown import format</string>
 
     <string name="calendar_export">Calendar</string>

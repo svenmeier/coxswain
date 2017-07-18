@@ -2,6 +2,7 @@
     <string name="action_mock">Mock</string>
     <string name="action_evaluate">Bewerten</string>
     <string name="action_export">Exportieren</string>
+    <string name="action_import">Importieren</string>
     <string name="action_bind">Verknüpfen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_sort">Sortierung</string>
@@ -73,6 +74,7 @@
     <string name="workout_binding_decrease">Entfernen</string>
     <string name="workout_binding_increase">Hinzufügen</string>
 
+    <string name="import_chooser">Bitte installieren Sie einen Dateimanager</string>
     <string name="import_unknown">Unbekanntes Import Format</string>
 
     <string name="calendar_export">Kalender</string>

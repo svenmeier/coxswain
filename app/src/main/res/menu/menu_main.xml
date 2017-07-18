@@ -5,6 +5,9 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 
+    <item android:id="@+id/action_import" android:title="@string/action_import"
+          android:orderInCategory="100" app:showAsAction="never" />
+
     <item android:id="@+id/action_mock" android:title="@string/action_mock"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.io.ImportIntention;
@@ -44,6 +45,8 @@ import svenmeier.coxswain.view.WorkoutsFragment;
 public class MainActivity extends AbstractActivity {
 
     public static String TAG = "coxswain";
+
+    private static final int REQUEST_IMPORT = 42;
 
     private Gym gym;
 
@@ -186,6 +189,15 @@ public class MainActivity extends AbstractActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_IMPORT && data != null) {
+            // data intent does not have an action
+            new ImportIntention(this).importFrom(data.getData());
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -211,6 +223,18 @@ public class MainActivity extends AbstractActivity {
                 GymService.start(this, null);
             } else {
                 MockRower.openMock.close();
+            }
+
+            return true;
+        } else if (id == R.id.action_import) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+            try {
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.action_import)), REQUEST_IMPORT);
+            } catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(this, getString(R.string.import_chooser), Toast.LENGTH_LONG).show();
             }
 
             return true;

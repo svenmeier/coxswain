@@ -1,5 +1,6 @@
 package svenmeier.coxswain.heart.bluetooth;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -10,6 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.heart.generic.ConnectionStatus;
@@ -28,26 +32,50 @@ import svenmeier.coxswain.util.Destroyable;
  *  @see BluetoothHeartAdapter
  */
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class BluetoothHeartService extends Service implements BluetoothHeartDiscoveryListener, BluetoothHeartConnectionListener, BatteryStatusListener, HeartRateListener {
+public class BluetoothHeartService extends IntentService implements BluetoothHeartDiscoveryListener, BluetoothHeartConnectionListener, BatteryStatusListener, HeartRateListener {
     private static final String TAG = Coxswain.TAG + "BT";
 
     private Destroyable currentScan;
     private final IBinder binder = new LocalBinder();
     private HeartRateCommunication.Writer listener;
+    private CompletableFuture<HeartRateCommunication.Writer> writeTo = new CompletableFuture<>();
+
+    public BluetoothHeartService() {
+        this(BluetoothHeartService.class.getSimpleName() + "_" + Thread.currentThread().getId());
+    }
+
+    public BluetoothHeartService(final String name) {
+        super(name);
+        Log.i(TAG, "New " + BluetoothHeartService.class.getSimpleName() + " named " + name);
+    }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    protected void onHandleIntent(@Nullable Intent intent) {
+        Log.i(TAG, BluetoothHeartService.class.getSimpleName() + " running in " + Thread.currentThread().getName());
+        writeTo.whenComplete(new BiConsumer<HeartRateCommunication.Writer, Throwable>() {
+            @Override
+            public void accept(HeartRateCommunication.Writer writer, Throwable throwable) {
+                writer.bind(BluetoothHeartService.this);
+                BluetoothHeartService.this.listener = writer;
+                scan();
+            }
+        });
+    }
+
+    @Override
+    public IBinder onBind(final Intent intent) {
+        Log.i(TAG, "Bound " + BluetoothHeartService.class.getSimpleName() + " from " + Thread.currentThread().getName());
+        final Intent self = new Intent(getApplicationContext(), BluetoothHeartService.class);
+        getApplicationContext().startService(self);
         return binder;
     }
 
     public void initialize(final @NonNull HeartRateCommunication.Writer writeTo) {
-        this.listener = writeTo;
-        this.listener.bind(this);
-        scan();
+        this.writeTo.complete(writeTo);
     }
 
     private void scan() {
-        Log.i(Coxswain.TAG, "Start bluetooth-scan...");
+        Log.i(Coxswain.TAG, "Start bluetooth-scan... in thread " + Thread.currentThread().getName());
         final BluetoothLeHeartScanner scanner = new BluetoothLeHeartScanner(this);
         publishProgress(ConnectionStatus.SCANNING, null, null);
         currentScan = scanner.scan(this);

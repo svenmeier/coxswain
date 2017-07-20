@@ -10,6 +10,7 @@
     <string name="action_sort">Sort</string>
     <string name="action_ok">OK</string>
     <string name="action_edit">Edit</string>
+    <string name="action_select">Select</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_confirm_title">Deletion?</string>
     <string name="action_delete_confirm_message">Deletion can not be reverted!</string>

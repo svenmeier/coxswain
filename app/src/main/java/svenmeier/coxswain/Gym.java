@@ -183,18 +183,33 @@ public class Gym {
     }
 
     public Match<Workout> getWorkouts() {
-        return repository.query(new Workout());
+        Workout prototype = new Workout();
+
+        if (program == null) {
+            return repository.query(prototype);
+        } else {
+            return repository.query(prototype, Where.equal(prototype.program, program));
+        }
     }
 
     public Match<Workout> getWorkouts(long from, long to) {
         Workout propotype = new Workout();
 
         // evaluated workouts only
-        return repository.query(propotype, all(
-                equal(propotype.evaluate, true),
-                greaterEqual(propotype.start, from),
-                lessThan(propotype.start, to))
-        );
+        if (program == null) {
+            return repository.query(propotype, all(
+                    equal(propotype.evaluate, true),
+                    greaterEqual(propotype.start, from),
+                    lessThan(propotype.start, to))
+            );
+        } else  {
+            return repository.query(propotype, all(
+                    equal(propotype.program, program),
+                    equal(propotype.evaluate, true),
+                    greaterEqual(propotype.start, from),
+                    lessThan(propotype.start, to))
+            );
+        }
     }
 
     public void delete(Propoid propoid) {
@@ -223,17 +238,19 @@ public class Gym {
             Export.start(context, current);
         }
 
-        this.pace = null;
-        this.program = null;
+        if (program != null) {
+            this.pace = null;
+            this.program = null;
 
-        this.measurement = new Measurement();
-        this.current = null;
-        this.progress = null;
+            this.measurement = new Measurement();
+            this.current = null;
+            this.progress = null;
 
-        fireChanged();
+            fireChanged();
+        }
     }
 
-    public void repeat(Program program) {
+    public void select(Program program) {
         this.pace = null;
         this.program = program;
 

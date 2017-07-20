@@ -16,7 +16,6 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import propoid.ui.Index;
 import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchRecyclerAdapter;
 import svenmeier.coxswain.Gym;
@@ -116,6 +114,9 @@ public class ProgramsFragment extends Fragment {
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
+                                case R.id.action_select:
+                                    gym.select(item);
+                                    return true;
                                 case R.id.action_new:
                                     Program newProgram = Gym.instance(getActivity()).newProgram();
 
@@ -154,7 +155,7 @@ public class ProgramsFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            gym.repeat(item);
+            gym.select(item);
 
             WorkoutActivity.start(getActivity());
         }

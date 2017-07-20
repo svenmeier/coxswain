@@ -33,6 +33,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import propoid.db.Match;
 import propoid.db.Order;
 import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchRecyclerAdapter;
@@ -46,7 +47,7 @@ import svenmeier.coxswain.rower.Energy;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 
-public class WorkoutsFragment extends Fragment {
+public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
     private Gym gym;
 
@@ -61,8 +62,16 @@ public class WorkoutsFragment extends Fragment {
         super.onAttach(context);
 
         gym = Gym.instance(context);
+        gym.addListener(this);
 
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onDetach() {
+        gym.removeListener(this);
+
+        super.onDetach();
     }
 
     @Override
@@ -91,7 +100,7 @@ public class WorkoutsFragment extends Fragment {
 
         workoutsView = (RecyclerView) root.findViewById(R.id.workouts);
         workoutsView.setLayoutManager(new LinearLayoutManager(getContext()));
-        workoutsView .setHasFixedSize(true);
+        workoutsView.setHasFixedSize(true);
         workoutsView.setAdapter(adapter = new WorkoutsAdapter());
 
         return root;
@@ -102,6 +111,15 @@ public class WorkoutsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         adapter.initLoader(0, this);
+    }
+
+    @Override
+    public void changed() {
+        adapter.destroy(0, this);
+
+        workoutsView.setAdapter(adapter = new WorkoutsAdapter());
+
+        adapter.restartLoader(0, this);
     }
 
     private class WorkoutsAdapter extends MatchRecyclerAdapter<Workout> {

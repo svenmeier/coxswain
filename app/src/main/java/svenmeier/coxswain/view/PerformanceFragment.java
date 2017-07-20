@@ -41,7 +41,7 @@ import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.rower.Energy;
 
 
-public class PerformanceFragment extends Fragment implements View.OnClickListener {
+public class PerformanceFragment extends Fragment implements View.OnClickListener, Gym.Listener {
 
     private Gym gym;
 
@@ -66,6 +66,23 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
         gym = Gym.instance(context);
 
         windowPreference = Preference.getLong(context, R.string.preference_performance_window).fallback(28 * TimelineView.DAY);
+
+        gym.addListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        gym.removeListener(this);
+
+        super.onDetach();
+    }
+
+
+    @Override
+    public void changed() {
+        performances.clear();
+
+        timelineView.requestLayout();
     }
 
     @Override

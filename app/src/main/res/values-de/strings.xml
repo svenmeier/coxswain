@@ -8,6 +8,7 @@
     <string name="action_sort">Sortierung</string>
     <string name="action_ok">OK</string>
     <string name="action_edit">Bearbeiten</string>
+    <string name="action_select">Auswählen</string>
     <string name="action_delete">Löschen</string>
     <string name="action_delete_confirm_title">Löschen?</string>
     <string name="action_delete_confirm_message">Löschen kann nicht rückgängig gemacht werden!</string>

@@ -11,6 +11,9 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
@@ -61,6 +64,7 @@ public class BluetoothLeHeartScanner {
         final OnDevice listener = new OnDevice(handler);
          final Optional<BluetoothAdapter> adapter = getBluetoothAdapter();
          if (adapter.isPresent()) {
+             Log.i(Coxswain.TAG, "Starting scan from " + Thread.currentThread().getName());
              final BluetoothLeScanner scanner = adapter.get().getBluetoothLeScanner();
              scanner.startScan(DEVICES_FILTER, DISCOVERY_SCAN, listener);
              return new ScanDestroyer(scanner, listener);
@@ -167,15 +171,28 @@ public class BluetoothLeHeartScanner {
         return ret;
     }
 
-    private static class OnDevice extends ScanCallback {
+    private static class OnDevice extends ScanCallback implements Handler.Callback {
         private final BluetoothHeartDiscoveryListener handler;
+        private final Handler toBluetoothService = new Handler(this);
 
         public OnDevice(final BluetoothHeartDiscoveryListener handler) {
             this.handler = handler;
         }
 
+        /**
+         *  Called on main thread
+         */
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
+            if (Thread.currentThread().getName().equals("main")) {
+                new DiscoveryMessage(callbackType, result, toBluetoothService).send();
+            } else {
+                onScanResultImpl(callbackType, result);
+            }
+        }
+
+        public void onScanResultImpl(int callbackType, ScanResult result) {
+            Log.i(Coxswain.TAG, "Handling scan-result on " + Thread.currentThread().getName());
             switch (callbackType) {
                 case CALLBACK_TYPE_ALL_MATCHES:
                 case CALLBACK_TYPE_FIRST_MATCH:
@@ -201,6 +218,43 @@ public class BluetoothLeHeartScanner {
         @Override
         public void onScanFailed(int errorCode) {
             super.onScanFailed(errorCode);
+        }
+
+        @Override
+        public boolean handleMessage(Message msg) {
+            final DiscoveryMessage mess = new DiscoveryMessage(msg);
+            onScanResultImpl(mess.getCallbackType(), mess.getScanResult());
+            return true;
+        }
+
+        private class DiscoveryMessage {
+            private static final String RESULTS = "results";
+            private final Message message;
+
+            public DiscoveryMessage(final int callbackType, final ScanResult result, final Handler receiver) {
+                message = receiver.obtainMessage();
+                message.arg1 = 0;
+                message.arg2 = callbackType;
+                final Bundle data = new Bundle(1);
+                data.putParcelable(RESULTS, result);
+                message.setData(data);
+            }
+
+            public DiscoveryMessage(final Message message) {
+                this.message = message;
+            }
+
+            public void send() {
+                message.sendToTarget();
+            }
+
+            public int getCallbackType() {
+                return message.arg2;
+            }
+
+            public ScanResult getScanResult() {
+                return message.getData().getParcelable(RESULTS);
+            }
         }
     }
 

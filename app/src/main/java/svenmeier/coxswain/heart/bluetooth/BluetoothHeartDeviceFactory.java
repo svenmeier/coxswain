@@ -39,10 +39,10 @@ public class BluetoothHeartDeviceFactory {
 
         try {
             if (dev.canUseBluetoothNotifications().get()) {
-                Log.i(Coxswain.TAG, "Using notification-based heart-sensor: " + device.getName());
+                Log.i(Coxswain.TAG, "Using notification-based heart-sensor: " + device.getName() + " thread " + Thread.currentThread().getName());
                 return new NotificationBluetoothHeartDevice(dev.getConversation());
             } else {
-                Log.i(Coxswain.TAG, "Using polling heart-sensor: " + device.getName());
+                Log.i(Coxswain.TAG, "Using polling heart-sensor: " + device.getName() + " thread " + Thread.currentThread().getName());
                 return dev;
             }
         } catch (final Exception e) {

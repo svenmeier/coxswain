@@ -85,7 +85,7 @@ public class BluetoothHeartService extends IntentService implements BluetoothHea
     @Override
     public void onDiscovered(BluetoothDevice device, int SignalStrength, boolean supportsConnectionLess) {
         publishProgress(ConnectionStatus.CONNECTING, device.getName(), null);
-        Log.i(TAG, "Using first discovered device: " + device.getAddress() + " -> " + device.getName());
+        Log.i(TAG, "Using first discovered device: " + device.getAddress() + " -> " + device.getName() + " thread " + Thread.currentThread().getName());
 
         destroyCurrentScan();
 

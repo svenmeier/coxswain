@@ -92,7 +92,11 @@ public class BluetoothHeartAdapter extends Heart {
 
         public void unbind() {
             if (service != null) {
-                service.unbindService(this);
+                try {
+                    service.unbindService(this);
+                } catch (Exception e) {
+                    // Service was not registered
+                }
             }
             service = null;
         }

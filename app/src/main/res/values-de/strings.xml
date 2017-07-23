@@ -65,6 +65,11 @@
     <string name="none_label">KEINE</string>
     <string name="none_pattern"></string>
 
+    <string name="sort_start">Sorting by start</string>
+    <string name="sort_duration">Sorting by duration</string>
+    <string name="sort_distance">Sorting by distance</string>
+    <string name="sort_energy">Sorting by energy</string>
+
     <string name="programs">Programm</string>
     <string name="workouts">Training</string>
     <string name="performance">Leistung</string>

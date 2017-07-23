@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import propoid.db.Match;
 import propoid.db.Order;
@@ -85,8 +86,12 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
         if (item.getItemId() == R.id.action_sort) {
             sort = (sort + 1) % 4;
 
-            adapter.sort(sort);
+            String text = adapter.sort(sort);
             adapter.restartLoader(0, this);
+
+            if (text != null) {
+                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+            }
 
             return true;
         }
@@ -130,21 +135,29 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
             sort(sort);
         }
 
-        public void sort(int index) {
+        public String sort(int index) {
+            String text = null;
+
             switch (index) {
                 case 0:
+                    text = getString(R.string.sort_start);
                     setOrder(Order.descending(getMatch().getPrototype().start));
                     break;
                 case 1:
-                    setOrder(Order.descending(getMatch().getPrototype().duration));
+                    text = getString(R.string.sort_duration);
+                    setOrder(Order.ascending(getMatch().getPrototype().duration));
                     break;
                 case 2:
+                    text = getString(R.string.sort_distance);
                     setOrder(Order.descending(getMatch().getPrototype().distance));
                     break;
                 case 3:
+                    text = getString(R.string.sort_energy);
                     setOrder(Order.descending(getMatch().getPrototype().energy));
                     break;
             }
+
+            return text;
         }
 
         @Override

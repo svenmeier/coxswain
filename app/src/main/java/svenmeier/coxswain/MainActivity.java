@@ -162,6 +162,10 @@ public class MainActivity extends AbstractActivity {
                 GymService.start(this, device);
 
                 if (gym.program == null) {
+                    if (pager != null) {
+                        // views are already created, so switch to workouts
+                        pager.setCurrentItem(0, true);
+                    }
                     // try to unlock device - has no effect if this activity is already running :/
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |

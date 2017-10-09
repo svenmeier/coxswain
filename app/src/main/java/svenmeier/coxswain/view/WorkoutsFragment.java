@@ -43,6 +43,7 @@ import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.rower.Distance;
 import svenmeier.coxswain.rower.Energy;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -241,7 +242,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
 			String counts = TextUtils.join(", ", new String[]{
                     asHoursMinutesSeconds(item.duration.get()),
-                    String.format(getString(R.string.distance_meters), item.distance.get()),
+                    Distance.m(getActivity(), item.distance.get()).formatted(),
                     String.format(getString(R.string.strokes_count), item.strokes.get()),
                     Energy.kcal(getActivity(), item.energy.get()).formatted()
             });

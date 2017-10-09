@@ -54,6 +54,15 @@
             android:entryValues="@array/energy_units"
         />
 
+        <ListPreference
+            android:key="@string/preference_distance_unit"
+            android:title="@string/preference_distance_unit_title"
+            android:summary="@string/preference_distance_unit_summary"
+            android:defaultValue="m"
+            android:entries="@array/distance_units"
+            android:entryValues="@array/distance_units"
+        />
+
         <CheckBoxPreference
             android:key="@string/preference_open_end"
             android:title="@string/preference_open_end_title"

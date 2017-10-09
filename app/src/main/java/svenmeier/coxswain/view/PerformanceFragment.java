@@ -38,6 +38,7 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
+import svenmeier.coxswain.rower.Distance;
 import svenmeier.coxswain.rower.Energy;
 
 
@@ -313,7 +314,7 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
                         what = String.format(getString(R.string.duration_minutes), performance.duration / 60);
                         break;
                     case 1:
-                        what = String.format(getString(R.string.distance_meters), performance.distance);
+                        what = Distance.m(getActivity(), performance.distance).formatted();
                         break;
                     case 2:
                         what = String.format(getString(R.string.strokes_count), performance.strokes);

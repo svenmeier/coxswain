@@ -23,7 +23,10 @@
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_ready">bereit</string>
 
-    <string name="distance_meters">%,d Meter</string>
+    <string name="distance_miles">%,d mi</string>
+    <string name="distance_yards">%,d yd</string>
+    <string name="distance_feets">%,d ft</string>
+    <string name="distance_meters">%,d m</string>
     <string name="distance_label">DISTANZ</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d Minuten</string>
@@ -141,6 +144,9 @@
 
     <string name="preference_energy_unit_title">Energie</string>
     <string name="preference_energy_unit_summary">Energie in der Einheit %s</string>
+
+    <string name="preference_distance_unit_title">Distanz</string>
+    <string name="preference_distance_unit_summary">Distanz in der Einheit %s</string>
 
     <string name="preference_split_distance_title">Split</string>
     <string name="preference_split_distance_summary">Zeit pro %s Meter</string>

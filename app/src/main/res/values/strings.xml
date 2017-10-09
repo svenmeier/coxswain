@@ -25,7 +25,10 @@
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
 
-    <string name="distance_meters">%,d meters</string>
+    <string name="distance_miles">%,d mi</string>
+    <string name="distance_yards">%,d yd</string>
+    <string name="distance_feets">%,d ft</string>
+    <string name="distance_meters">%,d m</string>
     <string name="distance_label">DISTANCE</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d minutes</string>
@@ -148,6 +151,10 @@
     <string name="preference_energy_unit" translatable="false">preference_energy_unit</string>
     <string name="preference_energy_unit_title">Energy</string>
     <string name="preference_energy_unit_summary">Energy unit %s</string>
+
+    <string name="preference_distance_unit" translatable="false">preference_distance_unit</string>
+    <string name="preference_distance_unit_title">Distance</string>
+    <string name="preference_distance_unit_summary">Distance unit %s</string>
 
     <string name="preference_split_distance" translatable="false">preference_split_distance</string>
     <string name="preference_split_distance_title">Split</string>

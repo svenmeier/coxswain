@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
-    <!-- export -->
+    <!-- export TCX -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- bluetooth heart rate -->
@@ -26,6 +26,10 @@
 
     <!-- sensor heart rate -->
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
+
+    <!-- export Calendar for >23 only -->
+    <uses-permission-sdk-23 android:name="android.permission.READ_CALENDAR"/>
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_CALENDAR"/>
 
     <application
         android:allowBackup="true"

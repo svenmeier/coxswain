@@ -89,6 +89,8 @@
     <string name="import_unknown">Unkown import format</string>
 
     <string name="calendar_export">Calendar</string>
+    <string name="calendar_export_failed">Exporting workout failed</string>
+    <string name="calendar_export_finished">Event inserted into calendar</string>
 
     <string name="program_export">File</string>
     <string name="program_export_share">Share ...</string>

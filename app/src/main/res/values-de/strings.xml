@@ -87,6 +87,8 @@
     <string name="import_unknown">Unbekanntes Import Format</string>
 
     <string name="calendar_export">Kalender</string>
+    <string name="calendar_export_failed">Export des Trainings gescheitert</string>
+    <string name="calendar_export_finished">Termin in Kalender eingestellt</string>
 
     <string name="program_export">Datei</string>
     <string name="program_export_share">Teilen ...</string>

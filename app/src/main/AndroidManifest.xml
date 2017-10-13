@@ -131,6 +131,9 @@
             android:enabled="true" >
         </service>
 
+        <service
+            android:name=".heart.bluetooth.BluetoothHeartService"
+            android:enabled="true" />
     </application>
 
 </manifest>

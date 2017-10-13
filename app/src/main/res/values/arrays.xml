@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="heart_sensors" translatable="false">
-        <item>Waterrower</item>
-        <item>Sensor</item>
+        <item>Waterrower / no sensing</item>
+        <item>Device internal sensor</item>
         <item>Bluetooth</item>
+        <item>New bluetooth</item>
         <item>Ant+</item>
     </string-array>
     <string-array name="heart_sensor_values" translatable="false">
         <item>svenmeier.coxswain.Heart</item>
         <item>svenmeier.coxswain.sensors.SensorsHeart</item>
         <item>svenmeier.coxswain.bluetooth.BluetoothHeart</item>
+        <item>svenmeier.coxswain.heart.bluetooth.BluetoothHeartAdapter</item>
         <item>svenmeier.coxswain.ant.AntHeart</item>
     </string-array>
 

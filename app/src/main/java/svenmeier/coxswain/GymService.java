@@ -16,6 +16,7 @@
 package svenmeier.coxswain;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -25,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
@@ -62,9 +64,7 @@ public class GymService extends Service {
 
     @Override
     public void onDestroy() {
-        if (this.rowing != null) {
-            endRowing();
-        }
+        foreground.stop();
     }
 
     @Override
@@ -103,6 +103,16 @@ public class GymService extends Service {
         this.rowing = null;
     }
 
+    private void rowingEnded(Rowing rowing) {
+        if (this.rowing == rowing) {
+            this.rowing = null;
+        }
+
+        if (this.rowing == null) {
+            stopSelf();
+        }
+    }
+
     /**
      * Current rowing on rower.
      */
@@ -121,7 +131,7 @@ public class GymService extends Service {
 
             this.heart = Heart.create(GymService.this, rower);
 
-            this.motivator = new DefaultMotivator(GymService.this);
+            this.motivator = new DefaultMotivator(getApplicationContext());
         }
 
         public void run() {
@@ -194,7 +204,7 @@ public class GymService extends Service {
 
                     heart.destroy();
 
-                    foreground.stop();
+                    rowingEnded(Rowing.this);
                 }
             });
         }
@@ -205,13 +215,13 @@ public class GymService extends Service {
 
         private Preference<Boolean> headsup;
 
-        private boolean started;
-
         private String text;
 
         private int progress = -1;
 
         private long headsupSince;
+
+        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         private Notification.Builder builder;
 
@@ -221,7 +231,23 @@ public class GymService extends Service {
             builder = new Notification.Builder(GymService.this)
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(getString(R.string.app_name))
-                    .setOngoing(true);
+                    .setOngoing(true)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setPriority(Notification.PRIORITY_DEFAULT);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                String id = "gym";
+                NotificationChannel channel = new NotificationChannel(id,
+                            "Gym", NotificationManager.IMPORTANCE_DEFAULT);
+                channel.enableVibration(true);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                notificationManager.createNotificationChannel(channel);
+
+                builder.setChannelId(id);
+            }
+
+            builder.setContentText(getString(R.string.gym_notification_connecting));
+            startForeground(1, builder.build());
         }
 
         public void connected(String text) {
@@ -232,12 +258,13 @@ public class GymService extends Service {
             }
 
             builder.setContentIntent(PendingIntent.getActivity(service, 1, new Intent(service, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-            builder.setDefaults(Notification.DEFAULT_VIBRATE);
             builder.setContentText(text);
             builder.setProgress(0, 0, false);
-            builder.setPriority(Notification.PRIORITY_DEFAULT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            }
 
-            start(builder.build());
+            notificationManager.notify(1, builder.build());
 
             this.text = text;
             this.progress = -1;
@@ -253,58 +280,13 @@ public class GymService extends Service {
             }
 
             builder.setContentIntent(PendingIntent.getActivity(service, 1, new Intent(service, WorkoutActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-
-            if (text.equals(this.text)) {
-                // no vibration, but needs empty array to keep headsup
-                builder.setDefaults(0);
-                builder.setVibrate(new long[0]);
-            } else {
-                builder.setDefaults(Notification.DEFAULT_VIBRATE);
-            }
-
             builder.setContentText(text);
             builder.setProgress(100, progress, false);
 
-            if (headsUp()) {
-                builder.setPriority(Notification.PRIORITY_HIGH);
-            } else {
-                builder.setPriority(Notification.PRIORITY_DEFAULT);
-            }
-
-            Notification notification = builder.build();
-
-            start(notification);
+            notificationManager.notify(1, builder.build());
 
             this.text = text;
             this.progress = progress;
-        }
-
-        private boolean headsUp() {
-            if (headsup.get()) {
-                if (gym.hasListener(Object.class)) {
-                    headsupSince = 0;
-                } else {
-                    if (headsupSince == 0) {
-                        headsupSince = System.currentTimeMillis();
-                    } else {
-                        if (System.currentTimeMillis() - headsupSince > 2000) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private void start(Notification notification) {
-            if (started) {
-                NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-                notificationManager.notify(1, notification);
-            } else {
-                startForeground(1, notification);
-            }
-            started = true;
         }
 
         public void stop() {
@@ -312,8 +294,6 @@ public class GymService extends Service {
             progress = -1;
 
             stopForeground(true);
-
-            started = false;
         }
     }
 
@@ -324,6 +304,10 @@ public class GymService extends Service {
             serviceIntent.putExtra(UsbManager.EXTRA_DEVICE, device);
         }
 
-        context.startService(serviceIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
+        }
     }
 }

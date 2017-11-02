@@ -21,6 +21,7 @@
     <string name="action_challenge">Challenge</string>
     <string name="action_new">New</string>
 
+    <string name="gym_notification_connecting">Connecting ...</string>
     <string name="gym_notification_connected">Connected to %s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
@@ -220,10 +221,6 @@
     <string name="preference_export_track_summary">Generate artificial track locations</string>
 
     <string name="preference_integration_title">Integration</string>
-
-    <string name="preference_integration_headsup" translatable="false">preference_integration_headsup</string>
-    <string name="preference_integration_headsup_title">Notification</string>
-    <string name="preference_integration_headsup_summary">Show heads-up notification while other Apps (>= Android 4.1)</string>
 
     <string name="preference_integration_intent" translatable="false">preference_integration_intent</string>
     <string name="preference_integration_intent_title">Intent</string>

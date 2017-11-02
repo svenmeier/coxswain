@@ -169,13 +169,6 @@
         android:title="@string/preference_integration_title"
     >
         <CheckBoxPreference
-            android:key="@string/preference_integration_headsup"
-            android:title="@string/preference_integration_headsup_title"
-            android:summary="@string/preference_integration_headsup_summary"
-            android:defaultValue="false"
-            />
-
-        <CheckBoxPreference
             android:key="@string/preference_integration_intent"
             android:title="@string/preference_integration_intent_title"
             android:summary="@string/preference_integration_intent_summary"

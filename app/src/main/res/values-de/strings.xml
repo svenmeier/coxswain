@@ -19,6 +19,7 @@
     <string name="action_challenge">Wettstreit</string>
     <string name="action_new">Neu</string>
 
+    <string name="gym_notification_connecting">Verbinde ...</string>
     <string name="gym_notification_connected">Verbunden mit %s</string>
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_ready">bereit</string>
@@ -196,9 +197,6 @@
     <string name="preference_export_track_summary">Generate künstliche Spur-Orte</string>
 
     <string name="preference_integration_title">Integration</string>
-
-    <string name="preference_integration_headsup_title">Notifikation</string>
-    <string name="preference_integration_headsup_summary">Heads-up Notifikation während anderer Apps (>= Android 4.1)</string>
 
     <string name="preference_integration_intent_title">Intent</string>
     <string name="preference_integration_intent_summary">Intent ausführen bei Start eines Programms</string>

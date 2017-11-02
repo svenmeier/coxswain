@@ -133,6 +133,9 @@
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
 
+    <string name="preference_compact_title">Training komprimieren</string>
+    <string name="preference_compact_summary">Trainings nach %s Tagen komprimieren</string>
+
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy_title">Energie</string>

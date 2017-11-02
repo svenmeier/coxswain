@@ -1,6 +1,8 @@
 package svenmeier.coxswain.view.preference;
 
 import android.content.Context;
+import android.os.Parcelable;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 
 /**
@@ -19,6 +21,15 @@ public class EditTextPreference extends android.support.v7.preference.EditTextPr
 
 	public EditTextPreference(Context context) {
 		super(context);
+	}
+
+	@Override
+	protected boolean persistString(String value) {
+		boolean persisted = super.persistString(value);
+
+		notifyChanged();
+
+		return persisted;
 	}
 
 	@Override

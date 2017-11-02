@@ -69,7 +69,7 @@ public class LabelView extends View {
 
             textColor = a.getColor(R.styleable.LabelView_text_color, 0);
 
-            String font = a.getString(R.styleable.LabelView_font);
+            String font = a.getString(R.styleable.LabelView_fontname);
             if (font != null) {
                 paint.setTypeface(FontCache.getFont(getContext(), font));
             }

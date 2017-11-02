@@ -62,7 +62,7 @@
     </style>
 
     <style name="ValueView" parent="LabelView">
-        <item name="font">fonts/coxswain.ttf</item>
+        <item name="fontname">fonts/coxswain.ttf</item>
     </style>
 
     <style name="MenuButton" parent="Base.Widget.AppCompat.Button.Borderless">

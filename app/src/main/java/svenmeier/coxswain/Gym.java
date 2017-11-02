@@ -18,19 +18,23 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
+import android.text.format.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import propoid.core.Propoid;
 import propoid.db.LookupException;
 import propoid.db.Match;
 import propoid.db.Order;
+import propoid.db.Range;
 import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Transaction;
 import propoid.db.Where;
 import propoid.db.cascading.DefaultCascading;
+import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Program;
@@ -93,34 +97,47 @@ public class Gym {
         repository.index(snapshotIndex, false, Order.ascending(snapshotIndex.workout));
     }
 
-    public void defaults() {
+    public void initialize() {
         Match<Program> query = repository.query(new Program());
-        if (query.count() > 0) {
-            return;
+        if (query.count() == 0) {
+            repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500, Difficulty.EASY));
+            repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000, Difficulty.EASY));
+            repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000, Difficulty.MEDIUM));
+
+            repository.insert(Program.kilocalories(String.format(context.getString(R.string.energy_kilocalories), 200), 200, Difficulty.MEDIUM));
+
+            repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5, Difficulty.EASY));
+            repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.MEDIUM));
+
+            repository.insert(Program.strokes(String.format(context.getString(R.string.strokes_count), 500), 500, Difficulty.MEDIUM));
+
+            Program program = new Program(context.getString(R.string.program_name_segments));
+            program.getSegment(0).setDistance(1000);
+            program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+            program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+            program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+            program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+            program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+            program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+            program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
+            program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
+            repository.insert(program);
         }
 
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500, Difficulty.EASY));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 1000), 1000, Difficulty.EASY));
-        repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 2000), 2000, Difficulty.MEDIUM));
-
-        repository.insert(Program.kilocalories(String.format(context.getString(R.string.energy_kilocalories), 200), 200, Difficulty.MEDIUM));
-
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 5), 5, Difficulty.EASY));
-        repository.insert(Program.minutes(String.format(context.getString(R.string.duration_minutes), 10), 10, Difficulty.MEDIUM));
-
-        repository.insert(Program.strokes(String.format(context.getString(R.string.strokes_count), 500), 500, Difficulty.MEDIUM));
-
-        Program program = new Program(context.getString(R.string.program_name_segments));
-        program.getSegment(0).setDistance(1000);
-        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
-        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
-        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
-        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
-        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
-        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
-        program.addSegment(new Segment(Difficulty.HARD).setDuration(60).setStrokeRate(30));
-        program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
-        repository.insert(program);
+        // compact 5 oldest workouts only, to minimize strain
+        int days = Preference.getInt(context, R.string.preference_compact).get();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -days);
+        Workout workout = new Workout();
+        Snapshot snapshot = new Snapshot();
+        Where where =
+                Where.all(
+                    Where.lessEqual(workout.start, calendar.getTimeInMillis()),
+                        Where.is(snapshot.workout, Where.any())
+                );
+        for (Workout compact : repository.query(workout, where).list(Range.limit(5), Order.ascending(workout.start))) {
+            repository.query(snapshot, Where.equal(snapshot.workout, compact)).delete();
+        }
     }
 
     public boolean hasListener(Class<?> clazz) {

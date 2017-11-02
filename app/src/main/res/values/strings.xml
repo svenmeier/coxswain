@@ -136,6 +136,10 @@
     <string name="preference_theme_dark_title">Dark theme</string>
     <string name="preference_theme_dark_summary">Use a dark theme</string>
 
+    <string name="preference_compact" translatable="false">preference_compact</string>
+    <string name="preference_compact_title">Compact workouts</string>
+    <string name="preference_compact_summary">Compact workouts after %s days</string>
+
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy" translatable="false">preference_adjust_energy</string>

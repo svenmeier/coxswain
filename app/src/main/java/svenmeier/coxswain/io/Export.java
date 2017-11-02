@@ -1,7 +1,12 @@
 package svenmeier.coxswain.io;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.widget.Toast;
+
+import java.io.File;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.R;
@@ -57,5 +62,14 @@ public abstract class Export<T> {
 		last.set(export.getClass().getName());
 
 		export.start(workout);
+	}
+
+	/**
+	 * Set a file on the given intent.
+	 */
+	public static void setFile(Context context, File file, Intent intent) {
+		Uri uri = FileProvider.getUriForFile(context, context.getPackageName() + ".files", file);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.putExtra(Intent.EXTRA_STREAM, uri);
 	}
 }

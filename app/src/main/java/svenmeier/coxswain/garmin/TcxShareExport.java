@@ -36,9 +36,8 @@ public class TcxShareExport extends TcxExport {
 	@Override
 	protected void onWritten(File file) {
 		Intent shareIntent = new Intent(Intent.ACTION_SEND);
-		Uri uri = Uri.fromFile(file);
 		shareIntent.setType("text/xml");
-		shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		setFile(context, file, shareIntent);
 		shareIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
 
 		context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.garmin_export)));

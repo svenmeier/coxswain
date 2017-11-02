@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -95,9 +96,9 @@ public class ProgramExport extends Export<Program> {
 
 		private void share(File file) {
 			Intent shareIntent = new Intent(Intent.ACTION_SEND);
-			Uri uri = Uri.fromFile(file);
+
 			shareIntent.setType("text/xml");
-			shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+			setFile(context, file, shareIntent);
 			shareIntent.putExtra(Intent.EXTRA_SUBJECT, file.getName());
 
 			context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.program_export)));

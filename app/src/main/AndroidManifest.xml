@@ -131,6 +131,24 @@
             android:enabled="true" >
         </service>
 
+        <!-- needed for API 24+ for content observers registered by Propoid -->
+        <provider
+            android:name=".GymContentProvider"
+            android:authorities="svenmeier.coxswain.gym"
+            android:enabled="true"
+            android:exported="false"
+        />
+
+        <!-- needed for API 24+ for sharing file uri by exports -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="svenmeier.coxswain.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

@@ -5,13 +5,13 @@ if (project.hasProperty("coxswain-signing") && new File(project.property("coxswa
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 48
         versionName "4.8"
     }
@@ -29,8 +29,15 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        jcenter()
+        google()
+    }
+}
+
 ext {
-    supportLibraryVersion = '25.3.1'
+    supportLibraryVersion = '27.0.0'
     playServicesVersion = '8.4.0'
 }
 
@@ -42,7 +49,7 @@ dependencies {
     compile "com.android.support:preference-v14:$supportLibraryVersion"
     compile "com.google.android.gms:play-services-fitness:$playServicesVersion"
     testCompile 'junit:junit:4.12'
-    testCompile('org.robolectric:robolectric:3.3.2') {
+    testCompile('org.robolectric:robolectric:3.4.2') {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }

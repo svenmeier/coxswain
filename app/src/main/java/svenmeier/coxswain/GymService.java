@@ -226,8 +226,6 @@ public class GymService extends Service {
         private Notification.Builder builder;
 
         public Foreground() {
-            headsup = Preference.getBoolean(GymService.this, R.string.preference_integration_headsup);
-
             builder = new Notification.Builder(GymService.this)
                     .setSmallIcon(R.drawable.notification)
                     .setContentTitle(getString(R.string.app_name))

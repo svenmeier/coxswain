@@ -18,6 +18,7 @@ package svenmeier.coxswain.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -91,7 +92,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
             adapter.restartLoader(0, this);
 
             if (text != null) {
-                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), text, Toast.LENGTH_SHORT).show();
             }
 
             return true;

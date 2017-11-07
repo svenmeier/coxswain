@@ -1,6 +1,7 @@
 package svenmeier.coxswain;
 
 import android.app.Application;
+import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
 
 /**
@@ -19,18 +20,8 @@ public class Coxswain extends Application {
 
 		gym = Gym.instance(this);
 
-		new Initializer();
-	}
-
-	private class Initializer implements Runnable {
-
-		public Initializer() {
-			new Thread(this).start();
-		}
-
-		@Override
-		public void run() {
-			gym.initialize();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			CompactService.setup(this.getApplicationContext());
 		}
 	}
 }

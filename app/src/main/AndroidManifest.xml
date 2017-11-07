@@ -131,6 +131,11 @@
             android:enabled="true" >
         </service>
 
+        <service
+            android:name=".CompactService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+        />
+
         <!-- needed for API 24+ for content observers registered by Propoid -->
         <provider
             android:name=".GymContentProvider"

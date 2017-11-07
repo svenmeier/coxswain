@@ -123,8 +123,14 @@ public class Gym {
             program.addSegment(new Segment(Difficulty.EASY).setDistance(1000));
             repository.insert(program);
         }
+    }
 
-        // compact 5 oldest workouts only, to minimize strain
+    /**
+     * Compact workouts.
+     *
+     * @param count maximum count of workouts to compact
+     */
+    public void compact(int count) {
         int days = Preference.getInt(context, R.string.preference_compact).get();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -days);
@@ -135,18 +141,9 @@ public class Gym {
                     Where.lessEqual(workout.start, calendar.getTimeInMillis()),
                         Where.is(snapshot.workout, Where.any())
                 );
-        for (Workout compact : repository.query(workout, where).list(Range.limit(5), Order.ascending(workout.start))) {
+        for (Workout compact : repository.query(workout, where).list(Range.limit(count), Order.ascending(workout.start))) {
             repository.query(snapshot, Where.equal(snapshot.workout, compact)).delete();
         }
-    }
-
-    public boolean hasListener(Class<?> clazz) {
-        for (Listener listener : listeners) {
-            if (clazz.isInstance(listener)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void addListener(Listener listener) {
@@ -502,6 +499,13 @@ public class Gym {
     public static Gym instance(Context context) {
         if (instance == null) {
             instance = new Gym(context.getApplicationContext());
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    instance.initialize();
+                }
+            }).start();
         }
 
         return instance;

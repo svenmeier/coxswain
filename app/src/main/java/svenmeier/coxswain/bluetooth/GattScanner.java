@@ -13,7 +13,10 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.UUID;
 
 import svenmeier.coxswain.Coxswain;
@@ -21,179 +24,187 @@ import svenmeier.coxswain.Coxswain;
 /**
  * A scanner of {@link BluetoothGatt} devices.
  *
- * @see #onFound(BluetoothGatt)
+ * @see #onDiscovered(BluetoothGatt)
  */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class GattScanner extends BluetoothGattCallback implements BluetoothAdapter.LeScanCallback {
-
-	// direct connection (not auto) is faster
-	private static final boolean DIRECT = false;
 
 	private static final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
 
 	private Context context;
 
+	private String preferred;
+
 	private BluetoothAdapter adapter;
 
-	private LinkedHashMap<String, BluetoothDevice> devices = new LinkedHashMap<>();
+	private boolean scanning;
 
-	private boolean connecting;
+	private Set<String> scanned = new HashSet<>();
 
-	private BluetoothGatt discovering;
+	private BluetoothGatt connected;
 
-	public GattScanner(Context context) {
+	public GattScanner(Context context, String preferred) {
 		this.context = context;
+
+		this.preferred = preferred;
 	}
 
-	public synchronized boolean startScanning() {
-		boolean started = true;
+	public synchronized boolean start() {
 
-		if (adapter == null) {
-			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-
-			adapter = manager.getAdapter();
-
-			started = adapter.startLeScan(this);
-
-			Log.d(Coxswain.TAG, "bluetooth scan started " + started);
+		if (adapter != null) {
+			// already started
+			return true;
 		}
 
-		return started;
+		BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+		adapter = manager.getAdapter();
+
+		if (preferred != null) {
+			try {
+				BluetoothDevice device = adapter.getRemoteDevice(preferred);
+				if (device != null) {
+					connect(device);
+
+					// assume successful connect
+					return true;
+				}
+			} catch (Exception preferredFailed) {
+			}
+		}
+
+		scan();
+
+		// successful if scanning
+		return scanning;
 	}
 
-	public boolean isScanning() {
-		return this.adapter != null;
+	private void scan() {
+		if (scanning) {
+			// already scanning
+			return;
+		}
+
+		scanning = adapter.startLeScan(this);
+		Log.d(Coxswain.TAG, "bluetooth scan " + scanning);
+	}
+
+	private void unscan() {
+		if (scanning == false) {
+			// not scanning
+			return;
+		}
+
+		Log.d(Coxswain.TAG, "bluetooth unscan");
+		adapter.stopLeScan(this);
+		scanning = false;
 	}
 
 	/**
 	 * Close all contained devices.
 	 */
-	public synchronized void stopScanning() {
+	public synchronized void stop() {
 		if (adapter == null) {
 			return;
 		}
 
-		devices.clear();
-
-		if (discovering != null) {
-			discovering.close();
-			discovering = null;
+		if (connected != null) {
+			connected.close();
+			connected = null;
 		}
-		connecting = false;
 
-		adapter.stopLeScan(this);
+		scanned.clear();
+
+		unscan();
+
 		adapter = null;
-		Log.d(Coxswain.TAG, "bluetooth scan stopped");
-	}
-
-	/**
-	 * Connect if not already connecting.
-	 */
-	private void connect() {
-		if (connecting == false) {
-			if (devices.isEmpty() == false) {
-				BluetoothDevice device = devices.values().iterator().next();
-
-				Log.d(Coxswain.TAG, "bluetooth services connecting " + device.getAddress());
-				device.connectGatt(context, DIRECT, this);
-
-				connecting = true;
-			}
-		}
 	}
 
 	@Override
 	public synchronized void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-		if (isScanning() == false) {
+		if (adapter == null || scanning == false) {
 			return;
 		}
 
 		String address = device.getAddress();
-		if (devices.containsKey(address) == false) {
-			Log.d(Coxswain.TAG, "bluetooth gatt found " + address);
+		if (scanned.contains(address) == false) {
+			Log.d(Coxswain.TAG, "bluetooth scanned " + address);
+			scanned.add(address);
 
-			devices.put(address, device);
+			unscan();
 
-			connect();
+			connect(device);
 		}
+	}
+
+	private void connect(BluetoothDevice device) {
+		Log.d(Coxswain.TAG, "bluetooth connecting " + device.getAddress());
+		device.connectGatt(context, false, this);
 	}
 
 	@Override
 	public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
+		if (adapter == null) {
+			return;
+		}
+
 		String address = candidate.getDevice().getAddress();
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			if (connecting == true && discovering == null) {
-				Log.d(Coxswain.TAG, "bluetooth gatt connected " + candidate.getDevice().getAddress());
+			Log.d(Coxswain.TAG, "bluetooth connected " + candidate.getDevice().getAddress());
 
-				discovering = candidate;
-				discovering.discoverServices();
-			}
+			connected = candidate;
+			connected.discoverServices();
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-			// link loss?
-			Log.d(Coxswain.TAG, "bluetooth gatt disconnected " + address);
+			if (connected != null && connected.getDevice().getAddress().equals(address)) {
+				Log.d(Coxswain.TAG, "bluetooth disconnected " + address);
 
-			onLost(candidate);
-
-			if (isScanning()) {
-				retry(candidate);
+				connected.close();
+				connected = null;
+			} else {
+				onLost(candidate);
 			}
+
+			scanned.remove(address);
+
+			scan();
 		}
-	}
-
-	private void retry(BluetoothGatt candidate) {
-		String address = candidate.getDevice().getAddress();
-
-		BluetoothDevice removed = devices.remove(address);
-		if (removed != null) {
-			devices.put(address, removed);
-		}
-
-		if (discovering != null && discovering.getDevice().getAddress().equals(address)) {
-			connecting = false;
-			discovering = null;
-		}
-
-		candidate.close();
-
-		connect();
 	}
 
 	@Override
 	public synchronized void onServicesDiscovered(BluetoothGatt candidate, int status) {
+		if (adapter == null) {
+			return;
+		}
+
 		String address = candidate.getDevice().getAddress();
 
-		if (discovering == null || discovering.getDevice().getAddress().equals(address) == false) {
+		if (connected.getDevice().getAddress().equals(address) == false) {
 			return;
 		}
 
 		if (status == BluetoothGatt.GATT_SUCCESS) {
-			Log.d(Coxswain.TAG, "bluetooth services discovered " + address);
+			Log.d(Coxswain.TAG, "bluetooth discovered " + address);
 
-			devices.remove(address);
-			discovering = null;
-			connecting = false;
+			onDiscovered(connected);
+		}
 
-			onFound(candidate);
+		if (adapter != null) {
+			Log.d(Coxswain.TAG, "bluetooth still scanning " + address);
+			connected.close();
+			connected = null;
 
-			if (isScanning()) {
-				connect();
-			}
-		} else {
-			retry(candidate);
+			// keep in scanned, so it isn't connected again
+			scan();
 		}
 	}
 
 	/**
 	 *
-	 * A candidate was found.
-	 * <p>
-	 * Default implementation just closes the candidate.
+	 * A candidate was discovered.
 	 *
 	 * @param candidate found gatt
 	 */
-	protected void onFound(BluetoothGatt candidate) {
-		candidate.close();
+	protected void onDiscovered(BluetoothGatt candidate) {
 	}
 
 	/**
@@ -205,10 +216,10 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 	}
 
 	protected boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {
-		boolean info;
+		boolean status;
 
-		info = candidate.setCharacteristicNotification(characteristic, true);
-		Log.d(Coxswain.TAG, "bluetooth characteristic notification set " + info);
+		status = candidate.setCharacteristicNotification(characteristic, true);
+		Log.d(Coxswain.TAG, "bluetooth characteristic notification set " + status);
 
 		BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
 		if (descriptor == null) {
@@ -216,14 +227,22 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		} else {
 			Log.d(Coxswain.TAG, "bluetooth characteristic descriptor acquired");
 
-			info = descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-			Log.d(Coxswain.TAG, "bluetooth descriptor notification set " + info);
+			status = descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+			Log.d(Coxswain.TAG, "bluetooth descriptor notification set " + status);
 
-			info = candidate.writeDescriptor(descriptor);
-			Log.d(Coxswain.TAG, "bluetooth descriptor written " + info);
+			status = candidate.writeDescriptor(descriptor);
+			Log.d(Coxswain.TAG, "bluetooth descriptor write " + status);
 
+			// return true despite of the actual status
 			return true;
 		}
+	}
+
+	@Override
+	public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+		super.onCharacteristicWrite(gatt, characteristic, status);
+
+		Log.d(Coxswain.TAG, "bluetooth descriptor written " + status);
 	}
 
 	public static final UUID uuid(int id) {

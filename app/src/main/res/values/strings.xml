@@ -253,4 +253,6 @@
 
     <string name="preference_performance_window" translatable="false">preference_performance_window</string>
     <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
+
+    <string name="preference_bluetooth_preferred" translatable="false">preference_bluetooth_preferred</string>
 </resources>

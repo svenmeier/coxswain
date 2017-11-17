@@ -178,7 +178,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 
 		String address = candidate.getDevice().getAddress();
 
-		if (connected.getDevice().getAddress().equals(address) == false) {
+		if (connected == null || connected.getDevice().getAddress().equals(address) == false) {
 			return;
 		}
 

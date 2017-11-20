@@ -18,6 +18,7 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.UiThread;
 import android.text.format.DateUtils;
 
 import java.util.ArrayList;
@@ -88,16 +89,20 @@ public class Gym {
         this.context = context;
 
         repository = new Repository(context, "gym");
-
-        ((DefaultCascading) repository.cascading).setCascaded(new Program().segments);
-
-        Workout workoutIndex = new Workout();
-        repository.index(workoutIndex, false, Order.descending(workoutIndex.start));
-        Snapshot snapshotIndex = new Snapshot();
-        repository.index(snapshotIndex, false, Order.ascending(snapshotIndex.workout));
     }
 
-    public void initialize() {
+    void initialize() {
+        // programs cascade to their segments
+        ((DefaultCascading) repository.cascading).setCascaded(new Program().segments);
+
+        // index workout by start
+        Workout workoutIndex = new Workout();
+        repository.index(workoutIndex, false, Order.descending(workoutIndex.start));
+
+        // index snapshots by workout
+        Snapshot snapshotIndex = new Snapshot();
+        repository.index(snapshotIndex, false, Order.ascending(snapshotIndex.workout));
+        
         Match<Program> query = repository.query(new Program());
         if (query.count() == 0) {
             repository.insert(Program.meters(String.format(context.getString(R.string.distance_meters), 500), 500, Difficulty.EASY));
@@ -146,6 +151,12 @@ public class Gym {
         }
     }
 
+    /**
+     * Add a listener - has to be called on main thread.
+     * 
+     * @param listener
+     */
+    @UiThread
     public void addListener(Listener listener) {
         listeners.add(listener);
     }
@@ -496,6 +507,10 @@ public class Gym {
         }
     }
 
+    /**
+     * Get the singelton Gym - has to be called on the main thread.
+     */
+    @UiThread
     public static Gym instance(Context context) {
         if (instance == null) {
             instance = new Gym(context.getApplicationContext());

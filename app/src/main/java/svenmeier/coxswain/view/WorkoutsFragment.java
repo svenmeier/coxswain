@@ -35,6 +35,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import propoid.core.Property;
 import propoid.db.Match;
 import propoid.db.Order;
 import propoid.ui.list.GenericRecyclerAdapter;
@@ -59,6 +60,8 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
     private WorkoutsAdapter adapter;
 
     private int sort = 0;
+
+    private boolean ascending = false;
 
     @Override
     public void onAttach(Context context) {
@@ -87,12 +90,23 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sort) {
             sort = (sort + 1) % 4;
+            ascending = false;
 
-            String text = adapter.sort(sort);
+            String text = adapter.sort(sort, ascending);
             adapter.restartLoader(0, this);
 
             if (text != null) {
-                Snackbar.make(getView(), text, Toast.LENGTH_SHORT).show();
+                Snackbar.make(getView(), text, Toast.LENGTH_SHORT)
+                        .setAction(R.string.action_sort_descending, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ascending = !ascending;
+
+                                adapter.sort(sort, ascending);
+                                adapter.restartLoader(0, WorkoutsFragment.this);
+                            }
+                        })
+                        .show();
             }
 
             return true;
@@ -134,29 +148,35 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
         public WorkoutsAdapter() {
             super(R.layout.layout_workouts_item, Gym.instance(getActivity()).getWorkouts());
 
-            sort(sort);
+            sort(sort, false);
         }
 
-        public String sort(int index) {
+        public String sort(int index, boolean ascending) {
             String text = null;
 
+            Property by;
             switch (index) {
                 case 0:
                     text = getString(R.string.sort_start);
-                    setOrder(Order.descending(getMatch().getPrototype().start));
+                    by = getMatch().getPrototype().start;
                     break;
                 case 1:
                     text = getString(R.string.sort_duration);
-                    setOrder(Order.ascending(getMatch().getPrototype().duration));
+                    by = getMatch().getPrototype().duration;
                     break;
                 case 2:
                     text = getString(R.string.sort_distance);
-                    setOrder(Order.descending(getMatch().getPrototype().distance));
+                    by = getMatch().getPrototype().distance;
                     break;
-                case 3:
+                default:
                     text = getString(R.string.sort_energy);
-                    setOrder(Order.descending(getMatch().getPrototype().energy));
-                    break;
+                    by = getMatch().getPrototype().energy;
+            }
+
+            if (ascending) {
+                setOrder(Order.ascending(by));
+            } else {
+                setOrder(Order.descending(by));
             }
 
             return text;

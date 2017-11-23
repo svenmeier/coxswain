@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import propoid.core.Property;
-import propoid.db.Match;
 import propoid.db.Order;
 import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchRecyclerAdapter;
@@ -60,8 +59,6 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
     private WorkoutsAdapter adapter;
 
     private int sort = 0;
-
-    private boolean ascending = false;
 
     @Override
     public void onAttach(Context context) {
@@ -90,19 +87,16 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_sort) {
             sort = (sort + 1) % 4;
-            ascending = false;
 
-            String text = adapter.sort(sort, ascending);
+            String text = adapter.sort(sort, false);
             adapter.restartLoader(0, this);
 
             if (text != null) {
                 Snackbar.make(getView(), text, Toast.LENGTH_SHORT)
-                        .setAction(R.string.action_sort_descending, new View.OnClickListener() {
+                        .setAction(R.string.action_sort_ascending, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                ascending = !ascending;
-
-                                adapter.sort(sort, ascending);
+                                adapter.sort(sort, true);
                                 adapter.restartLoader(0, WorkoutsFragment.this);
                             }
                         })

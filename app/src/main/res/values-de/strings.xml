@@ -6,7 +6,7 @@
     <string name="action_bind">Verknüpfen</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_sort">Sortierung</string>
-    <string name="action_sort_descending">inverse</string>
+    <string name="action_sort_ascending">aufsteigend</string>
     <string name="action_ok">OK</string>
     <string name="action_edit">Bearbeiten</string>
     <string name="action_select">Auswählen</string>

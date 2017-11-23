@@ -265,6 +265,12 @@ public class BluetoothHeart extends Heart {
 		}
 
 		public void close() {
+			if (selected == null) {
+				// nothing was selected, clear preferred
+				preferredDevice.set(null);
+			}
+			selected = null;
+
 			stop();
 		}
 
@@ -274,9 +280,6 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public void run() {
 			if (connection == GattConnection.this && selected == null) {
-				// nothing found, clear preferred
-				preferredDevice.set(null);
-
 				toast(context.getString(R.string.bluetooth_heart_not_found));
 				close();
 			}

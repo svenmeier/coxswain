@@ -56,6 +56,8 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			return true;
 		}
 
+		Log.d(Coxswain.TAG, "bluetooth starting");
+
 		BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 		adapter = manager.getAdapter();
 
@@ -116,6 +118,8 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 
 		unscan();
 
+		Log.d(Coxswain.TAG, "bluetooth stopped");
+
 		adapter = null;
 	}
 
@@ -158,13 +162,14 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			if (connected != null && connected.getDevice().getAddress().equals(address)) {
 				Log.d(Coxswain.TAG, "bluetooth disconnected " + address);
 
+				onLost(connected);
+
 				connected.close();
 				connected = null;
-			} else {
-				onLost(candidate);
-			}
 
-			scanned.remove(address);
+				// remove from scanned for another chance
+				scanned.remove(address);
+			}
 
 			scan();
 		}
@@ -193,7 +198,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			connected.close();
 			connected = null;
 
-			// keep in scanned, so it isn't connected again
+			// dont remove from scanned, so it isn't connected again
 			scan();
 		}
 	}

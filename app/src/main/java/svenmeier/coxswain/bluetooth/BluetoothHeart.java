@@ -268,8 +268,10 @@ public class BluetoothHeart extends Heart {
 			if (selected == null) {
 				// nothing was selected, clear preferred
 				preferredDevice.set(null);
+			} else {
+				selected.close();
+				selected = null;
 			}
-			selected = null;
 
 			stop();
 		}
@@ -313,6 +315,8 @@ public class BluetoothHeart extends Heart {
 					}
 				}
 			}
+			
+			candidate.close();
 		}
 
 		@Override
@@ -342,16 +346,6 @@ public class BluetoothHeart extends Heart {
 			} else {
 				format = BluetoothGattCharacteristic.FORMAT_UINT16;
 			}
-
-			final String data = Arrays.toString(characteristic.getValue());
-			Log.d(Coxswain.TAG, "bluetooth characteristic changed " + data);
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					toast("changed: " + data);
-				}
-			});
-
 
 			onHeartRate(characteristic.getIntValue(format, 1));
 		}

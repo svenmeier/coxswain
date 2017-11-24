@@ -171,7 +171,9 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 				scanned.remove(address);
 			}
 
-			scan();
+			if (adapter != null) {
+				scan();
+			}
 		}
 	}
 
@@ -190,15 +192,13 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		if (status == BluetoothGatt.GATT_SUCCESS) {
 			Log.d(Coxswain.TAG, "bluetooth discovered " + address);
 
-			onDiscovered(connected);
+			// subclass is responsible for connection now
+			BluetoothGatt discovered = connected;
+			connected = null;
+			onDiscovered(discovered);
 		}
 
 		if (adapter != null) {
-			Log.d(Coxswain.TAG, "bluetooth still scanning " + address);
-			connected.close();
-			connected = null;
-
-			// dont remove from scanned, so it isn't connected again
 			scan();
 		}
 	}
@@ -206,10 +206,14 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 	/**
 	 *
 	 * A candidate was discovered.
+	 * <p>
+	 * Note: The default implementation just closes the device - if overridden the subclass is
+	 * responsible to close the device, whether immediately or later on.
 	 *
-	 * @param candidate found gatt
+	 * @param discovered discovered gatt
 	 */
-	protected void onDiscovered(BluetoothGatt candidate) {
+	protected void onDiscovered(BluetoothGatt discovered) {
+		discovered.close();
 	}
 
 	/**

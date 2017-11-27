@@ -15,6 +15,10 @@ You'll need
 - a USB-OTG adapter (USB-A/female to USB-micro/male for the cable which came with your Waterrower, or USB-mini/male to USB-micro/male)
 - Waterrower with S4
 
-This app is under development. Please report problems and ideas.
+Sideload from https://github.com/svenmeier/coxswain/releases/latest or install from Google Play:
 
-[<img alt="Get it on Google Play" height="70" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" />](http://play.google.com/store/apps/details?id=svenmeier.coxswain) [<img alt="Donate" src="https://www.paypalobjects.com/en_US/DE/i/btn/btn_donateCC_LG.gif" />](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CC3QC76CKCCRY)
+[<img alt="Get it on Google Play" height="70" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" />](http://play.google.com/store/apps/details?id=svenmeier.coxswain)
+
+This app is under development. Please report problems and ideas and/or support the development by a donation:
+
+[<img alt="Donate" src="https://www.paypalobjects.com/en_US/DE/i/btn/btn_donateCC_LG.gif" />](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CC3QC76CKCCRY)

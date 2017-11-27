@@ -80,6 +80,31 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		return scanning;
 	}
 
+	/**
+	 * Stop.
+	 */
+	public synchronized void stop() {
+		if (adapter == null) {
+			// aleady stopped
+			return;
+		}
+
+		if (connected != null) {
+			// still connected
+			connected.close();
+			connected = null;
+		}
+
+		// forget all scanned
+		scanned.clear();
+
+		unscan();
+
+		Log.d(Coxswain.TAG, "bluetooth stopped");
+
+		adapter = null;
+	}
+
 	private void scan() {
 		if (scanning) {
 			// already scanning
@@ -99,28 +124,6 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		Log.d(Coxswain.TAG, "bluetooth unscan");
 		adapter.stopLeScan(this);
 		scanning = false;
-	}
-
-	/**
-	 * Close all contained devices.
-	 */
-	public synchronized void stop() {
-		if (adapter == null) {
-			return;
-		}
-
-		if (connected != null) {
-			connected.close();
-			connected = null;
-		}
-
-		scanned.clear();
-
-		unscan();
-
-		Log.d(Coxswain.TAG, "bluetooth stopped");
-
-		adapter = null;
 	}
 
 	@Override
@@ -160,16 +163,14 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			connected.discoverServices();
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			if (connected != null && connected.getDevice().getAddress().equals(address)) {
-				Log.d(Coxswain.TAG, "bluetooth disconnected " + address);
-
-				onLost(connected);
-
 				connected.close();
 				connected = null;
 
 				// remove from scanned for another chance
 				scanned.remove(address);
 			}
+
+			onLost(candidate);
 
 			if (adapter != null) {
 				scan();

@@ -1,7 +1,11 @@
+plugins {
+    id "co.riiid.gradle" version "0.4.2"
+}
+
 apply plugin: 'com.android.application'
 
-if (project.hasProperty("coxswain-signing") && new File(project.property("coxswain-signing")).exists()) {
-    apply from: project.property("coxswain-signing")
+if (project.hasProperty("coxswain-private") && new File(project.property("coxswain-private")).exists()) {
+    apply from: project.property("coxswain-private")
 }
 
 android {
@@ -12,8 +16,8 @@ android {
         applicationId "svenmeier.coxswain"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 48
-        versionName "4.8"
+        versionCode Integer.parseInt(project.property("coxswain-versionCode"))
+        versionName project.property("coxswain-versionName")
     }
     buildTypes {
         debug {
@@ -57,4 +61,16 @@ dependencies {
     compile project(':propoid-db')
     compile project(':propoid-ui')
     compile project(':propoid-util')
+}
+
+github {
+    owner = 'svenmeier'
+    repo = 'coxswain'
+    tagName = project.property("coxswain-versionName")
+    targetCommitish = 'master'
+    name = 'v' + project.property("coxswain-versionName")
+    body = project.property("coxswain-changelog")
+    assets = [
+            'app/build/outputs/apk/release/app-release.apk',
+    ]
 }

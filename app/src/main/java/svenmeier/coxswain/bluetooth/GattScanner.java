@@ -14,8 +14,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -33,20 +31,29 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 
 	private Context context;
 
-	private String preferred;
+	/**
+	 * An optional previously bound device to connect to first.
+	 */
+	private String bound;
 
+	/**
+	 * Used while started.
+	 */
 	private BluetoothAdapter adapter;
 
+	/**
+	 * Are devices scanned currently.
+	 */
 	private boolean scanning;
 
 	private Set<String> scanned = new HashSet<>();
 
-	private BluetoothGatt connected;
+	private BluetoothGatt discovering;
 
-	public GattScanner(Context context, String preferred) {
+	public GattScanner(Context context, String bound) {
 		this.context = context;
 
-		this.preferred = preferred;
+		this.bound = bound;
 	}
 
 	public synchronized boolean start() {
@@ -61,9 +68,9 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 		adapter = manager.getAdapter();
 
-		if (preferred != null) {
+		if (bound != null) {
 			try {
-				BluetoothDevice device = adapter.getRemoteDevice(preferred);
+				BluetoothDevice device = adapter.getRemoteDevice(bound);
 				if (device != null) {
 					connect(device);
 
@@ -85,14 +92,14 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 	 */
 	public synchronized void stop() {
 		if (adapter == null) {
-			// aleady stopped
+			// already stopped
 			return;
 		}
 
-		if (connected != null) {
-			// still connected
-			connected.close();
-			connected = null;
+		if (discovering != null) {
+			// still discovering
+			discovering.close();
+			discovering = null;
 		}
 
 		// forget all scanned
@@ -137,6 +144,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			Log.d(Coxswain.TAG, "bluetooth scanned " + address);
 			scanned.add(address);
 
+			// stop scanning immediately, some devices won't connect otherwise
 			unscan();
 
 			connect(device);
@@ -150,21 +158,20 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 
 	@Override
 	public synchronized void onConnectionStateChange(BluetoothGatt candidate, int status, int newState) {
-		if (adapter == null) {
-			return;
-		}
-
 		String address = candidate.getDevice().getAddress();
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			Log.d(Coxswain.TAG, "bluetooth connected " + candidate.getDevice().getAddress());
+			Log.d(Coxswain.TAG, "bluetooth discovering " + candidate.getDevice().getAddress());
 
-			connected = candidate;
-			connected.discoverServices();
+			if (adapter != null) {
+				// still started
+				discovering = candidate;
+				discovering.discoverServices();
+			}
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-			if (connected != null && connected.getDevice().getAddress().equals(address)) {
-				connected.close();
-				connected = null;
+			if (discovering != null && discovering.getDevice().getAddress().equals(address)) {
+				discovering.close();
+				discovering = null;
 
 				// remove from scanned for another chance
 				scanned.remove(address);
@@ -173,6 +180,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			onLost(candidate);
 
 			if (adapter != null) {
+				// still started or started again
 				scan();
 			}
 		}
@@ -186,7 +194,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 
 		String address = candidate.getDevice().getAddress();
 
-		if (connected == null || connected.getDevice().getAddress().equals(address) == false) {
+		if (discovering == null || discovering.getDevice().getAddress().equals(address) == false) {
 			return;
 		}
 
@@ -194,8 +202,8 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			Log.d(Coxswain.TAG, "bluetooth discovered " + address);
 
 			// subclass is responsible for connection now
-			BluetoothGatt discovered = connected;
-			connected = null;
+			BluetoothGatt discovered = discovering;
+			discovering = null;
 			onDiscovered(discovered);
 		}
 
@@ -205,10 +213,9 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 	}
 
 	/**
-	 *
-	 * A candidate was discovered.
+	 * A Gatt device was discovered.
 	 * <p>
-	 * Note: The default implementation just closes the device - if overridden the subclass is
+	 * Note: The default implementation just closes the device - if overridden, the subclass is
 	 * responsible to close the device, whether immediately or later on.
 	 *
 	 * @param discovered discovered gatt
@@ -220,9 +227,9 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 	/**
 	 * A candidate was lost.
 	 *
-	 * @param candidate lost gatt
+	 * @param lost lost gatt
 	 */
-	protected void onLost(BluetoothGatt candidate) {
+	protected void onLost(BluetoothGatt lost) {
 	}
 
 	protected boolean enableNotification(BluetoothGatt candidate, BluetoothGattCharacteristic characteristic) {

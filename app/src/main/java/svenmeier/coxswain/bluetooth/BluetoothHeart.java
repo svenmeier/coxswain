@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -21,7 +20,6 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import propoid.util.content.Preference;
@@ -244,7 +242,7 @@ public class BluetoothHeart extends Heart {
 		private final UUID SERVICE_HEART_RATE = GattScanner.uuid(0x180D);
 		private final UUID CHARACTERISTIC_HEART_RATE = GattScanner.uuid(0x2A37);
 
-		private BluetoothGatt selected;
+		private BluetoothGatt connected;
 
 		GattConnection() {
 			super(context, preferredDevice.get());
@@ -265,12 +263,12 @@ public class BluetoothHeart extends Heart {
 		}
 
 		public void close() {
-			if (selected == null) {
-				// nothing was selected, clear preferred
+			if (connected == null) {
+				// preferred was not connected, so clear it
 				preferredDevice.set(null);
 			} else {
-				selected.close();
-				selected = null;
+				connected.close();
+				connected = null;
 			}
 
 			stop();
@@ -281,15 +279,15 @@ public class BluetoothHeart extends Heart {
 		 */
 		@Override
 		public void run() {
-			if (connection == GattConnection.this && selected == null) {
+			if (connection == GattConnection.this && connected == null) {
 				toast(context.getString(R.string.bluetooth_heart_not_found));
 				close();
 			}
 		}
 
 		@Override
-		protected void onDiscovered(BluetoothGatt candidate) {
-			BluetoothGattService service = candidate.getService(SERVICE_HEART_RATE);
+		protected void onDiscovered(BluetoothGatt discovered) {
+			BluetoothGattService service = discovered.getService(SERVICE_HEART_RATE);
 			if (service != null) {
 				Log.d(Coxswain.TAG, "bluetooth heart rate service acquired");
 
@@ -297,8 +295,8 @@ public class BluetoothHeart extends Heart {
 				if (characteristic != null) {
 					Log.d(Coxswain.TAG, "bluetooth heart rate characteristic acquired");
 
-					if (enableNotification(candidate, characteristic)) {
-						selected = candidate;
+					if (enableNotification(discovered, characteristic)) {
+						connected = discovered;
 
 						stop();
 
@@ -309,20 +307,20 @@ public class BluetoothHeart extends Heart {
 							}
 						});
 
-						preferredDevice.set(candidate.getDevice().getAddress());
+						preferredDevice.set(discovered.getDevice().getAddress());
 
 						return;
 					}
 				}
 			}
 			
-			candidate.close();
+			discovered.close();
 		}
 
 		@Override
-		protected void onLost(BluetoothGatt candidate) {
-			if (selected != null && selected.getDevice().getAddress().equals(candidate.getDevice().getAddress())) {
-				selected = null;
+		protected void onLost(BluetoothGatt lost) {
+			if (connected != null && connected.getDevice().getAddress().equals(lost.getDevice().getAddress())) {
+				connected = null;
 
 				handler.post(new Runnable() {
 					@Override
@@ -330,6 +328,7 @@ public class BluetoothHeart extends Heart {
 						toast(context.getString(R.string.bluetooth_heart_link_loss));
 
 						if (connection == GattConnection.this) {
+							// re-open
 							open();
 						}
 					}

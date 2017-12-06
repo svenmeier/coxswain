@@ -263,10 +263,7 @@ public class BluetoothHeart extends Heart {
 		}
 
 		public void close() {
-			if (connected == null) {
-				// preferred was not connected, so clear it
-				preferredDevice.set(null);
-			} else {
+			if (connected != null) {
 				connected.close();
 				connected = null;
 			}
@@ -280,6 +277,9 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public void run() {
 			if (connection == GattConnection.this && connected == null) {
+				// preferred was not connected, so reset it
+				preferredDevice.set(null);
+
 				toast(context.getString(R.string.bluetooth_heart_not_found));
 				close();
 			}

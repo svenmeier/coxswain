@@ -161,7 +161,7 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 		String address = candidate.getDevice().getAddress();
 
 		if (newState == BluetoothProfile.STATE_CONNECTED) {
-			Log.d(Coxswain.TAG, "bluetooth discovering " + candidate.getDevice().getAddress());
+			Log.d(Coxswain.TAG, "bluetooth discovering " + address);
 
 			if (adapter != null) {
 				// still started
@@ -170,11 +170,15 @@ public class GattScanner extends BluetoothGattCallback implements BluetoothAdapt
 			}
 		} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 			if (discovering != null && discovering.getDevice().getAddress().equals(address)) {
+				Log.d(Coxswain.TAG, "bluetooth discovering lost " + address);
+
 				discovering.close();
 				discovering = null;
 
 				// remove from scanned for another chance
 				scanned.remove(address);
+			} else {
+				Log.d(Coxswain.TAG, "bluetooth lost " + address);
 			}
 
 			onLost(candidate);

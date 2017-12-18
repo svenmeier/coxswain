@@ -86,9 +86,11 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
+        <!-- dont show soft input automatically -->
         <activity
             android:name=".ProgramActivity"
             android:label="@string/app_name"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             >
         </activity>
 

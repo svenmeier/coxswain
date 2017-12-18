@@ -219,8 +219,6 @@ public class GymService extends Service {
 
         private int progress = -1;
 
-        private long headsupSince;
-
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         private Notification.Builder builder;
@@ -233,6 +231,9 @@ public class GymService extends Service {
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setPriority(Notification.PRIORITY_DEFAULT);
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String id = "gym";
                 NotificationChannel channel = new NotificationChannel(id,
@@ -245,6 +246,7 @@ public class GymService extends Service {
             }
 
             builder.setContentText(getString(R.string.gym_notification_connecting));
+            builder.setOnlyAlertOnce(false);
             startForeground(1, builder.build());
         }
 
@@ -258,10 +260,7 @@ public class GymService extends Service {
             builder.setContentIntent(PendingIntent.getActivity(service, 1, new Intent(service, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
             builder.setContentText(text);
             builder.setProgress(0, 0, false);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-            }
-
+            builder.setOnlyAlertOnce(true);
             notificationManager.notify(1, builder.build());
 
             this.text = text;
@@ -280,7 +279,7 @@ public class GymService extends Service {
             builder.setContentIntent(PendingIntent.getActivity(service, 1, new Intent(service, WorkoutActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
             builder.setContentText(text);
             builder.setProgress(100, progress, false);
-
+            builder.setOnlyAlertOnce(text.equals(this.text));
             notificationManager.notify(1, builder.build());
 
             this.text = text;

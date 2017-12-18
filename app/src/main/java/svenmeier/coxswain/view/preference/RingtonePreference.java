@@ -81,7 +81,7 @@ public class RingtonePreference extends ResultPreference {
 			return summary;
 		}
 
-		String string = getPersistedString("");
+		String string = getPersistedString(null);
 
 		if (string == null || string.isEmpty()) {
 			string = getContext().getString(R.string.preference_audio_none);

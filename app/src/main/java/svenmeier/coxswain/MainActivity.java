@@ -103,12 +103,6 @@ public class MainActivity extends AbstractActivity {
     protected void onResume() {
         super.onResume();
 
-        if (gym.current != null && gym.progress == null) {
-            // workout is still running due to "open end", time to stop it now
-
-            gym.deselect();
-        }
-
         listener = new Gym.Listener() {
             @Override
             public void changed() {

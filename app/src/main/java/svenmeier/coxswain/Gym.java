@@ -34,6 +34,7 @@ import propoid.db.Reference;
 import propoid.db.Repository;
 import propoid.db.Transaction;
 import propoid.db.Where;
+import propoid.db.aspect.Row;
 import propoid.db.cascading.DefaultCascading;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Difficulty;
@@ -212,27 +213,31 @@ public class Gym {
 
         if (program == null) {
             return repository.query(prototype);
+        } else if (Row.getID(program) == Row.TRANSIENT) {
+            return repository.query(prototype, Where.none());
         } else {
             return repository.query(prototype, Where.equal(prototype.program, program));
         }
     }
 
     public Match<Workout> getWorkouts(long from, long to) {
-        Workout propotype = new Workout();
+        Workout prototype = new Workout();
 
         // evaluated workouts only
         if (program == null) {
-            return repository.query(propotype, all(
-                    equal(propotype.evaluate, true),
-                    greaterEqual(propotype.start, from),
-                    lessThan(propotype.start, to))
+            return repository.query(prototype, all(
+                    equal(prototype.evaluate, true),
+                    greaterEqual(prototype.start, from),
+                    lessThan(prototype.start, to))
             );
+        } else if (Row.getID(program) == Row.TRANSIENT) {
+            return repository.query(prototype, Where.none());
         } else  {
-            return repository.query(propotype, all(
-                    equal(propotype.program, program),
-                    equal(propotype.evaluate, true),
-                    greaterEqual(propotype.start, from),
-                    lessThan(propotype.start, to))
+            return repository.query(prototype, all(
+                    equal(prototype.program, program),
+                    equal(prototype.evaluate, true),
+                    greaterEqual(prototype.start, from),
+                    lessThan(prototype.start, to))
             );
         }
     }

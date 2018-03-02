@@ -89,7 +89,7 @@ public class Gym {
 
         this.context = context;
 
-        repository = new Repository(context, "gym");
+        repository = new Repository(context, "gym", new GymVersioning());
     }
 
     void initialize() {
@@ -150,6 +150,8 @@ public class Gym {
         for (Workout compact : repository.query(workout, where).list(Range.limit(count), Order.ascending(workout.start))) {
             repository.query(snapshot, Where.equal(snapshot.workout, compact)).delete();
         }
+
+        repository.vacuum();
     }
 
     /**

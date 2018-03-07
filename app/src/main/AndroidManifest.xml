@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="svenmeier.coxswain"
     android:installLocation="auto"
-    >
+>
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
@@ -31,8 +32,11 @@
     <uses-permission-sdk-23 android:name="android.permission.READ_CALENDAR"/>
     <uses-permission-sdk-23 android:name="android.permission.WRITE_CALENDAR"/>
 
+    <!-- allowBackup and replace the attribute in merged manifests-->
     <application
         android:allowBackup="true"
+        tools:replace="allowBackup"
+
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LightTheme"

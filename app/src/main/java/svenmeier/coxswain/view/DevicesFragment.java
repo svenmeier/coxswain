@@ -24,17 +24,42 @@ import android.support.v7.preference.PreferenceScreen;
 
 import java.util.Collection;
 
+import svenmeier.coxswain.GymService;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.rower.water.usb.Lister;
+import svenmeier.coxswain.rower.water.usb.UsbConnector;
 
 public class DevicesFragment extends PreferenceFragmentCompat {
+
+    private UsbConnector connector;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        connector = new UsbConnector(getContext()) {
+            @Override
+            protected void onConnected(UsbDevice device) {
+                GymService.start(getContext(), device);
+            }
+        };
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (connector != null) {
+            connector.destroy();
+            connector = null;
+        }
+    }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
 
-        Collection<UsbDevice> devices = new Lister(getActivity()).list();
+        Collection<UsbDevice> devices = new UsbConnector(getActivity()).list();
         if (devices.isEmpty()) {
             Preference preference = new Preference(getActivity());
 
@@ -43,7 +68,7 @@ public class DevicesFragment extends PreferenceFragmentCompat {
 
             screen.addPreference(preference);
         } else {
-            for (UsbDevice device : devices) {
+            for (final UsbDevice device : devices) {
                 Preference preference = new Preference(getActivity());
 
                 preference.setTitle(getTitle(device));
@@ -54,6 +79,15 @@ public class DevicesFragment extends PreferenceFragmentCompat {
                 append(summary, "Class", device.getDeviceClass());
 
                 preference.setSummary(summary);
+
+                preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        connector.connect(device);
+
+                        return true;
+                    }
+                });
 
                 screen.addPreference(preference);
             }

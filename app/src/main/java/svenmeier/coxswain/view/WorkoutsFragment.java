@@ -255,7 +255,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
             nameView.setText(item.programName("-"));
 
-			String counts = TextUtils.join(", ", new String[]{
+            String counts = TextUtils.join(", ", new String[]{
                     asHoursMinutesSeconds(item.duration.get()),
                     Distance.m(getActivity(), item.distance.get()).formatted(),
                     String.format(getString(R.string.strokes_count), item.strokes.get()),

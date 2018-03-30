@@ -41,7 +41,7 @@ allprojects {
 }
 
 ext {
-    supportLibraryVersion = '27.0.0'
+    supportLibraryVersion = '27.1.0'
     playServicesVersion = '8.4.0'
 }
 
@@ -52,6 +52,8 @@ dependencies {
     compile "com.android.support:support-v13:$supportLibraryVersion"
     compile "com.android.support:preference-v14:$supportLibraryVersion"
     compile "com.google.android.gms:play-services-fitness:$playServicesVersion"
+    implementation 'com.github.woxthebox:draglistview:1.5.3'
+    implementation 'com.android.support:cardview-v7:27.1.0'
     testCompile 'junit:junit:4.12'
     testCompile('org.robolectric:robolectric:3.4.2') {
         exclude group: 'commons-logging', module: 'commons-logging'

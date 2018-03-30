@@ -18,6 +18,7 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -26,6 +27,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import com.woxthebox.draglistview.DragListView;
+import com.woxthebox.draglistview.swipe.ListSwipeHelper;
+import com.woxthebox.draglistview.swipe.ListSwipeItem;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import propoid.db.Reference;
@@ -49,6 +55,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
     private SegmentsAdapter segmentsAdapter;
 
     private Program program;
+    private MySwipeRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,24 +63,79 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
         gym = Gym.instance(this);
 
-        setContentView(R.layout.layout_program);
+        setContentView(R.layout.layout_program_edit); // change
 
-        nameView = (EditText) findViewById(R.id.toolbar_edit);
+        nameView = (EditText) findViewById(R.id.toolbar_edit_edit);
 
-        segmentsView = (RecyclerView) findViewById(R.id.program_segments);
-        segmentsView.setLayoutManager(new LinearLayoutManager(this));
-        segmentsView.setHasFixedSize(true);
+        final DragListView mDragListView = this.findViewById(R.id.drag_list_view);
+        mDragListView.setDragListListener(new DragListView.DragListListener() {
+            @Override
+            public void onItemDragStarted(int position) {
 
-        Reference<Program> reference = Reference.from(getIntent());
+            }
 
-        program = gym.getProgram(reference);
-        if (program == null) {
-            finish();
-        } else {
-            nameView.setText(program.name.get());
+            @Override
+            public void onItemDragging(int itemPosition, float x, float y) {
 
-            segmentsView.setAdapter(segmentsAdapter = new SegmentsAdapter());
-        }
+            }
+
+            @Override
+            public void onItemDragEnded(int fromPosition, int toPosition) {
+
+            }
+        });
+
+        mDragListView.setLayoutManager(new LinearLayoutManager(this));
+        ArrayList<Pair<Long, String>> mItemArray = new ArrayList<>();
+        mItemArray.add(new Pair<>(1L, "eins"));
+        mItemArray.add(new Pair<>(2L, "zwei"));
+        mItemArray.add(new Pair<>(3L, "drei"));
+
+        ItemAdapter listAdapter = new ItemAdapter(mItemArray, R.layout.layout_segments_item_edit, R.id.move, true);
+        mDragListView.setAdapter(listAdapter, false);
+        mDragListView.setCanDragHorizontally(false);
+        mRefreshLayout = (MySwipeRefreshLayout) this.findViewById(R.id.swipe_refresh_layout);
+
+        mDragListView.setSwipeListener(new ListSwipeHelper.OnSwipeListenerAdapter() {
+            @Override
+            public void onItemSwipeStarted(ListSwipeItem item) {
+                mRefreshLayout.setEnabled(false);
+            }
+
+            @Override
+            public void onItemSwipeEnded(ListSwipeItem item, ListSwipeItem.SwipeDirection swipedDirection) {
+                mRefreshLayout.setEnabled(true);
+
+                // Swipe to delete on left
+                if (swipedDirection == ListSwipeItem.SwipeDirection.LEFT) {
+                    Pair<Long, String> adapterItem = (Pair<Long, String>) item.getTag();
+                    int pos = mDragListView.getAdapter().getPositionForItem(adapterItem);
+                    ItemAdapter adapter = (ItemAdapter) mDragListView.getAdapter();
+                    adapter.removeItem(pos);
+                    if (adapter.getItemCount() == 0) {
+                        adapter.addItem(0, new Pair<>(1L, "xxx"));
+                    }
+                }
+            }
+        });
+
+
+
+
+//        segmentsView = (RecyclerView) findViewById(R.id.program_segments);
+//        segmentsView.setLayoutManager(new LinearLayoutManager(this));
+//        segmentsView.setHasFixedSize(true);
+//
+//        Reference<Program> reference = Reference.from(getIntent());
+//
+//        program = gym.getProgram(reference);
+//        if (program == null) {
+//            finish();
+//        } else {
+//            nameView.setText(program.name.get());
+//
+//            segmentsView.setAdapter(segmentsAdapter = new SegmentsAdapter());
+//        }
     }
 
     @Override

@@ -95,6 +95,14 @@ public class Program extends Propoid {
         segments.get().add(index + 1, new Segment(Difficulty.EASY));
     }
 
+    public Segment duplicateSegmentAfter(Segment segment) {
+        int index = segments.get().indexOf(segment);
+        Segment duplicate = segment.copy();
+        segments.get().add(index + 1, duplicate);
+        return duplicate;
+    }
+
+
     public static Program kilocalories(String name, int kcal, Difficulty difficulty) {
         Program program = new Program(name);
 
@@ -131,7 +139,7 @@ public class Program extends Propoid {
         return program;
     }
 
-	/**
+    /**
      * Create a new {@link Workout}, linking with this program if not transient.
      *
      * @return workout

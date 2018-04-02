@@ -18,7 +18,6 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -31,12 +30,12 @@ import com.woxthebox.draglistview.DragListView;
 import com.woxthebox.draglistview.swipe.ListSwipeHelper;
 import com.woxthebox.draglistview.swipe.ListSwipeItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import propoid.db.Reference;
 import propoid.db.aspect.Row;
 import propoid.ui.list.GenericRecyclerAdapter;
+import svenmeier.coxswain.gym.Difficulty;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.view.AbstractValueFragment;
@@ -52,7 +51,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
     private EditText nameView;
 
     private RecyclerView segmentsView;
-    private SegmentsAdapter segmentsAdapter;
+    private ItemAdapter segmentsAdapter;
 
     private Program program;
     private MySwipeRefreshLayout mRefreshLayout;
@@ -86,12 +85,24 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         });
 
         mDragListView.setLayoutManager(new LinearLayoutManager(this));
-        ArrayList<Pair<Long, String>> mItemArray = new ArrayList<>();
-        mItemArray.add(new Pair<>(1L, "eins"));
-        mItemArray.add(new Pair<>(2L, "zwei"));
-        mItemArray.add(new Pair<>(3L, "drei"));
 
-        ItemAdapter listAdapter = new ItemAdapter(mItemArray, R.layout.layout_segments_item_edit, R.id.move, true);
+
+        Reference<Program> reference = Reference.from(getIntent());
+
+        program = gym.getProgram(reference);
+        if (program == null) {
+            finish();
+        } else {
+            nameView.setText(program.name.get());
+
+            //segmentsView.setAdapter(segmentsAdapter = new SegmentsAdapter());
+        }
+
+
+        List<Segment> segments = program.segments.get();
+        ItemAdapter listAdapter = new ItemAdapter(segments, R.layout.layout_segments_item_edit, R.id.move, true,
+                getSupportFragmentManager(), program, gym);
+        segmentsAdapter = listAdapter;
         mDragListView.setAdapter(listAdapter, false);
         mDragListView.setCanDragHorizontally(false);
         mRefreshLayout = (MySwipeRefreshLayout) this.findViewById(R.id.swipe_refresh_layout);
@@ -106,20 +117,28 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             public void onItemSwipeEnded(ListSwipeItem item, ListSwipeItem.SwipeDirection swipedDirection) {
                 mRefreshLayout.setEnabled(true);
 
-                // Swipe to delete on left
+                // Swipe to delete on left 666
                 if (swipedDirection == ListSwipeItem.SwipeDirection.LEFT) {
-                    Pair<Long, String> adapterItem = (Pair<Long, String>) item.getTag();
+                    Segment adapterItem = (Segment) item.getTag();
                     int pos = mDragListView.getAdapter().getPositionForItem(adapterItem);
                     ItemAdapter adapter = (ItemAdapter) mDragListView.getAdapter();
+
                     adapter.removeItem(pos);
+                    program.removeSegment(adapterItem);
+
+                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+                    segmentsAdapter.notifyDataSetChanged();
                     if (adapter.getItemCount() == 0) {
-                        adapter.addItem(0, new Pair<>(1L, "xxx"));
+                        program.addSegment(new Segment(Difficulty.EASY));
+                        Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+                        segmentsAdapter.notifyDataSetChanged();
+                        // 666 adapter.addItem(0, new Pair<>(1L, "xxx"));
                     }
                 }
             }
         });
-
-
 
 
 //        segmentsView = (RecyclerView) findViewById(R.id.program_segments);

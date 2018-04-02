@@ -15,12 +15,16 @@
  */
 package svenmeier.coxswain.gym;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import propoid.core.Property;
 import propoid.core.Propoid;
 
 /**
  */
 public class Segment extends Propoid {
+
+    private static AtomicLong id_counter = new AtomicLong(0);
 
     public final Property<Difficulty> difficulty = property();
 
@@ -38,7 +42,10 @@ public class Segment extends Propoid {
 
     public final Property<Integer> pulse = property();
 
+    private final long id;
+
     public Segment() {
+        id = id_counter.getAndAdd(1);
         difficulty.set(Difficulty.EASY);
 
         distance.set(1000);
@@ -49,6 +56,23 @@ public class Segment extends Propoid {
         speed.set(0);
         strokeRate.set(0);
         pulse.set(0);
+    }
+
+    public Segment copy() {
+        Segment newSegment = new Segment();
+        newSegment.difficulty.set(difficulty.get());
+        newSegment.distance.set(distance.get());
+        newSegment.duration.set(duration.get());
+        newSegment.strokes.set(strokes.get());
+        newSegment.energy.set(energy.get());
+        newSegment.speed.set(speed.get());
+        newSegment.strokeRate.set(strokeRate.get());
+        newSegment.pulse.set(pulse.get());
+        return newSegment;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Segment(Difficulty difficulty) {

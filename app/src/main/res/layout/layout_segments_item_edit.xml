@@ -19,7 +19,7 @@
         android:background="#ff0000"
         android:gravity="start|center_vertical"
         android:padding="16dp"
-        android:text="Red"
+        android:text="@string/action_delete"
         android:textColor="@android:color/white"
         android:textSize="20sp"/>
 
@@ -29,10 +29,10 @@
         android:layout_height="match_parent"
         android:layout_alignBottom="@+id/item_layout"
         android:layout_alignTop="@+id/item_layout"
-        android:background="#0000ff"
-        android:gravity="end|center_vertical"
+        android:background="#ff0000"
+        android:gravity="start|center_vertical"
         android:padding="16dp"
-        android:text="Blue"
+        android:text="@string/action_delete"
         android:textColor="@android:color/white"
         android:textSize="20sp"/>
 

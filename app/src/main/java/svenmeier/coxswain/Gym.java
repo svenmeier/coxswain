@@ -56,6 +56,8 @@ public class Gym {
 
     private Context context;
 
+    private Preference<Boolean> external;
+
     private Repository repository;
 
     private List<Listener> listeners = new ArrayList<>();
@@ -85,11 +87,23 @@ public class Gym {
      */
     public Progress progress;
 
-    private Gym(Context context) {
+    private Gym(final Context context) {
 
         this.context = context;
 
-        repository = new Repository(context, "gym", new GymVersioning());
+        repository = new Repository(context, new GymLocator(context), new GymVersioning());
+
+        external = Preference.getBoolean(context, R.string.preference_data_external);
+        external.listen(new Preference.OnChangeListener() {
+            @Override
+            public void onChanged() {
+                repository.close();
+
+                repository.open();
+
+                fireChanged();
+            }
+        });
     }
 
     void initialize() {
@@ -518,7 +532,7 @@ public class Gym {
      * Get the singelton Gym - has to be called on the main thread.
      */
     @UiThread
-    public static Gym instance(Context context) {
+    public synchronized static Gym instance(Context context) {
         if (instance == null) {
             instance = new Gym(context.getApplicationContext());
 

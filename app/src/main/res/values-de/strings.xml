@@ -24,6 +24,7 @@
     <string name="gym_notification_connected">Verbunden mit %s</string>
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_ready">bereit</string>
+    <string name="gym_repository_extern_failed">Repository können nicht von externer Lokation geladen werden</string>
 
     <string name="distance_miles">%,d mi</string>
     <string name="distance_yards">%,d yd</string>
@@ -135,9 +136,6 @@
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
 
-    <string name="preference_compact_title">Training komprimieren</string>
-    <string name="preference_compact_summary">Trainings nach %s Tagen komprimieren</string>
-
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy_title">Energie</string>
@@ -188,14 +186,20 @@
     <string name="preference_audio_speak_limit_title">Segment Anforderung</string>
     <string name="preference_audio_speak_limit_summary">Anforderung für Semgent wiederholen wenn nicht erfüllt</string>
 
-    <string name="preference_export_title">Export</string>
+    <string name="preference_data_title">Daten</string>
 
-    <string name="preference_export_auto_title">Automatisch</string>
+    <string name="preference_compact_title">Training komprimieren</string>
+    <string name="preference_compact_summary">Trainings nach %s Tagen komprimieren</string>
+
+    <string name="preference_data_external_title">Speicherort</string>
+    <string name="preference_data_external_summary">Daten in externe Lokation speichern</string>
+
+    <string name="preference_export_auto_title">Export</string>
     <string name="preference_export_auto_summary">Exportiere jedes Training automatisch</string>
     <string name="preference_export_auto_reminder">Exportiere zuerst ein Training um automatisches Exportieren festzulegen</string>
 
-    <string name="preference_export_track_title">Generiere Orte</string>
-    <string name="preference_export_track_summary">Generate künstliche Spur-Orte</string>
+    <string name="preference_export_track_title">Orte exportieren</string>
+    <string name="preference_export_track_summary">Exportiere generierte Spur-Orten</string>
 
     <string name="preference_integration_title">Integration</string>
 

@@ -17,15 +17,19 @@ package svenmeier.coxswain.view;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.util.PermissionBlock;
 import svenmeier.coxswain.view.preference.ResultPreference;
@@ -49,12 +53,38 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
-        Preference trace = findPreference(getString(R.string.preference_hardware_trace));
+        final CheckBoxPreference external = (CheckBoxPreference) findPreference(getString(R.string.preference_data_external));
+        external.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (Boolean.TRUE.equals(o)) {
+                    new PermissionBlock(getActivity()) {
+                        @Override
+                        protected void onPermissionsApproved() {
+                            external.setChecked(true);
+                        }
+                    }.acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                    return false;
+                }
+
+                return true;
+            }
+        });
+
+        final CheckBoxPreference trace = (CheckBoxPreference) findPreference(getString(R.string.preference_hardware_trace));
         trace.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (Boolean.TRUE.equals(o)) {
-                    new PermissionBlock(getActivity()).acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    new PermissionBlock(getActivity()) {
+                        @Override
+                        protected void onPermissionsApproved() {
+                            trace.setChecked(true);
+                        }
+                    }.acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                    return false;
                 }
 
                 return true;

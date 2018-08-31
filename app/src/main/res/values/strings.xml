@@ -26,6 +26,7 @@
     <string name="gym_notification_connected">Connected to %s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
+    <string name="gym_repository_extern_failed">Cannot load repository from external location</string>
 
     <string name="distance_miles">%,d mi</string>
     <string name="distance_yards">%,d yd</string>
@@ -138,10 +139,6 @@
     <string name="preference_theme_dark_title">Dark theme</string>
     <string name="preference_theme_dark_summary">Use a dark theme</string>
 
-    <string name="preference_compact" translatable="false">preference_compact</string>
-    <string name="preference_compact_title">Compact workouts</string>
-    <string name="preference_compact_summary">Compact workouts after %s days</string>
-
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy" translatable="false">preference_adjust_energy</string>
@@ -209,17 +206,26 @@
     <string name="preference_audio_speak_limit_title">Segment limit</string>
     <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled</string>
 
-    <string name="preference_export_title">Export</string>
+    <string name="preference_data_title">Data</string>
+
+    <string name="preference_data_external" translatable="false">preference_data_external</string>
+    <string name="preference_data_external_copy" translatable="false">preference_data_external_copy</string>
+    <string name="preference_data_external_title">Storage location</string>
+    <string name="preference_data_external_summary">Store data in external location</string>
+
+    <string name="preference_compact" translatable="false">preference_compact</string>
+    <string name="preference_compact_title">Compact workouts</string>
+    <string name="preference_compact_summary">Compact workouts after %s days</string>
 
     <string name="preference_export_auto" translatable="false">preference_integration_export_auto</string>
     <string name="preference_export_last" translatable="false">preference_integration_export_last</string>
-    <string name="preference_export_auto_title">Automatic</string>
+    <string name="preference_export_auto_title">Export</string>
     <string name="preference_export_auto_summary">Export each workout automatically</string>
     <string name="preference_export_auto_reminder">First export a workout to determine automatic exports</string>
 
     <string name="preference_export_track" translatable="false">preference_export_track</string>
-    <string name="preference_export_track_title">Generate track locations</string>
-    <string name="preference_export_track_summary">Generate artificial track locations</string>
+    <string name="preference_export_track_title">Export locations</string>
+    <string name="preference_export_track_summary">Export artificial track locations</string>
 
     <string name="preference_integration_title">Integration</string>
 

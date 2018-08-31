@@ -119,7 +119,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public int getCount() {
-                return 100;
+                return 100 + 2;
             }
 
             @Override
@@ -129,12 +129,33 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public int getValue(int index) {
-                return (index + 1) * 10;
+                if (index == 0) {
+                    return 5;
+                } else if (index == 1) {
+                    return 10;
+                } else if (index == 2) {
+                    return 15;
+                } else {
+                    return (index - 1) * 10;
+                }
             }
 
             @Override
             public int segmentToIndex(Segment segment) {
-                return segment.strokes.get() / 10 - 1;
+                int strokes = segment.strokes.get();
+
+                if (strokes == 0) {
+                    return -1;
+                } else if (strokes <= 5) {
+                    return 0;
+                } else if (strokes <= 10) {
+                    return 1;
+                } else if (strokes <= 15) {
+                    return 2;
+                } else {
+                    return strokes / 10 + 1;
+                }
+
             }
 
             @Override

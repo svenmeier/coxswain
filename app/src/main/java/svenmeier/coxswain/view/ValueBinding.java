@@ -1,5 +1,8 @@
 package svenmeier.coxswain.view;
 
+import android.content.Context;
+
+import propoid.util.content.Preference;
 import svenmeier.coxswain.R;
 
 /**
@@ -7,7 +10,6 @@ import svenmeier.coxswain.R;
 public enum ValueBinding {
 
 	DURATION(R.string.duration_label, R.string.duration_pattern),
-	DURATION_SHORT(R.string.duration_label, R.string.duration_short_pattern),
 	DISTANCE(R.string.distance_label, R.string.distance_pattern),
 	STROKES(R.string.strokes_label, R.string.strokes_pattern),
 	ENERGY(R.string.energy_label, R.string.energy_pattern),
@@ -28,5 +30,58 @@ public enum ValueBinding {
 	ValueBinding(int label, int pattern) {
 		this.label = label;
 		this.pattern = pattern;
+	}
+
+	public String format(Context context, int value) {
+		return format(context, value, false);
+	}
+
+	public String format(Context context, int value, boolean signed) {
+		StringBuilder text = new StringBuilder();
+
+		boolean arabic = Preference.getBoolean(context, R.string.preference_numbers_arabic).get();
+		int digits = Math.abs(value);
+		String pattern = context.getString(this.pattern);
+
+		for (int c = pattern.length() - 1; c >= 0; c--) {
+			char character = pattern.charAt(c);
+
+			if ('0' == character) {
+				// decimal
+				text.append(toChar(digits % 10, arabic));
+
+				digits /= 10;
+			} else if ('6' == character) {
+				// minutes or hours
+				text.append(toChar(digits % 6, arabic));
+
+				digits /= 6;
+			} else if ('F' == character) {
+				// hexadecimal
+				text.append(Integer.toHexString(digits % 0xF));
+
+				digits /= 0xF;
+			} else if ('-' == character){
+				if (value < 0) {
+					text.append("-");
+				} else if (signed) {
+					text.append("+");
+				}
+			} else {
+				text.append(character);
+			}
+		}
+
+		text.reverse();
+
+		return text.toString();
+	}
+
+	private char toChar(int digit, boolean arabic) {
+		if (arabic) {
+			return (char)(0x660 + digit);
+		} else {
+			return (char)('0' + digit);
+		}
 	}
 }

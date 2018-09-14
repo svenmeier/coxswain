@@ -35,7 +35,6 @@
     <string name="duration_minutes">%d Minuten</string>
     <string name="duration_label">DAUER</string>
     <string name="duration_pattern">0:60:60</string>
-    <string name="duration_short_pattern">60:60</string>
     <string name="strokes_count">%,d Züge</string>
     <string name="strokes_label">ZÜGE</string>
     <string name="strokes_pattern">0000</string>
@@ -65,9 +64,9 @@
     <string name="average_split_label">⌀ SPLIT</string>
     <string name="average_split_pattern">60:60</string>
     <string name="delta_duration_label">Δ DAUER</string>
-    <string name="delta_duration_pattern">+60:60</string>
+    <string name="delta_duration_pattern">-60:60</string>
     <string name="delta_distance_label">Δ DISTANZ</string>
-    <string name="delta_distance_pattern">+0000</string>
+    <string name="delta_distance_pattern">-0000</string>
     <string name="none_label">KEINE</string>
     <string name="none_pattern"></string>
 
@@ -133,9 +132,6 @@
     <string name="bluetooth_heart_reading">Lese Puls über Bluetooth</string>
     <string name="bluetooth_heart_link_loss">Verbindung zu Puls über Bluetooth verloren</string>
 
-    <string name="preference_theme_dark_title">Dunkles Theme</string>
-    <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
-
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy_title">Energie</string>
@@ -158,6 +154,14 @@
 
     <string name="preference_open_end_title">Offenes Ende</string>
     <string name="preference_open_end_summary">Nach Beendigung des Trainings weiter rudern</string>
+
+    <string name="preference_display_title">Anzeige</string>
+
+    <string name="preference_theme_dark_title">Dunkles Theme</string>
+    <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
+
+    <string name="preference_numbers_arabic_title">Zahlen</string>
+    <string name="preference_numbers_arabic_summary">Verwende arabische Zahlen</string>
 
     <string name="preference_workout_bindings_reset_title">Verknüpfungen zurücksetzen</string>
     <string name="preference_workout_bindings_reset_summary">Verknüpfungen für Training auf Standard zurücksetzen</string>

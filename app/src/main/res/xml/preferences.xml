@@ -3,13 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
 
-    <CheckBoxPreference
-        android:key="@string/preference_theme_dark"
-        android:title="@string/preference_theme_dark_title"
-        android:summary="@string/preference_theme_dark_summary"
-        android:defaultValue="false"
-        />
-
     <ListPreference
         android:key="@string/preference_energy_unit"
         android:title="@string/preference_energy_unit_title"
@@ -26,13 +19,6 @@
         android:defaultValue="m"
         android:entries="@array/distance_units"
         android:entryValues="@array/distance_units"
-    />
-
-    <svenmeier.coxswain.view.preference.EditTextPreference
-        android:key="@string/preference_compact"
-        android:title="@string/preference_compact_title"
-        android:summary="@string/preference_compact_summary"
-        android:defaultValue="180"
     />
 
     <PreferenceCategory
@@ -74,6 +60,24 @@
             android:summary="@string/preference_open_end_summary"
             android:defaultValue="false"
             />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_display_title"
+    >
+        <CheckBoxPreference
+            android:key="@string/preference_numbers_arabic"
+            android:title="@string/preference_numbers_arabic_title"
+            android:summary="@string/preference_numbers_arabic_summary"
+            android:defaultValue="false"
+        />
+
+        <CheckBoxPreference
+            android:key="@string/preference_theme_dark"
+            android:title="@string/preference_theme_dark_title"
+            android:summary="@string/preference_theme_dark_summary"
+            android:defaultValue="false"
+        />
 
         <Preference
             android:key="@string/preference_workout_bindings_reset"
@@ -143,6 +147,13 @@
     <PreferenceCategory
         android:title="@string/preference_data_title"
         >
+
+        <svenmeier.coxswain.view.preference.EditTextPreference
+            android:key="@string/preference_compact"
+            android:title="@string/preference_compact_title"
+            android:summary="@string/preference_compact_summary"
+            android:defaultValue="180"
+        />
 
         <CheckBoxPreference
             android:key="@string/preference_data_external"

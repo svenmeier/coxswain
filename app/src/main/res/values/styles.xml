@@ -58,11 +58,16 @@
     </style>
 
     <style name="LabelView">
-        <item name="text_color">?android:attr/colorForeground</item>
-    </style>
+        <item name="android:gravity">center</item>
+        <item name="autoSizeTextType">uniform</item>
 
-    <style name="ValueView" parent="LabelView">
-        <item name="fontname">fonts/coxswain.ttf</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:lineSpacingExtra">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:lineSpacingMultiplier">0</item>
+
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_margin">0dp</item>
     </style>
 
     <style name="MenuButton" parent="Base.Widget.AppCompat.Button.Borderless">

@@ -19,6 +19,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
@@ -36,9 +37,9 @@ public class BindingView extends LinearLayout {
 
     private ValueBinding binding;
 
-    private ValueView valueView;
+    private TextView valueView;
 
-    private LabelView labelView;
+    private TextView labelView;
 
     private Runnable timer;
 
@@ -67,25 +68,24 @@ public class BindingView extends LinearLayout {
         this.binding = binding;
 
         if (labelView == null) {
-            labelView = (LabelView)findViewById(R.id.label);
+            labelView = (TextView)findViewById(R.id.label);
         }
         labelView.setText(getContext().getString(binding.label));
 
         if (valueView == null) {
-            valueView = (ValueView)findViewById(R.id.value);
+            valueView = (TextView)findViewById(R.id.value);
         }
-        valueView.setPattern(getContext().getString(binding.pattern));
 
         changed(0);
 
-        initBinding();
+        checkTimer();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        initBinding();
+        checkTimer();
     }
 
     @Override
@@ -95,10 +95,7 @@ public class BindingView extends LinearLayout {
         super.onDetachedFromWindow();
     }
 
-    private void initBinding() {
-        if (binding == null) {
-            setBinding(ValueBinding.NONE);
-        }
+    private void checkTimer() {
         if (binding == ValueBinding.TIME) {
             timer = new Runnable() {
                 @Override
@@ -113,6 +110,8 @@ public class BindingView extends LinearLayout {
                 }
             };
             timer.run();
+        } else {
+            timer = null;
         }
     }
 
@@ -122,7 +121,7 @@ public class BindingView extends LinearLayout {
 
     public void changed(int value) {
         setState(R.attr.binding_normal);
-        valueView.setValue(value);
+        valueView.setText(binding.format(getContext(), value));
     }
 
     public void changed(Gym gym, PaceBoat paceBoat) {
@@ -197,7 +196,7 @@ public class BindingView extends LinearLayout {
 
         float duration = splitDistance * inverseSpeed;
 
-        valueView.setValue((duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration));
+        valueView.setText(binding.format(getContext(), (duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration)));
     }
 
     private void delta(int delta, boolean positiveIsLow) {
@@ -208,18 +207,18 @@ public class BindingView extends LinearLayout {
         } else {
             setState(R.attr.binding_limit_high);
         }
-        valueView.setValue(delta);
+        valueView.setText(binding.format(getContext(), delta));
     }
 
     private void target(int value, int target, int achieved) {
         if (target > 0) {
             setState(R.attr.binding_target);
 
-            valueView.setValue(Math.max(0, target - achieved));
+            valueView.setText(binding.format(getContext(),Math.max(0, target - achieved)));
         } else {
             setState(R.attr.binding_normal);
 
-            valueView.setValue(value);
+            valueView.setText(binding.format(getContext(),value));
         }
     }
 
@@ -232,13 +231,11 @@ public class BindingView extends LinearLayout {
                 setState(R.attr.binding_limit_high);
             }
 
-            valueView.setPattern(valueView.getPattern().replace('-', '+'));
-            valueView.setValue(difference);
+            valueView.setText(binding.format(getContext(), difference, true));
         } else {
             setState(R.attr.binding_normal);
 
-            valueView.setPattern(valueView.getPattern().replace('+', '-'));
-            valueView.setValue(value);
+            valueView.setText(binding.format(getContext(), value));
         }
     }
 

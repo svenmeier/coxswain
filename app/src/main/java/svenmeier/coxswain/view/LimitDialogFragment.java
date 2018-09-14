@@ -37,8 +37,8 @@ public class LimitDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.speed_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.SPEED;
             }
 
             @Override
@@ -70,8 +70,8 @@ public class LimitDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.pulse_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.PULSE;
             }
 
             @Override
@@ -103,8 +103,8 @@ public class LimitDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.strokeRate_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.STROKE_RATE;
             }
 
             @Override
@@ -135,8 +135,8 @@ public class LimitDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return "";
+            public ValueBinding getPattern() {
+                return ValueBinding.NONE;
             }
 
             @Override

@@ -157,7 +157,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         @Override
         protected void onBind() {
             if (item.duration.get() > 0) {
-                targetView.setBinding(ValueBinding.DURATION_SHORT);
+                targetView.setBinding(ValueBinding.DURATION);
                 targetView.changed(item.duration.get());
             } else if (item.distance.get() > 0) {
                 targetView.setBinding(ValueBinding.DISTANCE);

@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,12 +147,12 @@ public abstract class AbstractValueFragment extends DialogFragment {
                 public ValueHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                     View v = (View) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_values_item, parent, false);
 
-                    return new ValueHolder(v, tab.getPattern());
+                    return new ValueHolder(v);
                 }
 
                 @Override
                 public void onBindViewHolder(ValueHolder holder, int position) {
-                    holder.onBind(tab.getValue(position));
+                    holder.onBind(tab.getPattern(), tab.getValue(position));
                 }
             });
 
@@ -177,19 +178,18 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
     private class ValueHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final ValueView valueView;
+        private final TextView valueView;
 
-        public ValueHolder(View view, String pattern) {
+        public ValueHolder(View view) {
             super(view);
 
-            valueView = (ValueView) view.findViewById(R.id.values_value);
-            valueView.setPattern(pattern);
+            valueView = (TextView) view.findViewById(R.id.values_value);
 
             valueView.setOnClickListener(this);
         }
 
-        public void onBind(int value) {
-            valueView.setValue(value);
+        public void onBind(ValueBinding binding, int value) {
+            valueView.setText(binding.format(getContext(), value));
         }
 
         @Override
@@ -203,7 +203,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
         int getCount();
 
-        String getPattern();
+        ValueBinding getPattern();
 
         int getValue(int index);
 

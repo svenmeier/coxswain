@@ -17,17 +17,6 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="LabelView">
-        <attr name="text_color" format="color" />
-        <attr name="text" format="string" />
-        <attr name="fontname" format="string" />
-        <attr name="align" format="enum">
-            <enum name="center" value="0" />
-            <enum name="left" value="-1" />
-            <enum name="right" value="1" />
-        </attr>
-    </declare-styleable>
-
     <declare-styleable name="BindingView">
         <attr name="binding_normal" format="boolean"/>
         <attr name="binding_limit_low" format="boolean"/>

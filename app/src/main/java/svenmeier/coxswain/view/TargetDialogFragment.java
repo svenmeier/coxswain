@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain.view;
 
+import propoid.ui.list.ViewsAdapter;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Segment;
 
@@ -37,8 +38,8 @@ public class TargetDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.duration_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.DURATION;
             }
 
             @Override
@@ -90,8 +91,8 @@ public class TargetDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.distance_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.DISTANCE;
             }
 
             @Override
@@ -123,8 +124,8 @@ public class TargetDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.strokes_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.STROKES;
             }
 
             @Override
@@ -177,8 +178,8 @@ public class TargetDialogFragment extends AbstractValueFragment {
             }
 
             @Override
-            public String getPattern() {
-                return getString(R.string.energy_pattern);
+            public ValueBinding getPattern() {
+                return ValueBinding.ENERGY;
             }
 
             @Override

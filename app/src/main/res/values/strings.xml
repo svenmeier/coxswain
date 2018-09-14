@@ -37,7 +37,6 @@
     <string name="duration_minutes">%d minutes</string>
     <string name="duration_label">DURATION</string>
     <string name="duration_pattern">0:60:60</string>
-    <string name="duration_short_pattern">60:60</string>
     <string name="strokes_count">%,d strokes</string>
     <string name="strokes_label">STROKES</string>
     <string name="strokes_pattern">0000</string>
@@ -67,9 +66,9 @@
     <string name="average_split_label">⌀ SPLIT</string>
     <string name="average_split_pattern">60:60</string>
     <string name="delta_duration_label">Δ DURATION</string>
-    <string name="delta_duration_pattern">+60:60</string>
+    <string name="delta_duration_pattern">-60:60</string>
     <string name="delta_distance_label">Δ DISTANCE</string>
-    <string name="delta_distance_pattern">+0000</string>
+    <string name="delta_distance_pattern">-0000</string>
     <string name="none_label">NONE</string>
     <string name="none_pattern"></string>
 
@@ -135,10 +134,6 @@
     <string name="bluetooth_heart_reading">Reading heart rate via Bluetooth</string>
     <string name="bluetooth_heart_link_loss">Lost link to heart rate via Bluetooth</string>
 
-    <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
-    <string name="preference_theme_dark_title">Dark theme</string>
-    <string name="preference_theme_dark_summary">Use a dark theme</string>
-
     <string name="preference_training_title">Training</string>
 
     <string name="preference_adjust_energy" translatable="false">preference_adjust_energy</string>
@@ -168,6 +163,16 @@
     <string name="preference_open_end" translatable="false">preference_open_end</string>
     <string name="preference_open_end_title">Open end</string>
     <string name="preference_open_end_summary">Continue rowing after training has ended</string>
+
+    <string name="preference_display_title">Display</string>
+
+    <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
+    <string name="preference_theme_dark_title">Dark theme</string>
+    <string name="preference_theme_dark_summary">Use a dark theme</string>
+
+    <string name="preference_numbers_arabic" translatable="false">preference_numbers_arabic</string>
+    <string name="preference_numbers_arabic_title">Numbers</string>
+    <string name="preference_numbers_arabic_summary">Use Arabic numbers</string>
 
     <string name="preference_workout_bindings_reset" translatable="false">preference_bindings_reset</string>
     <string name="preference_workout_bindings_reset_title">Reset bindings</string>

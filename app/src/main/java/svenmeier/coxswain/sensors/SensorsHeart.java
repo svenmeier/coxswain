@@ -67,6 +67,11 @@ public class SensorsHeart extends Heart {
 			manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 		}
 
+		@Override
+		protected void onRejected() {
+			Toast.makeText(context, R.string.sensors_heart_rejected, Toast.LENGTH_LONG).show();
+		}
+
 		public void close() {
 			abortPermissions();
 

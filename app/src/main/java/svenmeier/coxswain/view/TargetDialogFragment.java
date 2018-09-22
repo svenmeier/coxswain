@@ -34,7 +34,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
 
             @Override
             public int getCount() {
-                return 60 + 2;
+                return 59 + 2;
             }
 
             @Override

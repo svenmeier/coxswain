@@ -10,7 +10,6 @@ if (project.hasProperty("coxswain-private") && new File(project.property("coxswa
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.0"
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
@@ -46,21 +45,21 @@ ext {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:design:$supportLibraryVersion"
-    compile "com.android.support:gridlayout-v7:$supportLibraryVersion"
-    compile "com.android.support:support-v13:$supportLibraryVersion"
-    compile "com.android.support:preference-v14:$supportLibraryVersion"
-    compile "com.google.android.gms:play-services-fitness:$playServicesVersion"
-    testCompile 'junit:junit:4.12'
-    testCompile('org.robolectric:robolectric:3.4.2') {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:gridlayout-v7:$supportLibraryVersion"
+    implementation "com.android.support:support-v13:$supportLibraryVersion"
+    implementation "com.android.support:preference-v14:$supportLibraryVersion"
+    implementation "com.google.android.gms:play-services-fitness:$playServicesVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation ('org.robolectric:robolectric:3.4.2') {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    compile project(':propoid-core')
-    compile project(':propoid-db')
-    compile project(':propoid-ui')
-    compile project(':propoid-util')
+    implementation project(':propoid-core')
+    implementation project(':propoid-db')
+    implementation project(':propoid-ui')
+    implementation project(':propoid-util')
 }
 
 github {

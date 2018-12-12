@@ -1,0 +1,27 @@
+5.4
+  - fixed performance regression on Galaxy S8
+
+5.3
+  - support external storage location
+  - improved number display
+  - arabic numerals
+  - allow 5 and 15 strokes target
+
+5.2
+  - allow explicit connect to a device as workaround for Sony devices
+
+5.1
+  - fixed crash when selecting workout as challenge
+  - fixed bug increasing database size excessively
+  - remove unnecessary data from database
+
+5.0
+  - fixed repeated notifications on Android O
+
+4.9
+  - adjusted to Android O
+  - old workouts are compacted
+  - improved bluetooth heart connection
+  - direct export into calendar if permitted
+  - allow installation on external memory
+

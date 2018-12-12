@@ -17,7 +17,6 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,6 +43,8 @@ public class BindingView extends LinearLayout {
     private Runnable timer;
 
     private int splitDistance;
+
+    private String value;
 
     public BindingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -120,8 +121,9 @@ public class BindingView extends LinearLayout {
     }
 
     public void changed(int value) {
-        setState(R.attr.binding_normal);
-        valueView.setText(binding.format(getContext(), value));
+        changeState(R.attr.binding_normal);
+
+        changeValue(binding.format(getContext(), value));
     }
 
     public void changed(Gym gym, PaceBoat paceBoat) {
@@ -192,33 +194,33 @@ public class BindingView extends LinearLayout {
     }
 
     private void split(float inverseSpeed) {
-        setState(R.attr.binding_normal);
+        changeState(R.attr.binding_normal);
 
         float duration = splitDistance * inverseSpeed;
 
-        valueView.setText(binding.format(getContext(), (duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration)));
+        changeValue(binding.format(getContext(), (duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration)));
     }
 
     private void delta(int delta, boolean positiveIsLow) {
         if (delta == 0) {
-            setState(R.attr.binding_normal);
+            changeState(R.attr.binding_normal);
         } else if ((delta < 0) ^ positiveIsLow) {
-            setState(R.attr.binding_limit_low);
+            changeState(R.attr.binding_limit_low);
         } else {
-            setState(R.attr.binding_limit_high);
+            changeState(R.attr.binding_limit_high);
         }
-        valueView.setText(binding.format(getContext(), delta));
+        changeValue(binding.format(getContext(), delta));
     }
 
     private void target(int value, int target, int achieved) {
         if (target > 0) {
-            setState(R.attr.binding_target);
+            changeState(R.attr.binding_target);
 
-            valueView.setText(binding.format(getContext(),Math.max(0, target - achieved)));
+            changeValue(binding.format(getContext(),Math.max(0, target - achieved)));
         } else {
-            setState(R.attr.binding_normal);
+            changeState(R.attr.binding_normal);
 
-            valueView.setText(binding.format(getContext(),value));
+            changeValue(binding.format(getContext(),value));
         }
     }
 
@@ -226,20 +228,30 @@ public class BindingView extends LinearLayout {
         if (limit > 0) {
             int difference = value - limit;
             if (difference < 0) {
-                setState(R.attr.binding_limit_low);
+                changeState(R.attr.binding_limit_low);
             } else {
-                setState(R.attr.binding_limit_high);
+                changeState(R.attr.binding_limit_high);
             }
 
-            valueView.setText(binding.format(getContext(), difference, true));
+            changeValue(binding.format(getContext(), difference, true));
         } else {
-            setState(R.attr.binding_normal);
+            changeState(R.attr.binding_normal);
 
-            valueView.setText(binding.format(getContext(), value));
+            changeValue(binding.format(getContext(), value));
         }
     }
 
-    private void setState(int state) {
+    private void changeValue(String value) {
+        if (value != null && value.equals(this.value)) {
+            // prevent unnecessary text changes, these seem to freeze Samsung Galaxy S8
+            return;
+        }
+        this.value = value;
+
+        valueView.setText(value);
+    }
+
+    private void changeState(int state) {
         if (this.state == state) {
             return;
         }

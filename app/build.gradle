@@ -68,7 +68,7 @@ github {
     tagName = project.property("coxswain-versionName")
     targetCommitish = 'master'
     name = 'v' + project.property("coxswain-versionName")
-    body = project.property("coxswain-changelog")
+    body = new File("changelog").getText("UTF-8")
     assets = [
             'app/build/outputs/apk/release/app-release.apk',
     ]

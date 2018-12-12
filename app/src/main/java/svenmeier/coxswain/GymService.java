@@ -126,6 +126,8 @@ public class GymService extends Service {
 
         private Program program;
 
+        private Runnable posted;
+
         public Rowing(Rower rower) {
             this.rower = rower;
 
@@ -160,38 +162,44 @@ public class GymService extends Service {
 
                     heart.pulse();
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (GymService.this.rowing != Rowing.this) {
-                                // no longer current
-                                return;
-                            }
+                    if (posted == null) {
+                        // no need to flood the main thread with more than one posted
+                        posted = new Runnable() {
+                            @Override
+                            public void run() {
+                                posted = null;
+                                
+                                if (GymService.this.rowing != Rowing.this) {
+                                    // no longer current
+                                    return;
+                                }
 
-                            if (gym.program ==  null) {
-                                foreground.connected(String.format(getString(R.string.gym_notification_connected), rower.getName()));
-                                return;
-                            } else if (gym.program != program) {
-                                // program changed
-                                return;
-                            }
+                                if (gym.program ==  null) {
+                                    foreground.connected(String.format(getString(R.string.gym_notification_connected), rower.getName()));
+                                    return;
+                                } else if (gym.program != program) {
+                                    // program changed
+                                    return;
+                                }
 
-                            String text = program.name.get();
-                            float completion = 0;
-                            if (gym.progress != null) {
-                                text += " - " +  gym.progress.describe();
-                                completion = gym.progress.completion();
-                            }
-                            foreground.workout(text, completion);
+                                String text = program.name.get();
+                                float completion = 0;
+                                if (gym.progress != null) {
+                                    text += " - " +  gym.progress.describe();
+                                    completion = gym.progress.completion();
+                                }
+                                foreground.workout(text, completion);
 
-                            Event event = gym.onMeasured(rower);
-                            motivator.onEvent(event);
+                                Event event = gym.onMeasured(rower);
+                                motivator.onEvent(event);
 
-                            if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
-                                gym.deselect();
+                                if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
+                                    gym.deselect();
+                                }
                             }
-                        }
-                    });
+                        };
+                        handler.post(posted);
+                    }
                 }
 
                 rower.close();

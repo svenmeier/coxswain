@@ -27,17 +27,12 @@ public class LimitDialogFragment extends AbstractValueFragment {
         // speed 0.1[0] - 5.0[0]
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.speed_label);
-            }
-
-            @Override
             public int getCount() {
                 return 50;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.SPEED;
             }
 
@@ -60,17 +55,12 @@ public class LimitDialogFragment extends AbstractValueFragment {
         // pulse 001 - 200
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.pulse_label);
-            }
-
-            @Override
             public int getCount() {
                 return 200;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.PULSE;
             }
 
@@ -93,17 +83,12 @@ public class LimitDialogFragment extends AbstractValueFragment {
         // strokerate 01 - 60
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.strokeRate_label);
-            }
-
-            @Override
             public int getCount() {
                 return 60;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.STROKE_RATE;
             }
 
@@ -125,17 +110,12 @@ public class LimitDialogFragment extends AbstractValueFragment {
 
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.none_label);
-            }
-
-            @Override
             public int getCount() {
                 return 1;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.NONE;
             }
 

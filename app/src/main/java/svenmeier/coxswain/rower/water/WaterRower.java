@@ -88,6 +88,8 @@ public class WaterRower extends Rower {
                     if (device.equals(WaterRower.this.device)) {
                         detached = true;
                     }
+
+                    trace.comment(String.format("detached from %s=%s", device.getDeviceName(), detached));
                 }
             }
         };

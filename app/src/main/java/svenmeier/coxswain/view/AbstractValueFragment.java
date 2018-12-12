@@ -21,14 +21,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.preference.DialogPreference;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -115,7 +112,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
         @Override
         public CharSequence getPageTitle(int tab) {
-            return tabs.get(tab).getTitle();
+            return getString(tabs.get(tab).getBinding().label);
         }
 
         @Override
@@ -152,7 +149,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
                 @Override
                 public void onBindViewHolder(ValueHolder holder, int position) {
-                    holder.onBind(tab.getPattern(), tab.getValue(position));
+                    holder.onBind(tab.getBinding(), tab.getValue(position));
                 }
             });
 
@@ -199,11 +196,10 @@ public abstract class AbstractValueFragment extends DialogFragment {
     }
 
     public interface Tab {
-        CharSequence getTitle();
+
+        ValueBinding getBinding();
 
         int getCount();
-
-        ValueBinding getPattern();
 
         int getValue(int index);
 

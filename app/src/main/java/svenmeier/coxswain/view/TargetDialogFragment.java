@@ -28,17 +28,12 @@ public class TargetDialogFragment extends AbstractValueFragment {
         // duration 01:[00] - 60:[00]
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.duration_label);
-            }
-
-            @Override
             public int getCount() {
                 return 59 + 2;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.DURATION;
             }
 
@@ -81,17 +76,12 @@ public class TargetDialogFragment extends AbstractValueFragment {
         // distance 001[00] - 100[00]
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.distance_label);
-            }
-
-            @Override
             public int getCount() {
                 return 100;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.DISTANCE;
             }
 
@@ -114,17 +104,12 @@ public class TargetDialogFragment extends AbstractValueFragment {
         // strokes 001[0] - 100[0]
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.strokes_label);
-            }
-
-            @Override
             public int getCount() {
                 return 100 + 2;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.STROKES;
             }
 
@@ -168,17 +153,12 @@ public class TargetDialogFragment extends AbstractValueFragment {
         // energy 001[0] - 100[0]
         addTab(new Tab() {
             @Override
-            public CharSequence getTitle() {
-                return getString(R.string.energy_label);
-            }
-
-            @Override
             public int getCount() {
                 return 100;
             }
 
             @Override
-            public ValueBinding getPattern() {
+            public ValueBinding getBinding() {
                 return ValueBinding.ENERGY;
             }
 

@@ -21,7 +21,7 @@ public class Heart {
 
 	private int heartRate = -1;
 
-	protected Heart(Context context, Measurement measurement) {
+	public Heart(Context context, Measurement measurement) {
 		this.context = context;
 		this.measurement = measurement;
 	}

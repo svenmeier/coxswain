@@ -44,7 +44,7 @@ public class BindingView extends LinearLayout {
 
     private int splitDistance;
 
-    private String value;
+    private int oldValue = Integer.MAX_VALUE;
 
     public BindingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -123,7 +123,7 @@ public class BindingView extends LinearLayout {
     public void changed(int value) {
         changeState(R.attr.binding_normal);
 
-        changeValue(binding.format(getContext(), value));
+        changeValue(value, false);
     }
 
     public void changed(Gym gym, PaceBoat paceBoat) {
@@ -198,7 +198,7 @@ public class BindingView extends LinearLayout {
 
         float duration = splitDistance * inverseSpeed;
 
-        changeValue(binding.format(getContext(), (duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration)));
+        changeValue((duration == Float.NaN || duration == Float.POSITIVE_INFINITY) ? 0 : (int)(duration), false);
     }
 
     private void delta(int delta, boolean positiveIsLow) {
@@ -209,18 +209,18 @@ public class BindingView extends LinearLayout {
         } else {
             changeState(R.attr.binding_limit_high);
         }
-        changeValue(binding.format(getContext(), delta));
+        changeValue(delta, false);
     }
 
     private void target(int value, int target, int achieved) {
         if (target > 0) {
             changeState(R.attr.binding_target);
 
-            changeValue(binding.format(getContext(),Math.max(0, target - achieved)));
+            changeValue(Math.max(0, target - achieved), false);
         } else {
             changeState(R.attr.binding_normal);
 
-            changeValue(binding.format(getContext(),value));
+            changeValue(value, false);
         }
     }
 
@@ -233,22 +233,23 @@ public class BindingView extends LinearLayout {
                 changeState(R.attr.binding_limit_high);
             }
 
-            changeValue(binding.format(getContext(), difference, true));
+            changeValue(difference, true);
         } else {
             changeState(R.attr.binding_normal);
 
-            changeValue(binding.format(getContext(), value));
+            changeValue(value, false);
         }
     }
 
-    private void changeValue(String value) {
-        if (value != null && value.equals(this.value)) {
-            // prevent unnecessary text changes, these seem to freeze Samsung Galaxy S8
+    private void changeValue(int value, boolean signed) {
+        if (value == oldValue) {
+            // prevent unnecessary changes, these seem to freeze Samsung Galaxy S8
             return;
         }
-        this.value = value;
 
-        valueView.setText(value);
+        this.oldValue = value;
+
+        valueView.setText(binding.format(getContext(), value, signed));
     }
 
     private void changeState(int state) {

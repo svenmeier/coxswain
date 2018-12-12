@@ -59,6 +59,7 @@
 
     <style name="LabelView">
         <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
         <item name="autoSizeTextType">uniform</item>
 
         <item name="android:padding">0dp</item>

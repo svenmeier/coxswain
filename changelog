@@ -1,5 +1,5 @@
-5.4
-  - fixed performance regression on Galaxy S8
+5.5
+  - fixed performance regression
 
 5.3
   - support external storage location

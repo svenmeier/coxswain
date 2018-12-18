@@ -44,6 +44,8 @@ public class BindingView extends LinearLayout {
 
     private int splitDistance;
 
+    private boolean arabic;
+
     private int oldValue = Integer.MAX_VALUE;
 
     public BindingView(Context context, AttributeSet attrs) {
@@ -60,6 +62,8 @@ public class BindingView extends LinearLayout {
 
     private void init() {
         splitDistance = Preference.getInt(getContext(), R.string.preference_split_distance).fallback(500).get();
+
+        arabic = Preference.getBoolean(getContext(), R.string.preference_numbers_arabic).get();
     }
 
     public void setBinding(ValueBinding binding) {
@@ -249,7 +253,7 @@ public class BindingView extends LinearLayout {
 
         this.oldValue = value;
 
-        valueView.setText(binding.format(getContext(), value, signed));
+        valueView.setText(binding.format(getContext(), value, arabic, signed));
     }
 
     private void changeState(int state) {

@@ -29,6 +29,7 @@ import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Process;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Program;
@@ -137,6 +138,8 @@ public class GymService extends Service {
         }
 
         public void run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            
             if (rower.open()) {
                 while (true) {
                     if (GymService.this.rowing != this) {

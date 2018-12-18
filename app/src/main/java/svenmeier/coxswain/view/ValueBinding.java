@@ -32,14 +32,13 @@ public enum ValueBinding {
 		this.pattern = pattern;
 	}
 
-	public String format(Context context, int value) {
-		return format(context, value, false);
+	public String format(Context context, int value, boolean arabic) {
+		return format(context, value, arabic, false);
 	}
 
-	public String format(Context context, int value, boolean signed) {
+	public String format(Context context, int value, boolean arabic, boolean signed) {
 		StringBuilder text = new StringBuilder();
 
-		boolean arabic = Preference.getBoolean(context, R.string.preference_numbers_arabic).get();
 		int digits = Math.abs(value);
 		String pattern = context.getString(this.pattern);
 

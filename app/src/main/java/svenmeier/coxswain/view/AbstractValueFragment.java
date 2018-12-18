@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import propoid.db.Reference;
+import propoid.util.content.Preference;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Segment;
@@ -48,12 +49,16 @@ public abstract class AbstractValueFragment extends DialogFragment {
 
     private ViewPager pager;
 
+    private boolean arabic;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.layout_tabs, container, false);
 
         pager = (ViewPager) view.findViewById(R.id.tabs_pager);
         pager.setAdapter(new MyFragmentAdapter());
+
+        arabic = Preference.getBoolean(getContext(), R.string.preference_numbers_arabic).get();
 
         return view;
     }
@@ -186,7 +191,7 @@ public abstract class AbstractValueFragment extends DialogFragment {
         }
 
         public void onBind(ValueBinding binding, int value) {
-            valueView.setText(binding.format(getContext(), value));
+            valueView.setText(binding.format(getContext(), value, arabic));
         }
 
         @Override

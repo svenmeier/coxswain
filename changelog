@@ -1,3 +1,6 @@
+5.7
+  - don't repeat segment limit when pausing
+
 5.6
   - fixed performance regression
 

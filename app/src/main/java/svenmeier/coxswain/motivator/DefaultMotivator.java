@@ -35,9 +35,9 @@ import svenmeier.coxswain.gym.Difficulty;
 public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener, AudioManager.OnAudioFocusChangeListener {
 
     /**
-     * Time before limit is repeated.
+     * Seconds before limit is repeated.
      */
-    public static final int LIMIT_LATENCY = 20000;
+    public static final int LIMIT_LATENCY = 20;
 
     private final Context context;
 
@@ -256,7 +256,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 
         private Preference<Boolean> speakLimitPreference = Preference.getBoolean(context, R.string.preference_audio_speak_limit);
 
-        private long underLimitSince = -1;
+        /**
+         * Seconds since measurement is under limit.
+         */
+        private int underLimitSince = -1;
 
         @Override
         public void init() {
@@ -270,7 +273,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             if (progress.inLimit()) {
                 underLimitSince = -1;
             } else {
-                long now = System.currentTimeMillis();
+                int now = gym.measurement.duration;
 
                 if (underLimitSince == -1) {
                     underLimitSince = now;

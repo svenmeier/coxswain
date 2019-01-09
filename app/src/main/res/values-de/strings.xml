@@ -20,7 +20,7 @@
     <string name="action_challenge">Wettstreit</string>
     <string name="action_new">Neu</string>
 
-    <string name="gym_notification_connecting">Verbinde ...</string>
+    <string name="gym_notification_connecting">Verbinde …</string>
     <string name="gym_notification_connected">Verbunden mit %s</string>
     <string name="gym_notification_stop">Stopp</string>
     <string name="gym_ready">bereit</string>
@@ -72,7 +72,7 @@
     <string name="delta_distance_label">Δ DISTANZ</string>
     <string name="delta_distance_pattern">-0000</string>
     <string name="none_label">KEINE</string>
-    <string name="none_pattern"></string>
+    <string name="none_pattern"/>
 
     <string name="sort_start">Nach Start sortiert</string>
     <string name="sort_duration">Nach Dauer sortiert</string>
@@ -97,7 +97,7 @@
     <string name="calendar_export_finished">Termin in Kalender eingestellt</string>
 
     <string name="program_export">Datei</string>
-    <string name="program_export_share">Teilen ...</string>
+    <string name="program_export_share">Teilen …</string>
     <string name="program_export_starting">Exportiere Programm</string>
     <string name="program_export_finished">Programm exportiert nach %s</string>
     <string name="program_export_failed">Export des Programs gescheitert</string>
@@ -106,7 +106,7 @@
     <string name="program_import_failed">Import des Programms gescheitert</string>
 
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_share">TCX teilen ...</string>
+    <string name="garmin_export_share">TCX teilen …</string>
     <string name="garmin_export_starting">Exportiere Training</string>
     <string name="garmin_export_finished">Training exportiert nach %s</string>
     <string name="garmin_export_failed">Export des Trainings gescheitert</string>
@@ -125,14 +125,14 @@
     <string name="sensors_heart_reading">Lese Puls-Sensor</string>
 
     <string name="ant_heart_dependency_not_installed">Ant+ ist nicht verfügbar</string>
-    <string name="ant_heart_searching">Suche Puls über Ant+ ...</string>
+    <string name="ant_heart_searching">Suche Puls über Ant+ …</string>
     <string name="ant_heart_not_found">Kein Puls über Ant+ gefunden</string>
     <string name="ant_heart_reading">Lese Puls über Ant+</string>
 
     <string name="bluetooth_heart_no_bluetooth">Kein Bluetooth verfügbar</string>
     <string name="bluetooth_heart_no_bluetooth_le">Kein Bluetooth LE verfügbar</string>
     <string name="bluetooth_heart_no_location">Standortdienste müssen zum Zugriff auf Bluetooth aktiviert sein</string>
-    <string name="bluetooth_heart_searching">Suche Puls über Bluetooth ...</string>
+    <string name="bluetooth_heart_searching">Suche Puls über Bluetooth …</string>
     <string name="bluetooth_heart_not_found">Kein Puls über Bluetooth gefunden</string>
     <string name="bluetooth_heart_reading">Lese Puls über Bluetooth</string>
     <string name="bluetooth_heart_link_loss">Verbindung zu Puls über Bluetooth verloren</string>

@@ -82,10 +82,10 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
 
         setContentView(R.layout.layout_snapshots);
 
-        titleView = (TextView) findViewById(R.id.snapshots_title);
+        titleView = findViewById(R.id.snapshots_title);
         updateTitle();
 
-        timelineView = (TimelineView) findViewById(R.id.snapshots_timeline);
+        timelineView = findViewById(R.id.snapshots_timeline);
         timelineView.setOnClickListener(this);
         timelineView.setPeriods(new SnapshotPeriods());
 
@@ -167,7 +167,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
 
         private Path path = new Path();
 
-        public SnapshotPeriods() {
+        SnapshotPeriods() {
             dateFormat = new SimpleDateFormat("H:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
@@ -337,7 +337,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
 
     private class SnapshotLookup extends MatchLookup<Snapshot> {
 
-        public SnapshotLookup() {
+        SnapshotLookup() {
             super(gym.getSnapshots(workout));
 
             setOrder(Order.ascendingByInsert());
@@ -372,7 +372,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
     public static Intent createIntent(Context context, Workout workout) {
         Intent intent = new Intent(context, SnapshotsActivity.class);
 
-        intent.setData(new Reference<Workout>(workout).toUri());
+        intent.setData(new Reference<>(workout).toUri());
 
         return intent;
     }

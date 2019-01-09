@@ -22,7 +22,7 @@
     <string name="action_challenge">Challenge</string>
     <string name="action_new">New</string>
 
-    <string name="gym_notification_connecting">Connecting ...</string>
+    <string name="gym_notification_connecting">Connecting …</string>
     <string name="gym_notification_connected">Connected to %s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
@@ -74,7 +74,7 @@
     <string name="delta_distance_label">Δ DISTANCE</string>
     <string name="delta_distance_pattern">-0000</string>
     <string name="none_label">NONE</string>
-    <string name="none_pattern"></string>
+    <string name="none_pattern"/>
 
     <string name="sort_start">Sorting by start</string>
     <string name="sort_duration">Sorting by duration</string>
@@ -92,14 +92,14 @@
     <string name="workout_binding_increase">Add</string>
 
     <string name="import_chooser">Please install a file manager</string>
-    <string name="import_unknown">Unkown import format</string>
+    <string name="import_unknown">Unknown import format</string>
 
     <string name="calendar_export">Calendar</string>
     <string name="calendar_export_failed">Exporting workout failed</string>
     <string name="calendar_export_finished">Event inserted into calendar</string>
 
     <string name="program_export">File</string>
-    <string name="program_export_share">Share ...</string>
+    <string name="program_export_share">Share …</string>
     <string name="program_export_starting">Exporting to file</string>
     <string name="program_export_finished">Program exported to %s</string>
     <string name="program_export_failed">Exporting program failed</string>
@@ -108,7 +108,7 @@
     <string name="program_import_failed">Importing program failed</string>
 
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_share">Share TCX ...</string>
+    <string name="garmin_export_share">Share TCX …</string>
     <string name="garmin_export_starting">Exporting workout</string>
     <string name="garmin_export_finished">Workout exported to %s</string>
     <string name="garmin_export_failed">Exporting workout failed</string>
@@ -127,14 +127,14 @@
     <string name="sensors_heart_reading">Reading heart rate sensor</string>
 
     <string name="ant_heart_dependency_not_installed">Ant+ is not available</string>
-    <string name="ant_heart_searching">Searching for heart rate via Ant+ ...</string>
+    <string name="ant_heart_searching">Searching for heart rate via Ant+ …</string>
     <string name="ant_heart_not_found">No heart rate found via Ant+</string>
     <string name="ant_heart_reading">Reading heart rate via Ant+</string>
 
     <string name="bluetooth_heart_no_bluetooth">No Bluetooth available</string>
     <string name="bluetooth_heart_no_bluetooth_le">No Bluetooth LE available</string>
     <string name="bluetooth_heart_no_location">Location services must be enabled to access Bluetooth</string>
-    <string name="bluetooth_heart_searching">Searching for heart rate via Bluetooth ...</string>
+    <string name="bluetooth_heart_searching">Searching for heart rate via Bluetooth …</string>
     <string name="bluetooth_heart_not_found">No heart rate found via Bluetooth</string>
     <string name="bluetooth_heart_reading">Reading heart rate via Bluetooth</string>
     <string name="bluetooth_heart_link_loss">Lost link to heart rate via Bluetooth</string>

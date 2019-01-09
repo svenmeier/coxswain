@@ -171,7 +171,7 @@ public class Gym {
     /**
      * Add a listener - has to be called on main thread.
      * 
-     * @param listener
+     * @param listener listener of changes in the gym
      */
     @UiThread
     public void addListener(Listener listener) {
@@ -308,7 +308,7 @@ public class Gym {
     }
 
     public void repeat(Workout pace) {
-        Program program = null;
+        Program program;
         try {
             program = pace.program.get();
         } catch (LookupException programAlreadyDeleted) {
@@ -341,7 +341,7 @@ public class Gym {
 	/**
      * A new measurement.
      *
-     * @param measurement
+     * @param measurement the measurement
      */
     public Event onMeasured(Measurement measurement) {
         Event event = Event.ACKNOLEDGED;
@@ -405,17 +405,19 @@ public class Gym {
         try {
             LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-            for (String provider : manager.getProviders(true)) {
-                Location location = manager.getLastKnownLocation(provider);
-                if (location == null) {
-                    continue;
-                }
+			if (manager != null) {
+				for (String provider : manager.getProviders(true)) {
+					Location location = manager.getLastKnownLocation(provider);
+					if (location == null) {
+						continue;
+					}
 
-                if (bestLocation == null || location.getAccuracy() < bestLocation.getAccuracy()) {
-                    bestLocation = location;
-                }
-            }
-        } catch (SecurityException ex) {
+					if (bestLocation == null || location.getAccuracy() < bestLocation.getAccuracy()) {
+						bestLocation = location;
+					}
+				}
+			}
+        } catch (SecurityException ignored) {
         }
 
         return bestLocation;
@@ -436,7 +438,7 @@ public class Gym {
          */
         private final Measurement startMeasurement;
 
-        public Progress(Segment segment, Measurement measurement) {
+        Progress(Segment segment, Measurement measurement) {
             this.segment = segment;
 
             this.startMeasurement = new Measurement(measurement);

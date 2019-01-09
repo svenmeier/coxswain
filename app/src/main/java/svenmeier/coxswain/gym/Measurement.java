@@ -33,6 +33,11 @@ public class Measurement {
     public int strokes;
 
     /**
+     * kilo calories
+     */
+    public int energy;
+
+    /**
      * centimeters per seconds
      */
     public int speed;
@@ -47,12 +52,12 @@ public class Measurement {
      */
     public int strokeRate;
 
-    public int strokeRatio;
-
     /**
-     * kilo calories
+     * watts
      */
-    public int energy;
+    public int power;
+
+    public int strokeRatio;
 
     public Measurement() {
     }
@@ -61,10 +66,11 @@ public class Measurement {
         this.duration = measurement.duration;
         this.distance = measurement.distance;
         this.strokes = measurement.strokes;
+        this.energy = measurement.energy;
         this.speed = measurement.speed;
         this.pulse = measurement.pulse;
         this.strokeRate = measurement.strokeRate;
+        this.power = measurement.power;
         this.strokeRatio = measurement.strokeRatio;
-        this.energy = measurement.energy;
     }
 }

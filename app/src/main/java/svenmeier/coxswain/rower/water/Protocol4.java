@@ -35,8 +35,6 @@ public class Protocol4 implements IProtocol {
 
     private List<Field> fields = new ArrayList<>();
 
-    private boolean adjustSpeed;
-
     private RatioCalculator ratioCalculator = new RatioCalculator();
 
     private IEnergyCalculator energyCalculator = new IEnergyCalculator() {
@@ -152,40 +150,34 @@ public class Protocol4 implements IProtocol {
             }
         });
 
-        if (adjustSpeed) {
-            fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
+        fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
 
-                private long lastNonZeroReceivedAt = 0;
+            private long lastNonZeroReceivedAt = 0;
 
-                @Override
-                protected void onUpdate(int value, Measurement measurement) {
-                    long now = System.currentTimeMillis();
+            @Override
+            protected void onUpdate(int value, Measurement measurement) {
+                long now = System.currentTimeMillis();
 
-                    if (value == 0) {
-                        if (now - lastNonZeroReceivedAt > 5000) {
-                            // S4 sends watts once per stroke only,
-                            // so ignore zero for five seconds
-                            measurement.speed = 0;
-                        }
-                    } else {
-                        lastNonZeroReceivedAt = now;
-
-                        // magic formula see:
-                        // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
-                        float mps = 0.709492f * (float) Math.pow(value, 1d / 3d);
-
-                        measurement.speed = Math.round(mps * 100);
+                if (value == 0) {
+                    if (now - lastNonZeroReceivedAt > 5000) {
+                        // S4 sends watts once per stroke only,
+                        // so ignore zero for five seconds
+                        measurement.power = 0;
                     }
+                } else {
+                    lastNonZeroReceivedAt = now;
+
+                    measurement.power = value;
                 }
-            });
-        } else {
-            fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
-                @Override
-                protected void onUpdate(int value, Measurement measurement) {
-                    measurement.speed = value;
-                }
-            });
-        }
+            }
+        });
+
+        fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
+            @Override
+            protected void onUpdate(int value, Measurement measurement) {
+                measurement.speed = value;
+            }
+        });
 
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
@@ -361,10 +353,6 @@ public class Protocol4 implements IProtocol {
         cycle = fields.indexOf(reset);
 
         ratioCalculator.clear(System.currentTimeMillis());
-    }
-
-    public void adjustSpeed(boolean calculate) {
-        this.adjustSpeed = calculate;
     }
 
     public void adjustEnergy(IEnergyCalculator calculator) {

@@ -139,6 +139,7 @@ public class BindingView extends LinearLayout {
         int targetEnergy = 0;
         int limitSpeed = 0;
         int limitStrokeRate = 0;
+        int limitPower = 0;
         int limitPulse = 0;
 
         if (gym.progress != null) {
@@ -152,6 +153,7 @@ public class BindingView extends LinearLayout {
             targetEnergy = segment.energy.get();
             limitSpeed = segment.speed.get();
             limitStrokeRate = segment.strokeRate.get();
+            limitPower = segment.power.get();
             limitPulse = segment.pulse.get();
         }
 
@@ -178,6 +180,9 @@ public class BindingView extends LinearLayout {
                 break;
             case STROKE_RATE:
                 limit(measurement.strokeRate, limitStrokeRate);
+                break;
+            case POWER:
+                limit(measurement.power, limitPower);
                 break;
             case STROKE_RATIO:
                 limit(measurement.strokeRatio, 0);

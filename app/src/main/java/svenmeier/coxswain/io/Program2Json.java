@@ -60,6 +60,7 @@ public class Program2Json {
 		limit("speed", segment.speed);
 		limit("strokeRate", segment.strokeRate);
 		limit("pulse", segment.pulse);
+		limit("power", segment.power);
 
 		writer.endObject();
 	}

@@ -473,6 +473,8 @@ public class Gym {
                 return false;
             } else if (measurement.strokeRate < progress.segment.strokeRate.get()) {
                 return false;
+			} else if (measurement.power < progress.segment.power.get()) {
+				return false;
             }
 
             return true;
@@ -502,6 +504,8 @@ public class Gym {
                 limit = String.format(context.getString(R.string.speed_metersPerSecond), segment.speed.get() / 100f);
             } else if (segment.pulse.get() > 0){
                  limit = String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get());
+            } else if (segment.power.get() > 0){
+                limit = String.format(context.getString(R.string.power_watts), segment.power.get());
             }
 
             return limit;

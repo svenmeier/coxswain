@@ -108,6 +108,34 @@ public class LimitDialogFragment extends AbstractValueFragment {
             }
        });
 
+        // power 10 - 500
+        addTab(new Tab() {
+            @Override
+            public int getCount() {
+                return 50;
+            }
+
+            @Override
+            public ValueBinding getBinding() {
+                return ValueBinding.POWER;
+            }
+
+            @Override
+            public int getValue(int index) {
+                return (index + 1) * 10;
+            }
+
+            @Override
+            public int segmentToIndex(Segment segment) {
+                return segment.power.get() / 10 - 1;
+            }
+
+            @Override
+            public void indexToSegment(Segment segment, int index) {
+                segment.setPower(getValue(index));
+            }
+        });
+
         addTab(new Tab() {
             @Override
             public int getCount() {

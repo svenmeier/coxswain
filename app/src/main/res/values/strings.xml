@@ -59,6 +59,10 @@
     <string name="speed_pattern">-0.00</string>
     <string name="strokeRatio_label">STROKERATIO</string>
     <string name="strokeRatio_pattern">1:0.0</string>
+    <string name="power_watts_abbr">%d W</string>
+    <string name="power_watts">%d watts</string>
+    <string name="power_label">POWER</string>
+    <string name="power_pattern">000</string>
     <string name="time_label">TIME</string>
     <string name="time_pattern">00:60</string>
     <string name="split_label">SPLIT</string>

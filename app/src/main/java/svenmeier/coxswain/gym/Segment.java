@@ -38,6 +38,8 @@ public class Segment extends Propoid {
 
     public final Property<Integer> pulse = property();
 
+    public final Property<Integer> power = property();
+
     public Segment() {
         difficulty.set(Difficulty.EASY);
 
@@ -49,6 +51,7 @@ public class Segment extends Propoid {
         speed.set(0);
         strokeRate.set(0);
         pulse.set(0);
+        power.set(0);
     }
 
     public Segment(Difficulty difficulty) {
@@ -89,6 +92,8 @@ public class Segment extends Propoid {
             return strokeRate.get();
         } else if (pulse.get() > 0) {
             return pulse.get();
+        } else if (power.get() > 0) {
+            return power.get();
         }
         return 0;
     }
@@ -97,7 +102,7 @@ public class Segment extends Propoid {
         this.speed.set(0);
         this.strokeRate.set(0);
         this.pulse.set(0);
-        this.energy.set(0);
+        this.power.set(0);
     }
 
     public Segment setDuration(int duration) {
@@ -140,6 +145,7 @@ public class Segment extends Propoid {
         this.speed.set(speed);
         this.strokeRate.set(0);
         this.pulse.set(0);
+        this.power.set(0);
 
         return this;
     }
@@ -148,6 +154,7 @@ public class Segment extends Propoid {
         this.speed.set(0);
         this.strokeRate.set(strokeRate);
         this.pulse.set(0);
+        this.power.set(0);
 
         return this;
     }
@@ -156,6 +163,16 @@ public class Segment extends Propoid {
         this.speed.set(0);
         this.strokeRate.set(0);
         this.pulse.set(pulse);
+        this.power.set(0);
+
+        return this;
+    }
+
+    public Segment setPower(int power) {
+        this.speed.set(0);
+        this.strokeRate.set(0);
+        this.pulse.set(0);
+        this.power.set(power);
 
         return this;
     }

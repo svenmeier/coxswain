@@ -56,9 +56,13 @@ public class WaterRower extends Rower {
 
     private ITrace trace;
 
+    private boolean adjustSpeed;
+
     public WaterRower(Context context, UsbDevice device) {
         this.context = context;
         this.device = device;
+
+        adjustSpeed = Preference.getBoolean(context, R.string.preference_adjust_speed).get();
     }
 
     @Override
@@ -99,7 +103,6 @@ public class WaterRower extends Rower {
             protocol = new Protocol3(transfer, trace);
         } else {
             Protocol4 protocol4 = new Protocol4(transfer, trace);
-            protocol4.adjustSpeed(Preference.getBoolean(context, R.string.preference_adjust_speed).get());
             if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
                 protocol4.adjustEnergy(new EnergyCalculator(Preference.getInt(context, R.string.preference_weight).fallback(90).get()));
             }
@@ -152,6 +155,14 @@ public class WaterRower extends Rower {
         }
 
         protocol.transfer(this);
+
+        if (adjustSpeed) {
+            // magic formula see:
+            // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
+            float mps = 0.709492f * (float) Math.pow(this.power, 1d / 3d);
+
+            this.speed = Math.round(mps * 100);
+        }
 
         return true;
     }

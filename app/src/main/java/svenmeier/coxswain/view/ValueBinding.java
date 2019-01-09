@@ -17,6 +17,7 @@ public enum ValueBinding {
 	PULSE(R.string.pulse_label, R.string.pulse_pattern),
 	STROKE_RATE(R.string.strokeRate_label, R.string.strokeRate_pattern),
 	STROKE_RATIO(R.string.strokeRatio_label, R.string.strokeRatio_pattern),
+	POWER(R.string.power_label, R.string.power_pattern),
 	TIME(R.string.time_label, R.string.time_pattern),
 	SPLIT(R.string.split_label, R.string.split_pattern),
 	AVERAGE_SPLIT(R.string.average_split_label, R.string.average_split_pattern),

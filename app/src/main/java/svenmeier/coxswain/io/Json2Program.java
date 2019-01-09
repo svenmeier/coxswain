@@ -81,6 +81,9 @@ public class Json2Program {
 				case "pulse":
 					segment.setPulse(reader.nextInt());
 					break;
+				case "power":
+					segment.setPower(reader.nextInt());
+					break;
 			}
 		}
 

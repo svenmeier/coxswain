@@ -115,7 +115,9 @@ public class Workout2TCX {
 			track(workout, snapshots);
 		}
 
-		extension("LX", "Steps", Integer.toString(workout.strokes.get()));
+		startExtension("LX");
+		tag(null, "Steps", Integer.toString(workout.strokes.get()));
+		endExtension();
 
 		serializer.endTag(null, serializer.getName());
 	}
@@ -147,7 +149,10 @@ public class Workout2TCX {
 
 		tag(null, "Cadence", Integer.toString(snapshot.strokeRate.get()));
 
-		extension("TPX", "Speed", Float.toString(snapshot.speed.get() / 100f));
+		startExtension("TPX");
+		tag(null, "Speed", Float.toString(snapshot.speed.get() / 100f));
+		tag(null, "Watts", Integer.toString(snapshot.power.get()));
+		endExtension();
 
 		serializer.endTag(null, serializer.getName());
 	}
@@ -163,16 +168,15 @@ public class Workout2TCX {
 		serializer.endTag(null, serializer.getName());
 	}
 
-	private void extension(String extension, String name, String value) throws IOException {
+	private void startExtension(String extension) throws IOException {
 		serializer.startTag(null, "Extensions");
 
 		serializer.startTag(null, extension);
 		serializer.attribute(null, "xmlns", "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+	}
 
-		tag(null, name, value);
-
+	private void endExtension() throws IOException {
 		serializer.endTag(null, serializer.getName());
-
 		serializer.endTag(null, serializer.getName());
 	}
 

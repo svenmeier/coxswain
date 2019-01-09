@@ -33,6 +33,11 @@ public class Snapshot extends Propoid {
     public final Property<Integer> strokes = property();
 
     /**
+     * kilo calories
+     */
+    public final Property<Integer> energy = property();
+
+    /**
      * centimeters per second
      */
     public final Property<Integer> speed = property();
@@ -50,27 +55,29 @@ public class Snapshot extends Propoid {
     public final Property<Integer> strokeRatio = property();
 
     /**
-     * kilo calories
+     * watts
      */
-    public final Property<Integer> energy = property();
+    public final Property<Integer> power = property();
 
     public Snapshot() {
         distance.set(0);
         strokes.set(0);
         speed.set(0);
+        energy.set(0);
         pulse.set(0);
         strokeRate.set(0);
         strokeRatio.set(0);
-        energy.set(0);
+        power.set(0);
     }
 
     public Snapshot(Measurement measurement) {
         distance.set(measurement.distance);
         strokes.set(measurement.strokes);
+        energy.set(measurement.energy);
         speed.set(measurement.speed);
         pulse.set(measurement.pulse);
         strokeRate.set(measurement.strokeRate);
         strokeRatio.set(measurement.strokeRatio);
-        energy.set(measurement.energy);
+        power.set(measurement.power);
     }
 }

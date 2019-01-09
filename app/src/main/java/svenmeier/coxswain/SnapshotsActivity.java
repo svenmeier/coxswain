@@ -124,7 +124,7 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        highlight = (highlight + 1) % 3;
+        highlight = (highlight + 1) % 4;
 
         timelineView.invalidate();
 
@@ -141,6 +141,9 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                 break;
             case 2:
                 titleView.setText(R.string.strokeRate_label);
+                break;
+            case 3:
+                titleView.setText(R.string.power_label);
                 break;
             default:
                 throw new IndexOutOfBoundsException();
@@ -235,6 +238,9 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                     case 2:
                         what = String.format(getString(R.string.strokeRate_strokesPerMinute_abbr), snapshot.strokeRate.get());
                         break;
+                    case 3:
+                        what = String.format(getString(R.string.power_watts_abbr), snapshot.power.get());
+                        break;
                     default:
                         throw new IndexOutOfBoundsException();
                 }
@@ -285,6 +291,11 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                         value = snapshot.strokeRate.get();
                         min = minSnapshot.strokeRate.get();
                         max = maxSnapshot.strokeRate.get();
+                        break;
+                    case 3:
+                        value = snapshot.energy.get();
+                        min = minSnapshot.energy.get();
+                        max = maxSnapshot.energy.get();
                         break;
                     default:
                         throw new IndexOutOfBoundsException();
@@ -340,15 +351,18 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
             minSnapshot.speed.set(Integer.MAX_VALUE);
             minSnapshot.strokeRate.set(Integer.MAX_VALUE);
             minSnapshot.pulse.set(Integer.MAX_VALUE);
+            minSnapshot.power.set(Integer.MAX_VALUE);
             maxSnapshot = new Snapshot();
             for (Snapshot snapshot : snapshots) {
                 minSnapshot.speed.set(Math.min(minSnapshot.speed.get(), snapshot.speed.get()));
                 minSnapshot.strokeRate.set(Math.min(minSnapshot.strokeRate.get(), snapshot.strokeRate.get()));
                 minSnapshot.pulse.set(Math.min(minSnapshot.pulse.get(), snapshot.pulse.get()));
+                minSnapshot.power.set(Math.min(minSnapshot.power.get(), snapshot.power.get()));
 
                 maxSnapshot.speed.set(Math.max(maxSnapshot.speed.get(), snapshot.speed.get()));
                 maxSnapshot.strokeRate.set(Math.max(maxSnapshot.strokeRate.get(), snapshot.strokeRate.get()));
                 maxSnapshot.pulse.set(Math.max(maxSnapshot.pulse.get(), snapshot.pulse.get()));
+                maxSnapshot.power.set(Math.max(maxSnapshot.power.get(), snapshot.power.get()));
             }
 
             timelineView.postInvalidate();

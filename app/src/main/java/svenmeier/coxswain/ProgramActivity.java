@@ -185,6 +185,9 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             } else if (item.strokeRate.get() > 0) {
                 limitView.setBinding(ValueBinding.STROKE_RATE);
                 limitView.changed(item.strokeRate.get());
+            } else if (item.power.get() > 0) {
+                limitView.setBinding(ValueBinding.POWER);
+                limitView.changed(item.power.get());
             } else {
                 limitView.setBinding(ValueBinding.NONE);
                 limitView.changed(0);

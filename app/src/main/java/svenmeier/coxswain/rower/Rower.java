@@ -34,11 +34,14 @@ public abstract class Rower extends Measurement {
         duration = 0;
         distance = 0;
         strokes = 0;
+        energy = 0;
+
         speed = 0;
         pulse = 0;
         strokeRate = 0;
+        power = 0;
+
         strokeRatio = 0;
-        energy = 0;
     }
 
     /**

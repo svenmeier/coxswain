@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -120,6 +121,7 @@ public class FitExport extends Export<Workout> {
 		@Override
 		public void run() {
 			toast(context.getString(R.string.googlefit_export_starting));
+			Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
 			try {

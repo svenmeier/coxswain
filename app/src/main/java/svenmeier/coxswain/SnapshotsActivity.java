@@ -212,9 +212,9 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
             int start = (int)(from / 1000);
             int end = (int)(to / 1000);
 
-            paintCurve(canvas, rect, start, end, 0);
-            paintCurve(canvas, rect, start, end, 1);
-            paintCurve(canvas, rect, start, end, 2);
+            for (int property = 0; property < 4; property++) {
+                paintCurve(canvas, rect, start, end, property);
+            }
 
             paintHeader(from, canvas, rect);
         }
@@ -293,9 +293,9 @@ public class SnapshotsActivity extends AbstractActivity implements View.OnClickL
                         max = maxSnapshot.strokeRate.get();
                         break;
                     case 3:
-                        value = snapshot.energy.get();
-                        min = minSnapshot.energy.get();
-                        max = maxSnapshot.energy.get();
+                        value = snapshot.power.get();
+                        min = minSnapshot.power.get();
+                        max = maxSnapshot.power.get();
                         break;
                     default:
                         throw new IndexOutOfBoundsException();

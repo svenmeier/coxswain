@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Process;
 import android.support.annotation.UiThread;
 import android.util.Log;
 import android.widget.Toast;
@@ -84,6 +85,7 @@ public class TcxExport extends Export<Workout> {
 		@Override
 		public void run() {
 			toast(context.getString(R.string.garmin_export_starting));
+			Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
 			Match<Snapshot> snapshots = gym.getSnapshots(workout);
 

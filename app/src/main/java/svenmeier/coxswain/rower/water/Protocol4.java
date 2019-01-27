@@ -16,6 +16,8 @@
 package svenmeier.coxswain.rower.water;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Measurement;
@@ -78,6 +80,8 @@ public class Protocol4 implements IProtocol {
                 onHandshake();
 
                 trace.comment("handshake complete");
+
+                removeField(this);
             }
         });
     }
@@ -100,6 +104,8 @@ public class Protocol4 implements IProtocol {
                 version = message.substring(response.length());
 
                 trace.comment("version " + version);
+
+                removeField(this);
             }
         });
 
@@ -150,28 +156,6 @@ public class Protocol4 implements IProtocol {
             }
         });
 
-        fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
-
-            private long lastNonZeroReceivedAt = 0;
-
-            @Override
-            protected void onUpdate(int value, Measurement measurement) {
-                long now = System.currentTimeMillis();
-
-                if (value == 0) {
-                    if (now - lastNonZeroReceivedAt > 5000) {
-                        // S4 sends watts once per stroke only,
-                        // so ignore zero for five seconds
-                        measurement.power = 0;
-                    }
-                } else {
-                    lastNonZeroReceivedAt = now;
-
-                    measurement.power = value;
-                }
-            }
-        });
-
         fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
@@ -198,6 +182,43 @@ public class Protocol4 implements IProtocol {
                         measurement.pulse = 0;
                     } else {
                         measurement.pulse = value;
+                    }
+                }
+            }
+        });
+
+        fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
+
+            private List<Integer> sequence = new LinkedList<>();
+
+            private int strokePower;
+
+            @Override
+            protected void onUpdate(int value, Measurement measurement) {
+                if (value == 0) {
+                    // stroke has finished
+                    if (strokePower != 0) {
+                        sequence.add(strokePower);
+                        if (sequence.size() > 6) {
+                            // not more than six
+                            sequence.remove(0);
+                        }
+
+                        int sum = 0;
+                        for (int i = 0; i < sequence.size(); i++) {
+                            sum += sequence.get(i);
+                        }
+
+                        measurement.power = sum / sequence.size();
+                        trace.comment("power mean of " + sequence + " + is " + measurement.power);
+                    }
+                    strokePower = 0;
+                } else {
+                    // waterrower might report different values during single stroke
+                    if (strokePower == 0) {
+                        strokePower = value;
+                    } else {
+                        strokePower = (strokePower + value) / 2;
                     }
                 }
             }
@@ -345,16 +366,23 @@ public class Protocol4 implements IProtocol {
              */
             @Override
             protected void onAfterOutput() {
-                fields.remove(this);
+                removeField(this);
             }
         };
-        fields.add(reset);
-
-        cycle = fields.indexOf(reset);
+        addField(reset);
 
         ratioCalculator.clear(System.currentTimeMillis());
     }
 
+    private void addField(Field field) {
+        fields.add(field);
+        cycle = fields.indexOf(field);
+    }
+
+    private void removeField(Field field) {
+        fields.remove(field);
+    }
+    
     public void adjustEnergy(IEnergyCalculator calculator) {
         this.energyCalculator = calculator;
     }

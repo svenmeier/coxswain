@@ -146,7 +146,7 @@
     <string name="preference_weight_summary">Anpassen an %s kg Körpergewicht</string>
 
     <string name="preference_adjust_speed_title">Tempo anpassen</string>
-    <string name="preference_adjust_speed_summary">Tempo aus Energie berechnen</string>
+    <string name="preference_adjust_speed_summary">Tempo aus Kraft berechnen</string>
 
     <string name="preference_energy_unit_title">Energie</string>
     <string name="preference_energy_unit_summary">Energie in der Einheit %s</string>

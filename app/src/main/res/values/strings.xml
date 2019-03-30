@@ -151,7 +151,7 @@
 
     <string name="preference_adjust_speed" translatable="false">preference_adjust_speed</string>
     <string name="preference_adjust_speed_title">Adjust speed</string>
-    <string name="preference_adjust_speed_summary">Calculate speed from energy</string>
+    <string name="preference_adjust_speed_summary">Calculate speed from power</string>
 
     <string name="preference_energy_unit" translatable="false">preference_energy_unit</string>
     <string name="preference_energy_unit_title">Energy</string>

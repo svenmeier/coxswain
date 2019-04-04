@@ -47,7 +47,7 @@ public class CalendarExport extends Export<Workout> {
 
 			this.workout = workout;
 
-			acquirePermissions(Manifest.permission.WRITE_CALENDAR);
+			acquirePermissions(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR);
 		}
 
 		/**

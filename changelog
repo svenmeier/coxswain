@@ -1,3 +1,6 @@
+5.8
+  - fixed calendar export
+
 5.7
   - don't repeat segment limit when pausing
   - record power and export to TCX
@@ -21,11 +24,3 @@
 
 5.0
   - fixed repeated notifications on Android O
-
-4.9
-  - adjusted to Android O
-  - old workouts are compacted
-  - improved bluetooth heart connection
-  - direct export into calendar if permitted
-  - allow installation on external memory
-

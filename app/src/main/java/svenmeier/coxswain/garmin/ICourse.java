@@ -2,11 +2,11 @@ package svenmeier.coxswain.garmin;
 
 import android.location.Location;
 
-public interface ITrack {
+public interface ICourse {
+
+	void setDistance(double meters);
 
 	double getLongitude();
 
 	double getLatitude();
-
-	void setDistance(int meters);
 }

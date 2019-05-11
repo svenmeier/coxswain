@@ -175,6 +175,7 @@
             android:summary="@string/preference_export_track_summary"
             android:defaultValue="false"
         />
+
     </PreferenceCategory>
 
     <PreferenceCategory

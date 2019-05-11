@@ -18,24 +18,22 @@ import svenmeier.coxswain.gym.Workout;
  */
 public class Workout2TCX {
 
-	private XmlSerializer serializer;
+	private final XmlSerializer serializer;
+
+	private final ICourse track;
 
 	private SimpleDateFormat dateFormat;
 
-	private ITrack track;
-
-	public Workout2TCX(Writer writer) throws IOException {
+	public Workout2TCX(Writer writer, ICourse track) throws IOException {
 		serializer = Xml.newSerializer();
 		serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
 		serializer.setOutput(writer);
 
+		this.track = track;
+
 		// time for trackpoints must be in UTC
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-	}
-
-	public void track(ITrack track) {
-		this.track = track;
 	}
 
 	public void document(Workout workout, List<Snapshot> snaoshots) throws IOException {
@@ -124,10 +122,6 @@ public class Workout2TCX {
 
 	private void track(Workout workout, List<Snapshot> snapshots) throws IOException {
 		serializer.startTag(null, "Track");
-
-		if (track == null) {
-			track = new StationaryTrack(workout.location.get());
-		}
 
 		for (int index = 0; index < snapshots.size(); index++) {
 			trackpoint(workout, snapshots.get(index), index);

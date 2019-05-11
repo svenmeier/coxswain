@@ -108,7 +108,8 @@
     <string name="garmin_export">TCX</string>
     <string name="garmin_export_share">TCX teilen …</string>
     <string name="garmin_export_starting">Exportiere Training</string>
-    <string name="garmin_export_finished">Training exportiert nach %s</string>
+    <string name="garmin_export_finished">Exportiert nach %s</string>
+    <string name="garmin_export_track_course_unavailable">Strecke ist fehlerhaft</string>
     <string name="garmin_export_failed">Export des Trainings gescheitert</string>
     <string name="garmin_import_starting">Importiere Training</string>
     <string name="garmin_import_finished">Training wurde importiert</string>
@@ -207,8 +208,8 @@
     <string name="preference_export_auto_summary">Exportiere jedes Training automatisch</string>
     <string name="preference_export_auto_reminder">Exportiere zuerst ein Training um automatisches Exportieren festzulegen</string>
 
-    <string name="preference_export_track_title">Orte exportieren</string>
-    <string name="preference_export_track_summary">Exportiere generierte Spur-Orten</string>
+    <string name="preference_export_track_title">Mit Orten exportieren</string>
+    <string name="preference_export_track_summary">Du kannst deines eigenen Kurs verwenden, indem du ihn in /coxswain/course.tcx ablegst.</string>
 
     <string name="preference_integration_title">Integration</string>
 

@@ -13,9 +13,13 @@ import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 
 import propoid.db.Match;
@@ -38,16 +42,12 @@ public class TcxExport extends Export<Workout> {
 
 	private final Gym gym;
 
-	private Preference<Boolean> generateLocations;
-
 	public TcxExport(Context context) {
 		super(context.getApplicationContext());
 
 		this.handler = new Handler();
 
 		this.gym = Gym.instance(context);
-
-		this.generateLocations = Preference.getBoolean(context, R.string.preference_export_track);
 	}
 
 	@Override
@@ -129,11 +129,7 @@ public class TcxExport extends Export<Workout> {
 
 			Writer writer = new BufferedWriter(new FileWriter(file));
 			try {
-				Workout2TCX workout2TCX = new Workout2TCX(writer);
-
-				if (generateLocations.get()) {
-					workout2TCX.track(new ArtificialTrack(workout.location.get()));
-				}
+				Workout2TCX workout2TCX = new Workout2TCX(writer, getCourse(workout));
 
 				workout2TCX.document(workout, snapshots.list());
 			} finally {
@@ -142,6 +138,33 @@ public class TcxExport extends Export<Workout> {
 
 			return file;
 		}
+	}
+
+	private ICourse getCourse(Workout workout) {
+		ICourse course = new StationaryCourse(workout.location.get());
+
+		if (Preference.getBoolean(context, R.string.preference_export_track).get()) {
+			InputStream input;
+			try {
+				input = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Coxswain.TAG), "course.tcx"));
+			} catch (Exception ex) {
+				input = context.getResources().openRawResource(R.raw.course);
+			}
+			
+			try {
+				TCX2Course tcx2Course = new TCX2Course(new InputStreamReader(input, Charset.forName("UTF-8")));
+				tcx2Course.course();
+
+				course = tcx2Course.getCourse();
+				
+				input.close();
+			} catch (Exception ex) {
+				Log.e(Coxswain.TAG, "cannot read course", ex);
+				toast(context.getString(R.string.garmin_export_track_course_unavailable));
+			}
+		}
+
+		return course;
 	}
 
 	private void toast(final String text) {

@@ -2,11 +2,11 @@ package svenmeier.coxswain.garmin;
 
 import android.location.Location;
 
-public class StationaryTrack implements ITrack {
+public class StationaryCourse implements ICourse {
 
 	private Location location;
 
-	public StationaryTrack(Location location) {
+	public StationaryCourse(Location location) {
 		if (location == null) {
 			// Greenwich
 			location = new Location("");
@@ -17,7 +17,7 @@ public class StationaryTrack implements ITrack {
 		this.location = location;
 	}
 
-	public void setDistance(int meters) {
+	public void setDistance(double meters) {
 	}
 
 	public double getLongitude() {

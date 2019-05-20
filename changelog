@@ -1,3 +1,6 @@
+5.9
+  - export with artificial locations, by default River Thames
+
 5.8
   - fixed calendar export
 
@@ -21,6 +24,3 @@
   - fixed crash when selecting workout as challenge
   - fixed bug increasing database size excessively
   - remove unnecessary data from database
-
-5.0
-  - fixed repeated notifications on Android O

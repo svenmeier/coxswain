@@ -35,28 +35,8 @@
         <android.support.v7.widget.GridLayout
             android:id="@+id/workout_grid"
             android:layout_width="0dp"
-            android:layout_weight="6"
+            android:layout_weight="8"
             android:layout_height="match_parent"
-        >
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-                />
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-            />
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-            />
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-            />
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-            />
-            <svenmeier.coxswain.view.BindingView
-                style="@style/BindingView"
-            />
-        </android.support.v7.widget.GridLayout>
-
+        />
     </LinearLayout>
 </LinearLayout>

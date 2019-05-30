@@ -66,16 +66,23 @@
         android:title="@string/preference_display_title"
     >
         <CheckBoxPreference
-            android:key="@string/preference_numbers_arabic"
-            android:title="@string/preference_numbers_arabic_title"
-            android:summary="@string/preference_numbers_arabic_summary"
+            android:key="@string/preference_theme_dark"
+            android:title="@string/preference_theme_dark_title"
+            android:summary="@string/preference_theme_dark_summary"
             android:defaultValue="false"
         />
 
         <CheckBoxPreference
-            android:key="@string/preference_theme_dark"
-            android:title="@string/preference_theme_dark_title"
-            android:summary="@string/preference_theme_dark_summary"
+            android:key="@string/preference_picture_in_picture"
+            android:title="@string/preference_picture_in_picture_title"
+            android:summary="@string/preference_picture_in_picture_summary"
+            android:defaultValue="false"
+        />
+
+        <CheckBoxPreference
+            android:key="@string/preference_numbers_arabic"
+            android:title="@string/preference_numbers_arabic_title"
+            android:summary="@string/preference_numbers_arabic_summary"
             android:defaultValue="false"
         />
 

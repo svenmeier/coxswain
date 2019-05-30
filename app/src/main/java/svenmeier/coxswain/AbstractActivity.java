@@ -15,10 +15,15 @@
  */
 package svenmeier.coxswain;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +37,17 @@ public class AbstractActivity extends AppCompatActivity {
     protected Preference<Boolean> darkTheme;
 
     private boolean darkWhenCreated;
+
+    private BroadcastReceiver closePictureInPicture = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                if (isInPictureInPictureMode()) {
+                    finish();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +95,36 @@ public class AbstractActivity extends AppCompatActivity {
 
         if (darkTheme.get() != darkWhenCreated) {
             recreate();
-        } else {
-            darkTheme.listen(new Preference.OnChangeListener() {
-                @Override
-                public void onChanged() {
-                    recreate();
-                }
-            });
+            return;
+        }
+
+        darkTheme.listen(new Preference.OnChangeListener() {
+            @Override
+            public void onChanged() {
+                recreate();
+            }
+        });
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            String action = "close_picture_in_picture";
+
+            LocalBroadcastManager broadcasts = LocalBroadcastManager.getInstance(this);
+            broadcasts.registerReceiver(closePictureInPicture, new IntentFilter(action));
+            if (!isInPictureInPictureMode()) {
+                broadcasts.sendBroadcast(new Intent(action));
+            }
         }
     }
 
     @Override
     protected void onStop() {
         darkTheme.listen(null);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            LocalBroadcastManager broadcasts = LocalBroadcastManager.getInstance(this);
+
+            broadcasts.unregisterReceiver(closePictureInPicture);
+        }
 
         super.onStop();
     }

@@ -16,12 +16,17 @@
 package svenmeier.coxswain;
 
 import android.app.Activity;
+import android.app.PictureInPictureParams;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayout;
+import android.util.DisplayMetrics;
+import android.util.Rational;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -105,11 +110,15 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(this);
 
 		setContentView(R.layout.layout_workout);
-		segmentsView = (SegmentsView) findViewById(R.id.workout_segments);
+		segmentsView = findViewById(R.id.workout_segments);
 		segmentsView.setData(new SegmentsData(gym.program));
-		progressView = (LevelView) findViewById(R.id.workout_progress);
-		gridView = (GridLayout) findViewById(R.id.workout_grid);
+		progressView = findViewById(R.id.workout_progress);
+		gridView = findViewById(R.id.workout_grid);
 
+		writeToGrid();
+	}
+
+	private void writeToGrid() {
 		List<ValueBinding> defaultBinding;
 		if (gym.pace == null) {
 			defaultBinding = DEFAULT_BINDING;
@@ -166,7 +175,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	private int columnCount(int size) {
-		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		if (metrics.widthPixels > metrics.heightPixels) {
 			if (size <= 3) {
 				return 1;
 			}
@@ -198,6 +209,13 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+
+		writeToGrid();
+	}
+
+	@Override
 	protected void onDestroy() {
 		List<ValueBinding> bindings = readFromGrid();
 		bindingPreference.setList(bindings);
@@ -208,18 +226,27 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 
 		changed();
 		gym.addListener(this);
 	}
 
 	@Override
-	protected void onPause() {
+	protected void onStop() {
 		gym.removeListener(this);
 
-		super.onPause();
+		super.onStop();
+	}
+
+	@Override
+	protected void onUserLeaveHint() {
+		if (Preference.getBoolean(this, R.string.preference_picture_in_picture).get()) {
+			if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+				enterPictureInPictureMode();
+			}
+		}
 	}
 
 	@Override

@@ -176,6 +176,10 @@
     <string name="preference_theme_dark_title">Dark theme</string>
     <string name="preference_theme_dark_summary">Use a dark theme</string>
 
+    <string name="preference_picture_in_picture" translatable="false">preference_picture_in_picture</string>
+    <string name="preference_picture_in_picture_title">Picture-in-picture</string>
+    <string name="preference_picture_in_picture_summary">Show workout as picture-in-picture</string>
+
     <string name="preference_numbers_arabic" translatable="false">preference_numbers_arabic</string>
     <string name="preference_numbers_arabic_title">Numbers</string>
     <string name="preference_numbers_arabic_summary">Use Arabic numbers</string>

@@ -166,6 +166,9 @@
     <string name="preference_theme_dark_title">Dunkles Theme</string>
     <string name="preference_theme_dark_summary">Dunkles Theme verwenden</string>
 
+    <string name="preference_picture_in_picture_title">Bild-in-Bild</string>
+    <string name="preference_picture_in_picture_summary">Training in Bild-in-Bild anzeigen</string>
+
     <string name="preference_numbers_arabic_title">Zahlen</string>
     <string name="preference_numbers_arabic_summary">Verwende arabische Zahlen</string>
 

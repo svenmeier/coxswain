@@ -1,162 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="svenmeier.coxswain"
-    android:installLocation="auto"
->
+<manifest package="svenmeier.coxswain"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          android:installLocation="auto">
 
-    <uses-feature android:name="android.hardware.usb.host" />
-    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
-    <uses-feature android:name="android.hardware.location" android:required="false"/>
-
-    <!-- notifications -->
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
-    <!-- service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <!-- location & bluetooth -->
+    <uses-feature android:name="android.hardware.usb.host"/>
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.location"
+        android:required="false"/> <!-- notifications -->
+    <uses-permission android:name="android.permission.VIBRATE"/> <!-- service -->
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"/> <!-- location & bluetooth -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
-    <!-- export TCX -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- bluetooth heart rate -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- export TCX -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- bluetooth heart rate -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-
-    <!-- sensor heart rate -->
-    <uses-permission android:name="android.permission.BODY_SENSORS"/>
-
-    <!-- export Calendar for >23 only -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/> <!-- sensor heart rate -->
+    <uses-permission
+        android:name="android.permission.BODY_SENSORS"/> <!-- export Calendar for >23 only -->
     <uses-permission-sdk-23 android:name="android.permission.READ_CALENDAR"/>
     <uses-permission-sdk-23 android:name="android.permission.WRITE_CALENDAR"/>
 
-    <!-- allowBackup and replace the attribute in merged manifests-->
     <application
+        android:name=".Coxswain"
         android:allowBackup="true"
-        tools:replace="allowBackup"
-
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LightTheme"
-        android:name=".Coxswain"
-        >
-
+        tools:replace="allowBackup">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            >
+            android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
 
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/xml" />
-                <data android:pathPattern=".*\\.tcx" />
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="text/xml"/>
+                <data android:pathPattern=".*\\.tcx"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
-                <data android:pathPattern=".*\\.tcx" />
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="text/*"/>
+                <data android:pathPattern=".*\\.tcx"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="application/json"/>
+                <data android:pathPattern=".*\\.coxswain"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:mimeType="text/*"/>
+                <data android:pathPattern=".*\\.coxswain"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
             </intent-filter>
 
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/json" />
-                <data android:pathPattern=".*\\.coxswain" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/*" />
-                <data android:pathPattern=".*\\.coxswain" />
-            </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-            </intent-filter>
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
-        </activity>
-
-        <!-- dont show soft input automatically -->
+                android:resource="@xml/device_filter"/>
+        </activity> <!-- dont show soft input automatically -->
         <activity
             android:name=".ProgramActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            >
+            android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
-
         <activity
             android:name=".SnapshotsActivity"
-            android:label="@string/app_name"
-            >
+            android:label="@string/app_name">
         </activity>
-
         <activity
             android:name=".WorkoutActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
-            android:supportsPictureInPicture="true"
             android:resizeableActivity="true"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
-        </activity>
+            android:supportsPictureInPicture="true">
 
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity"
-            >
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
-        </activity>
+            android:parentActivityName=".MainActivity">
 
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
+        </activity>
         <activity
             android:name=".util.PermissionActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            >
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+        </activity>
+        <activity
+            android:name=".bluetooth.BluetoothActivity"
+            android:label="@string/bluetooth_heart_choose_device"
+            android:theme="@style/DialogTheme">
         </activity>
 
         <service
             android:name=".GymService"
-            android:enabled="true" >
+            android:enabled="true">
         </service>
-
         <service
             android:name=".CompactService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-        />
-
-        <!-- needed for API 24+ for content observers registered by Propoid -->
+            android:permission="android.permission.BIND_JOB_SERVICE"/> <!-- needed for API 24+ for content observers registered by Propoid -->
         <provider
             android:name=".GymContentProvider"
             android:authorities="svenmeier.coxswain.gym"
             android:enabled="true"
-            android:exported="false"
-        />
-
-        <!-- needed for API 24+ for sharing file uri by exports -->
+            android:exported="false"/> <!-- needed for API 24+ for sharing file uri by exports -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="svenmeier.coxswain.files"

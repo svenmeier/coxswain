@@ -26,7 +26,8 @@
     <string name="gym_notification_connected">Connected to %s</string>
     <string name="gym_notification_stop">Stop</string>
     <string name="gym_ready">ready</string>
-    <string name="gym_repository_extern_failed">Cannot load repository from external location</string>
+    <string name="gym_repository_extern_failed">Cannot load repository from external location
+    </string>
 
     <string name="distance_miles">%,d mi</string>
     <string name="distance_yards">%,d yd</string>
@@ -132,13 +133,13 @@
     <string name="ant_heart_not_found">No heart rate found via Ant+</string>
     <string name="ant_heart_reading">Reading heart rate via Ant+</string>
 
-    <string name="bluetooth_heart_no_bluetooth">No Bluetooth available</string>
-    <string name="bluetooth_heart_no_bluetooth_le">No Bluetooth LE available</string>
-    <string name="bluetooth_heart_no_location">Location services must be enabled to access Bluetooth</string>
-    <string name="bluetooth_heart_searching">Searching for heart rate via Bluetooth …</string>
-    <string name="bluetooth_heart_not_found">No heart rate found via Bluetooth</string>
-    <string name="bluetooth_heart_reading">Reading heart rate via Bluetooth</string>
-    <string name="bluetooth_heart_link_loss">Lost link to heart rate via Bluetooth</string>
+    <string name="bluetooth_heart_no_bluetooth">Bluetooth not available</string>
+    <string name="bluetooth_heart_no_location">Bluetooth requires location services enabled</string>
+    <string name="bluetooth_heart_connecting">Bluetooth connecting to %s</string>
+    <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
+    <string name="bluetooth_heart_connected">Bluetooth heart rate reading from %s</string>
+    <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
+    <string name="bluetooth_heart_choose_device">Bluetooth choose heart rate</string>
 
     <string name="preference_training_title">Training</string>
 
@@ -176,7 +177,9 @@
     <string name="preference_theme_dark_title">Dark theme</string>
     <string name="preference_theme_dark_summary">Use a dark theme</string>
 
-    <string name="preference_picture_in_picture" translatable="false">preference_picture_in_picture</string>
+    <string name="preference_picture_in_picture" translatable="false">
+        preference_picture_in_picture
+    </string>
     <string name="preference_picture_in_picture_title">Picture-in-picture</string>
     <string name="preference_picture_in_picture_summary">Show workout as picture-in-picture</string>
 
@@ -184,47 +187,68 @@
     <string name="preference_numbers_arabic_title">Numbers</string>
     <string name="preference_numbers_arabic_summary">Use Arabic numbers</string>
 
-    <string name="preference_workout_bindings_reset" translatable="false">preference_bindings_reset</string>
+    <string name="preference_workout_bindings_reset" translatable="false">
+        preference_bindings_reset
+    </string>
     <string name="preference_workout_bindings_reset_title">Reset bindings</string>
-    <string name="preference_workout_bindings_reset_summary">Reset workout bindings to defaults</string>
-    <string name="preference_workout_binding" translatable="false">preference_workout_binding</string>
-    <string name="preference_workout_binding_pace" translatable="false">preference_workout_binding_pace</string>
+    <string name="preference_workout_bindings_reset_summary">Reset workout bindings to defaults
+    </string>
+    <string name="preference_workout_binding" translatable="false">preference_workout_binding
+    </string>
+    <string name="preference_workout_binding_pace" translatable="false">
+        preference_workout_binding_pace
+    </string>
 
     <string name="preference_audio_title">Audio</string>
     <string name="preference_audio_none">None</string>
 
-    <string name="preference_audio_ringtones" translatable="false">preference_audio_ringtones</string>
+    <string name="preference_audio_ringtones" translatable="false">preference_audio_ringtones
+    </string>
     <string name="preference_audio_ringtones_title">Sounds</string>
     <string name="preference_audio_ringtones_summary">Play sounds for segments</string>
 
-    <string name="preference_audio_ringtone_easy" translatable="false">preference_audio_ringtone_easy</string>
+    <string name="preference_audio_ringtone_easy" translatable="false">
+        preference_audio_ringtone_easy
+    </string>
     <string name="preference_audio_ringtone_easy_title">Easy segment</string>
     <string name="preference_audio_ringtone_easy_summary">%s</string>
 
-    <string name="preference_audio_ringtone_medium" translatable="false">preference_audio_ringtone_medium</string>
+    <string name="preference_audio_ringtone_medium" translatable="false">
+        preference_audio_ringtone_medium
+    </string>
     <string name="preference_audio_ringtone_medium_title">Medium segment</string>
     <string name="preference_audio_ringtone_medium_summary">%s</string>
 
-    <string name="preference_audio_ringtone_hard" translatable="false">preference_audio_ringtone_hard</string>
+    <string name="preference_audio_ringtone_hard" translatable="false">
+        preference_audio_ringtone_hard
+    </string>
     <string name="preference_audio_ringtone_hard_title">Hard segment</string>
     <string name="preference_audio_ringtone_hard_summary">%s</string>
 
-    <string name="preference_audio_ringtone_finish" translatable="false">preference_audio_ringtone_finish</string>
+    <string name="preference_audio_ringtone_finish" translatable="false">
+        preference_audio_ringtone_finish
+    </string>
     <string name="preference_audio_ringtone_finish_title">Program finished</string>
     <string name="preference_audio_ringtone_finish_summary">%s</string>
 
-    <string name="preference_audio_speak_segment" translatable="false">preference_audio_speak_segment</string>
+    <string name="preference_audio_speak_segment" translatable="false">
+        preference_audio_speak_segment
+    </string>
     <string name="preference_audio_speak_segment_title">Segment instructions</string>
     <string name="preference_audio_speak_segment_summary">Speak instructions for segments</string>
 
-    <string name="preference_audio_speak_limit" translatable="false">preference_audio_speak_limit</string>
+    <string name="preference_audio_speak_limit" translatable="false">preference_audio_speak_limit
+    </string>
     <string name="preference_audio_speak_limit_title">Segment limit</string>
-    <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled</string>
+    <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled
+    </string>
 
     <string name="preference_data_title">Data</string>
 
     <string name="preference_data_external" translatable="false">preference_data_external</string>
-    <string name="preference_data_external_copy" translatable="false">preference_data_external_copy</string>
+    <string name="preference_data_external_copy" translatable="false">
+        preference_data_external_copy
+    </string>
     <string name="preference_data_external_title">Storage location</string>
     <string name="preference_data_external_summary">Store data in external location</string>
 
@@ -232,33 +256,46 @@
     <string name="preference_compact_title">Compact workouts</string>
     <string name="preference_compact_summary">Compact workouts after %s days</string>
 
-    <string name="preference_export_auto" translatable="false">preference_integration_export_auto</string>
-    <string name="preference_export_last" translatable="false">preference_integration_export_last</string>
+    <string name="preference_export_auto" translatable="false">preference_integration_export_auto
+    </string>
+    <string name="preference_export_last" translatable="false">preference_integration_export_last
+    </string>
     <string name="preference_export_auto_title">Export</string>
     <string name="preference_export_auto_summary">Export each workout automatically</string>
-    <string name="preference_export_auto_reminder">First export a workout to determine automatic exports</string>
+    <string name="preference_export_auto_reminder">First export a workout to determine automatic
+        exports
+    </string>
 
     <string name="preference_export_track" translatable="false">preference_export_track</string>
     <string name="preference_export_track_title">Export with locations</string>
-    <string name="preference_export_track_summary">You can use your custom course, by storing it in /coxswain/course.tcx</string>
+    <string name="preference_export_track_summary">You can use your custom course, by storing it in
+        /coxswain/course.tcx
+    </string>
 
     <string name="preference_integration_title">Integration</string>
 
-    <string name="preference_integration_intent" translatable="false">preference_integration_intent</string>
+    <string name="preference_integration_intent" translatable="false">
+        preference_integration_intent
+    </string>
     <string name="preference_integration_intent_title">Intent</string>
     <string name="preference_integration_intent_summary">Open intent on program start</string>
 
-    <string name="preference_integration_intent_uri" translatable="false">preference_integration_intent_uri</string>
+    <string name="preference_integration_intent_uri" translatable="false">
+        preference_integration_intent_uri
+    </string>
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
     <string name="preference_hardware_title">Hardware</string>
 
-    <string name="preference_hardware_heart_sensor" translatable="false">preference_hardware_heart_sensor</string>
+    <string name="preference_hardware_heart_sensor" translatable="false">
+        preference_hardware_heart_sensor
+    </string>
     <string name="preference_hardware_heart_sensor_title">Sensors</string>
     <string name="preference_hardware_heart_sensor_summary">Read heart rate from %s</string>
 
-    <string name="preference_hardware_legacy" translatable="false">preference_hardware_legacy</string>
+    <string name="preference_hardware_legacy" translatable="false">preference_hardware_legacy
+    </string>
     <string name="preference_hardware_legacy_title">S3</string>
     <string name="preference_hardware_legacy_summary">Use S3 protocol (experimental)</string>
 
@@ -273,8 +310,13 @@
     <string name="preference_devices_none_title">No devices</string>
     <string name="preference_devices_none_summary">No USB devices are connected</string>
 
-    <string name="preference_performance_window" translatable="false">preference_performance_window</string>
-    <string name="preference_snapshots_window" translatable="false">preference_snapshots_window</string>
+    <string name="preference_performance_window" translatable="false">
+        preference_performance_window
+    </string>
+    <string name="preference_snapshots_window" translatable="false">preference_snapshots_window
+    </string>
 
-    <string name="preference_bluetooth_preferred" translatable="false">preference_bluetooth_preferred</string>
+    <string name="preference_bluetooth_preferred" translatable="false">
+        preference_bluetooth_preferred
+    </string>
 </resources>

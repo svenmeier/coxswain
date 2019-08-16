@@ -130,13 +130,13 @@
     <string name="ant_heart_not_found">Kein Puls über Ant+ gefunden</string>
     <string name="ant_heart_reading">Lese Puls über Ant+</string>
 
-    <string name="bluetooth_heart_no_bluetooth">Kein Bluetooth verfügbar</string>
-    <string name="bluetooth_heart_no_bluetooth_le">Kein Bluetooth LE verfügbar</string>
-    <string name="bluetooth_heart_no_location">Standortdienste müssen zum Zugriff auf Bluetooth aktiviert sein</string>
-    <string name="bluetooth_heart_searching">Suche Puls über Bluetooth …</string>
-    <string name="bluetooth_heart_not_found">Kein Puls über Bluetooth gefunden</string>
-    <string name="bluetooth_heart_reading">Lese Puls über Bluetooth</string>
-    <string name="bluetooth_heart_link_loss">Verbindung zu Puls über Bluetooth verloren</string>
+    <string name="bluetooth_heart_no_bluetooth">Bluetooth ist nicht verfügbar</string>
+    <string name="bluetooth_heart_no_location">Bluetooth erfordert aktivierte Standortdienste</string>
+    <string name="bluetooth_heart_connecting">Bluetooth verbinde mit %s</string>
+    <string name="bluetooth_heart_not_found">Bluetooth kein Puls auf %s gefunden </string>
+    <string name="bluetooth_heart_connected">Bluetooth Puls wird gelesen von %s</string>
+    <string name="bluetooth_heart_disconnected">Bluetooth Verbindung zu %s verloren</string>
+    <string name="bluetooth_heart_choose_device">Wähle Puls Gerät</string>
 
     <string name="preference_training_title">Training</string>
 

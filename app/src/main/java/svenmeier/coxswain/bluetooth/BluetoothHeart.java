@@ -38,11 +38,13 @@ import svenmeier.coxswain.util.PermissionBlock;
  */
 public class BluetoothHeart extends Heart {
 
-	private static final int SCAN_TIMEOUT_MILLIS = 60000;
+	private static final int CONNECT_TIMEOUT_MILLIS = 15000;
 
 	private Handler handler = new Handler();
 
 	private Connection connection;
+
+	private Preference<String> preferredDevice;
 
 	public BluetoothHeart(Context context, Measurement measurement) {
 		super(context, measurement);
@@ -52,11 +54,15 @@ public class BluetoothHeart extends Heart {
 			return;
 		}
 
+		preferredDevice = Preference.getString(context, R.string.preference_bluetooth_preferred);
+
 		connection = new Permissions(context);
 		connection.open();
 	}
 
 	private void chooseDevice() {
+		preferredDevice.set(null);
+
 		BluetoothActivity.start(context);
 	}
 
@@ -246,20 +252,19 @@ public class BluetoothHeart extends Heart {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class GattConnection extends BluetoothGattCallback implements Connection, Preference.OnChangeListener {
+	private class GattConnection extends BluetoothGattCallback implements Connection, Preference.OnChangeListener, Runnable {
 
 		private final UUID SERVICE_HEART_RATE = uuid(0x180D);
 		private final UUID CHARACTERISTIC_HEART_RATE = uuid(0x2A37);
 		private final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
 
-		private Preference<String> preferredDevice;
-
 		private BluetoothAdapter adapter;
+
+		private BluetoothGatt connecting;
 
 		private BluetoothGatt connected;
 
 		GattConnection() {
-			preferredDevice = Preference.getString(context, R.string.preference_bluetooth_preferred);
 			preferredDevice.listen(this);
 		}
 
@@ -282,7 +287,10 @@ public class BluetoothHeart extends Heart {
 
 				BluetoothDevice device = adapter.getRemoteDevice(address);
 				Log.d(Coxswain.TAG, "bluetooth connecting " + device.getAddress());
-				device.connectGatt(context, false, this);
+				connecting = device.connectGatt(context, false, this);
+
+				handler.removeCallbacks(this);
+				handler.postDelayed(this, CONNECT_TIMEOUT_MILLIS);
 			} catch (IllegalArgumentException invalid) {
 				chooseDevice();
 			}
@@ -299,22 +307,34 @@ public class BluetoothHeart extends Heart {
 			if (newState == BluetoothProfile.STATE_CONNECTED) {
 				Log.d(Coxswain.TAG, "bluetooth connected " + address);
 
+				connecting = null;
 				connected = gatt;
 				connected.discoverServices();
 			} else if (newState == BluetoothProfile.STATE_DISCONNECTED ) {
 				Log.d(Coxswain.TAG, "bluetooth disconnected " + address);
 
-				toast(context.getString(R.string.bluetooth_heart_disconnected, address));
+				boolean retry = false;
+				if (connecting != null && connecting.getDevice().getAddress().equals(address)) {
+					toast(context.getString(R.string.bluetooth_heart_failed, address));
+					retry = true;
+				} else if (connected != null && connected.getDevice().getAddress().equals(address)) {
+					toast(context.getString(R.string.bluetooth_heart_disconnected, address));
+					retry = true;
+				}
 
-				disconnect();
+				if (retry) {
+					disconnect();
 
-				preferredDevice.set(null);
-
-				chooseDevice();
+					chooseDevice();
+				}
 			}
 		}
 
 		private void disconnect() {
+			if (connecting != null) {
+				connecting.close();
+				connecting = null;
+			}
 			if (connected != null) {
 				connected.close();
 				connected = null;
@@ -403,6 +423,20 @@ public class BluetoothHeart extends Heart {
 			}
 
 			onHeartRate(characteristic.getIntValue(format, 1));
+		}
+
+		/**
+		 * @see BluetoothHeart#CONNECT_TIMEOUT_MILLIS
+		 */
+		@Override
+		public void run() {
+			if (connecting != null) {
+				toast(context.getString(R.string.bluetooth_heart_failed, connecting.getDevice().getAddress()));
+
+				disconnect();
+				
+				chooseDevice();
+			}
 		}
 	}
 

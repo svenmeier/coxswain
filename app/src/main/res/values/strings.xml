@@ -134,12 +134,13 @@
     <string name="ant_heart_reading">Reading heart rate via Ant+</string>
 
     <string name="bluetooth_heart_no_bluetooth">Bluetooth not available</string>
-    <string name="bluetooth_heart_no_location">Bluetooth requires location services enabled</string>
+    <string name="bluetooth_heart_no_location">Bluetooth requires enabled location services</string>
     <string name="bluetooth_heart_connecting">Bluetooth connecting to %s</string>
+    <string name="bluetooth_heart_failed">Bluetooth connection to %s failed</string>
     <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
-    <string name="bluetooth_heart_connected">Bluetooth heart rate reading from %s</string>
+    <string name="bluetooth_heart_connected">Bluetooth reading heart rate from %s</string>
     <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
-    <string name="bluetooth_heart_choose_device">Bluetooth choose heart rate</string>
+    <string name="bluetooth_heart_choose_device">Choose heart rate sensor</string>
 
     <string name="preference_training_title">Training</string>
 

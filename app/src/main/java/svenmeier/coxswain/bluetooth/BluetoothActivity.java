@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.R;
 
 public class BluetoothActivity extends AppCompatActivity {
+
+	private static final long TIMEOUT = 60000;
 
 	private RecyclerView devicesView;
 
@@ -39,7 +42,7 @@ public class BluetoothActivity extends AppCompatActivity {
 		
 		setContentView(R.layout.layout_bluetooth);
 
-		devicesView = (RecyclerView) findViewById(R.id.bluetooth_devices);
+		devicesView = findViewById(R.id.bluetooth_devices);
 		devicesView.setLayoutManager(new LinearLayoutManager(this));
 		devicesView.setHasFixedSize(true);
 
@@ -67,7 +70,7 @@ public class BluetoothActivity extends AppCompatActivity {
 		}
 	}
 
-	private class ScannedHolder extends GenericRecyclerAdapter.GenericHolder<Scanned> {
+	private class ScannedHolder extends GenericRecyclerAdapter.GenericHolder<Scanned> implements View.OnClickListener {
 
 		private final TextView nameView;
 		private final TextView addressView;
@@ -78,19 +81,18 @@ public class BluetoothActivity extends AppCompatActivity {
 			nameView = v.findViewById(R.id.scanned_name);
 			addressView = v.findViewById(R.id.scanned_address);
 
-			v.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					onSelect(item.address);
-				}
-			});
-
+			v.setOnClickListener(this);
 		}
 
 		@Override
 		protected void onBind() {
 			nameView.setText(item.name);
 			addressView.setText(item.address);
+		}
+
+		@Override
+		public void onClick(View view) {
+			onSelect(item.address);
 		}
 	}
 
@@ -126,14 +128,26 @@ public class BluetoothActivity extends AppCompatActivity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					String name = device.getName();
+					Scanned newest = new Scanned(device.getName(), device.getAddress());
 
-					Scanned s = new Scanned(name == null ? "N/A" : name, device.getAddress());
-					if (scanned.contains(s) == false) {
-						scanned.add(s);
+					int index = scanned.indexOf(newest);
+					if (index == -1) {
+						scanned.add(newest);
+
+						devicesAdapter.notifyItemInserted(scanned.size() - 1);
+						devicesView.requestLayout();
+					} else {
+						scanned.set(index, newest);
 					}
 
-					devicesAdapter.notifyDataSetChanged();
+					for (index = 0; index < scanned.size(); index++) {
+						Scanned old = scanned.get(index);
+
+						if (newest.when - old.when > TIMEOUT) {
+							scanned.remove(index);
+							devicesAdapter.notifyItemRemoved(index);
+						}
+					}
 				}
 			});
 		}
@@ -141,12 +155,15 @@ public class BluetoothActivity extends AppCompatActivity {
 
 	private class Scanned {
 
-		public final String name;
 		public final String address;
+		public final String name;
+		public long when;
 
 		private Scanned(String name, String address) {
-			this.name = name;
+			this.name = (name == null ? "N/A" : name);
 			this.address = address;
+
+			when = System.currentTimeMillis();
 		}
 
 		@Override
@@ -155,6 +172,11 @@ public class BluetoothActivity extends AppCompatActivity {
 				return ((Scanned)obj).address.equals(this.address);
 			}
 			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return address.hashCode();
 		}
 	}
 

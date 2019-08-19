@@ -21,6 +21,9 @@
     <string name="action_repeat">Repeat</string>
     <string name="action_challenge">Challenge</string>
     <string name="action_new">New</string>
+    <string name="action_day">Day</string>
+    <string name="action_week">Week</string>
+    <string name="action_month">Month</string>
 
     <string name="gym_notification_connecting">Connecting …</string>
     <string name="gym_notification_connected">Connected to %s</string>
@@ -33,48 +36,48 @@
     <string name="distance_yards">%,d yd</string>
     <string name="distance_feets">%,d ft</string>
     <string name="distance_meters">%,d m</string>
-    <string name="distance_label">DISTANCE</string>
+    <string name="distance_label">Distance</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d minutes</string>
-    <string name="duration_label">DURATION</string>
+    <string name="duration_label">Duration</string>
     <string name="duration_pattern">00:60</string>
     <string name="strokes_count">%,d strokes</string>
-    <string name="strokes_label">STROKES</string>
+    <string name="strokes_label">Strokes</string>
     <string name="strokes_pattern">0000</string>
     <string name="energy_kilocalories">%,d kcal</string>
     <string name="energy_watthours">%,d Wh</string>
     <string name="energy_kilojoules">%,d kJ</string>
-    <string name="energy_label">ENERGY</string>
+    <string name="energy_label">Energy</string>
     <string name="energy_pattern">0000</string>
     <string name="strokeRate_strokesPerMinute_abbr">%d spm</string>
     <string name="strokeRate_strokesPerMinute">%d strokes per minute</string>
-    <string name="strokeRate_label">STROKERATE</string>
+    <string name="strokeRate_label">Strokerate</string>
     <string name="strokeRate_pattern">-00</string>
     <string name="pulse_beatsPerMinute_abbr">%d bpm</string>
     <string name="pulse_beatsPerMinute">%d beats per minute</string>
-    <string name="pulse_label">PULSE</string>
+    <string name="pulse_label">Pulse</string>
     <string name="pulse_pattern">-000</string>
     <string name="speed_metersPerSecond_abbr">%.1f m/s</string>
     <string name="speed_metersPerSecond">%.1f meters per second</string>
-    <string name="speed_label">SPEED</string>
+    <string name="speed_label">Speed</string>
     <string name="speed_pattern">-0.00</string>
     <string name="power_watts_abbr">%d W</string>
     <string name="power_watts">%d watts</string>
-    <string name="power_label">POWER</string>
+    <string name="power_label">Power</string>
     <string name="power_pattern">-000</string>
-    <string name="strokeRatio_label">STROKERATIO</string>
+    <string name="strokeRatio_label">Strokeratio</string>
     <string name="strokeRatio_pattern">1:0.0</string>
-    <string name="time_label">TIME</string>
+    <string name="time_label">Time</string>
     <string name="time_pattern">00:60</string>
-    <string name="split_label">SPLIT</string>
+    <string name="split_label">Split</string>
     <string name="split_pattern">60:60</string>
-    <string name="average_split_label">⌀ SPLIT</string>
+    <string name="average_split_label">⌀ Split</string>
     <string name="average_split_pattern">60:60</string>
-    <string name="delta_duration_label">Δ DURATION</string>
+    <string name="delta_duration_label">Δ Duration</string>
     <string name="delta_duration_pattern">-60:60</string>
-    <string name="delta_distance_label">Δ DISTANCE</string>
+    <string name="delta_distance_label">Δ Distance</string>
     <string name="delta_distance_pattern">-0000</string>
-    <string name="none_label">NONE</string>
+    <string name="none_label">None</string>
     <string name="none_pattern"/>
 
     <string name="sort_start">Sorting by start</string>
@@ -311,10 +314,8 @@
     <string name="preference_devices_none_title">No devices</string>
     <string name="preference_devices_none_summary">No USB devices are connected</string>
 
-    <string name="preference_performance_window" translatable="false">
-        preference_performance_window
-    </string>
-    <string name="preference_snapshots_window" translatable="false">preference_snapshots_window
+    <string name="preference_performance_unit" translatable="false">
+        preference_performance_unit
     </string>
 
     <string name="preference_bluetooth_preferred" translatable="false">

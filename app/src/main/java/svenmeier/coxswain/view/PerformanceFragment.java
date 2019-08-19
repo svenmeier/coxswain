@@ -16,49 +16,60 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
+import svenmeier.coxswain.AbstractActivity;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
-import svenmeier.coxswain.rower.Distance;
-import svenmeier.coxswain.rower.Energy;
+import svenmeier.coxswain.util.ChartUtils;
 
-
-public class PerformanceFragment extends Fragment implements View.OnClickListener, Gym.Listener {
+public class PerformanceFragment extends Fragment implements Gym.Listener {
 
     private Gym gym;
 
+    private Preference<TimeUnit> unitPreference;
+
+    private Performance max = new Performance(-1);
+
     private List<Performance> pendings = new ArrayList<>();
 
-    private Map<String, Performance> performances = new HashMap<>();
-
-    private int highlight;
-
-    private TextView titleView;
-
-    private TimelineView timelineView;
+    private Map<Integer, Performance> performances = new HashMap<>();
 
     private PerformanceLookup lookup;
 
-    private Preference<Long> windowPreference;
+    private RecyclerView chartsView;
+
+    private ChartsAdapter adapter;
+
+    private TimeUnit unit = TimeUnit.DAY;
 
     @Override
     public void onAttach(Context context) {
@@ -66,9 +77,12 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
 
         gym = Gym.instance(context);
 
-        windowPreference = Preference.getLong(context, R.string.preference_performance_window).fallback(28 * TimelineView.DAY);
+        unitPreference = Preference.getEnum(context, TimeUnit.class, R.string.preference_performance_unit).fallback(TimeUnit.DAY);
+        unit = unitPreference.get();
 
         gym.addListener(this);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -81,281 +95,330 @@ public class PerformanceFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void changed() {
-        performances.clear();
+        // TODO
+    }
 
-        timelineView.requestLayout();
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_performance, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        unit.prepare(menu.findItem(R.id.action_unit));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_unit) {
+            unit = unit.next();
+            unitPreference.set(unit);
+
+            unit.prepare(item);
+
+            max.reset();
+			pendings.clear();
+			performances.clear();
+            adapter.notifyDataSetChanged();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.layout_performance, container, false);
 
-        titleView = (TextView) root.findViewById(R.id.performance_title);
-        updateTitle();
-
-        timelineView = (TimelineView) root.findViewById(R.id.performance_timeline);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // required for CoordinatorLayout :/
-            timelineView.setNestedScrollingEnabled(true);
-        }
-
-        timelineView.setWindow(24 * TimelineView.DAY);
-        timelineView.setPeriods(new PerformancePeriods());
-        timelineView.setOnClickListener(this);
+        chartsView = root.findViewById(R.id.charts);
+        chartsView.setLayoutManager(new LinearLayoutManager(getContext()));
+        chartsView.setHasFixedSize(true);
+        chartsView.setAdapter(adapter = new ChartsAdapter());
 
         return root;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    private class ChartsAdapter extends GenericRecyclerAdapter<Long> {
 
-        windowPreference.set(timelineView.getWindow());
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        timelineView.setWindow(windowPreference.get());
-    }
-
-    private Performance getMax(Class<?> unit) {
-        String key = unit.getSimpleName();
-
-        Performance performancestic = this.performances.get(key);
-        if (performancestic == null) {
-            performancestic = new Performance();
-
-            performances.put(key, performancestic);
+        public ChartsAdapter() {
+            super(R.layout.layout_performance_item, null);
         }
 
-        return performancestic;
+        @Override
+        public int getItemCount() {
+            return Integer.MAX_VALUE;
+        }
+
+        @Override
+        protected Long getItem(int position) {
+            return Long.valueOf(position);
+        }
+
+        @Override
+        protected GenericHolder createHolder(View v) {
+            return new ChartHolder(v);
+        }
     }
 
-    private Performance getPerformance(Class<?> unit, long from, long to) {
-        String key = from + ":" + to;
+    private class ChartHolder extends GenericRecyclerAdapter.GenericHolder<Long> {
 
-        Performance performance = this.performances.get(key);
+        private final HorizontalBarChart chartView;
+
+        public ChartHolder(View view) {
+            super(view);
+
+            chartView = view.findViewById(R.id.chart);
+            chartView.getLegend().setEnabled(false);
+            chartView.setTouchEnabled(false);
+            chartView.setFitBars(true);
+            chartView.getDescription().setTextSize(15);
+
+            chartView.setExtraRightOffset(32);
+
+            chartView.getAxisRight().setEnabled(false);
+
+            final String[] strings = new String[]{
+                    getString(R.string.energy_label),
+                    getString(R.string.distance_label),
+                    getString(R.string.duration_label),
+                    getString(R.string.strokes_label)};
+            chartView.getXAxis().setGranularity(1f);
+            chartView.getXAxis().setValueFormatter(new IndexAxisValueFormatter(strings));
+            chartView.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chartView.getXAxis().setDrawGridLines(false);
+
+            ChartUtils.setTextColor(getActivity(), chartView);
+        }
+
+        @Override
+        protected void onBind() {
+            Performance performance = getPerformance(getAdapterPosition());
+
+            BarDataSet dataSet = createDataSet(R.string.performance, 0xffff00ff);
+            dataSet.addEntry(new BarEntry(0, performance.energy));
+            dataSet.addEntry(new BarEntry(1, performance.distance));
+            dataSet.addEntry(new BarEntry(2, performance.duration));
+            dataSet.addEntry(new BarEntry(3, performance.strokes));
+
+            BarData data = new BarData(dataSet);
+            data.setBarWidth(0.8f);
+            dataSet.setColors(0xffff0000, 0xff00ff00, 0xff0000ff, 0xffeebb00);
+            chartView.setData(data);
+
+			chartView.getAxisLeft().setAxisMinimum(0);
+            chartView.getAxisLeft().setAxisMaximum(max.distance);
+
+            long from = unit.getFrom(performance);
+            long to = unit.getTo(performance);
+            String description = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+            chartView.getDescription().setText(description);
+        }
+
+        private BarDataSet createDataSet(int label, int color) {
+            BarDataSet set = new BarDataSet(new ArrayList<BarEntry>(), getString(label));
+
+            set.setColor(color);
+
+            return set;
+        }
+    }
+
+    private Performance getPerformance(int time) {
+        Performance performance = this.performances.get(time);
         if (performance == null) {
-            performance = new Performance();
+            performance = new Performance(time);
 
-            performances.put(key, performance);
+            performances.put(time, performance);
             pendings.add(performance);
         }
 
-        if (pendings.contains(performance) && lookup == null) {
-            lookup = new PerformanceLookup(from, to, performance, getMax(unit));
-            lookup.restartLoader(0, this);
-        }
-
-        performance.animation = Math.min(performance.animation + 0.05f, 1.0f);
-        if (performance.animation < 1.0f) {
-            timelineView.postInvalidate();
-        }
+        checkPending();
 
         return performance;
     }
 
-    @Override
-    public void onClick(View v) {
-        highlight = (highlight + 1) % 4;
+    private void checkPending() {
+        if (pendings.isEmpty() == false && lookup == null) {
+            Performance performance = pendings.get(pendings.size() - 1);
 
-        timelineView.invalidate();
-        updateTitle();
-    }
-
-    private void updateTitle() {
-        switch (highlight) {
-            case 0:
-                titleView.setText(R.string.duration_label);
-                break;
-            case 1:
-                titleView.setText(R.string.distance_label);
-                break;
-            case 2:
-                titleView.setText(R.string.strokes_label);
-                break;
-            case 3:
-                titleView.setText(R.string.energy_label);
-                break;
-            default:
-                throw new IndexOutOfBoundsException();
+            lookup = new PerformanceLookup(performance, unit.getFrom(performance), unit.getTo(performance));
+            lookup.restartLoader(0, this);
         }
 
     }
 
     private class Performance {
 
-        float animation;
-
-        public boolean found;
+        int time;
 
         public int duration;
         public int distance;
         public int strokes;
         public int energy;
+
+        public Performance(int time) {
+            this.time = time;
+        }
+
+        public void reset() {
+            distance = 0;
+            strokes = 0;
+            energy = 0;
+            duration = 0;
+        }
     }
 
     private class PerformanceLookup extends MatchLookup<Workout> {
 
         private final Performance pending;
 
-        private final Performance max;
-
-        public PerformanceLookup(long from, long to, Performance pending, Performance max) {
+        public PerformanceLookup(Performance pending, long from, long to) {
             super(gym.getWorkouts(from, to));
 
             this.pending = pending;
-            this.max = max;
         }
 
         @Override
         protected void onLookup(List<Workout> workouts) {
-            // reset in case the lookup is done twice
-            pending.distance = 0;
-            pending.strokes = 0;
-            pending.energy = 0;
-            pending.duration = 0;
-            pending.found = false;
 
+            // reset in case the lookup is done twice
+            pending.reset();
             for (Workout workout : workouts) {
                 pending.distance += workout.distance.get();
                 pending.strokes += workout.strokes.get();
                 pending.energy += workout.energy.get();
                 pending.duration += workout.duration.get();
-                pending.found = true;
             }
-
             max.distance = Math.max(max.distance, pending.distance);
             max.strokes = Math.max(max.strokes, pending.strokes);
             max.energy = Math.max(max.energy, pending.energy);
             max.duration = Math.max(max.duration, pending.duration);
 
-            timelineView.postInvalidate();
-
             // no longer pending
             pendings.remove(pending);
 
-            lookup = null;
+            adapter.notifyDataSetChanged();
 
             // recover cursor
             workouts.clear();
+            
+            lookup = null;
+            checkPending();
         }
     }
 
-    private class PerformancePeriods implements TimelineView.Periods {
+    private enum TimeUnit {
 
-        private Paint paint = new Paint();
-
-        private Paint.FontMetrics metrics = new Paint.FontMetrics();
-
-        private float textSize = Utils.dpToPx(getActivity(), 20);
-
-        private float padding = Utils.dpToPx(getActivity(), 4);
-
-        @Override
-        public long min() {
-            return 0;
-        }
-
-        @Override
-        public long max() {
-            return System.currentTimeMillis();
-        }
-
-        @Override
-        public long minWindow() {
-            return TimelineView.DAY;
-        }
-
-        @Override
-        public long maxWindow() {
-            return 356 * TimelineView.DAY;
-        }
-
-        @Override
-        public TimelineView.Unit unit(long time, long window) {
-            long windowDays = window / TimelineView.DAY;
-            if (windowDays > 60) {
-                return new TimelineView.MonthUnit(time);
-            } else if (windowDays > 10) {
-                return new TimelineView.WeekUnit(time);
-            } else {
-                return new TimelineView.DayUnit(time);
-            }
-        }
-
-        @Override
-		public void paint(Class<?> unit, long from, long to, Canvas canvas, RectF rect) {
-			Performance performance = getPerformance(unit, from, to);
-			Performance max = getMax(unit);
-
-			float headerHeight = paintHeader(from, to, canvas, rect, performance);
-
-            rect.left += padding;
-            rect.top += padding + headerHeight + padding;
-            rect.right -= padding;
-            rect.bottom -= padding;
-			paintBar(performance.duration, max.duration, performance.animation, canvas, rect, 0);
-			paintBar(performance.distance, max.distance, performance.animation, canvas, rect, 1);
-			paintBar(performance.strokes, max.strokes, performance.animation, canvas, rect, 2);
-			paintBar(performance.energy, max.energy, performance.animation, canvas, rect, 3);
-		}
-
-        private float paintHeader(long from, long to, Canvas canvas, RectF rect, Performance performance) {
-            paint.setTextSize(textSize);
-            paint.getFontMetrics(metrics);
-
-            if (performance.found) {
-                String what;
-                switch (highlight) {
-                    case 0:
-                        what = String.format(getString(R.string.duration_minutes), performance.duration / 60);
-                        break;
-                    case 1:
-                        what = Distance.m(getActivity(), performance.distance).formatted();
-                        break;
-                    case 2:
-                        what = String.format(getString(R.string.strokes_count), performance.strokes);
-                        break;
-                    case 3:
-                        what = Energy.kcal(getActivity(), performance.energy).formatted();
-                        break;
-                    default:
-                        throw new IndexOutOfBoundsException();
-                }
-                float whatWidth = paint.measureText(what);
-
-                paint.setColor(0xff3567ed);
-                canvas.drawText(what, rect.right - padding - whatWidth, rect.top + padding - metrics.top, paint);
+        DAY {
+            @Override
+            public void prepare(MenuItem item) {
+                item.setTitle(R.string.action_day);
+                item.setIcon(R.drawable.baseline_today_white_24);
             }
 
-            String when = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-            paint.setColor(timelineView.getForegroundColor());
-            paint.setTextSize(textSize);
-            canvas.drawText(when, rect.left + padding, rect.top + padding - metrics.top, paint);
+            @Override
+            public long getFrom(Performance performance) {
 
-            return -metrics.top;
+                Calendar calendar = calendar();
+                calendar.add(Calendar.DATE, -performance.time);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public long getTo(Performance performance) {
+
+                Calendar calendar = calendar();
+                calendar.add(Calendar.DATE, -performance.time + 1);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public TimeUnit next() {
+                return WEEK;
+            }
+        },
+
+        WEEK {
+
+            @Override
+            public void prepare(MenuItem item) {
+                item.setTitle(R.string.action_week);
+                item.setIcon(R.drawable.baseline_week_white_24);
+            }
+
+            @Override
+            public long getFrom(Performance performance) {
+                Calendar calendar = calendar();
+
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+                calendar.add(Calendar.WEEK_OF_YEAR, -performance.time);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public long getTo(Performance performance) {
+                Calendar calendar = calendar();
+
+                calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+                calendar.add(Calendar.WEEK_OF_YEAR, -performance.time + 1);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public TimeUnit next() {
+                return MONTH;
+            }
+        },
+
+        MONTH {
+
+            @Override
+            public void prepare(MenuItem item) {
+                item.setTitle(R.string.action_month);
+                item.setIcon(R.drawable.baseline_month_white_24);
+            }
+
+            @Override
+            public long getFrom(Performance performance) {
+                Calendar calendar = calendar();
+
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.add(Calendar.MONTH, -performance.time);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public long getTo(Performance performance) {
+                Calendar calendar = calendar();
+
+                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                calendar.add(Calendar.MONTH, -performance.time + 1);
+                return calendar.getTimeInMillis();
+            }
+
+            @Override
+            public TimeUnit next() {
+                return DAY;
+            }
+        };
+
+        private Calendar calendar = Calendar.getInstance();
+
+        protected Calendar calendar() {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            return calendar;
         }
 
-        private void paintBar(int value, int max, float animation, Canvas canvas, RectF rect, int index) {
-			paint.setStyle(Paint.Style.FILL);
-			if (index == highlight) {
-				paint.setColor(0x803567ed);
-			} else {
-				paint.setColor(0x403567ed);
-			}
+        public abstract void prepare(MenuItem item);
 
-			float height = (rect.bottom - rect.top);
-			float width = (rect.right - rect.left);
+        public abstract long getFrom(Performance performance);
 
-			float left = rect.left;
-			float right = rect.left + (width * value * animation / max);
-			float top = rect.top + (index * height / 5) + (index * height / 15);
-			float bottom = rect.top + ((index + 1) * height / 5) + (index * height / 15);
+        public abstract long getTo(Performance performance);
 
-			canvas.drawRect(left, top, right, bottom, paint);
-		}
+        public abstract TimeUnit next();
     }
 }

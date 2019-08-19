@@ -1,21 +1,9 @@
-<RelativeLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity"
+    android:id="@+id/charts"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
-    <TextView
-        android:id="@+id/performance_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        style="@style/TimelineTitle"
-        />
-
-    <svenmeier.coxswain.view.TimelineView
-        android:id="@+id/performance_timeline"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/TimelineView"
-        />
-</RelativeLayout>
+>
+</android.support.v7.widget.RecyclerView>

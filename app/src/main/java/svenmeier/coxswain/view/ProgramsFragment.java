@@ -97,11 +97,11 @@ public class ProgramsFragment extends Fragment {
 
             view.setOnClickListener(this);
 
-            nameTextView = (TextView) view.findViewById(R.id.program_name);
-            durationTextView = (TextView) view.findViewById(R.id.program_duration);
-            segmentsView = (SegmentsView) view.findViewById(R.id.program_segments);
+            nameTextView = view.findViewById(R.id.program_name);
+            durationTextView = view.findViewById(R.id.program_duration);
+            segmentsView = view.findViewById(R.id.program_segments);
 
-            menuButton = (ImageButton) view.findViewById(R.id.program_menu);
+            menuButton = view.findViewById(R.id.program_menu);
             menuButton.setFocusable(false);
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override

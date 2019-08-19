@@ -16,5 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
+        android:textAllCaps="true"
     />
 </svenmeier.coxswain.view.BindingView>

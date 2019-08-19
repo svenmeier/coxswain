@@ -7,7 +7,7 @@
 
     <ImageButton
         android:id="@+id/segment_menu"
-        android:src="@drawable/ic_more_vert_black_24dp"
+        android:src="?attr/icon_more"
         style="@style/MenuButton"
         />
 

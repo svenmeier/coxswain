@@ -26,6 +26,7 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -46,7 +47,9 @@ import svenmeier.coxswain.util.ChartUtils;
 
 public class SnapshotsActivity extends AbstractActivity {
 
-    public static final int RESOLUTION = 10;
+    public static final int VALUE_TEXT_SIZE = 12;
+
+    public static final int LEGEND_TEXT_SIZE = 15;
 
     private Gym gym;
 
@@ -74,12 +77,18 @@ public class SnapshotsActivity extends AbstractActivity {
         chartView.setScaleYEnabled(false);
         chartView.getDescription().setEnabled(false);
         chartView.getLegend().setTextColor(ContextCompat.getColor(this, R.color.design_default_color_primary));
+        chartView.getLegend().setTextSize(LEGEND_TEXT_SIZE);
 
         chartView.getAxisLeft().setDrawGridLines(false);
+        chartView.getAxisLeft().setTextSize(VALUE_TEXT_SIZE);
 
         chartView.getAxisRight().setDrawGridLines(false);
+        chartView.getAxisRight().setTextSize(VALUE_TEXT_SIZE);
 
         chartView.getXAxis().setValueFormatter(new TimeValueFormatter());
+        chartView.getXAxis().setTextSize(VALUE_TEXT_SIZE);
+        chartView.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartView.getXAxis().setAxisMinimum(0f);
 
         ChartUtils.setTextColor(this, chartView);
 
@@ -110,16 +119,16 @@ public class SnapshotsActivity extends AbstractActivity {
 
             List<ILineDataSet> dataSets = new ArrayList<>();
 
-            LineDataSet pulse = createDataSet(lookup.size(), R.string.pulse_label, 0xffeebb00);
+            LineDataSet pulse = createDataSet(lookup.size(), R.string.pulse_label, getResources().getColor(R.color.chart1));
             dataSets.add(pulse);
 
-            LineDataSet strokeRate = createDataSet(lookup.size(), R.string.strokeRate_label, 0xff0000ff);
+            LineDataSet strokeRate = createDataSet(lookup.size(), R.string.strokeRate_label, getResources().getColor(R.color.chart2));
             dataSets.add(strokeRate);
 
-            LineDataSet power = createDataSet(lookup.size(), R.string.power_label, 0xffff0000);
+            LineDataSet power = createDataSet(lookup.size(), R.string.power_label, getResources().getColor(R.color.chart3));
             dataSets.add(power);
 
-            LineDataSet speed = createDataSet(lookup.size(), R.string.speed_label, 0xff00ff00);
+            LineDataSet speed = createDataSet(lookup.size(), R.string.speed_label, getResources().getColor(R.color.chart4));
             speed.setAxisDependency(YAxis.AxisDependency.RIGHT);
             dataSets.add(speed);
 

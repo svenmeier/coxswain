@@ -16,12 +16,13 @@
 package svenmeier.coxswain.view;
 
 import android.content.Context;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +36,10 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import java.text.Format;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -45,13 +49,16 @@ import java.util.Map;
 import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
-import svenmeier.coxswain.AbstractActivity;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.util.ChartUtils;
 
 public class PerformanceFragment extends Fragment implements Gym.Listener {
+
+    public static final int VALUE_TEXT_SIZE = 12;
+
+    public static final int DESCRIPTION_TEXT_SIZE = 15;
 
     private Gym gym;
 
@@ -170,22 +177,29 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
             chartView = view.findViewById(R.id.chart);
             chartView.getLegend().setEnabled(false);
             chartView.setTouchEnabled(false);
-            chartView.setFitBars(true);
-            chartView.getDescription().setTextSize(15);
+            chartView.setDrawValueAboveBar(false);
 
-            chartView.setExtraRightOffset(32);
-
-            chartView.getAxisRight().setEnabled(false);
+            chartView.getDescription().setTextSize(DESCRIPTION_TEXT_SIZE);
+            chartView.getDescription().setPosition(30, 30);
+            chartView.getDescription().setTextAlign(Paint.Align.LEFT);
 
             final String[] strings = new String[]{
-                    getString(R.string.energy_label),
-                    getString(R.string.distance_label),
                     getString(R.string.duration_label),
+                    getString(R.string.distance_label),
+                    getString(R.string.energy_label),
                     getString(R.string.strokes_label)};
             chartView.getXAxis().setGranularity(1f);
             chartView.getXAxis().setValueFormatter(new IndexAxisValueFormatter(strings));
             chartView.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
             chartView.getXAxis().setDrawGridLines(false);
+            chartView.getXAxis().setTextSize(VALUE_TEXT_SIZE);
+
+            chartView.getAxisLeft().setAxisMinimum(0f);
+            chartView.getAxisLeft().setAxisMaximum(1f);
+            chartView.getAxisLeft().setDrawGridLines(false);
+            chartView.getAxisLeft().setDrawLabels(false);
+
+            chartView.getAxisRight().setEnabled(false);
 
             ChartUtils.setTextColor(getActivity(), chartView);
         }
@@ -194,24 +208,36 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
         protected void onBind() {
             Performance performance = getPerformance(getAdapterPosition());
 
-            BarDataSet dataSet = createDataSet(R.string.performance, 0xffff00ff);
-            dataSet.addEntry(new BarEntry(0, performance.energy));
-            dataSet.addEntry(new BarEntry(1, performance.distance));
-            dataSet.addEntry(new BarEntry(2, performance.duration));
-            dataSet.addEntry(new BarEntry(3, performance.strokes));
+            BarDataSet dataSet = createDataSet(R.string.performance, 0);
+            dataSet.addEntry(new BarEntry(0, relative(performance.duration, max.duration), formatSeconds(performance.duration)));
+            dataSet.addEntry(new BarEntry(1, relative(performance.distance, max.distance), formatNumber(performance.distance)));
+            dataSet.addEntry(new BarEntry(2, relative(performance.energy,max.energy), formatNumber(performance.energy)));
+            dataSet.addEntry(new BarEntry(3, relative(performance.strokes, max.strokes), formatNumber(performance.strokes)));
+            dataSet.setColors(getColor(R.color.chart1),
+                    getColor(R.color.chart2),
+                    getColor(R.color.chart3),
+                    getColor(R.color.chart4));
 
             BarData data = new BarData(dataSet);
             data.setBarWidth(0.8f);
-            dataSet.setColors(0xffff0000, 0xff00ff00, 0xff0000ff, 0xffeebb00);
+            data.setValueTextSize(VALUE_TEXT_SIZE);
+            data.setValueTypeface(Typeface.DEFAULT_BOLD);
+            data.setValueFormatter(new DataToStringFormatter());
+            data.setValueTextColor(getColor(R.color.chart_value));
             chartView.setData(data);
-
-			chartView.getAxisLeft().setAxisMinimum(0);
-            chartView.getAxisLeft().setAxisMaximum(max.distance);
 
             long from = unit.getFrom(performance);
             long to = unit.getTo(performance);
             String description = DateUtils.formatDateRange(getActivity(), from, to, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
             chartView.getDescription().setText(description);
+        }
+
+        private float relative(int actual, int max) {
+            if (max == 0) {
+                return 0;
+            }
+
+            return ((float)actual) / max;
         }
 
         private BarDataSet createDataSet(int label, int color) {
@@ -221,6 +247,29 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
 
             return set;
         }
+    }
+
+    private Format numberFormat = NumberFormat.getNumberInstance();
+
+    private String formatNumber(int value) {
+        return numberFormat.format(value);
+    }
+
+    private String formatSeconds(int value) {
+
+        int seconds = Math.round(value % 60);
+        int minutes = Math.round((value / 60) % 60);
+        int hours = Math.round((value / 60 / 60) % 60);
+
+        if (hours == 0f) {
+            return String.format("%02d:%02d", minutes, seconds);
+        } else {
+            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        }
+    }
+
+    private int getColor(int p) {
+        return getContext().getResources().getColor(p);
     }
 
     private Performance getPerformance(int time) {
@@ -420,5 +469,17 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
         public abstract long getTo(Performance performance);
 
         public abstract TimeUnit next();
+    }
+
+    private class DataToStringFormatter extends ValueFormatter {
+
+        @Override
+        public String getBarLabel(BarEntry barEntry) {
+            if (barEntry.getY() < 0.2f) {
+                // prevent label from overlapping into x-axis
+                return "";
+            }
+            return barEntry.getData().toString();
+        }
     }
 }

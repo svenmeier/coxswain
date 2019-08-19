@@ -4,4 +4,10 @@
     <color name="primary_dark">#ff1547ad</color>
     <color name="accent">#FFEEBB00</color>
 
+    <color name="chart_value">#ffffffff</color>
+    <color name="chart1">#ff50a9ff</color>
+    <color name="chart2">#ffc3a0ff</color>
+    <color name="chart3">#ffffa0be</color>
+    <color name="chart4">#ffffcc7e</color>
+
 </resources>

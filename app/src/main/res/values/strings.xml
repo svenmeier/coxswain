@@ -143,7 +143,8 @@
     <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
     <string name="bluetooth_heart_connected">Bluetooth reading heart rate from %s</string>
     <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
-    <string name="bluetooth_heart_choose_device">Choose heart rate sensor</string>
+    <string name="bluetooth_heart_choose_device">Choose Bluetooth device</string>
+    <string name="bluetooth_heart_choose_filtered">heart rate sensors only</string>
 
     <string name="preference_training_title">Training</string>
 

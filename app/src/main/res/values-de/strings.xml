@@ -140,7 +140,8 @@
     <string name="bluetooth_heart_not_found">Bluetooth kein Puls auf %s gefunden </string>
     <string name="bluetooth_heart_connected">Bluetooth lese Puls von %s</string>
     <string name="bluetooth_heart_disconnected">Bluetooth Verbindung zu %s verloren</string>
-    <string name="bluetooth_heart_choose_device">Wähle Pulsmesser</string>
+    <string name="bluetooth_heart_choose_device">Wähle Bluetooth Gerät</string>
+    <string name="bluetooth_heart_choose_filtered">nur Pulsmesser</string>
 
     <string name="preference_training_title">Training</string>
 

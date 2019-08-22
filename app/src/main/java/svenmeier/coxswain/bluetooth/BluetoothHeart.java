@@ -40,6 +40,11 @@ public class BluetoothHeart extends Heart {
 
 	private static final int CONNECT_TIMEOUT_MILLIS = 15000;
 
+	public static final UUID SERVICE_HEART_RATE = uuid(0x180D);
+	private static final UUID CHARACTERISTIC_HEART_RATE = uuid(0x2A37);
+	private static final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
+
+
 	private Handler handler = new Handler();
 
 	private Connection connection;
@@ -253,10 +258,6 @@ public class BluetoothHeart extends Heart {
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	private class GattConnection extends BluetoothGattCallback implements Connection, Preference.OnChangeListener, Runnable {
-
-		private final UUID SERVICE_HEART_RATE = uuid(0x180D);
-		private final UUID CHARACTERISTIC_HEART_RATE = uuid(0x2A37);
-		private final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
 
 		private BluetoothAdapter adapter;
 

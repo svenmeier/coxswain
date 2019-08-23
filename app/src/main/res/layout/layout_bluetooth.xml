@@ -36,4 +36,11 @@
         android:checked="true"
         android:text="@string/bluetooth_heart_choose_filtered"
     />
+    <CheckBox
+        android:id="@+id/bluetooth_remember"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/bluetooth_heart_choose_remember"
+    />
 </LinearLayout>

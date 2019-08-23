@@ -145,6 +145,7 @@
     <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
     <string name="bluetooth_heart_choose_device">Choose Bluetooth device</string>
     <string name="bluetooth_heart_choose_filtered">heart rate sensors only</string>
+    <string name="bluetooth_heart_choose_remember">remember selection</string>
 
     <string name="preference_training_title">Training</string>
 
@@ -315,11 +316,8 @@
     <string name="preference_devices_none_title">No devices</string>
     <string name="preference_devices_none_summary">No USB devices are connected</string>
 
-    <string name="preference_performance_unit" translatable="false">
-        preference_performance_unit
-    </string>
+    <string name="preference_performance_unit" translatable="false">preference_performance_unit</string>
 
-    <string name="preference_bluetooth_preferred" translatable="false">
-        preference_bluetooth_preferred
-    </string>
+    <string name="preference_bluetooth_device" translatable="false">preference_bluetooth_device</string>
+    <string name="preference_bluetooth_device_remember" translatable="false">preference_bluetooth_device_remember</string>
 </resources>

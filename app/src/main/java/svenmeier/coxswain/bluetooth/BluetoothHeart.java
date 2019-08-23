@@ -49,7 +49,9 @@ public class BluetoothHeart extends Heart {
 
 	private Connection connection;
 
-	private Preference<String> preferredDevice;
+	private Preference<String> devicePreference;
+
+	private Preference<Boolean> devicePreferenceRemember;
 
 	public BluetoothHeart(Context context, Measurement measurement) {
 		super(context, measurement);
@@ -59,14 +61,15 @@ public class BluetoothHeart extends Heart {
 			return;
 		}
 
-		preferredDevice = Preference.getString(context, R.string.preference_bluetooth_preferred);
+		devicePreference = Preference.getString(context, R.string.preference_bluetooth_device);
+		devicePreferenceRemember = Preference.getBoolean(context, R.string.preference_bluetooth_device_remember);
 
 		connection = new Permissions(context);
 		connection.open();
 	}
 
 	private void chooseDevice() {
-		preferredDevice.set(null);
+		devicePreference.set(null);
 
 		BluetoothActivity.start(context);
 	}
@@ -265,20 +268,18 @@ public class BluetoothHeart extends Heart {
 
 		private BluetoothGatt connected;
 
-		GattConnection() {
-			preferredDevice.listen(this);
-		}
-
 		@Override
 		public void open() {
+			devicePreference.listen(this);
+			
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 			adapter = manager.getAdapter();
 
-			String address = preferredDevice.get();
-			if (address == null) {
-				chooseDevice();
-			} else {
+			String address = devicePreference.get();
+			if (address != null && devicePreferenceRemember.get()) {
 				connect(address);
+			} else {
+				chooseDevice();
 			}
 		}
 
@@ -347,7 +348,7 @@ public class BluetoothHeart extends Heart {
 			if (adapter != null) {
 				disconnect();
 
-				String address = preferredDevice.get();
+				String address = devicePreference.get();
 				if (address != null) {
 					connect(address);
 				}
@@ -357,7 +358,7 @@ public class BluetoothHeart extends Heart {
 		public void close() {
 			disconnect();
 
-			preferredDevice.listen(null);
+			devicePreference.listen(null);
 
 			adapter = null;
 		}

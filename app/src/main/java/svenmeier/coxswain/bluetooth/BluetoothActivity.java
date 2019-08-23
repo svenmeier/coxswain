@@ -36,6 +36,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 	private CheckBox filterCheckBox;
 
+	private CheckBox rememberCheckBox;
+
 	private RecyclerView devicesView;
 
 	private DevicesAdapter devicesAdapter;
@@ -54,6 +56,9 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		filterCheckBox = findViewById(R.id.bluetooth_filter);
 		filterCheckBox.setOnCheckedChangeListener(this);
+
+		rememberCheckBox = findViewById(R.id.bluetooth_remember);
+		rememberCheckBox.setChecked(Preference.getBoolean(this, R.string.preference_bluetooth_device_remember).get());
 
 		devicesView = findViewById(R.id.bluetooth_devices);
 		devicesView.setLayoutManager(new LinearLayoutManager(this));
@@ -101,7 +106,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		// stop immediately, otherwise following connection might fail
 		stopScanning();
 
-		Preference.getString(this, R.string.preference_bluetooth_preferred).set(address);
+		Preference.getString(this, R.string.preference_bluetooth_device).set(address);
+		Preference.getBoolean(this, R.string.preference_bluetooth_device_remember).set(rememberCheckBox.isChecked());
 
 		finish();
 	}

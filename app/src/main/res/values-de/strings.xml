@@ -142,6 +142,7 @@
     <string name="bluetooth_heart_disconnected">Bluetooth Verbindung zu %s verloren</string>
     <string name="bluetooth_heart_choose_device">Wähle Bluetooth Gerät</string>
     <string name="bluetooth_heart_choose_filtered">nur Pulsmesser</string>
+    <string name="bluetooth_heart_choose_remember">Auswahl merken</string>
 
     <string name="preference_training_title">Training</string>
 

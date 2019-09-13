@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.wired;
 
 import org.junit.Test;
 

@@ -1,8 +1,6 @@
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.wired;
 
 import org.junit.Test;
-
-import svenmeier.coxswain.gym.Measurement;
 
 import static org.junit.Assert.assertEquals;
 

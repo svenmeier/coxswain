@@ -20,16 +20,14 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Process;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Program;
@@ -37,9 +35,18 @@ import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.mock.MockRower;
-import svenmeier.coxswain.rower.water.WaterRower;
+import svenmeier.coxswain.rower.wireless.BluetoothRower;
+import svenmeier.coxswain.rower.wired.UsbRower;
 
-public class GymService extends Service {
+public class GymService extends Service implements Gym.Listener, Rower.Callback, Heart.Callback {
+
+    private static final String CONNECTOR = "connector";
+
+    public static final String CONNECTOR_BLUETOOTH = "bluetooth";
+
+    public static final String CONNECTOR_MOCK = "mock";
+
+    public static final String CONNECTOR_NONE = "none";
 
     private Gym gym;
 
@@ -47,52 +54,35 @@ public class GymService extends Service {
 
     private Preference<Boolean> openEnd;
 
-    private Rowing rowing;
-
     private Foreground foreground;
 
-    public GymService() {
-    }
+    private Rower rower;
+
+    private Heart heart;
+
+    private Motivator motivator;
+
+    private Program program;
 
     @Override
     public void onCreate() {
         gym = Gym.instance(this);
 
         openEnd = Preference.getBoolean(this, R.string.preference_open_end);
-
-        foreground = new Foreground();
-    }
-
-    @Override
-    public void onDestroy() {
-        foreground.stop();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
-        if (this.rowing != null) {
+        if (this.rower != null) {
             endRowing();
         }
-
-        startRowing(device);
-
-        return START_NOT_STICKY;
-    }
-
-    private void startRowing(UsbDevice device) {
-
-        Rower rower;
-        if (device == null) {
-            rower = new MockRower();
-        } else {
-            rower = new WaterRower(this, device);
+        
+        if (!startRowing(intent)) {
+            stopSelf();
         }
 
-        rowing = new Rowing(rower);
-        new Thread(rowing).start();
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -100,131 +90,109 @@ public class GymService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    private boolean startRowing(Intent intent) {
+
+        if (CONNECTOR_NONE.equals(intent.getStringExtra(CONNECTOR))) {
+            return false;
+        }
+
+        if (CONNECTOR_BLUETOOTH.equals(intent.getStringExtra(CONNECTOR))) {
+            rower = new BluetoothRower(this, this);
+        } else if (CONNECTOR_MOCK.equals(intent.getStringExtra(CONNECTOR))) {
+            rower = new MockRower(this);
+        } else {
+            rower = new UsbRower(this, (UsbDevice) intent.getParcelableExtra(CONNECTOR), this);
+        }
+
+        this.foreground = new Foreground();
+
+        this.motivator = new DefaultMotivator(getApplicationContext());
+
+        this.program = gym.program;
+
+        gym.addListener(this);
+
+        rower.open();
+
+        return true;
+    }
+
     private void endRowing() {
-        this.rowing = null;
+        this.rower.close();
+        this.rower = null;
+
+        this.motivator.destroy();
+        this.motivator = null;
+
+        if (this.heart != null) {
+            this.heart.destroy();
+            this.heart = null;
+        }
+
+        this.foreground.stop();
+        this.foreground = null;
+
+        this.program = null;
+
+        gym.removeListener(this);
     }
 
-    private void rowingEnded(Rowing rowing) {
-        if (this.rowing == rowing) {
-            this.rowing = null;
+    @Override
+    public void changed(Object scope) {
+        if (rower == null) {
+            return;
         }
 
-        if (this.rowing == null) {
-            stopSelf();
+        if (gym.program != this.program) {
+            this.program = gym.program;
+
+            rower.reset();
         }
     }
 
-    /**
-     * Current rowing on rower.
-     */
-    private class Rowing implements Runnable {
-
-        private final Rower rower;
-
-        private Heart heart;
-
-        private final Motivator motivator;
-
-        private Program program;
-
-        private Runnable posted;
-
-        public Rowing(Rower rower) {
-            this.rower = rower;
-
-            this.heart = Heart.create(GymService.this, rower);
-
-            this.motivator = new DefaultMotivator(getApplicationContext());
+    @Override
+    public void onConnected() {
+        if (rower == null) {
+            return;
         }
 
-        public void run() {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            
-            if (rower.open()) {
-                while (true) {
-                    if (GymService.this.rowing != this) {
-                        break;
-                    }
+        this.heart = Heart.create(GymService.this, rower, this);
 
-                    if (gym.program != program) {
-                        // program changed
-                        program = gym.program;
+        foreground.connected();
+    }
 
-                        rower.reset();
-                    }
-
-                    if (rower.row() == false) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                gym.deselect();
-                            }
-                        });
-                        break;
-                    }
-
-                    heart.pulse();
-
-                    if (posted == null) {
-                        // no need to flood the main thread with more than one posted
-                        posted = new Runnable() {
-                            @Override
-                            public void run() {
-                                posted = null;
-                                
-                                if (GymService.this.rowing != Rowing.this) {
-                                    // no longer current
-                                    return;
-                                }
-
-                                if (gym.program ==  null) {
-                                    foreground.connected(String.format(getString(R.string.gym_notification_connected), rower.getName()));
-                                    return;
-                                } else if (gym.program != program) {
-                                    // program changed
-                                    return;
-                                }
-
-                                String text = program.name.get();
-                                float completion = 0;
-                                if (gym.progress != null) {
-                                    text += " - " +  gym.progress.describe();
-                                    completion = gym.progress.completion();
-                                }
-                                foreground.workout(text, completion);
-
-                                Event event = gym.onMeasured(rower);
-                                motivator.onEvent(event);
-
-                                if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
-                                    gym.deselect();
-                                }
-                            }
-                        };
-                        handler.post(posted);
-                    }
-                }
-
-                rower.close();
-            }
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    motivator.destroy();
-
-                    heart.destroy();
-
-                    rowingEnded(Rowing.this);
-                }
-            });
+    @Override
+    public void onMeasurement() {
+        if (rower == null) {
+            return;
         }
 
+        Event event = gym.onMeasured(rower);
+        motivator.onEvent(event, rower, gym.progress);
+
+        if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
+            gym.deselect();
+
+            foreground.connected();
+        } else if (program != null){
+            foreground.progress();
+        }
+    }
+
+    @Override
+    public void onDisconnected() {
+        if (rower == null) {
+            return;
+        }
+
+        endRowing();
+
+        gym.deselect();
+
+        stopSelf();
     }
 
     private class Foreground {
-
-        private Preference<Boolean> headsup;
 
         private String text;
 
@@ -256,13 +224,19 @@ public class GymService extends Service {
                 builder.setChannelId(id);
             }
 
-            builder.setContentText(getString(R.string.gym_notification_connecting));
+            PendingIntent intent = PendingIntent.getService(getApplicationContext(), 0,
+                    createIntent(getApplicationContext(), CONNECTOR_NONE), 0);
+            builder.addAction(0, getString(R.string.gym_notification_disconnect),intent);
+
+            builder.setContentText(getString(R.string.gym_notification_connecting, rower.getName()));
             builder.setOnlyAlertOnce(false);
             startForeground(1, builder.build());
         }
 
-        public void connected(String text) {
+        public void connected() {
             GymService service = GymService.this;
+
+            String text = String.format(getString(R.string.gym_notification_connected), rower.getName());
 
             if (text.equals(this.text)) {
                 return;
@@ -278,7 +252,14 @@ public class GymService extends Service {
             this.progress = -1;
         }
 
-        public void workout(String text, float completion) {
+        public void progress() {
+            String text = program.name.get();
+            float completion = 0;
+            if (gym.progress != null) {
+                text += " - " +  gym.progress.describe();
+                completion = gym.progress.completion();
+            }
+
             GymService service = GymService.this;
 
             int progress = (int)(completion * 100);
@@ -305,17 +286,25 @@ public class GymService extends Service {
         }
     }
 
-    public static void start(Context context, UsbDevice device) {
-        Intent serviceIntent = new Intent(context, GymService.class);
+    @NonNull
+    private static Intent createIntent(Context context, Object connector) {
+        Intent intent = new Intent(context, GymService.class);
 
-        if (device != null) {
-            serviceIntent.putExtra(UsbManager.EXTRA_DEVICE, device);
+        if (connector instanceof Parcelable) {
+            intent.putExtra(CONNECTOR, (Parcelable) connector);
+        } else {
+            intent.putExtra(CONNECTOR, (String) connector);
         }
+        return intent;
+    }
+
+    public static void start(Context context, Object connector) {
+        Intent intent = createIntent(context, connector);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent);
+            context.startForegroundService(intent);
         } else {
-            context.startService(serviceIntent);
+            context.startService(intent);
         }
     }
 }

@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.wired;
 
 import org.junit.Test;
 
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.rower.water.usb.ITransfer;
+import svenmeier.coxswain.rower.wired.usb.ITransfer;
 
 import static org.junit.Assert.assertEquals;
 

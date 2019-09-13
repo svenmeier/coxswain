@@ -19,5 +19,5 @@ package svenmeier.coxswain;
  * Created by sven on 15.09.15.
  */
 public enum Event {
-    ACKNOLEDGED, PROGRAM_START, SEGMENT_CHANGED, PROGRAM_FINISHED;
+    ACKNOWLEDGED, PROGRAM_START, SEGMENT_CHANGED, PROGRAM_FINISHED;
 }

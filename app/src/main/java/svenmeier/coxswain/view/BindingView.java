@@ -130,7 +130,7 @@ public class BindingView extends LinearLayout {
         changeValue(value, false);
     }
 
-    public void changed(Gym gym, PaceBoat paceBoat) {
+    public void changed(Gym gym, PaceBoat paceBoat, Measurement measurement) {
         int achieved = 0;
 
         int targetDuration = 0;
@@ -156,8 +156,6 @@ public class BindingView extends LinearLayout {
             limitPower = segment.power.get();
             limitPulse = segment.pulse.get();
         }
-
-        Measurement measurement = gym.measurement;
 
         switch (binding) {
             case DURATION:

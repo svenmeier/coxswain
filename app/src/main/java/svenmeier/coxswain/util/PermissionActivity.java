@@ -3,6 +3,7 @@ package svenmeier.coxswain.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,7 @@ public class PermissionActivity extends Activity implements ActivityCompat.OnReq
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		String[] permissions = getIntent().getStringArrayExtra("permissions");
+		String[] permissions = getIntent().getStringArrayExtra(PERMISSIONS);
 
 		ActivityCompat.requestPermissions(this, permissions, 1);
 	}
@@ -42,7 +43,7 @@ public class PermissionActivity extends Activity implements ActivityCompat.OnReq
 		finish();
 	}
 
-	public static void start(Context context, String[] permissions) {
+	public static IntentFilter start(Context context, String[] permissions) {
 		Intent intent = new Intent(context, PermissionActivity.class);
 
 		// required for activity started from non-activity
@@ -51,5 +52,9 @@ public class PermissionActivity extends Activity implements ActivityCompat.OnReq
 		intent.putExtra(PERMISSIONS, permissions);
 
 		context.startActivity(intent);
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(PermissionActivity.ACTION);
+		return filter;
 	}
 }

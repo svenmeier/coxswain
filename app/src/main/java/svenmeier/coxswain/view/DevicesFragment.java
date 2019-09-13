@@ -26,7 +26,7 @@ import java.util.Collection;
 
 import svenmeier.coxswain.GymService;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.rower.water.usb.UsbConnector;
+import svenmeier.coxswain.rower.wired.usb.UsbConnector;
 
 public class DevicesFragment extends PreferenceFragmentCompat {
 

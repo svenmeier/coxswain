@@ -229,8 +229,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	protected void onStart() {
 		super.onStart();
 
-		changed();
 		gym.addListener(this);
+		changed(null);
 	}
 
 	@Override
@@ -250,14 +250,16 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	@Override
-	public void changed() {
+	public void changed(Object scope) {
 		if (gym.program == null) {
 			finish();
 			return;
 		}
 
-		updateBindings();
-		updateLevel();
+		if (Measurement.class.isInstance(scope)) {
+			updateBindings((Measurement)scope);
+			updateLevel();
+		}
 	}
 
 	@Override
@@ -265,10 +267,10 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		leanBack(true);
 	}
 
-	private void updateBindings() {
+	private void updateBindings(Measurement measurement) {
 		int count = gridView.getChildCount();
 		for (int v = 0; v < count; v++) {
-			((BindingView) gridView.getChildAt(v)).changed(gym, paceBoat);
+			((BindingView) gridView.getChildAt(v)).changed(gym, paceBoat, measurement);
 		}
 	}
 

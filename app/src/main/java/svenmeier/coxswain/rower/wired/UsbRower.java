@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.wired;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,6 +25,8 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Handler;
+import android.os.Process;
 import android.util.Log;
 
 import propoid.util.content.Preference;
@@ -32,17 +34,19 @@ import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.rower.Rower;
-import svenmeier.coxswain.rower.water.usb.ITransfer;
-import svenmeier.coxswain.rower.water.usb.UsbTransfer;
+import svenmeier.coxswain.rower.wired.usb.ITransfer;
+import svenmeier.coxswain.rower.wired.usb.UsbTransfer;
 
 /**
  * Waterrower rower.
  */
-public class WaterRower extends Rower {
+public class UsbRower extends Rower implements Runnable {
 
     private final Context context;
 
     private final UsbDevice device;
+
+    private final Handler handler = new Handler();
 
     private UsbDeviceConnection connection;
 
@@ -50,15 +54,15 @@ public class WaterRower extends Rower {
 
     private IProtocol protocol;
 
-    private boolean detached;
-
     private BroadcastReceiver receiver;
 
     private ITrace trace;
 
     private boolean adjustSpeed;
 
-    public WaterRower(Context context, UsbDevice device) {
+    public UsbRower(Context context, UsbDevice device, Callback callback) {
+        super(callback);
+        
         this.context = context;
         this.device = device;
 
@@ -66,34 +70,38 @@ public class WaterRower extends Rower {
     }
 
     @Override
-    public boolean open() {
-        if (isOpen()) {
-            return true;
+    public void open() {
+        if (connection != null) {
+            return;
         }
 
         initTrace();
 
         trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
-        if (initConnection() == false) {
-            closeTrace();
-
-            return false;
+        if (initConnection()) {
+			callback.onConnected();
+        } else {
+			callback.onDisconnected();
+            return;
         }
 
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
+                if (connection == null) {
+                    return;
+                }
 
+                String action = intent.getAction();
                 if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
                     UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-                    if (device.equals(WaterRower.this.device)) {
-                        detached = true;
+                    if (device.equals(UsbRower.this.device)) {
+                        trace.comment(String.format("disconnected from %s", device.getDeviceName()));
+                        
+						callback.onDisconnected();
                     }
-
-                    trace.comment(String.format("detached from %s=%s", device.getDeviceName(), detached));
                 }
             }
         };
@@ -109,7 +117,7 @@ public class WaterRower extends Rower {
             protocol = protocol4;
         }
 
-        return true;
+        new Thread(this).start();
     }
 
     @Override
@@ -118,18 +126,11 @@ public class WaterRower extends Rower {
     }
 
     @Override
-    public boolean isOpen() {
-        return this.connection != null;
-    }
-
-    @Override
     public void close() {
-        if (isOpen() == false) {
-            return;
-        }
-
-        context.unregisterReceiver(receiver);
-        receiver = null;
+    	if (receiver != null) {
+			context.unregisterReceiver(receiver);
+			receiver = null;
+		}
 
         closeTrace();
 
@@ -149,22 +150,27 @@ public class WaterRower extends Rower {
     }
 
     @Override
-    public boolean row() {
-        if (isOpen() == false || detached) {
-            return false;
+    public void run() {
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+
+        while (connection != null) {
+            protocol.transfer(this);
+
+            if (adjustSpeed) {
+                // magic formula see:
+                // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
+                float mps = 0.709492f * (float) Math.pow(this.power, 1d / 3d);
+
+                this.speed = Math.round(mps * 100);
+            }
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+					callback.onMeasurement();
+                }
+            });
         }
-
-        protocol.transfer(this);
-
-        if (adjustSpeed) {
-            // magic formula see:
-            // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
-            float mps = 0.709492f * (float) Math.pow(this.power, 1d / 3d);
-
-            this.speed = Math.round(mps * 100);
-        }
-
-        return true;
     }
 
     private void initTrace() {

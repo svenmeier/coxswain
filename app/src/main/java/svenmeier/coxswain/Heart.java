@@ -3,6 +3,8 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.util.Log;
 
+import java.lang.reflect.Constructor;
+
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.Rower;
@@ -17,45 +19,37 @@ public class Heart {
 
 	private final Measurement measurement;
 
-	private long heartRateTime;
+	protected final Callback callback;
 
-	private int heartRate = -1;
-
-	public Heart(Context context, Measurement measurement) {
+	public Heart(Context context, Measurement measurement, Callback callback) {
 		this.context = context;
 		this.measurement = measurement;
+		this.callback = callback;
 	}
 
 	public void destroy() {
 	}
 
-	public final void pulse() {
-		if (heartRate == -1) {
-			return;
-		}
-
-		long now = System.currentTimeMillis();
-		if (now - heartRateTime > TIMEOUT_MILLIS) {
-			heartRate = 0;
-		}
-
-		measurement.pulse = heartRate;
-	}
-
 	protected void onHeartRate(int heartRate) {
-		heartRateTime = System.currentTimeMillis();
-		this.heartRate = heartRate;
+		measurement.pulse = heartRate;
+		
+		callback.onMeasurement();
 	}
 
-	public static Heart create(Context context, Rower rower) {
+	public static Heart create(Context context, Rower rower, Callback callback) {
 		Preference<String> sensors = Preference.getString(context, R.string.preference_hardware_heart_sensor);
 
 		String name = sensors.get();
 		try {
-			return (Heart) Class.forName(name).getConstructor(Context.class, Measurement.class).newInstance(context, rower);
+			Constructor<?> constructor = Class.forName(name).getConstructor(Context.class, Measurement.class, Callback.class);
+			return (Heart) constructor.newInstance(context, rower, callback);
 		} catch (Exception ex) {
 			Log.e(Coxswain.TAG, "cannot create sensor " + name);
-			return new Heart(context, rower);
+			return new Heart(context, rower, callback);
 		}
+	}
+
+	public interface Callback {
+		void onMeasurement();
 	}
 }

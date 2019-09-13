@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.rower.water;
+package svenmeier.coxswain.rower.wired;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.rower.Rower;
 
 public interface IProtocol {
 

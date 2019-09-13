@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water.usb;
+package svenmeier.coxswain.rower.wired.usb;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;

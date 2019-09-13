@@ -42,7 +42,7 @@ public class Workout2TCXTest {
 
 		StringWriter writer = new StringWriter();
 
-		new Workout2TCX(writer).document(workout, snapshots);
+		new Workout2TCX(writer, new StationaryCourse(null)).document(workout, snapshots);
 
 		assertContent(getClass().getResourceAsStream("/empty.tcx"), writer.toString());
 	}
@@ -88,7 +88,7 @@ public class Workout2TCXTest {
 
 		StringWriter writer = new StringWriter();
 
-		new Workout2TCX(writer).document(workout, snapshots);
+		new Workout2TCX(writer, new StationaryCourse(null)).document(workout, snapshots);
 
 		assertContent(getClass().getResourceAsStream("/snapshots.tcx"), writer.toString());
 	}

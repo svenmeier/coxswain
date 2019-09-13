@@ -28,8 +28,8 @@ public class AntHeart extends Heart {
 
 	private Connection connection;
 
-	public AntHeart(Context context, Measurement measurement) {
-		super(context, measurement);
+	public AntHeart(Context context, Measurement measurement, Callback callback) {
+		super(context, measurement, callback);
 
 		this.connection = new AntConnection();
 		this.connection.open();

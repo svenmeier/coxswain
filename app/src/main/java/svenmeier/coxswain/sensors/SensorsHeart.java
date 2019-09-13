@@ -22,8 +22,8 @@ public class SensorsHeart extends Heart {
 
 	private Connection connection;
 
-	public SensorsHeart(Context context, Measurement measurement) {
-		super(context, measurement);
+	public SensorsHeart(Context context, Measurement measurement, Callback callback) {
+		super(context, measurement, callback);
 
 		connection = new Connection(context);
 		connection.open();

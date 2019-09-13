@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.rower.water;
-
-import android.icu.text.SymbolTable;
+package svenmeier.coxswain.rower.wired;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.rower.water.usb.ITransfer;
+import svenmeier.coxswain.rower.wired.usb.ITransfer;
 
 public class Protocol3 implements IProtocol {
 

@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
+    <string name="action_bluetooth">Bluetooth</string>
     <string name="action_evaluate">Evaluate</string>
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
@@ -25,9 +26,9 @@
     <string name="action_week">Week</string>
     <string name="action_month">Month</string>
 
-    <string name="gym_notification_connecting">Connecting …</string>
+    <string name="gym_notification_connecting">Connecting to %s …</string>
     <string name="gym_notification_connected">Connected to %s</string>
-    <string name="gym_notification_stop">Stop</string>
+    <string name="gym_notification_disconnect">Cancel</string>
     <string name="gym_ready">ready</string>
     <string name="gym_repository_extern_failed">Cannot load repository from external location
     </string>
@@ -136,6 +137,7 @@
     <string name="ant_heart_not_found">No heart rate found via Ant+</string>
     <string name="ant_heart_reading">Reading heart rate via Ant+</string>
 
+    <string name="bluetooth_heart">Heart rate sensor</string>
     <string name="bluetooth_heart_no_bluetooth">Bluetooth not available</string>
     <string name="bluetooth_heart_no_location">Bluetooth requires enabled location services</string>
     <string name="bluetooth_heart_connecting">Bluetooth connecting to %s</string>
@@ -143,9 +145,18 @@
     <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
     <string name="bluetooth_heart_connected">Bluetooth reading heart rate from %s</string>
     <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
-    <string name="bluetooth_heart_choose_device">Choose Bluetooth device</string>
-    <string name="bluetooth_heart_choose_filtered">heart rate sensors only</string>
-    <string name="bluetooth_heart_choose_remember">remember selection</string>
+
+    <string name="bluetooth_choose">Choose %s</string>
+    <string name="bluetooth_choose_filtered">%s only</string>
+    <string name="bluetooth_choose_remember">remember selection</string>
+
+    <string name="bluetooth_rower">Rower</string>
+    <string name="bluetooth_rower_no_bluetooth">Bluetooth not available</string>
+    <string name="bluetooth_rower_no_location">Bluetooth requires enabled location services</string>
+    <string name="bluetooth_rower_failed">Bluetooth connection to %s failed</string>
+    <string name="bluetooth_rower_not_found">Bluetooth no rower found on %s</string>
+    <string name="bluetooth_rower_notification_timeout">Bluetooth notifiations time-out</string>
+    <string name="bluetooth_rower_disconnected">Bluetooth connection lost to %s</string>
 
     <string name="preference_training_title">Training</string>
 
@@ -318,6 +329,9 @@
 
     <string name="preference_performance_unit" translatable="false">preference_performance_unit</string>
 
-    <string name="preference_bluetooth_device" translatable="false">preference_bluetooth_device</string>
-    <string name="preference_bluetooth_device_remember" translatable="false">preference_bluetooth_device_remember</string>
+    <string name="preference_bluetooth_heart_device" translatable="false">preference_bluetooth_heart_device</string>
+    <string name="preference_bluetooth_heart_device_remember" translatable="false">preference_bluetooth_heart_device_remember</string>
+
+    <string name="preference_bluetooth_rower_device" translatable="false">preference_bluetooth_rower_device</string>
+    <string name="preference_bluetooth_rower_device_remember" translatable="false">preference_bluetooth_rower_device_remember</string>
 </resources>

@@ -1,5 +1,6 @@
 <resources>
     <string name="action_mock">Mock</string>
+    <string name="action_bluetooth">Bluetooth</string>
     <string name="action_evaluate">Bewerten</string>
     <string name="action_export">Exportieren</string>
     <string name="action_import">Importieren</string>
@@ -23,9 +24,9 @@
     <string name="action_week">Woche</string>
     <string name="action_month">Monat</string>
 
-    <string name="gym_notification_connecting">Verbinde …</string>
+    <string name="gym_notification_connecting">Verbinde mit %s …</string>
     <string name="gym_notification_connected">Verbunden mit %s</string>
-    <string name="gym_notification_stop">Stopp</string>
+    <string name="gym_notification_disconnect">Abbrechen</string>
     <string name="gym_ready">bereit</string>
     <string name="gym_repository_extern_failed">Repository können nicht von externer Lokation geladen werden</string>
 
@@ -133,6 +134,7 @@
     <string name="ant_heart_not_found">Kein Puls über Ant+ gefunden</string>
     <string name="ant_heart_reading">Lese Puls über Ant+</string>
 
+    <string name="bluetooth_heart">Pulsmesser</string>
     <string name="bluetooth_heart_no_bluetooth">Bluetooth ist nicht verfügbar</string>
     <string name="bluetooth_heart_no_location">Bluetooth erfordert aktivierte Standortdienste</string>
     <string name="bluetooth_heart_connecting">Bluetooth verbinde mit %s</string>
@@ -140,9 +142,18 @@
     <string name="bluetooth_heart_not_found">Bluetooth kein Puls auf %s gefunden </string>
     <string name="bluetooth_heart_connected">Bluetooth lese Puls von %s</string>
     <string name="bluetooth_heart_disconnected">Bluetooth Verbindung zu %s verloren</string>
-    <string name="bluetooth_heart_choose_device">Wähle Bluetooth Gerät</string>
-    <string name="bluetooth_heart_choose_filtered">nur Pulsmesser</string>
-    <string name="bluetooth_heart_choose_remember">Auswahl merken</string>
+
+    <string name="bluetooth_choose">Wähle %s</string>
+    <string name="bluetooth_choose_filtered">nur %s</string>
+    <string name="bluetooth_choose_remember">Auswahl merken</string>
+
+    <string name="bluetooth_rower">Rudergerät</string>
+    <string name="bluetooth_rower_no_bluetooth">Bluetooth ist nicht verfügbar</string>
+    <string name="bluetooth_rower_no_location">Bluetooth erfordert aktivierte Standortdienste</string>
+    <string name="bluetooth_rower_failed">Bluetooth Verbindung mit %s gescheitert</string>
+    <string name="bluetooth_rower_not_found">Bluetooth kein Ruderer auf %s gefunden </string>
+    <string name="bluetooth_rower_notification_timeout">Bluetooth Benachrichtigungen Time-out</string>
+    <string name="bluetooth_rower_disconnected">Bluetooth Verbindung zu %s verloren</string>
 
     <string name="preference_training_title">Training</string>
 

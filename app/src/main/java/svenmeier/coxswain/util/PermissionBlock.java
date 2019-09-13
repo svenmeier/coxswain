@@ -48,13 +48,10 @@ public class PermissionBlock {
 
 	private void requestPermissions() {
 
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(PermissionActivity.ACTION);
+		IntentFilter filter = PermissionActivity.start(context, permissions);
 
 		receiver = new BroadcastReceiverImpl();
 		context.registerReceiver(receiver, filter);
-
-		PermissionActivity.start(context, permissions);
 	}
 
 	private void unregister() {

@@ -11,6 +11,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
@@ -27,12 +28,23 @@ import java.util.List;
 import java.util.UUID;
 
 import propoid.ui.list.GenericRecyclerAdapter;
-import propoid.util.content.Preference;
 import svenmeier.coxswain.R;
 
 public class BluetoothActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
+	private static final String ACTION = "svenmeier.coxswain.bluetooth.SELECTED";
+
+	private static final String NAME = "name";
+
+	private static final String SERVICE_FILTER = "filter";
+
+	public static final String DEVICE_ADDRESS = "address";
+
+	public static final String DEVICE_REMEMBER = "remember";
+
 	private static final long TIMEOUT = 60000;
+
+	private String serviceFilter;
 
 	private CheckBox filterCheckBox;
 
@@ -54,17 +66,23 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		
 		setContentView(R.layout.layout_bluetooth);
 
+		String name = getIntent().getStringExtra(NAME);
+		setTitle(getString(R.string.bluetooth_choose, name));
+
 		filterCheckBox = findViewById(R.id.bluetooth_filter);
+		filterCheckBox.setText(getString(R.string.bluetooth_choose_filtered, name));
 		filterCheckBox.setOnCheckedChangeListener(this);
 
 		rememberCheckBox = findViewById(R.id.bluetooth_remember);
-		rememberCheckBox.setChecked(Preference.getBoolean(this, R.string.preference_bluetooth_device_remember).get());
+		rememberCheckBox.setChecked(false);
 
 		devicesView = findViewById(R.id.bluetooth_devices);
 		devicesView.setLayoutManager(new LinearLayoutManager(this));
 		devicesView.setHasFixedSize(true);
 
 		devicesView.setAdapter(devicesAdapter = new DevicesAdapter());
+
+		serviceFilter = getIntent().getStringExtra(SERVICE_FILTER);
 
 		startScanning();
 	}
@@ -106,8 +124,12 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		// stop immediately, otherwise following connection might fail
 		stopScanning();
 
-		Preference.getString(this, R.string.preference_bluetooth_device).set(address);
-		Preference.getBoolean(this, R.string.preference_bluetooth_device_remember).set(rememberCheckBox.isChecked());
+		Intent intent = new Intent();
+		intent.setAction(ACTION);
+		intent.putExtra(SERVICE_FILTER, serviceFilter);
+		intent.putExtra(DEVICE_ADDRESS, address);
+		intent.putExtra(DEVICE_REMEMBER, rememberCheckBox.isChecked());
+		sendBroadcast(intent);
 
 		finish();
 	}
@@ -166,8 +188,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 			BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 			adapter = manager.getAdapter();
 
-			if (filterCheckBox.isChecked()) {
-				adapter.startLeScan(new UUID[]{BluetoothHeart.SERVICE_HEART_RATE}, this);
+			if (filterCheckBox.isChecked() && serviceFilter != null) {
+				adapter.startLeScan(new UUID[]{UUID.fromString(serviceFilter)}, this);
 			} else {
 				adapter.startLeScan(this);
 			}
@@ -205,8 +227,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 			scanner = manager.getAdapter().getBluetoothLeScanner();
 
 			List<ScanFilter> filters = new ArrayList<>();
-			if (filterCheckBox.isChecked()) {
-				ScanFilter heartRateOnly = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(BluetoothHeart.SERVICE_HEART_RATE.toString())).build();
+			if (filterCheckBox.isChecked() && serviceFilter != null) {
+				ScanFilter heartRateOnly = new ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString(serviceFilter)).build();
 				filters.add(heartRateOnly);
 			}
 			scanner.startScan(filters, new ScanSettings.Builder().build(), this);
@@ -283,9 +305,15 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		}
 	}
 
-	public static void start(Context context) {
+	public static IntentFilter start(Context context, String name, String serviceFilter) {
 		Intent intent = new Intent(context, BluetoothActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra(NAME, name);
+		intent.putExtra(SERVICE_FILTER, serviceFilter);
 		context.startActivity(intent);
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BluetoothActivity.ACTION);
+		return filter;
 	}
 }

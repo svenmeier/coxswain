@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water.usb;
+package svenmeier.coxswain.rower.wired.usb;
 
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;

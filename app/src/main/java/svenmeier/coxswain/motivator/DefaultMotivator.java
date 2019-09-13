@@ -29,6 +29,7 @@ import svenmeier.coxswain.Event;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Difficulty;
+import svenmeier.coxswain.gym.Measurement;
 
 /**
  */
@@ -80,17 +81,21 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
     }
 
     @Override
-    public void onEvent(Event event) {
+    public void onEvent(Event event, Measurement measurement, Gym.Progress progress) {
         if (initialized == false) {
-            if (this.pending == null || event != Event.ACKNOLEDGED) {
+            if (this.pending == null || event != Event.ACKNOWLEDGED) {
+                // keep important event
                 this.pending = event;
             }
             return;
+        } else if (this.pending != null && event == Event.ACKNOWLEDGED) {
+            // important event takes precedence
+            event = this.pending;
+            this.pending = null;
         }
 
-        Gym.Progress progress = gym.progress;
         for (int a = 0; a < analysers.size(); a++) {
-            analysers.get(a).analyse(event, progress);
+            analysers.get(a).analyse(event, measurement, progress);
         }
     }
 
@@ -142,11 +147,6 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             }
 
             initialized = true;
-
-            if (pending != null) {
-                onEvent(pending);
-                pending = null;
-            }
         }
     }
 
@@ -164,9 +164,10 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
 		 * Analyse an event.
          *
          * @param event event
+         * @param measurement
          * @param progress current, may be {@code null}
          */
-        public abstract void analyse(Event event, Gym.Progress progress);
+        public abstract void analyse(Event event, Measurement measurement, Gym.Progress progress);
 
         public abstract void reset();
     }
@@ -197,7 +198,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             return "[" + difficulty.toString() + "]";
         }
 
-        public void analyse(Event event, Gym.Progress progress) {
+        public void analyse(Event event, Measurement measurement, Gym.Progress progress) {
             if (event == Event.PROGRAM_START || event == Event.SEGMENT_CHANGED) {
                 if (progress != null) {
                     ringtone(key(progress.segment.difficulty.get()));
@@ -238,7 +239,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             }
         }
 
-        public void analyse(Event event, Gym.Progress progress) {
+        public void analyse(Event event, Measurement measurement, Gym.Progress progress) {
             if (event == Event.PROGRAM_FINISHED) {
                 ringtone(KEY);
             }
@@ -265,15 +266,15 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         public void init() {
         }
 
-        public void analyse(Event event, Gym.Progress progress) {
-            if (event != Event.ACKNOLEDGED || progress == null || speakLimitPreference.get() == false) {
+        public void analyse(Event event, Measurement measurement, Gym.Progress progress) {
+            if (event != Event.ACKNOWLEDGED || progress == null || speakLimitPreference.get() == false) {
                 return;
             }
 
             if (progress.inLimit()) {
                 underLimitSince = -1;
             } else {
-                int now = gym.measurement.duration;
+                int now = measurement.duration;
 
                 if (underLimitSince == -1) {
                     underLimitSince = now;

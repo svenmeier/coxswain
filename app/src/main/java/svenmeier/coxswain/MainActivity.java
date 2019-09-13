@@ -29,14 +29,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.io.ImportIntention;
-import svenmeier.coxswain.rower.mock.MockRower;
 import svenmeier.coxswain.view.PerformanceFragment;
 import svenmeier.coxswain.view.ProgramsFragment;
 import svenmeier.coxswain.view.WorkoutsFragment;
@@ -105,11 +103,13 @@ public class MainActivity extends AbstractActivity {
 
         listener = new Gym.Listener() {
             @Override
-            public void changed() {
-                updateProgram();
+            public void changed(Object scope) {
+                if (scope == null) {
+                    updateProgram();
+                }
             }
         };
-        listener.changed();
+        listener.changed(null);
         gym.addListener(listener);
     }
 
@@ -217,11 +217,11 @@ public class MainActivity extends AbstractActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_mock) {
-            if (MockRower.openMock == null) {
-                GymService.start(this, null);
-            } else {
-                MockRower.openMock.close();
-            }
+            GymService.start(this, GymService.CONNECTOR_MOCK);
+
+            return true;
+        } else if (id == R.id.action_bluetooth) {
+            GymService.start(this, GymService.CONNECTOR_BLUETOOTH);
 
             return true;
         } else if (id == R.id.action_import) {

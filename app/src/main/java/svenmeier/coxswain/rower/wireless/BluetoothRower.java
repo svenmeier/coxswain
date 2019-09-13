@@ -1,4 +1,4 @@
-package svenmeier.coxswain.bluetooth;
+package svenmeier.coxswain.rower.wireless;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -19,56 +19,70 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
-import svenmeier.coxswain.Heart;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.bluetooth.BlueUtils;
+import svenmeier.coxswain.bluetooth.BluetoothActivity;
+import svenmeier.coxswain.bluetooth.Fields;
+import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.util.PermissionBlock;
 
-/**
- * {@link Heart} reading from a connected Bluetooth device.
- */
-public class BluetoothHeart extends Heart {
+public class BluetoothRower extends Rower {
 
 	private static final int CONNECT_TIMEOUT_MILLIS = 15000;
 
-	private Handler handler = new Handler();
+	/**
+	 * Timeout after which we re-enable notifications.
+	 */
+	private static final int NOTIFICATIONS_TIMEOUT = 3000;
+
+	private final Context context;
+
+	private final Handler handler = new Handler();
+
+	private final Preference<String> devicePreference;
+	
+	private final Preference<Boolean> devicePreferenceRemember;
 
 	private Connection connection;
 
-	private Preference<String> devicePreference;
+	public BluetoothRower(Context context, Callback callback) {
+		super(callback);
 
-	private Preference<Boolean> devicePreferenceRemember;
-
-	public BluetoothHeart(Context context, Measurement measurement, Callback callback) {
-		super(context, measurement, callback);
-
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-			toast(context.getString(R.string.bluetooth_heart_no_bluetooth));
-			return;
-		}
+		this.context = context;
 
 		devicePreference = Preference.getString(context, R.string.preference_bluetooth_heart_device);
 		devicePreferenceRemember = Preference.getBoolean(context, R.string.preference_bluetooth_heart_device_remember);
-
-		connect(new Permissions());
 	}
 
 	@Override
-	public void destroy() {
+	public void open() {
+		if (connection == null) {
+			connect(new Permissions());
+		}
+	}
+
+	@Override
+	public void close() {
 		if (connection != null) {
 			connection.close();
 			connection = null;
 		}
 	}
 
+	@Override
+	public String getName() {
+		return "Bluetooth Rower";
+	}
+
 	private void toast(final String text) {
 		handler.post(new Runnable() {
+
 			@Override
 			public void run() {
 				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
@@ -122,7 +136,7 @@ public class BluetoothHeart extends Heart {
 		public void open() {
 			if (isRequired()) {
 				if (isEnabled() == false) {
-					toast(context.getString(R.string.bluetooth_heart_no_location));
+					toast(context.getString(R.string.bluetooth_rower_no_location));
 
 					Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,7 +216,7 @@ public class BluetoothHeart extends Heart {
 			adapter = manager.getAdapter();
 
 			if (adapter == null) {
-				toast(context.getString(R.string.bluetooth_heart_no_bluetooth));
+				toast(context.getString(R.string.bluetooth_rower_no_bluetooth));
 				return;
 			}
 
@@ -249,6 +263,8 @@ public class BluetoothHeart extends Heart {
 
 	private class SelectionConnection extends BroadcastReceiver implements Connection {
 
+		boolean registered = false;
+
 		@Override
 		public void open() {
 			String address = devicePreference.get();
@@ -257,9 +273,10 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			String name = context.getString(R.string.bluetooth_heart);
-			IntentFilter filter = BluetoothActivity.start(context, name, BlueUtils.SERVICE_HEART_RATE.toString());
+			String name = context.getString(R.string.bluetooth_rower);
+			IntentFilter filter = BluetoothActivity.start(context, name, BlueUtils.SERVICE_FITNESS_MACHINE.toString());
 			context.registerReceiver(this, filter);
+			registered = true;
 		}
 
 		@Override
@@ -280,7 +297,10 @@ public class BluetoothHeart extends Heart {
 
 		@Override
 		public void close() {
-			context.unregisterReceiver(this);
+			if (registered) {
+				context.unregisterReceiver(this);
+				registered = false;
+			}
 		}
 	}
 
@@ -289,13 +309,15 @@ public class BluetoothHeart extends Heart {
 
 		private final String address;
 
+		private KeepAlive keepAlive = new KeepAlive();
+
 		private BluetoothAdapter adapter;
 
 		private BluetoothGatt connected;
 
-		private BluetoothGattCharacteristic heartRateMeasurement;
+		private BluetoothGattCharacteristic rowerData;
 
-		private GattConnection(String address) {
+		GattConnection(String address) {
 			this.address = address;
 		}
 
@@ -309,13 +331,12 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public synchronized void open() {
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+
 			adapter = manager.getAdapter();
 
 			try {
-				toast(context.getString(R.string.bluetooth_heart_connecting, address));
-
 				BluetoothDevice device = adapter.getRemoteDevice(address);
-				Log.d(Coxswain.TAG, "bluetooth heart connecting " + device.getAddress());
+				Log.d(Coxswain.TAG, "bluetooth rower connecting " + address);
 				connected = device.connectGatt(context, false, this);
 
 				handler.removeCallbacks(this);
@@ -334,32 +355,47 @@ public class BluetoothHeart extends Heart {
 			String address = gatt.getDevice().getAddress();
 
 			if (newState == BluetoothProfile.STATE_CONNECTED) {
-				Log.d(Coxswain.TAG, "bluetooth heart connected " + address);
+				Log.d(Coxswain.TAG, "bluetooth rower connected " + address);
 
 				connected = gatt;
 				connected.discoverServices();
 			} else if (newState == BluetoothProfile.STATE_DISCONNECTED ) {
 				if (connected != null && connected.getDevice().getAddress().equals(address)) {
-					Log.d(Coxswain.TAG, "bluetooth heart disconnected " + address);
+					Log.d(Coxswain.TAG, "bluetooth rower disconnected " + address);
 
 					if (adapter.isEnabled()) {
-						toast(context.getString(R.string.bluetooth_heart_disconnected, address));
+						toast(context.getString(R.string.bluetooth_rower_disconnected, address));
 
-						select();
-					} else {
-						close();
+						if (rowerData == null) {
+							// only select when no successful connection yet
+							select();
+							return;
+						}
 					}
+
+					close();
+
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							callback.onDisconnected();
+						}
+					});
 				}
 			}
 		}
 
-		public synchronized void close() {
+		private void disconnect() {
 			if (connected != null) {
 				connected.close();
 				connected = null;
 			}
 
-			heartRateMeasurement = null;
+			rowerData = null;
+		}
+
+		public synchronized void close() {
+			disconnect();
 
 			adapter = null;
 		}
@@ -370,55 +406,151 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			BluetoothGattService service = gatt.getService(BlueUtils.SERVICE_HEART_RATE);
+			BluetoothGattService service = gatt.getService(BlueUtils.SERVICE_FITNESS_MACHINE);
 			if (service == null) {
-				Log.d(Coxswain.TAG, "bluetooth no heart rate");
+				Log.d(Coxswain.TAG, "bluetooth no fitness machine");
 			} else {
-				heartRateMeasurement = service.getCharacteristic(BlueUtils.CHARACTERISTIC_HEART_RATE_MEASUREMENT);
-				if (heartRateMeasurement == null) {
-					Log.d(Coxswain.TAG, "bluetooth no heart rate measurement");
+				rowerData = service.getCharacteristic(BlueUtils.CHARACTERISTIC_ROWER_DATA);
+				if (rowerData == null) {
+					Log.d(Coxswain.TAG, "bluetooth no rower data");
 				} else {
-					if (BlueUtils.enableNotification(gatt, heartRateMeasurement)) {
-						toast(context.getString(R.string.bluetooth_heart_connected, gatt.getDevice().getAddress()));
+					if (BlueUtils.enableNotification(gatt, rowerData)) {
+						handler.post(new Runnable() {
+							@Override
+							public void run() {
+								callback.onConnected();
+							}
+						});
 						return;
 					}
-					Log.d(Coxswain.TAG, "bluetooth no heart rate measurement notification");
+					Log.d(Coxswain.TAG, "bluetooth no rower data notification");
 				}
 			}
 
-			heartRateMeasurement = null;
-			toast(context.getString(R.string.bluetooth_heart_not_found, gatt.getDevice().getAddress()));
+			rowerData = null;
+			toast(context.getString(R.string.bluetooth_rower_not_found, gatt.getDevice().getAddress()));
 
 			select();
 		}
-		
+
 		@Override
-		@WorkerThread
 		public synchronized void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			if (connected == null) {
 				return;
 			}
 
-			int heartRate;
-			Fields fields = new Fields(characteristic, Fields.UINT8);
-			if (fields.flag(0)) {
-				heartRate = fields.get(Fields.UINT16);
-			} else {
-				heartRate = fields.get(Fields.UINT8);
+			Fields fields = new Fields(characteristic, Fields.UINT16);
+
+			if (fields.flag(0) == false) { // more data
+				strokeRate = fields.get(Fields.UINT8) / 2; // stroke rate 0.5
+				strokes = fields.get(Fields.UINT16); // stroke count
+			}
+			if (fields.flag(1)) {
+				fields.get(Fields.UINT8); // average stroke rate
+			}
+			if (fields.flag(2)) {
+				distance = fields.get(Fields.UINT16) +
+						(fields.get(Fields.UINT8) << 16); // total distance
+			}
+			if (fields.flag(3)) {
+				fields.get(Fields.UINT16); // instantaneous pace
+			}
+			if (fields.flag(4)) {
+				fields.get(Fields.UINT16); // average pace
+			}
+			if (fields.flag(5)) {
+				power = fields.get(Fields.SINT16); // instantaneous power
+			}
+			if (fields.flag(6)) {
+				fields.get(Fields.SINT16); // average power
+			}
+			if (fields.flag(7)) {
+				fields.get(Fields.SINT16); // resistance level
+			}
+			if (fields.flag(8)) { // expended energy
+				energy = fields.get(Fields.UINT16); // total energy
+				fields.get(Fields.UINT16); // energy per hour
+				fields.get(Fields.UINT8); // energy per minute
+			}
+			if (fields.flag(9)) {
+				int heartRate = fields.get(Fields.UINT8); // heart rate
+				if (heartRate > 0) {
+					pulse = heartRate;
+				}
+			}
+			if (fields.flag(10)) {
+				speed = fields.get(Fields.UINT8) * 10; // metabolic equivalent 0.1
+			}
+			if (fields.flag(11)) {
+				int elapsedTime = fields.get(Fields.UINT16); // elapsed time
+				int delta = Math.abs(elapsedTime - duration);
+				//  erroneous  values are sent on minute boundaries, so ignore these deltas
+				if (delta == 59 || delta == 60) {
+					// 359 ... 300 ... 360
+					// 599 ... 659 ... 600
+					Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
+				} else {
+					duration = elapsedTime;
+				}
+			}
+			if (fields.flag(12)) {
+				fields.get(Fields.UINT16); // remaining time
 			}
 
-			onHeartRate(heartRate);
+			keepAlive.onNotification();
+
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					callback.onMeasurement();
+				}
+			});
 		}
 
 		/**
-		 * @see BluetoothHeart#CONNECT_TIMEOUT_MILLIS
+		 * @see BluetoothRower#CONNECT_TIMEOUT_MILLIS
 		 */
 		@Override
 		public void run() {
-			if (connected != null && heartRateMeasurement == null) {
+			if (connected != null && rowerData == null) {
 				toast(context.getString(R.string.bluetooth_heart_failed, connected.getDevice().getAddress()));
 
 				select();
+			}
+		}
+
+		/**
+		 * Notifications from the S4 comm module time out every other minute,
+		 * thus we re-enabled the notification when no new notification has
+		 * been received within a timeout.
+		 *
+		 * @see #NOTIFICATIONS_TIMEOUT
+		 */
+		private class KeepAlive implements Runnable {
+
+			/**
+			 * Notification was received.
+			 */
+			public void onNotification() {
+				handler.removeCallbacks(this);
+				handler.postDelayed(this, NOTIFICATIONS_TIMEOUT);
+			}
+
+			/**
+			 * Notifications timed out.
+			 */
+			@Override
+			public void run() {
+				if (rowerData != null) {
+					Log.d(Coxswain.TAG, "bluetooth rower notifications time-out");
+
+					if (BuildConfig.DEBUG) {
+						toast(context.getString(R.string.bluetooth_rower_notification_timeout));
+					}
+
+					// re-enable notification
+					BlueUtils.enableNotification(connected, rowerData);
+				}
 			}
 		}
 	}

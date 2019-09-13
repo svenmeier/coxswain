@@ -48,7 +48,7 @@ public class Measurement {
     public int pulse;
 
     /**
-     * strokes per second
+     * strokes per minute
      */
     public int strokeRate;
 

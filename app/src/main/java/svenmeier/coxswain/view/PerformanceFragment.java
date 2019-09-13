@@ -101,11 +101,13 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
 
 
     @Override
-    public void changed() {
-        max.reset();
-        pendings.clear();
-        performances.clear();
-        adapter.notifyDataSetChanged();
+    public void changed(Object scope) {
+        if (scope == null) {
+            max.reset();
+            pendings.clear();
+            performances.clear();
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -127,7 +129,7 @@ public class PerformanceFragment extends Fragment implements Gym.Listener {
 
             unit.prepare(item);
 
-            changed();
+            changed(null);
         }
 
         return super.onOptionsItemSelected(item);

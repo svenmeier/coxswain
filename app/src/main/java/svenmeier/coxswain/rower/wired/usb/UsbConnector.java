@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.water.usb;
+package svenmeier.coxswain.rower.wired.usb;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,8 +9,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by sven on 24.10.15.

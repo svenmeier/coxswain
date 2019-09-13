@@ -15,20 +15,24 @@
  */
 package svenmeier.coxswain.rower;
 
-import propoid.core.Property;
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.gym.Workout;
 
 /**
  */
 public abstract class Rower extends Measurement {
 
+    protected final Callback callback;
+
+    protected Rower(Callback callback) {
+        this.callback = callback;
+    }
+
+    public abstract String getName();
+
     /**
      * Open the rower.
      */
-    public abstract boolean open();
-
-    public abstract boolean isOpen();
+    public abstract void open();
 
     public void reset() {
         duration = 0;
@@ -45,16 +49,15 @@ public abstract class Rower extends Measurement {
     }
 
     /**
-     * Row.
-     *
-     * @return whether still rowing
-     */
-    public abstract boolean row();
-
-    /**
      * Close the rower.
      */
     public abstract void close();
 
-    public abstract String getName();
+    public interface Callback {
+        void onConnected();
+
+        void onMeasurement();
+
+        void onDisconnected();
+    }
 }

@@ -19,7 +19,6 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.UiThread;
-import android.text.format.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,6 +62,11 @@ public class Gym {
     private List<Listener> listeners = new ArrayList<>();
 
     /**
+     * The last measurement.
+     */
+    private Measurement measurement = new Measurement();
+
+    /**
      * The selected program.
      */
     public Program program;
@@ -76,11 +80,6 @@ public class Gym {
      * The current workout.
      */
     public Workout current;
-
-    /**
-     * The last measurement.
-     */
-    public Measurement measurement = new Measurement();
 
 	/**
      * Progress of current workout.
@@ -101,7 +100,7 @@ public class Gym {
 
                 repository.open();
 
-                fireChanged();
+                fireChanged(null);
             }
         });
     }
@@ -292,7 +291,7 @@ public class Gym {
             this.current = null;
             this.progress = null;
 
-            fireChanged();
+            fireChanged(null);
         }
     }
 
@@ -304,7 +303,7 @@ public class Gym {
         this.current = null;
         this.progress = null;
 
-        fireChanged();
+        fireChanged(null);
     }
 
     public void repeat(Workout pace) {
@@ -324,7 +323,7 @@ public class Gym {
         this.current = null;
         this.progress = null;
 
-        fireChanged();
+        fireChanged(null);
     }
 
     public void challenge(Workout pace) {
@@ -335,7 +334,7 @@ public class Gym {
         this.current = null;
         this.progress = null;
 
-        fireChanged();
+        fireChanged(null);
     }
 
 	/**
@@ -344,7 +343,7 @@ public class Gym {
      * @param measurement the measurement
      */
     public Event onMeasured(Measurement measurement) {
-        Event event = Event.ACKNOLEDGED;
+        Event event = Event.ACKNOWLEDGED;
 
         this.measurement = measurement;
 
@@ -388,7 +387,7 @@ public class Gym {
             }
         }
 
-        fireChanged();
+        fireChanged(measurement);
 
         return event;
     }
@@ -528,9 +527,9 @@ public class Gym {
         }
     }
 
-    private void fireChanged() {
+    private void fireChanged(Object scope) {
         for (Listener listener : listeners) {
-            listener.changed();
+            listener.changed(scope);
         }
     }
 
@@ -554,6 +553,6 @@ public class Gym {
     }
 
     public interface Listener {
-        void changed();
+        void changed(Object scope);
     }
 }

@@ -1,6 +1,4 @@
-package svenmeier.coxswain.rower.water;
-
-import svenmeier.coxswain.rower.water.usb.ITransfer;
+package svenmeier.coxswain.rower.wired;
 
 import static org.junit.Assert.assertEquals;
 

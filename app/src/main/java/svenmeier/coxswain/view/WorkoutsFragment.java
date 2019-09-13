@@ -43,6 +43,7 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.rower.Distance;
 import svenmeier.coxswain.rower.Energy;
@@ -50,7 +51,7 @@ import svenmeier.coxswain.rower.Energy;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 
-public class WorkoutsFragment extends Fragment implements Gym.Listener {
+public class WorkoutsFragment extends Fragment {
 
     private Gym gym;
 
@@ -65,16 +66,8 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
         super.onAttach(context);
 
         gym = Gym.instance(context);
-        gym.addListener(this);
 
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onDetach() {
-        gym.removeListener(this);
-
-        super.onDetach();
     }
 
     @Override
@@ -126,15 +119,6 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
         super.onActivityCreated(savedInstanceState);
 
         adapter.initLoader(0, this);
-    }
-
-    @Override
-    public void changed() {
-        adapter.destroy(0, this);
-
-        workoutsView.setAdapter(adapter = new WorkoutsAdapter());
-
-        adapter.restartLoader(0, this);
     }
 
     private class WorkoutsAdapter extends MatchRecyclerAdapter<Workout> {

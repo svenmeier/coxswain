@@ -129,7 +129,6 @@
         </activity>
         <activity
             android:name=".bluetooth.BluetoothActivity"
-            android:label="@string/bluetooth_heart_choose_device"
             android:launchMode="singleTop"
             android:theme="@style/DialogTheme">
         </activity>

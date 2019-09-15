@@ -13,12 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.rower.wired;
+package svenmeier.coxswain.rower;
+
+import svenmeier.coxswain.gym.Measurement;
 
 /**
  * Calculator of energy relative to a weight.
  */
-public interface IEnergyCalculator {
+public class SpeedCalculator implements ICalculator {
 
-    int energy(int value);
+	/**
+     * Speed dependent on power.
+     *
+     * @param measurement measurement to adjust
+     */
+    public void adjust(Measurement measurement) {
+        // magic formula see:
+        // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
+        float mps = 0.709492f * (float) Math.pow(measurement.power, 1d / 3d);
+        measurement.speed = Math.round(mps * 100);
+    }
 }

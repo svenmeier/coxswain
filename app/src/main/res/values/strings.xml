@@ -186,7 +186,7 @@
 
     <string name="preference_open_end" translatable="false">preference_open_end</string>
     <string name="preference_open_end_title">Open end</string>
-    <string name="preference_open_end_summary">Continue rowing after training has ended</string>
+    <string name="preference_open_end_summary">Continue training after program has ended</string>
 
     <string name="preference_display_title">Display</string>
 

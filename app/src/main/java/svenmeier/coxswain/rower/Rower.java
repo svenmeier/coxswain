@@ -15,16 +15,40 @@
  */
 package svenmeier.coxswain.rower;
 
+import android.content.Context;
+import android.os.Handler;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import propoid.util.content.Preference;
+import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Measurement;
 
 /**
  */
 public abstract class Rower extends Measurement {
 
+    private final Handler handler = new Handler();
+
+    private final Context context;
+
+    private List<ICalculator> calculators = new ArrayList<>();
+
     protected final Callback callback;
 
-    protected Rower(Callback callback) {
+    protected Rower(Context context, Callback callback) {
+        this.context = context;
         this.callback = callback;
+
+        if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
+            calculators.add(new SpeedCalculator());
+        }
+
+        if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
+            calculators.add(new EnergyCalculator(Preference.getInt(context, R.string.preference_weight).fallback(90).get()));
+        }
     }
 
     public abstract String getName();
@@ -46,6 +70,30 @@ public abstract class Rower extends Measurement {
         power = 0;
 
         strokeRatio = 0;
+    }
+
+    protected void toast(final String text) {
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    protected void notifyMeasurement() {
+
+        for (ICalculator calculator : calculators) {
+            calculator.adjust(this);
+        }
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onMeasurement();
+            }
+        });
     }
 
     /**

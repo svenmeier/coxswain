@@ -2,6 +2,8 @@ package svenmeier.coxswain.rower.wired;
 
 import org.junit.Test;
 
+import svenmeier.coxswain.rower.EnergyCalculator;
+
 import static org.junit.Assert.assertEquals;
 
 /**

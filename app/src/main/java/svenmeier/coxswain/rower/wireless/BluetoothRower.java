@@ -34,12 +34,12 @@ import svenmeier.coxswain.util.PermissionBlock;
 
 public class BluetoothRower extends Rower {
 
-	private static final int CONNECT_TIMEOUT_MILLIS = 15000;
+	private static final int CONNECT_TIMEOUT_MILLIS = 10000;
 
 	/**
 	 * Timeout after which we re-enable notifications.
 	 */
-	private static final int NOTIFICATIONS_TIMEOUT = 3000;
+	private static final int NOTIFICATIONS_TIMEOUT = 2000;
 
 	private final Context context;
 
@@ -52,7 +52,7 @@ public class BluetoothRower extends Rower {
 	private Connection connection;
 
 	public BluetoothRower(Context context, Callback callback) {
-		super(callback);
+		super(context, callback);
 
 		this.context = context;
 
@@ -78,16 +78,6 @@ public class BluetoothRower extends Rower {
 	@Override
 	public String getName() {
 		return "Bluetooth Rower";
-	}
-
-	private void toast(final String text) {
-		handler.post(new Runnable() {
-
-			@Override
-			public void run() {
-				Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-			}
-		});
 	}
 
 	private void connect(Connection connection) {
@@ -499,12 +489,7 @@ public class BluetoothRower extends Rower {
 
 			keepAlive.onNotification();
 
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					callback.onMeasurement();
-				}
-			});
+			notifyMeasurement();
 		}
 
 		/**

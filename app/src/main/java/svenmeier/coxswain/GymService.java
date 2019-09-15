@@ -99,7 +99,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         if (CONNECTOR_BLUETOOTH.equals(intent.getStringExtra(CONNECTOR))) {
             rower = new BluetoothRower(this, this);
         } else if (CONNECTOR_MOCK.equals(intent.getStringExtra(CONNECTOR))) {
-            rower = new MockRower(this);
+            rower = new MockRower(this, this);
         } else {
             rower = new UsbRower(this, (UsbDevice) intent.getParcelableExtra(CONNECTOR), this);
         }
@@ -147,6 +147,8 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
             this.program = gym.program;
 
             rower.reset();
+
+            foreground.changed();
         }
     }
 
@@ -172,8 +174,6 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
         if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
             gym.deselect();
-
-            foreground.connected();
         } else if (program != null){
             foreground.progress();
         }
@@ -230,6 +230,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
             builder.setContentText(getString(R.string.gym_notification_connecting, rower.getName()));
             builder.setOnlyAlertOnce(false);
+            
             startForeground(1, builder.build());
         }
 
@@ -276,6 +277,12 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
             this.text = text;
             this.progress = progress;
+        }
+
+        public void changed() {
+            if (progress != -1 && program == null) {
+                connected();
+            }
         }
 
         public void stop() {

@@ -15,6 +15,7 @@
  */
 package svenmeier.coxswain.rower.mock;
 
+import android.content.Context;
 import android.os.Handler;
 
 import svenmeier.coxswain.rower.Rower;
@@ -48,14 +49,14 @@ public class MockRower extends Rower {
         public void run() {
             row();
 
-            callback.onMeasurement();
+            notifyMeasurement();
 
             handler.postDelayed(this, 500);
         }
     };
 
-    public MockRower(Callback callback) {
-        super(callback);
+    public MockRower(Context context, Callback callback) {
+        super(context, callback);
     }
     
     @Override

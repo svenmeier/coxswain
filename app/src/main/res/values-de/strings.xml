@@ -176,7 +176,7 @@
     <string name="preference_split_distance_summary">Zeit pro %s Meter</string>
 
     <string name="preference_open_end_title">Offenes Ende</string>
-    <string name="preference_open_end_summary">Nach Beendigung des Trainings weiter rudern</string>
+    <string name="preference_open_end_summary">Training nach Beendigung des Programms weiterführen</string>
 
     <string name="preference_display_title">Anzeige</string>
 

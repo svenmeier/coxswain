@@ -38,13 +38,6 @@ public class Protocol4 implements IProtocol {
 
     private RatioCalculator ratioCalculator = new RatioCalculator();
 
-    private IEnergyCalculator energyCalculator = new IEnergyCalculator() {
-        @Override
-        public int energy(int value) {
-            return value  / 1000;
-        }
-    };
-
     private int cycle = 0;
 
     private long outputThrottle = DEFAULT_OUTPUT_THROTTLE;
@@ -226,7 +219,7 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.energy = energyCalculator.energy(value);
+                measurement.energy = value / 1000;
             }
         });
 
@@ -380,9 +373,5 @@ public class Protocol4 implements IProtocol {
 
     private void removeField(Field field) {
         fields.remove(field);
-    }
-    
-    public void adjustEnergy(IEnergyCalculator calculator) {
-        this.energyCalculator = calculator;
     }
 }

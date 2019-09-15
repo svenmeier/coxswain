@@ -35,7 +35,7 @@ import svenmeier.coxswain.util.PermissionBlock;
  */
 public class BluetoothHeart extends Heart {
 
-	private static final int CONNECT_TIMEOUT_MILLIS = 15000;
+	private static final int CONNECT_TIMEOUT_MILLIS = 10000;
 
 	private Handler handler = new Handler();
 

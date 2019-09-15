@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.rower.wired;
+package svenmeier.coxswain.rower;
+
+import svenmeier.coxswain.gym.Measurement;
 
 /**
  * Calculator of energy relative to a weight.
  */
-public class EnergyCalculator implements IEnergyCalculator {
+public class EnergyCalculator implements ICalculator {
 
     private static final int WEIGHT_MIN = 40;
 
@@ -54,18 +56,14 @@ public class EnergyCalculator implements IEnergyCalculator {
     }
 
 	/**
-     * Energy in Calories.
+     * Energy dependent on weight.
      *
-     * @param calories
-     * @return Calories adjusted to weight
+     * @param measurement measurement to adjust
      */
-	@Override
-    public int energy(int calories) {
+    public void adjust(Measurement measurement) {
 
-        double thousandth = (double)calories / 1000d;
+        double adjusted = ((double)measurement.energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
 
-        double adjusted = thousandth - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
-
-        return (int)(adjusted);
+        measurement.energy = (int)adjusted;
     }
 }

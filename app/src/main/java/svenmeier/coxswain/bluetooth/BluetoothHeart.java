@@ -78,7 +78,7 @@ public class BluetoothHeart extends Heart {
 
 	private void connect(Connection connection) {
 		if (this.connection != null) {
-			this.connection.close();;
+			this.connection.close();
 		}
 
 		this.connection = connection;
@@ -249,6 +249,8 @@ public class BluetoothHeart extends Heart {
 
 	private class SelectionConnection extends BroadcastReceiver implements Connection {
 
+		private boolean registered;
+
 		@Override
 		public void open() {
 			String address = devicePreference.get();
@@ -260,6 +262,7 @@ public class BluetoothHeart extends Heart {
 			String name = context.getString(R.string.bluetooth_heart);
 			IntentFilter filter = BluetoothActivity.start(context, name, BlueUtils.SERVICE_HEART_RATE.toString());
 			context.registerReceiver(this, filter);
+			registered = true;
 		}
 
 		@Override
@@ -279,8 +282,12 @@ public class BluetoothHeart extends Heart {
 		}
 
 		@Override
-		public void close() {
-			context.unregisterReceiver(this);
+		public void close()
+		{
+			if (registered) {
+				context.unregisterReceiver(this);
+				registered = false;
+			}
 		}
 	}
 

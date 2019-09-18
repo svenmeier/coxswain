@@ -2,6 +2,7 @@ package svenmeier.coxswain.rower.wired;
 
 import org.junit.Test;
 
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.EnergyCalculator;
 
 import static org.junit.Assert.assertEquals;
@@ -11,34 +12,43 @@ import static org.junit.Assert.assertEquals;
  */
 public class EnergyCalculatorTest {
 
+	private void assertAdjusted(int out, int weight, int in) {
+		Measurement measurement = new Measurement();
+
+		measurement.energy = in;
+		new EnergyCalculator(weight).adjust(measurement);
+
+		assertEquals(out, measurement.energy);
+	}
+
 	@Test
 	public void test() {
-		assertEquals(0, new EnergyCalculator(68).energy(0));
+		assertAdjusted(0, 68, 0);
 	}
 
 	@Test
 	public void test26minutes() {
-		assertEquals(261, new EnergyCalculator(65).energy(273*1000));
-		assertEquals(299, new EnergyCalculator(75).energy(273*1000));
-		assertEquals(337, new EnergyCalculator(85).energy(273*1000));
+		assertAdjusted(261, 65, 273);
+		assertAdjusted(299, 75, 273);
+		assertAdjusted(337, 85, 273);
 
-		assertEquals(355, new EnergyCalculator(90).energy(273*1000));
+		assertAdjusted(355, 90, 273);
 
-		assertEquals(374, new EnergyCalculator(95).energy(273*1000));
-		assertEquals(412, new EnergyCalculator(105).energy(273*1000));
-		assertEquals(450, new EnergyCalculator(115).energy(273*1000));
-		assertEquals(488, new EnergyCalculator(125).energy(273*1000));
+		assertAdjusted(374, 95, 273);
+		assertAdjusted(412, 105, 273);
+		assertAdjusted(450, 115, 273);
+		assertAdjusted(488, 125, 273);
 	}
 
 	@Test
 	public void test40minutes() {
-		assertEquals(408, new EnergyCalculator(65).energy(420*1000));
-		assertEquals(484, new EnergyCalculator(85).energy(420*1000));
+		assertAdjusted(408, 65, 420);
+		assertAdjusted(484, 85, 420);
 
-		assertEquals(502, new EnergyCalculator(90).energy(420*1000));
+		assertAdjusted(502, 90, 420);
 
-		assertEquals(521, new EnergyCalculator(95).energy(420*1000));
-		assertEquals(559, new EnergyCalculator(105).energy(420*1000));
-		assertEquals(635, new EnergyCalculator(125).energy(420*1000));
+		assertAdjusted(521, 95, 420);
+		assertAdjusted(559, 105, 420);
+		assertAdjusted(635, 125, 420);
 	}
 }

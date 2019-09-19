@@ -40,13 +40,13 @@ import svenmeier.coxswain.rower.wired.UsbRower;
 
 public class GymService extends Service implements Gym.Listener, Rower.Callback, Heart.Callback {
 
-    private static final String CONNECTOR = "connector";
+    private static final String CONNECTOR_USB = "CONNECTOR_USB";
 
-    public static final String CONNECTOR_BLUETOOTH = "bluetooth";
+    public static final String CONNECTOR_BLUETOOTH = "CONNECTOR_BLUETOOTH";
 
-    public static final String CONNECTOR_MOCK = "mock";
+    public static final String CONNECTOR_MOCK = "CONNECTOR_MOCK";
 
-    public static final String CONNECTOR_NONE = "none";
+    public static final String CONNECTOR_NONE = "CONNECTOR_NONE";
 
     private Gym gym;
 
@@ -92,16 +92,14 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
     private boolean startRowing(Intent intent) {
 
-        if (CONNECTOR_NONE.equals(intent.getStringExtra(CONNECTOR))) {
+        if (intent.getBooleanExtra(CONNECTOR_NONE, false)) {
             return false;
-        }
-
-        if (CONNECTOR_BLUETOOTH.equals(intent.getStringExtra(CONNECTOR))) {
+        } else if (intent.getBooleanExtra(CONNECTOR_BLUETOOTH, false)) {
             rower = new BluetoothRower(this, this);
-        } else if (CONNECTOR_MOCK.equals(intent.getStringExtra(CONNECTOR))) {
+        } else if (intent.getBooleanExtra(CONNECTOR_MOCK, false)) {
             rower = new MockRower(this, this);
         } else {
-            rower = new UsbRower(this, (UsbDevice) intent.getParcelableExtra(CONNECTOR), this);
+            rower = new UsbRower(this, (UsbDevice) intent.getParcelableExtra(CONNECTOR_USB), this);
         }
 
         this.foreground = new Foreground();
@@ -225,7 +223,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
             }
 
             PendingIntent intent = PendingIntent.getService(getApplicationContext(), 0,
-                    createIntent(getApplicationContext(), CONNECTOR_NONE), 0);
+                    createIntent(getApplicationContext(), CONNECTOR_NONE), PendingIntent.FLAG_UPDATE_CURRENT);
             builder.addAction(0, getString(R.string.gym_notification_disconnect),intent);
 
             builder.setContentText(getString(R.string.gym_notification_connecting, rower.getName()));
@@ -297,10 +295,12 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
     private static Intent createIntent(Context context, Object connector) {
         Intent intent = new Intent(context, GymService.class);
 
-        if (connector instanceof Parcelable) {
-            intent.putExtra(CONNECTOR, (Parcelable) connector);
+        if (connector instanceof UsbDevice) {
+            intent.putExtra(CONNECTOR_USB, (UsbDevice)connector);
+        } else if (connector instanceof String){
+            intent.putExtra((String)connector, true);
         } else {
-            intent.putExtra(CONNECTOR, (String) connector);
+            throw new IllegalArgumentException(connector.toString());
         }
         return intent;
     }

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
+import svenmeier.coxswain.rower.wired.usb.TestTransfer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,7 +25,7 @@ public class Protocol4Test {
 		assertEquals(TestTransfer.PARITY_NONE, transfer.parity);
 		assertEquals(ITransfer.STOP_BIT_1_0, transfer.stopBits);
 		assertEquals(false, transfer.tx);
-		protocol.setOutputThrottle(0);
+		protocol.setThrottle(0);
 
 		assertEquals(Protocol4.VERSION_UNKOWN, protocol.getVersion());
 
@@ -49,6 +50,10 @@ public class Protocol4Test {
 		protocol.transfer(measurement);
 		assertEquals(1, measurement.energy);
 
-		assertEquals("#protocol 4>USB<_WR_#handshake complete>IV?<IV42020#version 42020>IRD140<IDT1E1151515>IRD057<IDT08A0003E8>IRD14A", trace.toString());
+		// incomplete
+		transfer.setupInput("IDT08A0003");
+		protocol.transfer(measurement);
+
+		assertEquals("#protocol 4>USB<_WR_#handshake complete>IV?<IV42020#version 42020>IRD140<IDT1E1151515>IRD057<IDT08A0003E8>IRD14A>IRS1A9", trace.toString());
 	}
 }

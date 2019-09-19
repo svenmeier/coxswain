@@ -1,28 +1,28 @@
 package svenmeier.coxswain.rower.wired.usb;
 
+import java.util.Iterator;
+
 /**
  */
 public interface ITransfer {
 
-	public static final int PARITY_NONE = 0;
-	public static final int PARITY_ODD = 1;
-	public static final int PARITY_EVEN = 2;
-	public static final int PARITY_MARK = 3;
-	public static final int PARITY_SPACE = 4;
+	int PARITY_NONE = 0;
+	int PARITY_ODD = 1;
+	int PARITY_EVEN = 2;
+	int PARITY_MARK = 3;
+	int PARITY_SPACE = 4;
 
-	public static final int STOP_BIT_1_0 = 0;
-	public static final int STOP_BIT_1_5 = 1;
-	public static final int STOP_BIT_2_0 = 2;
+	int STOP_BIT_1_0 = 0;
+	int STOP_BIT_1_5 = 1;
+	int STOP_BIT_2_0 = 2;
+
+	void setTimeout(int timeout);
 
 	void setBaudrate(int baudRate);
 
 	void setData(int dataBits, int parity, int stopBits, boolean tx);
 
-	void setTimeout(int timeout);
-
-	byte[] buffer();
-
-	int bulkInput();
-
-	void bulkOutput(int length);
+	void produce(byte[] b);
+	
+	Consumer consumer();
 }

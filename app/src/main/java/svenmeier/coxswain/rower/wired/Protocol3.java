@@ -16,15 +16,22 @@
 package svenmeier.coxswain.rower.wired;
 
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.wired.usb.Consumer;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 
 public class Protocol3 implements IProtocol {
+
+    private static final long DEFAULT_THROTTLE = 50;
 
     private static final int TIMEOUT = 100;
 
     private final ITrace trace;
 
     private final ITransfer transfer;
+
+    private long throttle = DEFAULT_THROTTLE;
+
+    private long lastTransfer = 0;
 
     private long start;
 
@@ -43,6 +50,10 @@ public class Protocol3 implements IProtocol {
         trace.comment("protocol 3");
     }
 
+    public void setThrottle(long throttle) {
+        this.throttle = throttle;
+    }
+
     @Override
     public void reset() {
         distanceInDecimeters = 0;
@@ -54,73 +65,89 @@ public class Protocol3 implements IProtocol {
 
     @Override
     public void transfer(Measurement measurement) {
-        int length = transfer.bulkInput();
 
-        byte[] buffer = transfer.buffer();
-        for (int c = 0; c < length; c++) {
+        if (System.currentTimeMillis() - lastTransfer < throttle) {
+            return;
+        }
+        lastTransfer = System.currentTimeMillis();
 
-            // TODO calculate energy
-
-            switch (buffer[c]) {
+        Consumer consumer = transfer.consumer();
+        while (consumer.hasNext()) {
+            switch (consumer.next()) {
                 case (byte)0xFB:
-                    if (c + 1 < length) {
-                        trace(buffer, c, 2);
-
-                        measurement.pulse = buffer[++c] & 0xFF;
+                    if (!consumer.hasNext()) {
+                        break;
                     }
+                    measurement.pulse = consumer.next() & 0xFF;
+
+                    trace(consumer.consumed());
                     continue;
                 case (byte)0xFC:
-                    trace(buffer, c, 1);
-
+                    //trace(buffer, c, 1);
                     measurement.strokes = measurement.strokes + 1;
 
                     ratioCalculator.recovering(measurement, System.currentTimeMillis());
 
+                    trace(consumer.consumed());
                     continue;
                 case (byte)0xFD:
-                    if (c + 2 < length) {
-                        trace(buffer, c, 3);
-
-                        ratioCalculator.pulling(measurement, System.currentTimeMillis());
-
-                        // voltage not used
-                        c += 2;
+                    // 2 bytes voltage not used
+                    if (!consumer.hasNext()) {
+                        break;
                     }
+                    consumer.next();
+                    if (!consumer.hasNext()) {
+                        break;
+                    }
+                    consumer.next();
+
+                    ratioCalculator.pulling(measurement, System.currentTimeMillis());
+
+                    trace(consumer.consumed());
                     continue;
                 case (byte)0xFE:
-                    if (c + 1 < length) {
-                        trace(buffer, c, 2);
-
-                        distanceInDecimeters += (buffer[++c] & 0xFF);
-
-                        measurement.distance = distanceInDecimeters / 10;
+                    if (!consumer.hasNext()) {
+                        break;
                     }
+
+                    distanceInDecimeters += consumer.next() & 0xFF;
+                    measurement.distance = distanceInDecimeters / 10;
+
+                    trace(consumer.consumed());
                     continue;
                 case (byte)0xFF:
-                    if (c + 2 < length) {
-                        trace(buffer, c, 3);
-
-                        measurement.strokeRate = buffer[++c] & 0xFF;
-                        measurement.speed = (buffer[++c] & 0xFF) * 10;
+                    if (!consumer.hasNext()) {
+                        break;
                     }
-                    continue;
-            }
+                    byte strokeRate = consumer.next();
+                    if (!consumer.hasNext()) {
+                        break;
+                    }
+                    byte speed = consumer.next();
 
-            trace(buffer, c, 1);
+                    measurement.strokeRate = strokeRate & 0xFF;
+                    measurement.speed = (speed & 0xFF) * 10;
+
+                    trace(consumer.consumed());
+                    continue;
+                default:
+                    trace(consumer.consumed());
+                    trace.comment("unrecognized");
+            }
         }
 
         measurement.duration = (int)(System.currentTimeMillis() - start) / 1000;
     }
 
-    private void trace(byte[] buffer, int start, int length) {
-        StringBuilder string = new StringBuilder(length * 3);
+    private void trace(byte[] buffer) {
+        StringBuilder string = new StringBuilder(buffer.length * 3);
 
-        for (int c = 0; c < length; c++) {
+        for (int c = 0; c < buffer.length; c++) {
             if (c > 0) {
                 string.append(' ');
             }
 
-            int b = buffer[start + c] & 0xFF;
+            int b = buffer[c] & 0xFF;
 
             string.append(hex[b >>> 4]);
             string.append(hex[b & 0x0F]);

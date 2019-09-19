@@ -1,4 +1,4 @@
-package svenmeier.coxswain.rower.wired;
+package svenmeier.coxswain.rower.wired.usb;
 
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 
@@ -6,10 +6,10 @@ import static org.junit.Assert.assertEquals;
 
 /**
  */
-class TestTransfer implements ITransfer {
+public class TestTransfer implements ITransfer {
 
 	public int baudrate;
-	public int length = 0;
+	public int bufferLength = 0;
 	public int dataBits;
 	public int parity;
 	public int stopBits;
@@ -39,51 +39,58 @@ class TestTransfer implements ITransfer {
 			this.buffer[b] = (byte) buffer.charAt(b);
 		}
 
-		this.length = buffer.length();
+		this.bufferLength = buffer.length();
 	}
 
 	public void setupInput(byte[] buffer) {
 		System.arraycopy(buffer, 0, this.buffer, 0, buffer.length);
 
-		this.length = buffer.length;
+		this.bufferLength = buffer.length;
 	}
 
 	public void assertOutput(String string) {
-		assertEquals(string.length(), this.length);
+		assertEquals(string.length(), this.bufferLength);
 
 		for (int b = 0; b < string.length(); b++) {
 			assertEquals((byte) string.charAt(b), this.buffer[b]);
 		}
 
-		this.length = 0;
+		this.bufferLength = 0;
 	}
 
 	public void assertOutput(byte[] buffer) {
-		assertEquals(buffer.length, this.length);
+		assertEquals(buffer.length, this.bufferLength);
 
 		for (int b = 0; b < buffer.length; b++) {
 			assertEquals(buffer[b], this.buffer[b]);
 		}
 
-		this.length = 0;
+		this.bufferLength = 0;
 	}
 
 	@Override
-	public byte[] buffer() {
-		return buffer;
+	public void produce(byte[] b) {
+		System.arraycopy(b, 0, buffer, 0, b.length);
+		bufferLength = b.length;
 	}
 
 	@Override
-	public int bulkInput() {
-		int length = this.length;
+	public Consumer consumer() {
+		return new Consumer() {
+			@Override
+			protected byte[] getBuffer() {
+				return buffer;
+			}
 
-		this.length = 0;
+			@Override
+			protected int getBufferLength() {
+				return bufferLength;
+			}
 
-		return length;
-	}
-
-	@Override
-	public void bulkOutput(int length) {
-		this.length = length;
+			@Override
+			protected void setBufferLength(int bufferLength) {
+				TestTransfer.this.bufferLength = bufferLength;
+			}
+		};
 	}
 }

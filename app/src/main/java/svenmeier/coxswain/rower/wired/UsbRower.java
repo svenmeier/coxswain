@@ -59,6 +59,10 @@ public class UsbRower extends Rower implements Runnable {
         super(context, callback);
         
         this.context = context;
+
+        if (device == null) {
+            throw new IllegalArgumentException("device");
+        }
         this.device = device;
     }
 

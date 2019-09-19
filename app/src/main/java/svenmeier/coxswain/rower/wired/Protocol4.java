@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.wired.usb.Consumer;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 
 public class Protocol4 implements IProtocol {
@@ -28,7 +29,7 @@ public class Protocol4 implements IProtocol {
 
     private static final long PULSE_TIMEOUT_MILLIS = 2000;
 
-    private static final long DEFAULT_OUTPUT_THROTTLE = 25;
+    private static final long DEFAULT_THROTTLE = 25;
 
     private final ITransfer transfer;
 
@@ -40,9 +41,9 @@ public class Protocol4 implements IProtocol {
 
     private int cycle = 0;
 
-    private long outputThrottle = DEFAULT_OUTPUT_THROTTLE;
+    private long throttle = DEFAULT_THROTTLE;
 
-    private long lastOutput = 0;
+    private long lastTransfer = 0;
 
     private long lastPulse = 0;
 
@@ -257,8 +258,8 @@ public class Protocol4 implements IProtocol {
         });
     }
 
-    public void setOutputThrottle(long outputThrottle) {
-        this.outputThrottle = outputThrottle;
+    public void setThrottle(long throttle) {
+        this.throttle = throttle;
     }
 
     public String getVersion() {
@@ -296,55 +297,47 @@ public class Protocol4 implements IProtocol {
 
         input(measurement);
 
+        if (System.currentTimeMillis() - lastTransfer < throttle) {
+            return;
+        }
+        lastTransfer = System.currentTimeMillis();
+
         output();
     }
 
     private void output() {
-        if (System.currentTimeMillis() - lastOutput < outputThrottle) {
-            return;
-        }
-        lastOutput = System.currentTimeMillis();
-
         Field field = nextField();
         if (field != null) {
             String request = field.request;
 
             trace.onOutput(request);
 
-            byte[] buffer = transfer.buffer();
+            byte[] output = new byte[request.length() + 2];
             int c = 0;
             for (; c < request.length(); c++) {
-                buffer[c] = (byte)request.charAt(c);
+                output[c] = (byte)request.charAt(c);
             }
-            buffer[c++] = '\r';
-            buffer[c++] = '\n';
-
-            transfer.bulkOutput(c);
+            output[c++] = (byte)'\r';
+            output[c++] = (byte)'\n';
+            transfer.produce(output);
 
             field.onAfterOutput();
         }
     }
 
     private void input(Measurement measurement) {
-        int length = transfer.bulkInput();
-        if (length > 0) {
-            byte[] buffer = transfer.buffer();
-            StringBuilder response = new StringBuilder();
-            for (int c = 0; c < length; c++) {
-                char character = (char)buffer[c];
-                if (character == '\n' || character == '\r') {
-                    if (response.length() > 0) {
-                        String message = response.toString();
-                        trace.onInput(message);
 
-                        if (inputField(measurement, message) == false) {
-                            trace.comment("unrecognized");
-                        }
+        Consumer consumer = transfer.consumer();
+        while (consumer.hasNext()) {
+            char character = (char)consumer.next();
+            if (character == '\n' || character == '\r') {
+                String message = new String(consumer.consumed()).trim();
+                if (message.isEmpty() == false) {
+                    trace.onInput(message);
 
-                        response.setLength(0);
+                    if (inputField(measurement, message) == false) {
+                        trace.comment("unrecognized");
                     }
-                } else {
-                    response.append(character);
                 }
             }
         }

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
+import svenmeier.coxswain.rower.wired.usb.TestTransfer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,6 +30,7 @@ public class Protocol3Test {
 		assertEquals(TestTransfer.PARITY_NONE, transfer.parity);
 		assertEquals(ITransfer.STOP_BIT_1_0, transfer.stopBits);
 		assertEquals(false, transfer.tx);
+		protocol.setThrottle(0);
 
 		// distance +2.5
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x19});
@@ -49,14 +51,9 @@ public class Protocol3Test {
 		protocol.transfer(measurement);
 
 
-		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01});
+		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01, (byte) 0xFB, (byte) 0x02});
 		protocol.transfer(measurement);
-		assertEquals(1, measurement.pulse);
-
-		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01});
-		protocol.transfer(measurement);
-		assertEquals(1, measurement.pulse);
-
+		assertEquals(2, measurement.pulse);
 
 		transfer.setupInput(new byte[]{(byte) 0xFF, (byte) 0x01, (byte) 0x02});
 		protocol.transfer(measurement);
@@ -71,7 +68,11 @@ public class Protocol3Test {
 		transfer.setupInput(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
 		protocol.transfer(measurement);
 
-		assertEquals("#protocol 3<FE 19<FE 05<FC<FD 01 02<FB 01<FB 01<FF 01 02<FF 01 02<01<02<03", trace.toString());
+		// incomplete
+		transfer.setupInput(new byte[]{(byte) 0xFF});
+		protocol.transfer(measurement);
+
+		assertEquals("#protocol 3<FE 19<FE 05<FC<FD 01 02<FB 01<FB 02<FF 01 02<FF 01 02<01#unrecognized<02#unrecognized<03#unrecognized", trace.toString());
 	}
 
 	@Test
@@ -83,6 +84,7 @@ public class Protocol3Test {
 		TestTrace trace = new TestTrace();
 
 		Protocol3 protocol = new Protocol3(transfer, trace);
+		protocol.setThrottle(0);
 
 		while (true) {
 			String line = reader.readLine();

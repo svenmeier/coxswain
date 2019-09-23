@@ -68,6 +68,15 @@ public class BluetoothRower extends Rower {
 	}
 
 	@Override
+	public void reset() {
+		if (connection instanceof GattConnection) {
+			((GattConnection) connection).reset();
+		}
+
+		super.reset();
+	}
+
+	@Override
 	public void close() {
 		if (connection != null) {
 			connection.close();
@@ -307,6 +316,8 @@ public class BluetoothRower extends Rower {
 
 		private BluetoothGattCharacteristic rowerData;
 
+		private BluetoothGattCharacteristic controlPoint;
+
 		GattConnection(String address) {
 			this.address = address;
 		}
@@ -382,12 +393,21 @@ public class BluetoothRower extends Rower {
 			}
 
 			rowerData = null;
+			controlPoint = null;
 		}
 
 		public synchronized void close() {
 			disconnect();
 
 			adapter = null;
+		}
+
+		public void reset() {
+			if (controlPoint != null) {
+				if (BlueUtils.write(connected, controlPoint, 0x01) == false) {
+					Log.d(Coxswain.TAG, "bluetooth no rower data reset");
+				}
+			}
 		}
 
 		@Override
@@ -400,6 +420,16 @@ public class BluetoothRower extends Rower {
 			if (service == null) {
 				Log.d(Coxswain.TAG, "bluetooth no fitness machine");
 			} else {
+				// the comm module hangs up as soon as something is written to the control point :/
+				//controlPoint = service.getCharacteristic(BlueUtils.CHARACTERISTIC_CONTROL_POINT);
+				if (controlPoint == null) {
+					Log.d(Coxswain.TAG, "bluetooth no control point");
+				} else {
+					if (BlueUtils.write(connected, controlPoint, 0x00) == false) {
+						Log.d(Coxswain.TAG, "bluetooth no rower data request control");
+					}
+				}
+
 				rowerData = service.getCharacteristic(BlueUtils.CHARACTERISTIC_ROWER_DATA);
 				if (rowerData == null) {
 					Log.d(Coxswain.TAG, "bluetooth no rower data");
@@ -443,7 +473,7 @@ public class BluetoothRower extends Rower {
 						(fields.get(Fields.UINT8) << 16); // total distance
 			}
 			if (fields.flag(3)) {
-				fields.get(Fields.UINT16); // instantaneous pace
+				speed = 500 *100 / fields.get(Fields.UINT16); // instantaneous pace
 			}
 			if (fields.flag(4)) {
 				fields.get(Fields.UINT16); // average pace
@@ -469,7 +499,7 @@ public class BluetoothRower extends Rower {
 				}
 			}
 			if (fields.flag(10)) {
-				speed = fields.get(Fields.UINT8) * 10; // metabolic equivalent 0.1
+				fields.get(Fields.UINT8); // metabolic equivalent 0.1
 			}
 			if (fields.flag(11)) {
 				int elapsedTime = fields.get(Fields.UINT16); // elapsed time

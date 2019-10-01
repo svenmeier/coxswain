@@ -9,7 +9,8 @@
           android:orderInCategory="100" app:showAsAction="never" />
 
     <item android:id="@+id/action_bluetooth" android:title="@string/action_bluetooth"
-          android:orderInCategory="100" />
+        android:icon="@drawable/baseline_bluetooth_white_24"
+          android:orderInCategory="100" app:showAsAction="always" />
 
     <item android:id="@+id/action_mock" android:title="@string/action_mock"
         android:orderInCategory="100" app:showAsAction="never" />

@@ -1,6 +1,7 @@
 package svenmeier.coxswain;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
@@ -15,6 +16,8 @@ public class Heart {
 
 	private static final long TIMEOUT_MILLIS = 5000;
 
+	private final Handler handler = new Handler();
+	
 	protected final Context context;
 
 	private final Measurement measurement;
@@ -32,8 +35,13 @@ public class Heart {
 
 	protected void onHeartRate(int heartRate) {
 		measurement.pulse = heartRate;
-		
-		callback.onMeasurement();
+
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				callback.onMeasurement();
+			}
+		});
 	}
 
 	public static Heart create(Context context, Rower rower, Callback callback) {

@@ -114,8 +114,6 @@ public class MockRower extends Rower {
         strokeRatio = (int)(10 +  (Math.random() * 5));
 
         pulse = (int)(80 +  (Math.random() * 10));
-
-        callback.onMeasurement();
     }
 
     @Override

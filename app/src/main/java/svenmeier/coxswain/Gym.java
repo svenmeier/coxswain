@@ -353,41 +353,55 @@ public class Gym {
             if (measurement.distance > 0 || measurement.duration > 0) {
                 // delay workout creation
 
-                if (current == null) {
-                    current = program.newWorkout();
-                    current.location.set(getLocation());
-
-                    progress = new Progress(program.getSegment(0), new Measurement());
-
-                    event = Event.PROGRAM_START;
-                }
-
-                if (current.onMeasured(measurement)) {
-                    mergeWorkout(current);
-
-                    Snapshot snapshot = new Snapshot(measurement);
-                    snapshot.workout.set(current);
-                    repository.insert(snapshot);
-                }
-
-                if (progress != null && progress.completion() == 1.0f) {
-                    Segment next = program.getNextSegment(progress.segment);
-                    if (next == null) {
-                        mergeWorkout(current);
-
-                        progress = null;
-
-                        event = Event.PROGRAM_FINISHED;
-                    } else {
-                        progress = new Progress(next, measurement);
-
-                        event = Event.SEGMENT_CHANGED;
-                    }
-                }
+                event = analyse(measurement);
             }
         }
 
         fireChanged(measurement);
+
+        return event;
+    }
+
+    private Event analyse(Measurement measurement) {
+        Event event = Event.ACKNOWLEDGED;
+
+        if (current == null) {
+            current = program.newWorkout();
+            current.location.set(getLocation());
+
+            progress = new Progress(program.getSegment(0), new Measurement());
+
+            event = Event.PROGRAM_START;
+        } else {
+            if (measurement.duration < current.duration.get()
+                    || measurement.distance < current.distance.get()) {
+                // rower must have been reset, measurement is illegal
+                return Event.ILLEGAL;
+            }
+        }
+
+        if (current.onMeasured(measurement)) {
+            mergeWorkout(current);
+
+            Snapshot snapshot = new Snapshot(measurement);
+            snapshot.workout.set(current);
+            repository.insert(snapshot);
+        }
+
+        if (progress != null && progress.completion() == 1.0f) {
+            Segment next = program.getNextSegment(progress.segment);
+            if (next == null) {
+                mergeWorkout(current);
+
+                progress = null;
+
+                event = Event.PROGRAM_FINISHED;
+            } else {
+                progress = new Progress(next, measurement);
+
+                event = Event.SEGMENT_CHANGED;
+            }
+        }
 
         return event;
     }

@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">Coxswain</string>
 
     <string name="action_mock">Mock</string>
-    <string name="action_bluetooth">Bluetooth</string>
+    <string name="action_bluetooth">Connect via Bluetooth</string>
     <string name="action_evaluate">Evaluate</string>
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>

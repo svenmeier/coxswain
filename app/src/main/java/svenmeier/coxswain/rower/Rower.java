@@ -36,6 +36,13 @@ public abstract class Rower extends Measurement {
 
     private List<ICalculator> calculators = new ArrayList<>();
 
+    private final Runnable onMeasurement = new Runnable() {
+        @Override
+        public void run() {
+            callback.onMeasurement();
+        }
+    };
+
     protected final Callback callback;
 
     protected Rower(Context context, Callback callback) {
@@ -88,12 +95,9 @@ public abstract class Rower extends Measurement {
             calculator.adjust(this);
         }
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                callback.onMeasurement();
-            }
-        });
+        // prevent piling up
+        handler.removeCallbacks(onMeasurement);
+        handler.post(onMeasurement);
     }
 
     /**

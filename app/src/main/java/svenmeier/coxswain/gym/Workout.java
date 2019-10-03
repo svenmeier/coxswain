@@ -73,21 +73,23 @@ public class Workout extends Propoid {
      *
      * @param measurement
      *
-     * @return {@code true} if this workout's duration changed because of the measurement
+     * @throws IllegalArgumentException if measurement is illegal, i.e. is lower than current values
      */
-    public boolean onMeasured(Measurement measurement) {
-        this.distance.set(measurement.distance);
-        this.strokes.set(measurement.strokes);
-        this.energy.set(measurement.energy);
-
-        if (this.duration.get() != measurement.duration) {
-            this.duration.set(measurement.duration);
-
-            return true;
-        } else {
-            return false;
-        }
+    public void onMeasured(Measurement measurement) {
+        update(this.distance, measurement.distance);
+        update(this.duration, measurement.duration);
+        update(this.strokes, measurement.strokes);
+        update(this.energy, measurement.energy);
     }
+
+    private void update(Property<Integer> property, int value) {
+        int oldValue = property.get();
+        if (value < oldValue) {
+            throw new IllegalArgumentException(String.format("%s: %s < %s", property.meta().name, value, oldValue));
+        }
+        property.set(value);
+    }
+
 
     /**
      * Get the name of this workout's program.

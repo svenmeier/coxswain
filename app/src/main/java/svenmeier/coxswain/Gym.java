@@ -350,7 +350,7 @@ public class Gym {
         if (program != null) {
             // program is selected
 
-            if (measurement.distance > 0 || measurement.duration > 0) {
+            if (measurement.hasTarget()) {
                 // delay workout creation
 
                 event = analyse(measurement);
@@ -372,20 +372,25 @@ public class Gym {
             progress = new Progress(program.getSegment(0), new Measurement());
 
             event = Event.PROGRAM_START;
-        } else {
-            if (measurement.duration < current.duration.get()
-                    || measurement.distance < current.distance.get()) {
-                // rower must have been reset, measurement is illegal
-                return Event.ILLEGAL;
-            }
         }
 
-        if (current.onMeasured(measurement)) {
+        int seconds = current.duration.get();
+        try {
+            current.onMeasured(measurement);
+        } catch (IllegalArgumentException ex) {
+            return Event.REJECTED;
+        }
+
+        seconds = (current.duration.get() - seconds);
+        if (seconds > 0) {
             mergeWorkout(current);
 
-            Snapshot snapshot = new Snapshot(measurement);
-            snapshot.workout.set(current);
-            repository.insert(snapshot);
+            // limit snapshots so this does not take forever
+            for (seconds = Math.min(seconds, 10); seconds > 0; seconds--) {
+                Snapshot snapshot = new Snapshot(measurement);
+                snapshot.workout.set(current);
+                repository.insert(snapshot);
+            }
         }
 
         if (progress != null && progress.completion() == 1.0f) {

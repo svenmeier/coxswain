@@ -73,4 +73,8 @@ public class Measurement {
         this.power = measurement.power;
         this.strokeRatio = measurement.strokeRatio;
     }
+
+	public boolean hasTarget() {
+        return distance + duration + strokes + energy > 0;
+    }
 }

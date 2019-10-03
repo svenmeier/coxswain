@@ -26,7 +26,6 @@ import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import propoid.util.content.Preference;
@@ -173,7 +172,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         Event event = gym.onMeasured(rower);
         motivator.onEvent(event, rower, gym.progress);
 
-        if (event == Event.ILLEGAL || (event == Event.PROGRAM_FINISHED && openEnd.get() == false)) {
+        if (event == Event.REJECTED || (event == Event.PROGRAM_FINISHED && openEnd.get() == false)) {
             gym.deselect();
         } else if (program != null){
             foreground.progress();

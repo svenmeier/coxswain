@@ -9,9 +9,11 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelUuid;
@@ -54,6 +56,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 	private DevicesAdapter devicesAdapter;
 
+	private BluetoothWatcher watcher = new BluetoothWatcher();
+
 	private Scanning scanning;
 
 	private List<ScannedDevice> scannedDevices = new ArrayList<>();
@@ -84,12 +88,16 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		serviceFilter = getIntent().getStringExtra(SERVICE_FILTER);
 
+		watcher.register();
+
 		startScanning();
 	}
 
 	@Override
 	protected void onDestroy() {
 		stopScanning();
+
+		watcher.unregister();
 
 		super.onDestroy();
 	}
@@ -197,7 +205,10 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		@Override
 		public void stop() {
-			adapter.stopLeScan(this);
+			try {
+				adapter.stopLeScan(this);
+			} catch (Exception bluetoothAlreadyOff) {
+			}
 			adapter = null;
 		}
 
@@ -236,7 +247,10 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		@Override
 		public void stop() {
-			scanner.stopScan(this);
+			try {
+				scanner.stopScan(this);
+			} catch (Exception bluetoothAlreadyOff) {
+			}
 			scanner = null;
 		}
 
@@ -254,6 +268,28 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 					onScanned(new ScannedDevice(device.getName(), device.getAddress()));
 				}
 			});
+		}
+	}
+
+	private class BluetoothWatcher extends BroadcastReceiver {
+
+		public void register() {
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+			filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+			registerReceiver(this, filter);
+		}
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+			if (state == BluetoothAdapter.STATE_OFF) {
+				finish();
+			}
+		}
+
+		public void unregister() {
+			unregisterReceiver(this);
 		}
 	}
 

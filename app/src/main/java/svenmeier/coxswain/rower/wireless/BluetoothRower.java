@@ -22,6 +22,10 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+
 import propoid.util.content.Preference;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
@@ -49,7 +53,7 @@ public class BluetoothRower extends Rower {
 	
 	private final Preference<Boolean> devicePreferenceRemember;
 
-	private Connection connection;
+	private ArrayDeque<Connection> connections = new ArrayDeque<>();
 
 	public BluetoothRower(Context context, Callback callback) {
 		super(context, callback);
@@ -62,25 +66,34 @@ public class BluetoothRower extends Rower {
 
 	@Override
 	public void open() {
-		if (connection == null) {
+		if (connections.isEmpty()) {
 			connect(new Permissions());
 		}
 	}
 
 	@Override
 	public void reset() {
-		if (connection instanceof GattConnection) {
-			((GattConnection) connection).reset();
+		Connection last = connections.peekLast();
+		if (last instanceof GattConnection) {
+			((GattConnection) last).reset();
 		}
 
 		super.reset();
 	}
 
+	private void fireDisconnected() {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				callback.onDisconnected();
+			}
+		});
+	}
+	
 	@Override
 	public void close() {
-		if (connection != null) {
-			connection.close();
-			connection = null;
+		while (connections.isEmpty() == false) {
+			connections.pop().close();
 		}
 	}
 
@@ -90,11 +103,7 @@ public class BluetoothRower extends Rower {
 	}
 
 	private void connect(Connection connection) {
-		if (this.connection != null) {
-			this.connection.close();;
-		}
-
-		this.connection = connection;
+		this.connections.push(connection);
 		
 		connection.open();
 	}
@@ -180,11 +189,7 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (connection != this) {
-				return;
-			}
-
-			if (isEnabled()) {
+			if (connections.peek() == this && isEnabled()) {
 				proceed();
 			}
 		}
@@ -219,29 +224,28 @@ public class BluetoothRower extends Rower {
 				return;
 			}
 
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+			filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+			context.registerReceiver(this, filter);
+			registered = true;
+
 			if (adapter.isEnabled() == false) {
-				IntentFilter filter = new IntentFilter();
-				filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-				filter.addAction(LocationManager.MODE_CHANGED_ACTION);
-				context.registerReceiver(this, filter);
-				registered = true;
-
 				adapter.enable();
-				return;
+			} else {
+				proceed();
 			}
-
-			proceed();
 		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (connection != this) {
-				return;
-			}
-
 			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
 			if (state == BluetoothAdapter.STATE_ON) {
-				proceed();
+				if (connections.peek() == this) {
+					proceed();
+				}
+			} else if (state == BluetoothAdapter.STATE_OFF) {
+				fireDisconnected();
 			}
 		}
 
@@ -280,7 +284,7 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		public final void onReceive(Context context, Intent intent) {
-			if (connection == this) {
+			if (connections.peek() == this) {
 				String address = intent.getStringExtra(BluetoothActivity.DEVICE_ADDRESS);
 
 				devicePreference.set(address);
@@ -374,14 +378,7 @@ public class BluetoothRower extends Rower {
 						}
 					}
 
-					close();
-
-					handler.post(new Runnable() {
-						@Override
-						public void run() {
-							callback.onDisconnected();
-						}
-					});
+					fireDisconnected();
 				}
 			}
 		}

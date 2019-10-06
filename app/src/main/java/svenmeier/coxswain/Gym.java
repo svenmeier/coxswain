@@ -19,6 +19,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.UiThread;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -378,6 +379,8 @@ public class Gym {
         try {
             current.onMeasured(measurement);
         } catch (IllegalArgumentException ex) {
+            Log.d(Coxswain.TAG, "illegal measurement " + ex.getMessage());
+
             return Event.REJECTED;
         }
 

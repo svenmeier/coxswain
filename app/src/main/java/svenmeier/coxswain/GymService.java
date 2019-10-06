@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Program;
@@ -173,6 +174,8 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         motivator.onEvent(event, rower, gym.progress);
 
         if (event == Event.REJECTED || (event == Event.PROGRAM_FINISHED && openEnd.get() == false)) {
+            Toast.makeText(this, R.string.workout_reset, Toast.LENGTH_LONG).show();
+
             gym.deselect();
         } else if (program != null){
             foreground.progress();

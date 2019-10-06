@@ -90,6 +90,8 @@
     <string name="program_name_new">Neues Programm</string>
     <string name="program_name_segments">Segmente</string>
 
+    <string name="workout_reset">Ruderer wurde zurückgesetzt</string>
+
     <string name="workout_binding_decrease">Entfernen</string>
     <string name="workout_binding_increase">Hinzufügen</string>
 

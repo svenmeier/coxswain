@@ -502,9 +502,10 @@ public class BluetoothRower extends Rower {
 				int elapsedTime = fields.get(Fields.UINT16); // elapsed time
 				int delta = Math.abs(elapsedTime - duration);
 				//  erroneous  values are sent on minute boundaries, so ignore these deltas
-				if (delta == 59 || delta == 60) {
+				if (delta >= 58 && delta <= 60) {
 					// 359 ... 300 ... 360
 					// 599 ... 659 ... 600
+					// 478 ... 420 ... 479
 					Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
 				} else {
 					duration = elapsedTime;

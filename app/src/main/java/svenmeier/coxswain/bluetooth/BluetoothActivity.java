@@ -62,6 +62,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 	private List<ScannedDevice> scannedDevices = new ArrayList<>();
 
+	private String selected;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -99,6 +101,10 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		watcher.unregister();
 
+		if (selected == null) {
+			select(null);
+		}
+
 		super.onDestroy();
 	}
 
@@ -128,9 +134,8 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		startScanning();
 	}
 
-	private void onSelect(String address) {
-		// stop immediately, otherwise following connection might fail
-		stopScanning();
+	private void select(String address) {
+		selected = address;
 
 		Intent intent = new Intent();
 		intent.setAction(ACTION);
@@ -138,8 +143,6 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		intent.putExtra(DEVICE_ADDRESS, address);
 		intent.putExtra(DEVICE_REMEMBER, rememberCheckBox.isChecked());
 		sendBroadcast(intent);
-
-		finish();
 	}
 
 	private class DevicesAdapter extends GenericRecyclerAdapter<ScannedDevice> {
@@ -176,7 +179,12 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 		@Override
 		public void onClick(View view) {
-			onSelect(item.address);
+			// stop immediately, otherwise following connection might fail
+			stopScanning();
+
+			select(item.address);
+
+			finish();
 		}
 	}
 

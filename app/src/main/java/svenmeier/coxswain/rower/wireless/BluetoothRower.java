@@ -20,11 +20,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.BuildConfig;
@@ -51,8 +48,6 @@ public class BluetoothRower extends Rower {
 
 	private final Preference<String> devicePreference;
 	
-	private final Preference<Boolean> devicePreferenceRemember;
-
 	private ArrayDeque<Connection> connections = new ArrayDeque<>();
 
 	public BluetoothRower(Context context, Callback callback) {
@@ -60,14 +55,13 @@ public class BluetoothRower extends Rower {
 
 		this.context = context;
 
-		devicePreference = Preference.getString(context, R.string.preference_bluetooth_heart_device);
-		devicePreferenceRemember = Preference.getBoolean(context, R.string.preference_bluetooth_heart_device_remember);
+		devicePreference = Preference.getString(context, R.string.preference_bluetooth_rower_device);
 	}
 
 	@Override
 	public void open() {
 		if (connections.isEmpty()) {
-			connect(new Permissions());
+			push(new Permissions());
 		}
 	}
 
@@ -93,7 +87,7 @@ public class BluetoothRower extends Rower {
 	@Override
 	public void close() {
 		while (connections.isEmpty() == false) {
-			connections.pop().close();
+			pop();
 		}
 	}
 
@@ -102,10 +96,14 @@ public class BluetoothRower extends Rower {
 		return "Bluetooth Rower";
 	}
 
-	private void connect(Connection connection) {
+	private void push(Connection connection) {
 		this.connections.push(connection);
 		
 		connection.open();
+	}
+
+	private void pop() {
+		this.connections.pop().close();
 	}
 
 	private interface Connection {
@@ -133,7 +131,7 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		protected void onPermissionsApproved() {
-			connect(new LocationServices());
+			push(new LocationServices());
 		}
 	}
 
@@ -195,7 +193,7 @@ public class BluetoothRower extends Rower {
 		}
 
 		private void proceed() {
-			connect(new Bluetooth());
+			push(new Bluetooth());
 		}
 
 		@Override
@@ -250,7 +248,7 @@ public class BluetoothRower extends Rower {
 		}
 
 		private void proceed() {
-			connect(new SelectionConnection());
+			push(new SelectionConnection());
 		}
 
 		@Override
@@ -271,7 +269,7 @@ public class BluetoothRower extends Rower {
 		@Override
 		public void open() {
 			String address = devicePreference.get();
-			if (address != null && devicePreferenceRemember.get()) {
+			if (address != null) {
 				proceed(address);
 				return;
 			}
@@ -287,15 +285,23 @@ public class BluetoothRower extends Rower {
 			if (connections.peek() == this) {
 				String address = intent.getStringExtra(BluetoothActivity.DEVICE_ADDRESS);
 
-				devicePreference.set(address);
-				devicePreferenceRemember.set(intent.getBooleanExtra(BluetoothActivity.DEVICE_REMEMBER, false));
+				if (address == null) {
+					fireDisconnected();
+				} else {
+					boolean remember = intent.getBooleanExtra(BluetoothActivity.DEVICE_REMEMBER, false);
+					if (remember) {
+						devicePreference.set(address);
+					} else {
+						devicePreference.set(null);
+					}
 
-				proceed(address);
+					proceed(address);
+				}
 			}
 		}
 
 		private void proceed(String address) {
-			connect(new GattConnection(address));
+			push(new GattConnection(address));
 		}
 
 		@Override
@@ -328,9 +334,12 @@ public class BluetoothRower extends Rower {
 
 		private void select() {
 			devicePreference.set(null);
-			devicePreferenceRemember.set(false);
 
-			connect(new SelectionConnection());
+			handler.removeCallbacks(this);
+
+			pop();
+			pop();
+			push(new SelectionConnection());
 		}
 
 		@Override
@@ -383,7 +392,7 @@ public class BluetoothRower extends Rower {
 			}
 		}
 
-		private void disconnect() {
+		public synchronized void close() {
 			if (connected != null) {
 				connected.close();
 				connected = null;
@@ -391,10 +400,6 @@ public class BluetoothRower extends Rower {
 
 			rowerData = null;
 			controlPoint = null;
-		}
-
-		public synchronized void close() {
-			disconnect();
 
 			adapter = null;
 		}

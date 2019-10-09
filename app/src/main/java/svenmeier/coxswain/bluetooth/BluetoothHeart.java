@@ -23,6 +23,8 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayDeque;
+
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Heart;
@@ -39,11 +41,9 @@ public class BluetoothHeart extends Heart {
 
 	private Handler handler = new Handler();
 
-	private Connection connection;
+	private ArrayDeque<Connection> connections = new ArrayDeque<>();
 
 	private Preference<String> devicePreference;
-
-	private Preference<Boolean> devicePreferenceRemember;
 
 	public BluetoothHeart(Context context, Measurement measurement, Callback callback) {
 		super(context, measurement, callback);
@@ -54,16 +54,17 @@ public class BluetoothHeart extends Heart {
 		}
 
 		devicePreference = Preference.getString(context, R.string.preference_bluetooth_heart_device);
-		devicePreferenceRemember = Preference.getBoolean(context, R.string.preference_bluetooth_heart_device_remember);
 
-		connect(new Permissions());
+		push(new Permissions());
+	}
+
+	private void fireDisconnected() {
 	}
 
 	@Override
 	public void destroy() {
-		if (connection != null) {
-			connection.close();
-			connection = null;
+		while (connections.isEmpty() == false) {
+			pop();
 		}
 	}
 
@@ -76,17 +77,17 @@ public class BluetoothHeart extends Heart {
 		});
 	}
 
-	private void connect(Connection connection) {
-		if (this.connection != null) {
-			this.connection.close();
-		}
+	private void push(Connection connection) {
+		this.connections.push(connection);
 
-		this.connection = connection;
-		
 		connection.open();
 	}
 
-	private interface Connection {
+    private void pop() {
+        this.connections.pop().close();
+    }
+
+    private interface Connection {
 
 		void open();
 
@@ -111,7 +112,7 @@ public class BluetoothHeart extends Heart {
 
 		@Override
 		protected void onPermissionsApproved() {
-			connect(new LocationServices());
+			push(new LocationServices());
 		}
 	}
 
@@ -167,17 +168,13 @@ public class BluetoothHeart extends Heart {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (connection != this) {
-				return;
-			}
-
-			if (isEnabled()) {
+			if (connections.peek() == this && isEnabled()) {
 				proceed();
 			}
 		}
 
 		private void proceed() {
-			connect(new Bluetooth());
+			push(new Bluetooth());
 		}
 
 		@Override
@@ -206,34 +203,33 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
+			IntentFilter filter = new IntentFilter();
+			filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+			filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+			context.registerReceiver(this, filter);
+			registered = true;
+
 			if (adapter.isEnabled() == false) {
-				IntentFilter filter = new IntentFilter();
-				filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-				filter.addAction(LocationManager.MODE_CHANGED_ACTION);
-				context.registerReceiver(this, filter);
-				registered = true;
-
 				adapter.enable();
-				return;
-			}
-
-			proceed();
-		}
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (connection != this) {
-				return;
-			}
-
-			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-			if (state == BluetoothAdapter.STATE_ON) {
+			} else {
 				proceed();
 			}
 		}
 
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+			if (state == BluetoothAdapter.STATE_ON) {
+				if (connections.peek() == this) {
+					proceed();
+				}
+			} else if (state == BluetoothAdapter.STATE_OFF) {
+				fireDisconnected();
+			}
+		}
+
 		private void proceed() {
-			connect(new SelectionConnection());
+			push(new SelectionConnection());
 		}
 
 		@Override
@@ -254,7 +250,7 @@ public class BluetoothHeart extends Heart {
 		@Override
 		public void open() {
 			String address = devicePreference.get();
-			if (address != null && devicePreferenceRemember.get()) {
+			if (address != null) {
 				proceed(address);
 				return;
 			}
@@ -267,18 +263,25 @@ public class BluetoothHeart extends Heart {
 
 		@Override
 		public final void onReceive(Context context, Intent intent) {
-			if (connection == this) {
+			if (connections.peek() == this) {
 				String address = intent.getStringExtra(BluetoothActivity.DEVICE_ADDRESS);
+				if (address == null) {
+					fireDisconnected();
+				} else {
+					boolean remember = intent.getBooleanExtra(BluetoothActivity.DEVICE_REMEMBER, false);
+					if (remember) {
+						devicePreference.set(address);
+					} else {
+						devicePreference.set(null);
+					}
 
-				devicePreference.set(address);
-				devicePreferenceRemember.set(intent.getBooleanExtra(BluetoothActivity.DEVICE_REMEMBER, false));
-
-				proceed(address);
+					proceed(address);
+				}
 			}
 		}
 
 		private void proceed(String address) {
-			connect(new GattConnection(address));
+			push(new GattConnection(address));
 		}
 
 		@Override
@@ -308,9 +311,12 @@ public class BluetoothHeart extends Heart {
 
 		private void select() {
 			devicePreference.set(null);
-			devicePreferenceRemember.set(false);
 
-			connect(new SelectionConnection());
+			handler.removeCallbacks(this);
+
+			pop();
+            pop();
+			push(new SelectionConnection());
 		}
 
 		@Override

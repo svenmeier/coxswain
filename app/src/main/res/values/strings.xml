@@ -332,8 +332,5 @@
     <string name="preference_performance_unit" translatable="false">preference_performance_unit</string>
 
     <string name="preference_bluetooth_heart_device" translatable="false">preference_bluetooth_heart_device</string>
-    <string name="preference_bluetooth_heart_device_remember" translatable="false">preference_bluetooth_heart_device_remember</string>
-
     <string name="preference_bluetooth_rower_device" translatable="false">preference_bluetooth_rower_device</string>
-    <string name="preference_bluetooth_rower_device_remember" translatable="false">preference_bluetooth_rower_device_remember</string>
 </resources>

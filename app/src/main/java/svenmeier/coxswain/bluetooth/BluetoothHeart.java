@@ -291,6 +291,8 @@ public class BluetoothHeart extends Heart {
 				context.unregisterReceiver(this);
 				registered = false;
 			}
+
+			BluetoothActivity.cancel(context);
 		}
 	}
 

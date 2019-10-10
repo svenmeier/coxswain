@@ -310,6 +310,8 @@ public class BluetoothRower extends Rower {
 				context.unregisterReceiver(this);
 				registered = false;
 			}
+
+			BluetoothActivity.cancel(context);
 		}
 	}
 

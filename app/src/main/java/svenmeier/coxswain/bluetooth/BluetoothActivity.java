@@ -34,7 +34,9 @@ import svenmeier.coxswain.R;
 
 public class BluetoothActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-	private static final String ACTION = "svenmeier.coxswain.bluetooth.SELECTED";
+	private static final String ACTION_SELECTED = "svenmeier.coxswain.bluetooth.SELECTED";
+
+	private static final String ACTION_CANCEL = "svenmeier.coxswain.bluetooth.CANCEL";
 
 	private static final String NAME = "name";
 
@@ -56,7 +58,7 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 
 	private DevicesAdapter devicesAdapter;
 
-	private BluetoothWatcher watcher = new BluetoothWatcher();
+	private IntentReceiver watcher = new IntentReceiver();
 
 	private Scanning scanning;
 
@@ -138,7 +140,7 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		selected = address;
 
 		Intent intent = new Intent();
-		intent.setAction(ACTION);
+		intent.setAction(ACTION_SELECTED);
 		intent.putExtra(SERVICE_FILTER, serviceFilter);
 		intent.putExtra(DEVICE_ADDRESS, address);
 		intent.putExtra(DEVICE_REMEMBER, rememberCheckBox.isChecked());
@@ -279,19 +281,24 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		}
 	}
 
-	private class BluetoothWatcher extends BroadcastReceiver {
+	private class IntentReceiver extends BroadcastReceiver {
 
 		public void register() {
 			IntentFilter filter = new IntentFilter();
 			filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 			filter.addAction(LocationManager.MODE_CHANGED_ACTION);
+			filter.addAction(ACTION_CANCEL);
 			registerReceiver(this, filter);
 		}
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-			if (state == BluetoothAdapter.STATE_OFF) {
+			if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+				int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
+				if (state == BluetoothAdapter.STATE_OFF) {
+					finish();
+				}
+			} else if (ACTION_CANCEL.equals(intent.getAction())) {
 				finish();
 			}
 		}
@@ -357,7 +364,14 @@ public class BluetoothActivity extends AppCompatActivity implements CompoundButt
 		context.startActivity(intent);
 
 		IntentFilter filter = new IntentFilter();
-		filter.addAction(BluetoothActivity.ACTION);
+		filter.addAction(BluetoothActivity.ACTION_SELECTED);
 		return filter;
+	}
+
+	public static void cancel(Context context) {
+		Intent intent = new Intent();
+		intent.setAction(ACTION_CANCEL);
+		context.sendBroadcast(intent);
+
 	}
 }

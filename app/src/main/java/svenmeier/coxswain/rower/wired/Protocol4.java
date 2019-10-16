@@ -49,6 +49,8 @@ public class Protocol4 implements IProtocol {
 
     private String version = VERSION_UNKOWN;
 
+    private boolean resetting;
+
     public Protocol4(ITransfer transfer, ITrace aTrace) {
         this.transfer = transfer;
 
@@ -138,14 +140,18 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.strokes = value;
+                if (resetting == false) {
+                    measurement.strokes = value;
+                }
             }
         });
 
         fields.add(new NumberField(0x057, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.distance = value;
+                if (resetting == false) {
+                    measurement.distance = value;
+                }
             }
         });
 
@@ -253,7 +259,9 @@ public class Protocol4 implements IProtocol {
 
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.duration = value;
+                if (resetting == false) {
+                    measurement.duration = value;
+                }
             }
         });
     }
@@ -352,16 +360,20 @@ public class Protocol4 implements IProtocol {
             @Override
             protected void onAfterOutput() {
                 removeField(this);
+
+                resetting = false;
             }
         };
         addField(reset);
+
+        // prevent duration, distance and strokes from being read until reset was send
+        resetting = true;
 
         ratioCalculator.clear(System.currentTimeMillis());
     }
 
     private void addField(Field field) {
         fields.add(field);
-        cycle = fields.indexOf(field);
     }
 
     private void removeField(Field field) {

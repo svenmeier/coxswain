@@ -76,9 +76,7 @@ public class UsbRower extends Rower implements Runnable {
 
         trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
-        if (initConnection()) {
-			callback.onConnected();
-        } else {
+        if (initConnection() == false) {
 			callback.onDisconnected();
             return;
         }
@@ -109,6 +107,8 @@ public class UsbRower extends Rower implements Runnable {
         } else {
             protocol = new Protocol4(transfer, trace);
         }
+
+        callback.onConnected();
 
         new Thread(this).start();
     }

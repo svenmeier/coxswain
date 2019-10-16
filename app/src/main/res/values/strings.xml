@@ -93,7 +93,8 @@
     <string name="program_name_new">New program</string>
     <string name="program_name_segments">Segments</string>
 
-    <string name="workout_reset">Rower was reset</string>
+    <string name="rowing_measurement_rejected">Rower was reset</string>
+    <string name="rowing_program_finished">Program finished</string>
 
     <string name="workout_binding_decrease">Remove</string>
     <string name="workout_binding_increase">Add</string>

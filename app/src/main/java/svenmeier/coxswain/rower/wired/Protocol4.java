@@ -27,8 +27,6 @@ public class Protocol4 implements IProtocol {
 
     public static final String VERSION_UNKOWN = null;
 
-    private static final long PULSE_TIMEOUT_MILLIS = 2000;
-
     private static final long DEFAULT_THROTTLE = 25;
 
     private final ITransfer transfer;
@@ -44,8 +42,6 @@ public class Protocol4 implements IProtocol {
     private long throttle = DEFAULT_THROTTLE;
 
     private long lastTransfer = 0;
-
-    private long lastPulse = 0;
 
     private String version = VERSION_UNKOWN;
 
@@ -130,18 +126,11 @@ public class Protocol4 implements IProtocol {
             }
         });
 
-        fields.add(new Field(null, "P") {
-            @Override
-            protected void onInput(String message, Measurement measurement) {
-                lastPulse = System.currentTimeMillis();
-            }
-        });
-
         fields.add(new NumberField(0x140, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
                 if (resetting == false) {
-                    measurement.strokes = value;
+                    measurement.setStrokes(value);
                 }
             }
         });
@@ -150,7 +139,7 @@ public class Protocol4 implements IProtocol {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
                 if (resetting == false) {
-                    measurement.distance = value;
+                    measurement.setDistance(value);
                 }
             }
         });
@@ -158,30 +147,23 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.speed = value;
+                measurement.setSpeed(value);
             }
         });
 
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.strokeRate = value;
+                measurement.setStrokeRate(value);
             }
         });
 
         fields.add(new NumberField(0x1A0, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                if (lastPulse > 0) {
+                if (value > 0) {
                     // Waterrower is sending pulse
-                    long now = System.currentTimeMillis();
-                    if (now - lastPulse > PULSE_TIMEOUT_MILLIS) {
-                        // pulse has timed out, discard value
-                        lastPulse = 0;
-                        measurement.pulse = 0;
-                    } else {
-                        measurement.pulse = value;
-                    }
+                    measurement.setPulse(value);
                 }
             }
         });
@@ -208,8 +190,9 @@ public class Protocol4 implements IProtocol {
                             sum += sequence.get(i);
                         }
 
-                        measurement.power = sum / sequence.size();
-                        trace.comment("power mean of " + sequence + " + is " + measurement.power);
+                        int meanPower = sum / sequence.size();
+                        measurement.setPower(meanPower);
+                        trace.comment("power mean of " + sequence + " + is " + meanPower);
                     }
                     strokePower = 0;
                 } else {
@@ -226,7 +209,7 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.energy = value / 1000;
+                measurement.setEnergy(value / 1000);
             }
         });
 
@@ -260,7 +243,7 @@ public class Protocol4 implements IProtocol {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
                 if (resetting == false) {
-                    measurement.duration = value;
+                    measurement.setDuration(value);
                 }
             }
         });

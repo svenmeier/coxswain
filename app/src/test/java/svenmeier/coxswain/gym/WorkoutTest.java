@@ -15,51 +15,48 @@ public class WorkoutTest {
 
 		Workout workout = new Workout();
 
-		measurement.duration = 0;
-		measurement.distance = 0;
-		measurement.strokes = 0;
-		measurement.energy = 0;
-		assertEquals(false, workout.onMeasured(measurement));
+		measurement.reset();;
+		workout.onMeasured(measurement);
 		assertEquals(Integer.valueOf(0), workout.duration.get());
 		assertEquals(Integer.valueOf(0), workout.distance.get());
 		assertEquals(Integer.valueOf(0), workout.strokes.get());
 		assertEquals(Integer.valueOf(0), workout.energy.get());
 
-		measurement.duration = 0;
-		measurement.distance = 1;
-		measurement.strokes = 1;
-		measurement.energy = 1;
-		assertEquals(false, workout.onMeasured(measurement));
+		measurement.setDuration(0);
+		measurement.setDistance(1);
+		measurement.setStrokes(1);
+		measurement.setEnergy(1);
+		workout.onMeasured(measurement);
 		assertEquals(Integer.valueOf(0), workout.duration.get());
 		assertEquals(Integer.valueOf(1), workout.distance.get());
 		assertEquals(Integer.valueOf(1), workout.strokes.get());
 		assertEquals(Integer.valueOf(1), workout.energy.get());
 
-		measurement.duration = 1;
-		measurement.distance = 2;
-		measurement.strokes = 2;
-		measurement.energy = 2;
-		assertEquals(true, workout.onMeasured(measurement));
+		measurement.setDuration(1);
+		measurement.setDistance(2);
+		measurement.setStrokes(2);
+		measurement.setEnergy(2);
+		workout.onMeasured(measurement);
 		assertEquals(Integer.valueOf(1), workout.duration.get());
 		assertEquals(Integer.valueOf(2), workout.distance.get());
 		assertEquals(Integer.valueOf(2), workout.strokes.get());
 		assertEquals(Integer.valueOf(2), workout.energy.get());
 
-		measurement.duration = 1;
-		measurement.distance = 3;
-		measurement.strokes = 3;
-		measurement.energy = 3;
-		assertEquals(false, workout.onMeasured(measurement));
+		measurement.setDuration(1);
+		measurement.setDistance(3);
+		measurement.setStrokes(3);
+		measurement.setEnergy(3);
+		workout.onMeasured(measurement);
 		assertEquals(Integer.valueOf(1), workout.duration.get());
 		assertEquals(Integer.valueOf(3), workout.distance.get());
 		assertEquals(Integer.valueOf(3), workout.strokes.get());
 		assertEquals(Integer.valueOf(3), workout.energy.get());
 
-		measurement.duration = 2;
-		measurement.distance = 4;
-		measurement.strokes = 4;
-		measurement.energy = 4;
-		assertEquals(true, workout.onMeasured(measurement));
+		measurement.setDuration(2);
+		measurement.setDistance(4);
+		measurement.setStrokes(4);
+		measurement.setEnergy(4);
+		workout.onMeasured(measurement);
 		assertEquals(Integer.valueOf(2), workout.duration.get());
 		assertEquals(Integer.valueOf(4), workout.distance.get());
 		assertEquals(Integer.valueOf(4), workout.strokes.get());

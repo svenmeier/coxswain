@@ -378,12 +378,12 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 				return 0;
 			}
 
-			int from = distanceAt(measurement.duration);
-			int to = distanceAt(measurement.duration + 1);
+			int from = distanceAt(measurement.getDuration());
+			int to = distanceAt(measurement.getDuration() + 1);
 
-			int paceDistance = from + ((to - from) * (measurement.distance % 1000) / 1000);
+			int paceDistance = from + ((to - from) * (measurement.getDistance() % 1000) / 1000);
 
-			return measurement.distance - paceDistance;
+			return measurement.getDistance() - paceDistance;
 		}
 
 		private int distanceAt(int duration) {
@@ -402,7 +402,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		@Override
 		public int getDurationDelta(Measurement measurement) {
 			while (this.duration < snapshots.size()) {
-				if (snapshots.get(this.duration).distance.get() >= measurement.distance) {
+				if (snapshots.get(this.duration).distance.get() >= measurement.getDistance()) {
 					break;
 				}
 
@@ -415,11 +415,11 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 				int distance = snapshot.distance.get();
 				if (distance > 0) {
 					// estimate duration
-					this.duration = snapshots.size() * measurement.distance / distance;
+					this.duration = snapshots.size() * measurement.getDistance() / distance;
 				}
 			}
 
-			return measurement.duration - this.duration;
+			return measurement.getDuration() - this.duration;
 		}
 
 		@Override

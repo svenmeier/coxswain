@@ -71,13 +71,13 @@ public class Snapshot extends Propoid {
     }
 
     public Snapshot(Measurement measurement) {
-        distance.set(measurement.distance);
-        strokes.set(measurement.strokes);
-        energy.set(measurement.energy);
-        speed.set(measurement.speed);
-        pulse.set(measurement.pulse);
-        strokeRate.set(measurement.strokeRate);
-        strokeRatio.set(measurement.strokeRatio);
-        power.set(measurement.power);
+        distance.set(measurement.getDistance());
+        strokes.set(measurement.getStrokes());
+        energy.set(measurement.getEnergy());
+        speed.set(measurement.getSpeed());
+        pulse.set(measurement.getPulse());
+        strokeRate.set(measurement.getStrokeRate());
+        strokeRatio.set(measurement.getStrokeRatio());
+        power.set(measurement.getPower());
     }
 }

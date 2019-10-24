@@ -274,7 +274,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
             if (progress.inLimit()) {
                 underLimitSince = -1;
             } else {
-                int now = measurement.duration;
+                int now = measurement.getDuration();
 
                 if (underLimitSince == -1) {
                     underLimitSince = now;

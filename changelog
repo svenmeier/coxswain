@@ -1,3 +1,6 @@
+6.3
+  - fixed premature ending of rowing when adjusting energy
+
 6.2
   - support bluetooth rower connection
 

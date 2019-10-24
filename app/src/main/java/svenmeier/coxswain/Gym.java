@@ -369,6 +369,7 @@ public class Gym {
         if (current == null) {
             current = program.newWorkout();
             current.location.set(getLocation());
+            mergeWorkout(current);
 
             progress = new Progress(program.getSegment(0), new Measurement());
 
@@ -478,25 +479,25 @@ public class Gym {
 
         private int achieved(Measurement measurement) {
             if (segment.distance.get() > 0) {
-                return measurement.distance;
+                return measurement.getDistance();
             } else if (segment.strokes.get() > 0) {
-                return measurement.strokes;
+                return measurement.getStrokes();
             } else if (segment.energy.get() > 0) {
-                return measurement.energy;
+                return measurement.getEnergy();
             } else if (segment.duration.get() > 0){
-                return measurement.duration;
+                return measurement.getDuration();
             }
             return 0;
         }
 
         public boolean inLimit() {
-            if (measurement.speed < progress.segment.speed.get()) {
+            if (measurement.getSpeed() < progress.segment.speed.get()) {
                 return false;
-            } else if (measurement.pulse < progress.segment.pulse.get()) {
+            } else if (measurement.getPulse() < progress.segment.pulse.get()) {
                 return false;
-            } else if (measurement.strokeRate < progress.segment.strokeRate.get()) {
+            } else if (measurement.getStrokeRate() < progress.segment.strokeRate.get()) {
                 return false;
-			} else if (measurement.power < progress.segment.power.get()) {
+			} else if (measurement.getPower() < progress.segment.power.get()) {
 				return false;
             }
 

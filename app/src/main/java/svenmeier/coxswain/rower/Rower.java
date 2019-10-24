@@ -19,9 +19,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import propoid.util.content.Preference;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Measurement;
@@ -34,27 +31,29 @@ public abstract class Rower extends Measurement {
 
     private final Context context;
 
-    private List<ICalculator> calculators = new ArrayList<>();
-
     private final Runnable onMeasurement = new Runnable() {
         @Override
         public void run() {
-            callback.onMeasurement();
+            callback.onMeasurement(Rower.this);
         }
     };
 
     protected final Callback callback;
 
+    private Adjuster speedAdjuster = new Adjuster();
+
+    private Adjuster energyAdjuster = new Adjuster();
+
     protected Rower(Context context, Callback callback) {
         this.context = context;
         this.callback = callback;
 
-        if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
-            calculators.add(new SpeedCalculator());
+        if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
+            energyAdjuster = new EnergyAdjuster(Preference.getInt(context, R.string.preference_weight).fallback(90).get());
         }
 
-        if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
-            calculators.add(new EnergyCalculator(Preference.getInt(context, R.string.preference_weight).fallback(90).get()));
+        if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
+            speedAdjuster = new SpeedAdjuster();
         }
     }
 
@@ -65,18 +64,14 @@ public abstract class Rower extends Measurement {
      */
     public abstract void open();
 
-    public void reset() {
-        duration = 0;
-        distance = 0;
-        strokes = 0;
-        energy = 0;
+    @Override
+    public void setEnergy(int energy) {
+        super.setEnergy(energyAdjuster.adjust(this, energy));
+    }
 
-        speed = 0;
-        pulse = 0;
-        strokeRate = 0;
-        power = 0;
-
-        strokeRatio = 0;
+    @Override
+    public void setSpeed(int speed) {
+        super.setSpeed(speedAdjuster.adjust(this, speed));
     }
 
     protected void toast(final String text) {
@@ -90,11 +85,6 @@ public abstract class Rower extends Measurement {
     }
 
     protected void notifyMeasurement() {
-
-        for (ICalculator calculator : calculators) {
-            calculator.adjust(this);
-        }
-
         // prevent piling up
         handler.removeCallbacks(onMeasurement);
         handler.post(onMeasurement);
@@ -108,7 +98,7 @@ public abstract class Rower extends Measurement {
     public interface Callback {
         void onConnected();
 
-        void onMeasurement();
+        void onMeasurement(Measurement measurement);
 
         void onDisconnected();
     }

@@ -3,22 +3,22 @@ package svenmeier.coxswain.rower.wired;
 import org.junit.Test;
 
 import svenmeier.coxswain.gym.Measurement;
-import svenmeier.coxswain.rower.EnergyCalculator;
+import svenmeier.coxswain.rower.EnergyAdjuster;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test for {@link EnergyCalculator}.
+ * Test for {@link EnergyAdjuster}.
  */
-public class EnergyCalculatorTest {
+public class EnergyAdjusterTest {
 
 	private void assertAdjusted(int out, int weight, int in) {
 		Measurement measurement = new Measurement();
 
-		measurement.energy = in;
-		new EnergyCalculator(weight).adjust(measurement);
+		// needs distance to adjust
+		measurement.setDistance(1);
 
-		assertEquals(out, measurement.energy);
+		assertEquals(out, new EnergyAdjuster(weight).adjust(measurement, in));
 	}
 
 	@Test

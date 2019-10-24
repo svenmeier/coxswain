@@ -59,7 +59,7 @@ public class RatioCalculator {
             start = now;
 
             int ratio = Math.min((int) (MULTIPLIER * recoverDuration / pullDuration), MAX);
-            measurement.strokeRatio = ratio;
+            measurement.setStrokeRatio(ratio);
         }
     }
 }

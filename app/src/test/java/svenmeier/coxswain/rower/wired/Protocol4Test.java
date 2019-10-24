@@ -44,11 +44,11 @@ public class Protocol4Test {
 
 		transfer.setupInput("IDT1E1151515\r\n");
 		protocol.transfer(measurement);
-		assertEquals(((15 * 60) + 15)*60 +15, measurement.duration);
+		assertEquals(((15 * 60) + 15)*60 +15, measurement.getDuration());
 
 		transfer.setupInput("IDT08A0003E8\r\n");
 		protocol.transfer(measurement);
-		assertEquals(1, measurement.energy);
+		assertEquals(1, measurement.getEnergy());
 
 		// incomplete
 		transfer.setupInput("IDT08A0003");

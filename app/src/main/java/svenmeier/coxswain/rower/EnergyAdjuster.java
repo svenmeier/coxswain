@@ -18,9 +18,9 @@ package svenmeier.coxswain.rower;
 import svenmeier.coxswain.gym.Measurement;
 
 /**
- * Calculator of energy relative to a weight.
+ * Adjust energy relative to weight.
  */
-public class EnergyCalculator implements ICalculator {
+public class EnergyAdjuster extends Adjuster {
 
     private static final int WEIGHT_MIN = 40;
 
@@ -39,11 +39,11 @@ public class EnergyCalculator implements ICalculator {
 	/**
      * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust.
      */
-    public EnergyCalculator() {
+    public EnergyAdjuster() {
         this(DEFAULT_WEIGHT);
     }
 
-    public EnergyCalculator(int weight) {
+    public EnergyAdjuster(int weight) {
         if (weight < WEIGHT_MIN) {
             weight = WEIGHT_MIN;
         }
@@ -60,10 +60,16 @@ public class EnergyCalculator implements ICalculator {
      *
      * @param measurement measurement to adjust
      */
-    public void adjust(Measurement measurement) {
+	@Override
+    public int adjust(Measurement measurement, int energy) {
 
-        double adjusted = ((double)measurement.energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
+	    if (measurement.getDistance() == 0) {
+            // leave unadjusted
+	        return energy;
+        }
 
-        measurement.energy = (int)adjusted;
+        double adjusted = ((double)energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
+
+        return (int)adjusted;
     }
 }

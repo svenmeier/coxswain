@@ -76,10 +76,10 @@ public class Workout extends Propoid {
      * @throws IllegalArgumentException if measurement is illegal, i.e. is lower than current values
      */
     public void onMeasured(Measurement measurement) {
-        update(this.distance, measurement.distance);
-        update(this.duration, measurement.duration);
-        update(this.strokes, measurement.strokes);
-        update(this.energy, measurement.energy);
+        update(this.distance, measurement.getDistance());
+        update(this.duration, measurement.getDuration());
+        update(this.strokes, measurement.getStrokes());
+        update(this.energy, measurement.getEnergy());
     }
 
     private void update(Property<Integer> property, int value) {

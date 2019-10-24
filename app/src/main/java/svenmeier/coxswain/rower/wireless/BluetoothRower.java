@@ -466,24 +466,24 @@ public class BluetoothRower extends Rower {
 			Fields fields = new Fields(characteristic, Fields.UINT16);
 
 			if (fields.flag(0) == false) { // more data
-				strokeRate = fields.get(Fields.UINT8) / 2; // stroke rate 0.5
-				strokes = fields.get(Fields.UINT16); // stroke count
+				setStrokeRate(fields.get(Fields.UINT8) / 2); // stroke rate 0.5
+				setStrokes(fields.get(Fields.UINT16)); // stroke count
 			}
 			if (fields.flag(1)) {
 				fields.get(Fields.UINT8); // average stroke rate
 			}
 			if (fields.flag(2)) {
-				distance = fields.get(Fields.UINT16) +
-						(fields.get(Fields.UINT8) << 16); // total distance
+				setDistance(fields.get(Fields.UINT16) +
+						(fields.get(Fields.UINT8) << 16)); // total distance
 			}
 			if (fields.flag(3)) {
-				speed = 500 *100 / fields.get(Fields.UINT16); // instantaneous pace
+				setSpeed(500 *100 / fields.get(Fields.UINT16)); // instantaneous pace
 			}
 			if (fields.flag(4)) {
 				fields.get(Fields.UINT16); // average pace
 			}
 			if (fields.flag(5)) {
-				power = fields.get(Fields.SINT16); // instantaneous power
+				setPower(fields.get(Fields.SINT16)); // instantaneous power
 			}
 			if (fields.flag(6)) {
 				fields.get(Fields.SINT16); // average power
@@ -492,14 +492,14 @@ public class BluetoothRower extends Rower {
 				fields.get(Fields.SINT16); // resistance level
 			}
 			if (fields.flag(8)) { // expended energy
-				energy = fields.get(Fields.UINT16); // total energy
+				setEnergy(fields.get(Fields.UINT16)); // total energy
 				fields.get(Fields.UINT16); // energy per hour
 				fields.get(Fields.UINT8); // energy per minute
 			}
 			if (fields.flag(9)) {
 				int heartRate = fields.get(Fields.UINT8); // heart rate
 				if (heartRate > 0) {
-					pulse = heartRate;
+					setPulse(heartRate);
 				}
 			}
 			if (fields.flag(10)) {
@@ -507,6 +507,7 @@ public class BluetoothRower extends Rower {
 			}
 			if (fields.flag(11)) {
 				int elapsedTime = fields.get(Fields.UINT16); // elapsed time
+				int duration = getDuration();
 				int delta = Math.abs(elapsedTime - duration);
 				//  erroneous  values are sent on minute boundaries, so ignore these deltas
 				if (delta >= 58 && delta <= 60) {
@@ -515,7 +516,7 @@ public class BluetoothRower extends Rower {
 					// 478 ... 420 ... 479
 					Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
 				} else {
-					duration = elapsedTime;
+					setDuration(elapsedTime);
 				}
 			}
 			if (fields.flag(12)) {

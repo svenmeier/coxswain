@@ -23,41 +23,41 @@ public class Measurement {
     /**
      * seconds
      */
-    public int duration;
+    private int duration;
 
     /**
      * meters
      */
-    public int distance;
+    private int distance;
 
-    public int strokes;
+    private int strokes;
 
     /**
      * kilo calories
      */
-    public int energy;
+    private int energy;
 
     /**
      * centimeters per seconds
      */
-    public int speed;
+    private int speed;
 
     /**
      * beats per second
      */
-    public int pulse;
+    private int pulse;
 
     /**
      * strokes per minute
      */
-    public int strokeRate;
+    private int strokeRate;
 
     /**
      * watts
      */
-    public int power;
+    private int power;
 
-    public int strokeRatio;
+    private int strokeRatio;
 
     public Measurement() {
     }
@@ -74,7 +74,93 @@ public class Measurement {
         this.strokeRatio = measurement.strokeRatio;
     }
 
-	public boolean hasTarget() {
+    public void reset() {
+        duration = 0;
+        distance = 0;
+        strokes = 0;
+        energy = 0;
+
+        speed = 0;
+        pulse = 0;
+        strokeRate = 0;
+        power = 0;
+
+        strokeRatio = 0;
+    }
+
+    public boolean hasTarget() {
         return distance + duration + strokes + energy > 0;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getStrokes() {
+        return strokes;
+    }
+
+    public void setStrokes(int strokes) {
+        this.strokes = strokes;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getPulse() {
+        return pulse;
+    }
+
+    public void setPulse(int pulse) {
+        this.pulse = pulse;
+    }
+
+    public int getStrokeRate() {
+        return strokeRate;
+    }
+
+    public void setStrokeRate(int strokeRate) {
+        this.strokeRate = strokeRate;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void setPower(int power) {
+        this.power = power;
+    }
+
+    public int getStrokeRatio() {
+        return strokeRatio;
+    }
+
+    public void setStrokeRatio(int strokeRatio) {
+        this.strokeRatio = strokeRatio;
     }
 }

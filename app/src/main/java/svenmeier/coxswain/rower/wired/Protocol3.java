@@ -78,13 +78,12 @@ public class Protocol3 implements IProtocol {
                     if (!consumer.hasNext()) {
                         break;
                     }
-                    measurement.pulse = consumer.next() & 0xFF;
+                    measurement.setPulse(consumer.next() & 0xFF);
 
                     trace(consumer.consumed());
                     continue;
                 case (byte)0xFC:
-                    //trace(buffer, c, 1);
-                    measurement.strokes = measurement.strokes + 1;
+                    measurement.setStrokes(measurement.getStrokes() + 1);
 
                     ratioCalculator.recovering(measurement, System.currentTimeMillis());
 
@@ -111,7 +110,7 @@ public class Protocol3 implements IProtocol {
                     }
 
                     distanceInDecimeters += consumer.next() & 0xFF;
-                    measurement.distance = distanceInDecimeters / 10;
+                    measurement.setDistance(distanceInDecimeters / 10);
 
                     trace(consumer.consumed());
                     continue;
@@ -125,8 +124,8 @@ public class Protocol3 implements IProtocol {
                     }
                     byte speed = consumer.next();
 
-                    measurement.strokeRate = strokeRate & 0xFF;
-                    measurement.speed = (speed & 0xFF) * 10;
+                    measurement.setStrokeRate(strokeRate & 0xFF);
+                    measurement.setSpeed((speed & 0xFF) * 10);
 
                     trace(consumer.consumed());
                     continue;
@@ -136,7 +135,7 @@ public class Protocol3 implements IProtocol {
             }
         }
 
-        measurement.duration = (int)(System.currentTimeMillis() - start) / 1000;
+        measurement.setDuration((int)(System.currentTimeMillis() - start) / 1000);
     }
 
     private void trace(byte[] buffer) {

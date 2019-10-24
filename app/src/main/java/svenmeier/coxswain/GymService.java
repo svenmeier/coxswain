@@ -30,6 +30,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.motivator.DefaultMotivator;
 import svenmeier.coxswain.motivator.Motivator;
@@ -159,21 +160,23 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
         this.heart = Heart.create(GymService.this, rower, this);
 
+        foreground.connected();
+
         this.program = gym.program;
         if (this.program != null) {
             rower.reset();
-        }
 
-        foreground.connected();
+            foreground.changed();
+        }
     }
 
     @Override
-    public void onMeasurement() {
+    public void onMeasurement(Measurement measurement) {
         if (rower == null) {
             return;
         }
 
-        Event event = gym.onMeasured(rower);
+        Event event = gym.onMeasured(measurement);
         motivator.onEvent(event, rower, gym.progress);
 
         if (event == Event.REJECTED) {

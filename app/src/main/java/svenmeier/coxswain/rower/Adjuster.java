@@ -20,12 +20,14 @@ import svenmeier.coxswain.gym.Measurement;
 /**
  * Calculator.
  */
-public interface ICalculator {
+public class Adjuster {
 
 	/**
      * Adjust
      *
-     * @param measurement measurement to adjust
+     * @param value
      */
-    void adjust(Measurement measurement);
+    public int adjust(Measurement measurement, int value) {
+        return value;
+    }
 }

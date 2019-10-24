@@ -32,7 +32,12 @@ public class MockRower extends Rower {
     /**
      * Delay after rowing starts.
      */
-    private static final int ROWING_DELAY = 4000;
+    private static final int START_DELAY = 4000;
+
+    /**
+     * Delay after rowing starts.
+     */
+    private static final int ROW_DELAY = 500;
 
     private long startAt;
 
@@ -44,24 +49,56 @@ public class MockRower extends Rower {
 
     private final Handler handler = new Handler();
 
-    private Runnable update = new Runnable() {
+    private Runnable delayed;
+
+    private class Connected implements Runnable {
+        @Override
+        public void run() {
+            callback.onConnected();
+
+            delay(new Start(), START_DELAY);
+        }
+    };
+
+    private class Start implements Runnable {
+        @Override
+        public void run() {
+            delay(new Row(), ROW_DELAY);
+        }
+    };
+
+    private class Row implements Runnable {
         @Override
         public void run() {
             row();
 
             notifyMeasurement();
 
-            handler.postDelayed(this, 500);
+            delay(this, ROW_DELAY);
         }
     };
 
     public MockRower(Context context, Callback callback) {
         super(context, callback);
     }
-    
+
+    private void delay(Runnable runnable, int delay) {
+        if (delayed != null) {
+            handler.removeCallbacks(delayed);
+            this.delayed = null;
+        }
+
+        if (runnable != null) {
+            this.delayed = runnable;
+            handler.postDelayed(runnable, delay);
+        }
+    }
+
     @Override
     public void open() {
         reset();
+
+        delay(new Connected(), CONNECTION_DELAY);
     }
 
     @Override
@@ -79,15 +116,7 @@ public class MockRower extends Rower {
         strokesTemp = 0;
         energyTemp = 0;
 
-        handler.removeCallbacks(update);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                callback.onConnected();
-
-                handler.postDelayed(update, ROWING_DELAY);
-            }
-        }, CONNECTION_DELAY);
+        delay(new Start(), START_DELAY);
     }
 
     private void row() {
@@ -97,27 +126,27 @@ public class MockRower extends Rower {
             startAt = now;
         }
 
-        duration = (int)(now - startAt) / 1000;
+        setDuration((int)(now - startAt) / 1000);
 
-        distance = (int)((now - startAt) * speedTemp) / 1000;
+        setDistance((int)((now - startAt) * speedTemp) / 1000);
 
         strokesTemp += 0.04;
-        strokes = (int) strokesTemp;
+        setStrokes((int) strokesTemp);
 
         energyTemp += 0.015;
-        energy = (int) energyTemp;
+        setEnergy((int) energyTemp);
 
-        speed = (int)(speedTemp * 100);
+        setSpeed((int)(speedTemp * 100));
 
-        strokeRate = (int)(26 +  (Math.random() * 3));
+        setStrokeRate((int)(26 +  (Math.random() * 3)));
 
-        strokeRatio = (int)(10 +  (Math.random() * 5));
+        setStrokeRatio((int)(10 +  (Math.random() * 5)));
 
-        pulse = (int)(80 +  (Math.random() * 10));
+        setPulse((int)(80 +  (Math.random() * 10)));
     }
 
     @Override
     public void close() {
-        handler.removeCallbacks(update);
+        delay(null, 0);
     }
 }

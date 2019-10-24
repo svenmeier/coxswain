@@ -159,37 +159,37 @@ public class BindingView extends LinearLayout {
 
         switch (binding) {
             case DURATION:
-                target(measurement.duration, targetDuration, achieved);
+                target(measurement.getDuration(), targetDuration, achieved);
                 break;
             case DISTANCE:
-                target(measurement.distance, targetDistance, achieved);
+                target(measurement.getDistance(), targetDistance, achieved);
                 break;
             case STROKES:
-                target(measurement.strokes, targetStrokes, achieved);
+                target(measurement.getStrokes(), targetStrokes, achieved);
                 break;
             case ENERGY:
-                target(measurement.energy, targetEnergy, achieved);
+                target(measurement.getEnergy(), targetEnergy, achieved);
                 break;
             case SPEED:
-                limit(measurement.speed, limitSpeed);
+                limit(measurement.getSpeed(), limitSpeed);
                 break;
             case PULSE:
-                limit(measurement.pulse, limitPulse);
+                limit(measurement.getPulse(), limitPulse);
                 break;
             case STROKE_RATE:
-                limit(measurement.strokeRate, limitStrokeRate);
+                limit(measurement.getStrokeRate(), limitStrokeRate);
                 break;
             case POWER:
-                limit(measurement.power, limitPower);
+                limit(measurement.getPower(), limitPower);
                 break;
             case STROKE_RATIO:
-                limit(measurement.strokeRatio, 0);
+                limit(measurement.getStrokeRatio(), 0);
                 break;
             case SPLIT:
-                split(100f / measurement.speed);
+                split(100f / measurement.getSpeed());
                 break;
             case AVERAGE_SPLIT:
-                split(measurement.duration * 1f / measurement.distance);
+                split(measurement.getDuration() * 1f / measurement.getDistance());
                 break;
             case DELTA_DISTANCE:
                 delta(paceBoat.getDistanceDelta(measurement), false);

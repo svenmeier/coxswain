@@ -14,8 +14,6 @@ import svenmeier.coxswain.rower.Rower;
  */
 public class Heart {
 
-	private static final long TIMEOUT_MILLIS = 5000;
-
 	private final Handler handler = new Handler();
 	
 	protected final Context context;
@@ -34,30 +32,30 @@ public class Heart {
 	}
 
 	protected void onHeartRate(int heartRate) {
-		measurement.pulse = heartRate;
+		measurement.setPulse(heartRate);
 
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				callback.onMeasurement();
+				callback.onMeasurement(measurement);
 			}
 		});
 	}
 
-	public static Heart create(Context context, Rower rower, Callback callback) {
+	public static Heart create(Context context, Measurement measurement, Callback callback) {
 		Preference<String> sensors = Preference.getString(context, R.string.preference_hardware_heart_sensor);
 
 		String name = sensors.get();
 		try {
 			Constructor<?> constructor = Class.forName(name).getConstructor(Context.class, Measurement.class, Callback.class);
-			return (Heart) constructor.newInstance(context, rower, callback);
+			return (Heart) constructor.newInstance(context, measurement, callback);
 		} catch (Exception ex) {
 			Log.e(Coxswain.TAG, "cannot create sensor " + name);
-			return new Heart(context, rower, callback);
+			return new Heart(context, measurement, callback);
 		}
 	}
 
 	public interface Callback {
-		void onMeasurement();
+		void onMeasurement(Measurement measurement);
 	}
 }

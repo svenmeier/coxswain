@@ -35,16 +35,16 @@ public class Protocol3Test {
 		// distance +2.5
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x19});
 		protocol.transfer(measurement);
-		assertEquals(2, measurement.distance);
+		assertEquals(2, measurement.getDistance());
 		// distance +0.5
 		transfer.setupInput(new byte[]{(byte) 0xFE, (byte) 0x05});
 		protocol.transfer(measurement);
-		assertEquals(3, measurement.distance);
+		assertEquals(3, measurement.getDistance());
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFC});
 		protocol.transfer(measurement);
-		assertEquals(1, measurement.strokes);
+		assertEquals(1, measurement.getStrokes());
 
 
 		transfer.setupInput(new byte[]{(byte) 0xFD, (byte) 0x01, (byte) 0x02});
@@ -53,17 +53,17 @@ public class Protocol3Test {
 
 		transfer.setupInput(new byte[]{(byte) 0xFB, (byte) 0x01, (byte) 0xFB, (byte) 0x02});
 		protocol.transfer(measurement);
-		assertEquals(2, measurement.pulse);
+		assertEquals(2, measurement.getPulse());
 
 		transfer.setupInput(new byte[]{(byte) 0xFF, (byte) 0x01, (byte) 0x02});
 		protocol.transfer(measurement);
-		assertEquals(1, measurement.strokeRate);
-		assertEquals(20, measurement.speed);
+		assertEquals(1, measurement.getStrokeRate());
+		assertEquals(20, measurement.getSpeed());
 
 		transfer.setupInput(new byte[]{(byte) 0xFF, (byte) 0x01, (byte) 0x02});
 		protocol.transfer(measurement);
-		assertEquals(1, measurement.strokeRate);
-		assertEquals(20, measurement.speed);
+		assertEquals(1, measurement.getStrokeRate());
+		assertEquals(20, measurement.getSpeed());
 
 		transfer.setupInput(new byte[]{(byte) 0x01, (byte) 0x02, (byte) 0x03});
 		protocol.transfer(measurement);
@@ -101,7 +101,7 @@ public class Protocol3Test {
 				protocol.transfer(measurement);
 			}
 		}
-		assertEquals(363, measurement.strokes);
-		assertEquals(1510, measurement.distance);
+		assertEquals(363, measurement.getStrokes());
+		assertEquals(1510, measurement.getDistance()	);
 	}
 }

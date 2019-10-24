@@ -29,7 +29,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(measurement, now);
 		calculator.recovering(measurement, now + 200);
 
-		assertEquals(8, measurement.strokeRatio);
+		assertEquals(8, measurement.getStrokeRatio());
 
 		now += 2000;
 		calculator.pulling(measurement, now);
@@ -39,7 +39,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(measurement, now);
 		calculator.recovering(measurement, now + 200);
 
-		assertEquals(16, measurement.strokeRatio);
+		assertEquals(16, measurement.getStrokeRatio());
 
 		now += 1500;
 		calculator.pulling(measurement, now);
@@ -49,7 +49,7 @@ public class RatioCalculatorTest {
 		calculator.recovering(measurement, now);
 		calculator.recovering(measurement, now + 500);
 
-		assertEquals(12, measurement.strokeRatio);
+		assertEquals(12, measurement.getStrokeRatio());
 
 		now += 500;
 		calculator.pulling(measurement, now);
@@ -59,6 +59,6 @@ public class RatioCalculatorTest {
 		calculator.recovering(measurement, now);
 		calculator.recovering(measurement, now + 200);
 
-		assertEquals(4, measurement.strokeRatio);
+		assertEquals(4, measurement.getStrokeRatio());
 	}
 }

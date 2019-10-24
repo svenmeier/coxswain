@@ -18,19 +18,20 @@ package svenmeier.coxswain.rower;
 import svenmeier.coxswain.gym.Measurement;
 
 /**
- * Calculator of energy relative to a weight.
+ * Ignore speed and calculate from power instead.
  */
-public class SpeedCalculator implements ICalculator {
+public class SpeedAdjuster extends Adjuster {
 
 	/**
      * Speed dependent on power.
      *
      * @param measurement measurement to adjust
      */
-    public void adjust(Measurement measurement) {
+    @Override
+    public int adjust(Measurement measurement, int speed) {
         // magic formula see:
         // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
-        float mps = 0.709492f * (float) Math.pow(measurement.power, 1d / 3d);
-        measurement.speed = Math.round(mps * 100);
+        float mps = 0.709492f * (float) Math.pow(measurement.getPower(), 1d / 3d);
+        return Math.round(mps * 100);
     }
 }

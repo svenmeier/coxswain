@@ -42,7 +42,9 @@ public class TcxExport extends Export<Workout> {
 
 	private final Gym gym;
 
-	public TcxExport(Context context) {
+    protected boolean automatic;
+
+    public TcxExport(Context context) {
 		super(context.getApplicationContext());
 
 		this.handler = new Handler();
@@ -51,7 +53,10 @@ public class TcxExport extends Export<Workout> {
 	}
 
 	@Override
-	public void start(Workout workout) {
+	public void start(Workout workout, boolean automatic) {
+
+	    this.automatic = automatic;
+
 		new Writing(workout);
 	}
 

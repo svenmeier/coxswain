@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,7 +45,7 @@ public class ProgramExport extends Export<Program> {
 	}
 
 	@Override
-	public void start(Program program) {
+	public void start(Program program, boolean automatic) {
 		new Writing(program);
 	}
 

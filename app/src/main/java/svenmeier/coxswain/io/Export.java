@@ -22,7 +22,7 @@ public abstract class Export<T> {
 		this.context = context;
 	}
 
-	public abstract void start(T t);
+	public abstract void start(T t, boolean automatic);
 
 	/**
 	 * Start an automatic export for the given {@link Workout}.
@@ -45,7 +45,7 @@ public abstract class Export<T> {
 				return;
 			}
 
-			export.start(workout);
+			export.start(workout, true);
 		}
 	}
 
@@ -61,7 +61,7 @@ public abstract class Export<T> {
 
 		last.set(export.getClass().getName());
 
-		export.start(workout);
+		export.start(workout, false);
 	}
 
 	/**

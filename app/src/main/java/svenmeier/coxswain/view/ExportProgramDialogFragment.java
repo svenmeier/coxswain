@@ -39,7 +39,7 @@ public class ExportProgramDialogFragment extends DialogFragment {
 								throw new IndexOutOfBoundsException();
 						}
 
-						export.start(program);
+						export.start(program, false);
 					}
 				});
 

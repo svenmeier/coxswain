@@ -276,15 +276,15 @@
     <string name="preference_compact_title">Compact workouts</string>
     <string name="preference_compact_summary">Compact workouts after %s days</string>
 
-    <string name="preference_export_auto" translatable="false">preference_integration_export_auto
-    </string>
-    <string name="preference_export_last" translatable="false">preference_integration_export_last
-    </string>
+    <string name="preference_export_auto" translatable="false">preference_integration_export_auto</string>
+    <string name="preference_export_last" translatable="false">preference_integration_export_last</string>
     <string name="preference_export_auto_title">Export</string>
     <string name="preference_export_auto_summary">Export each workout automatically</string>
     <string name="preference_export_auto_reminder">First export a workout to determine automatic
         exports
     </string>
+
+    <string name="preference_export_tcx_share_package" translatable="false">preference_export_tcx_share_package</string>
 
     <string name="preference_export_track" translatable="false">preference_export_track</string>
     <string name="preference_export_track_title">Export with locations</string>

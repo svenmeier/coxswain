@@ -154,6 +154,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths"/>
         </provider>
+
+        <receiver android:name=".garmin.ShareReceiver" android:exported="false"/>
     </application>
 
 </manifest>

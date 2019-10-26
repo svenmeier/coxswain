@@ -46,11 +46,11 @@ public class FitExport extends Export<Workout> {
 
 		this.handler = new Handler();
 
-		this.gym = Gym.instance(context);
+		this.gym = Gym.instance(this.context);
 	}
 
 	@Override
-	public void start(Workout workout) {
+	public void start(Workout workout, boolean automatic) {
 		this.workout = workout;
 
 		connection = new Connection();

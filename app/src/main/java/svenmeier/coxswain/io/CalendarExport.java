@@ -7,12 +7,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Handler;
 import android.provider.CalendarContract;
-import android.support.annotation.UiThread;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.TimeZone;
 
 import propoid.db.mapping.LocationMapper;
@@ -34,7 +32,7 @@ public class CalendarExport extends Export<Workout> {
 	}
 
 	@Override
-	public void start(Workout workout) {
+	public void start(Workout workout, boolean automatic) {
 		new Writing(workout);
 	}
 

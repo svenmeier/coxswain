@@ -92,6 +92,7 @@ public class FitExport extends Export<Workout> {
 					result.startResolutionForResult((Activity) context, REQUEST_CODE);
 					return;
 				} catch (IntentSender.SendIntentException e) {
+					Log.e(Coxswain.TAG, "start resolution failed", e);
 				}
 			}
 
@@ -128,6 +129,7 @@ public class FitExport extends Export<Workout> {
 				Workout2Fit workout2Fit = new Workout2Fit();
 
 				Status status;
+				String rejected = null;
 
 				Session session = workout2Fit.session(workout);
 				SessionInsertRequest insertSession = new SessionInsertRequest.Builder()
@@ -135,21 +137,25 @@ public class FitExport extends Export<Workout> {
 						.build();
 				status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
 				if (status.isSuccess() == false) {
-					Log.e(Coxswain.TAG, "insert session failed " + status);
-					toast(context.getString(R.string.googlefit_export_failed));
-					return;
-				}
-
-				for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
-					status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
-					if (status.isSuccess() == false) {
-						Log.e(Coxswain.TAG, "insert dataset failed " + status);
-						toast(context.getString(R.string.googlefit_export_failed));
-						return;
+					Log.e(Coxswain.TAG, "insert session rejected " + status);
+					rejected = "SESSION";
+				} else {
+					for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
+						status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
+						if (status.isSuccess() == false) {
+							Log.e(Coxswain.TAG, "insert dataset rejected " + status);
+							rejected = dataSet.getDataType().getName();
+						}
 					}
 				}
 
-				toast(context.getString(R.string.googlefit_export_finished));
+				if (rejected == null) {
+					toast(context.getString(R.string.googlefit_export_finished));
+				} else {
+					toast(context.getString(R.string.googlefit_export_rejected, rejected));
+				}
+			} catch (Exception ex) {
+				toast(context.getString(R.string.googlefit_export_failed));
 			} finally {
 				snapshots.clear();
 

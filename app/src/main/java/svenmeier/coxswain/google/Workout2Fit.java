@@ -23,6 +23,8 @@ import svenmeier.coxswain.gym.Workout;
  */
 public class Workout2Fit {
 
+	private static final int MAX_DATAPOINTS = 1000;
+
 	private SimpleDateFormat dateFormat;
 
 	public Workout2Fit() {
@@ -53,10 +55,18 @@ public class Workout2Fit {
 					private List<Mapper> mappers = new ArrayList<>();
 
 					{
-					    mappers.add(new AggregateDistanceDelta());
 						mappers.add(new AggregateCaloriesExpended());
-						mappers.add(new Speed());
-						mappers.add(new HeartRateBpm());
+					    mappers.add(new AggregateDistanceDelta());
+
+						int to = snapshots.size();
+					    while (to > 0) {
+							int from = to - Math.min(to, MAX_DATAPOINTS);
+
+							mappers.add(new Speed(from, to));
+							mappers.add(new HeartRateBpm(from, to));
+
+							to = from;
+						}
 					}
 
 					@Override
@@ -103,11 +113,17 @@ public class Workout2Fit {
 
 	private abstract class AbstractSnapshotMapper extends Mapper {
 
-		private static final int MAX_DATAPOINTS = 1000;
+		private final int from;
+		private final int to;
+
+		public AbstractSnapshotMapper(int from, int to) {
+			this.from = from;
+			this.to = to;
+		}
 
 		@Override
 		protected void map(DataSet dataSet, Workout workout, List<Snapshot> snapshots) {
-			for (int index = 0; index < Math.min(snapshots.size(), MAX_DATAPOINTS); index++) {
+			for (int index = from; index < to; index++) {
 				Snapshot snapshot = snapshots.get(index);
 
 				DataPoint point = dataSet.createDataPoint();
@@ -121,6 +137,10 @@ public class Workout2Fit {
 	}
 
 	private class Speed extends AbstractSnapshotMapper {
+		public Speed(int from, int to) {
+			super(from, to);
+		}
+
 		@Override
 		public DataType type() {
 			return DataType.TYPE_SPEED;
@@ -133,6 +153,10 @@ public class Workout2Fit {
 	}
 
 	private class HeartRateBpm extends AbstractSnapshotMapper {
+		public HeartRateBpm(int from, int to) {
+			super(from, to);
+		}
+
 		@Override
 		public DataType type() {
 			return DataType.TYPE_HEART_RATE_BPM;
@@ -161,7 +185,7 @@ public class Workout2Fit {
 
 		@Override
 		public DataType type() {
-			return DataType.AGGREGATE_DISTANCE_DELTA;
+			return DataType.TYPE_DISTANCE_CUMULATIVE;
 		}
 
 		@Override
@@ -174,12 +198,14 @@ public class Workout2Fit {
 
 		@Override
 		public DataType type() {
-			return DataType.AGGREGATE_CALORIES_EXPENDED;
+			return DataType.TYPE_CALORIES_EXPENDED;
 		}
 
 		@Override
 		public void map(Workout workout, DataPoint point) {
-			point.getValue(Field.FIELD_CALORIES).setFloat(workout.energy.get());
+			int temp = workout.energy.get();
+
+			point.getValue(Field.FIELD_CALORIES).setFloat(temp);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+6.4
+  - improved Google Fit export
+  - remember share intent for automatic export
+
 6.3
   - fixed premature ending of rowing when adjusting energy
 

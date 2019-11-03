@@ -1,5 +1,8 @@
+6.5
+  - fixed Google Fit export
+
 6.4
-  - improved Google Fit export
+  - improved (broken) Google Fit export
   - remember share intent for automatic export
 
 6.3

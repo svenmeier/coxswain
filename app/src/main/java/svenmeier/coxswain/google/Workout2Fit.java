@@ -185,7 +185,8 @@ public class Workout2Fit {
 
 		@Override
 		public DataType type() {
-			return DataType.TYPE_DISTANCE_CUMULATIVE;
+			// DataType.TYPE_DISTANCE_CUMULATIVE does not show up in Fit
+			return DataType.AGGREGATE_DISTANCE_DELTA;
 		}
 
 		@Override
@@ -198,7 +199,8 @@ public class Workout2Fit {
 
 		@Override
 		public DataType type() {
-			return DataType.TYPE_CALORIES_EXPENDED;
+			// DataType.TYPE_CALORIES_EXPENDED does not show up in Fit
+			return DataType.AGGREGATE_CALORIES_EXPENDED;
 		}
 
 		@Override

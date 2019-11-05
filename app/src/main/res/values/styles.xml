@@ -8,6 +8,7 @@
 
         <item name="icon_more">@drawable/ic_more_vert_black_24dp</item>
         <item name="icon_share">@drawable/ic_share_black_24dp</item>
+        <item name="icon_duplicate">@drawable/baseline_filter_none_black_24</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -19,6 +20,7 @@
 
         <item name="icon_more">@drawable/ic_more_vert_white_24dp</item>
         <item name="icon_share">@drawable/ic_share_white_24dp</item>
+        <item name="icon_duplicate">@drawable/baseline_filter_none_white_24</item>
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">

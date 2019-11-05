@@ -176,4 +176,22 @@ public class Segment extends Propoid {
 
         return this;
     }
+
+    public Segment duplicate() {
+        Segment segment = new Segment();
+
+        segment.difficulty.set(this.difficulty.get());
+
+        segment.distance.set(this.distance.get());
+        segment.duration.set(this.duration.get());
+        segment.strokes.set(this.strokes.get());
+        segment.energy.set(this.energy.get());
+
+        segment.speed.set(this.speed.get());
+        segment.strokeRate.set(this.strokeRate.get());
+        segment.pulse.set(this.pulse.get());
+        segment.power.set(this.power.get());
+
+        return segment;
+    }
 }

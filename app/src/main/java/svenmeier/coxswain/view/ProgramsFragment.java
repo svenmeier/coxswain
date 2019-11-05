@@ -118,7 +118,7 @@ public class ProgramsFragment extends Fragment {
                                     gym.select(item);
                                     return true;
                                 case R.id.action_new:
-                                    Program newProgram = Gym.instance(getActivity()).newProgram();
+                                    Program newProgram = gym.newProgram();
 
                                     startActivity(ProgramActivity.createIntent(getActivity(), newProgram));
                                     return true;
@@ -127,6 +127,12 @@ public class ProgramsFragment extends Fragment {
                                     return true;
                                 case R.id.action_export:
                                     ExportProgramDialogFragment.create(item).show(getFragmentManager(), "export");
+
+                                    return true;
+                                case R.id.action_duplicate:
+                                    Program duplicatedProgram = gym.duplicateProgram(item);
+
+                                    startActivity(ProgramActivity.createIntent(getActivity(), duplicatedProgram));
 
                                     return true;
                                 case R.id.action_delete:

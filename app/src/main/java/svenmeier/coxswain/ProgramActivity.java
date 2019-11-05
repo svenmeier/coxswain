@@ -18,14 +18,18 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import java.util.Collections;
 import java.util.List;
 
 import propoid.db.Reference;
@@ -49,6 +53,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
     private SegmentsAdapter segmentsAdapter;
 
     private Program program;
+    private ItemTouchHelper touchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +63,9 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
         setContentView(R.layout.layout_program);
 
-        nameView = (EditText) findViewById(R.id.toolbar_edit);
+        nameView = findViewById(R.id.toolbar_edit);
 
-        segmentsView = (RecyclerView) findViewById(R.id.program_segments);
+        segmentsView = findViewById(R.id.program_segments);
         segmentsView.setLayoutManager(new LinearLayoutManager(this));
         segmentsView.setHasFixedSize(true);
 
@@ -73,6 +78,9 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             nameView.setText(program.name.get());
 
             segmentsView.setAdapter(segmentsAdapter = new SegmentsAdapter());
+
+            touchHelper = new ItemTouchHelper(new SegmentsMover());
+            touchHelper.attachToRecyclerView(segmentsView);
         }
     }
 
@@ -83,6 +91,41 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
         if (program != null) {
             program.name.set(nameView.getText().toString());
             Gym.instance(ProgramActivity.this).mergeProgram(program);
+        }
+    }
+
+    private class SegmentsMover extends ItemTouchHelper.SimpleCallback {
+
+        public SegmentsMover() {
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+        }
+
+        @Override
+        public boolean isLongPressDragEnabled() {
+            return false;
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder from, @NonNull RecyclerView.ViewHolder to) {
+            int fromPosition = from.getAdapterPosition();
+            int toPosition = to.getAdapterPosition();
+
+            Collections.swap(program.getSegments(), fromPosition, toPosition);
+
+            segmentsAdapter.notifyItemMoved(fromPosition, toPosition);
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAdapterPosition();
+
+            program.removeSegment(program.getSegment(position));
+
+            Gym.instance(ProgramActivity.this).mergeProgram(program);
+
+            segmentsAdapter.notifyItemRemoved(position);
         }
     }
 
@@ -116,40 +159,30 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popup = new PopupMenu(ProgramActivity.this, menuButton);
-                    popup.getMenuInflater().inflate(R.menu.menu_segments_item, popup.getMenu());
+                    Segment duplicate = program.duplicateSegment(item);
 
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()) {
-                                case R.id.action_delete:
-                                    program.removeSegment(item);
+                    Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+                    segmentsAdapter.notifyItemInserted(program.getSegments().indexOf(duplicate));
+                }
+            });
+            menuButton.setOnTouchListener(new View.OnTouchListener() {
 
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                case R.id.action_insert_before:
-                                    program.createSegmentBefore(item);
+                private float y;
 
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP) {
+                        y = event.getY();
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        if (Math.abs(event.getY() - y) > 5) {
+                            touchHelper.startDrag(SegmentHolder.this);
 
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                case R.id.action_insert_after:
-                                    program.createSegmentAfter(item);
-
-                                    Gym.instance(ProgramActivity.this).mergeProgram(program);
-
-                                    segmentsAdapter.notifyDataSetChanged();
-                                    return true;
-                                default:
-                                    return false;
-                            }
+                            return true;
                         }
-                    });
+                    }
 
-                    popup.show();
+                    return false;
                 }
             });
         }
@@ -207,7 +240,7 @@ public class ProgramActivity extends AbstractActivity implements AbstractValueFr
 
                     Gym.instance(ProgramActivity.this).mergeProgram(program);
 
-                    segmentsAdapter.notifyDataSetChanged();
+                    segmentsAdapter.notifyItemChanged(getAdapterPosition());
                 }
             });
         }

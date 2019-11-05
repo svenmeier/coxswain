@@ -12,13 +12,12 @@
     <string name="action_sort_ascending">ascending</string>
     <string name="action_ok">OK</string>
     <string name="action_edit">Edit</string>
+    <string name="action_duplicate">Duplicate</string>
     <string name="action_select">Select</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_confirm_title">Deletion?</string>
     <string name="action_delete_confirm_message">Deletion can not be reverted!</string>
     <string name="action_delete_confirm">Delete now</string>
-    <string name="action_insert_before">Insert before</string>
-    <string name="action_insert_after">Insert after</string>
     <string name="action_repeat">Repeat</string>
     <string name="action_challenge">Challenge</string>
     <string name="action_new">New</string>

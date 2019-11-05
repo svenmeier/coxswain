@@ -1,3 +1,8 @@
+6.6
+  - duplicate programs
+  - duplicate segments
+  - reorder segments
+
 6.5
   - fixed Google Fit export
 

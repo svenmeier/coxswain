@@ -83,16 +83,12 @@ public class Program extends Propoid {
         }
     }
 
-    public void createSegmentBefore(Segment segment) {
+    public Segment duplicateSegment(Segment segment) {
         int index = segments.get().indexOf(segment);
 
-        segments.get().add(index, new Segment(Difficulty.EASY));
-    }
-
-    public void createSegmentAfter(Segment segment) {
-        int index = segments.get().indexOf(segment);
-
-        segments.get().add(index + 1, new Segment(Difficulty.EASY));
+        Segment duplicate = segment.duplicate();
+        segments.get().add(index, duplicate);
+        return duplicate;
     }
 
     public static Program kilocalories(String name, int kcal, Difficulty difficulty) {

@@ -70,6 +70,6 @@ public class EnergyAdjuster extends Adjuster {
 
         double adjusted = ((double)energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
 
-        return (int)adjusted;
+        return Math.max(0, (int)adjusted);
     }
 }

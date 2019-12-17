@@ -18,6 +18,7 @@ package svenmeier.coxswain.rower.wired;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.wired.usb.Consumer;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
+import svenmeier.coxswain.util.ByteUtils;
 
 public class Protocol3 implements IProtocol {
 
@@ -74,22 +75,22 @@ public class Protocol3 implements IProtocol {
         Consumer consumer = transfer.consumer();
         while (consumer.hasNext()) {
             switch (consumer.next()) {
-                case (byte)0xFB:
+                case (byte) 0xFB:
                     if (!consumer.hasNext()) {
                         break;
                     }
                     measurement.setPulse(consumer.next() & 0xFF);
 
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
-                case (byte)0xFC:
+                case (byte) 0xFC:
                     measurement.setStrokes(measurement.getStrokes() + 1);
 
                     ratioCalculator.recovering(measurement, System.currentTimeMillis());
 
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
-                case (byte)0xFD:
+                case (byte) 0xFD:
                     // 2 bytes voltage not used
                     if (!consumer.hasNext()) {
                         break;
@@ -102,9 +103,9 @@ public class Protocol3 implements IProtocol {
 
                     ratioCalculator.pulling(measurement, System.currentTimeMillis());
 
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
-                case (byte)0xFE:
+                case (byte) 0xFE:
                     if (!consumer.hasNext()) {
                         break;
                     }
@@ -112,9 +113,9 @@ public class Protocol3 implements IProtocol {
                     distanceInDecimeters += consumer.next() & 0xFF;
                     measurement.setDistance(distanceInDecimeters / 10);
 
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
-                case (byte)0xFF:
+                case (byte) 0xFF:
                     if (!consumer.hasNext()) {
                         break;
                     }
@@ -127,33 +128,14 @@ public class Protocol3 implements IProtocol {
                     measurement.setStrokeRate(strokeRate & 0xFF);
                     measurement.setSpeed((speed & 0xFF) * 10);
 
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
                 default:
-                    trace(consumer.consumed());
+                    trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     trace.comment("unrecognized");
             }
         }
 
-        measurement.setDuration((int)(System.currentTimeMillis() - start) / 1000);
+        measurement.setDuration((int) (System.currentTimeMillis() - start) / 1000);
     }
-
-    private void trace(byte[] buffer) {
-        StringBuilder string = new StringBuilder(buffer.length * 3);
-
-        for (int c = 0; c < buffer.length; c++) {
-            if (c > 0) {
-                string.append(' ');
-            }
-
-            int b = buffer[c] & 0xFF;
-
-            string.append(hex[b >>> 4]);
-            string.append(hex[b & 0x0F]);
-        }
-
-        trace.onInput(string);
-    }
-
-    private static final char[] hex = "0123456789ABCDEF".toCharArray();
 }

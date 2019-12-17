@@ -158,7 +158,7 @@
     <string name="bluetooth_rower_no_location">Bluetooth requires enabled location services</string>
     <string name="bluetooth_rower_failed">Bluetooth connection to %s failed</string>
     <string name="bluetooth_rower_not_found">Bluetooth no rower found on %s</string>
-    <string name="bluetooth_rower_notification_timeout">Bluetooth notifiations time-out</string>
+    <string name="bluetooth_rower_software_revision">Bluetooth S4 Firmware is %s, please update to %s</string>
     <string name="bluetooth_rower_disconnected">Bluetooth connection lost to %s</string>
 
     <string name="preference_training_title">Training</string>

@@ -256,7 +256,7 @@ public class BluetoothHeart extends Heart {
 			}
 
 			String name = context.getString(R.string.bluetooth_heart);
-			IntentFilter filter = BluetoothActivity.start(context, name, BlueUtils.SERVICE_HEART_RATE.toString());
+			IntentFilter filter = BluetoothActivity.start(context, name, BlueWriter.SERVICE_HEART_RATE.toString());
 			context.registerReceiver(this, filter);
 			registered = true;
 		}
@@ -297,7 +297,7 @@ public class BluetoothHeart extends Heart {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class GattConnection extends BluetoothGattCallback implements Connection, Runnable {
+	private class GattConnection extends BlueWriter implements Connection, Runnable {
 
 		private final String address;
 
@@ -380,31 +380,25 @@ public class BluetoothHeart extends Heart {
 		}
 
 		@Override
-		public synchronized void onServicesDiscovered(BluetoothGatt gatt, int status) {
+		public synchronized void onServicesDiscovered(final BluetoothGatt gatt, int status) {
 			if (connected == null) {
 				return;
 			}
 
-			BluetoothGattService service = gatt.getService(BlueUtils.SERVICE_HEART_RATE);
-			if (service == null) {
-				Log.d(Coxswain.TAG, "bluetooth no heart rate");
+			heartRateMeasurement = get(gatt, SERVICE_HEART_RATE, CHARACTERISTIC_HEART_RATE_MEASUREMENT);
+			if (heartRateMeasurement == null) {
+				Log.d(Coxswain.TAG, "bluetooth no heart rate measurement");
 			} else {
-				heartRateMeasurement = service.getCharacteristic(BlueUtils.CHARACTERISTIC_HEART_RATE_MEASUREMENT);
-				if (heartRateMeasurement == null) {
-					Log.d(Coxswain.TAG, "bluetooth no heart rate measurement");
-				} else {
-					if (BlueUtils.enableNotification(gatt, heartRateMeasurement)) {
-						toast(context.getString(R.string.bluetooth_heart_connected, gatt.getDevice().getAddress()));
-						return;
-					}
-					Log.d(Coxswain.TAG, "bluetooth no heart rate measurement notification");
-				}
+				enableNotification(gatt, heartRateMeasurement);
 			}
 
-			heartRateMeasurement = null;
-			toast(context.getString(R.string.bluetooth_heart_not_found, gatt.getDevice().getAddress()));
+			if (heartRateMeasurement == null) {
+				toast(context.getString(R.string.bluetooth_heart_not_found, gatt.getDevice().getAddress()));
 
-			select();
+				select();
+			} else {
+				toast(context.getString(R.string.bluetooth_heart_connected, gatt.getDevice().getAddress()));
+			}
 		}
 		
 		@Override
@@ -414,15 +408,17 @@ public class BluetoothHeart extends Heart {
 				return;
 			}
 
-			int heartRate;
-			Fields fields = new Fields(characteristic, Fields.UINT8);
-			if (fields.flag(0)) {
-				heartRate = fields.get(Fields.UINT16);
-			} else {
-				heartRate = fields.get(Fields.UINT8);
-			}
+			if (characteristic.getUuid().equals(heartRateMeasurement.getUuid())) {
+				int heartRate;
+				Fields fields = new Fields(characteristic, Fields.UINT8);
+				if (fields.flag(0)) {
+					heartRate = fields.get(Fields.UINT16);
+				} else {
+					heartRate = fields.get(Fields.UINT8);
+				}
 
-			onHeartRate(heartRate);
+				onHeartRate(heartRate);
+			}
 		}
 
 		/**

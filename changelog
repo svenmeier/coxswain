@@ -1,3 +1,7 @@
+6.8
+  - reset rower via bluetooth
+  - fixed values of snapshot axis
+
 6.7
   - another fix for premature ending of workout :/
 

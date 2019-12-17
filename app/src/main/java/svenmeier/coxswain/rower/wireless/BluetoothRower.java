@@ -5,9 +5,7 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
@@ -22,15 +20,17 @@ import android.provider.Settings;
 import android.util.Log;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
-import svenmeier.coxswain.bluetooth.BlueUtils;
+import svenmeier.coxswain.bluetooth.BlueWriter;
 import svenmeier.coxswain.bluetooth.BluetoothActivity;
 import svenmeier.coxswain.bluetooth.Fields;
 import svenmeier.coxswain.rower.Rower;
+import svenmeier.coxswain.util.ByteUtils;
 import svenmeier.coxswain.util.PermissionBlock;
 
 public class BluetoothRower extends Rower {
@@ -42,6 +42,9 @@ public class BluetoothRower extends Rower {
 	 */
 	private static final int NOTIFICATIONS_TIMEOUT = 2000;
 
+	private static byte OP_CODE_REQUEST_CONTROL = 0x00;
+	private static byte OP_CODE_RESET = 0x01;
+
 	private final Context context;
 
 	private final Handler handler = new Handler();
@@ -49,6 +52,8 @@ public class BluetoothRower extends Rower {
 	private final Preference<String> devicePreference;
 	
 	private ArrayDeque<Connection> connections = new ArrayDeque<>();
+
+	private boolean resetting = false;
 
 	public BluetoothRower(Context context, Callback callback) {
 		super(context, callback);
@@ -67,7 +72,9 @@ public class BluetoothRower extends Rower {
 
 	@Override
 	public void reset() {
-		Connection last = connections.peekLast();
+		resetting = true;
+
+		Connection last = connections.peek();
 		if (last instanceof GattConnection) {
 			((GattConnection) last).reset();
 		}
@@ -275,7 +282,7 @@ public class BluetoothRower extends Rower {
 			}
 
 			String name = context.getString(R.string.bluetooth_rower);
-			IntentFilter filter = BluetoothActivity.start(context, name, BlueUtils.SERVICE_FITNESS_MACHINE.toString());
+			IntentFilter filter = BluetoothActivity.start(context, name, BlueWriter.SERVICE_FITNESS_MACHINE.toString());
 			context.registerReceiver(this, filter);
 			registered = true;
 		}
@@ -316,7 +323,7 @@ public class BluetoothRower extends Rower {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class GattConnection extends BluetoothGattCallback implements Connection, Runnable {
+	private class GattConnection extends BlueWriter implements Connection, Runnable {
 
 		private final String address;
 
@@ -326,8 +333,8 @@ public class BluetoothRower extends Rower {
 
 		private BluetoothGatt connected;
 
+		private BluetoothGattCharacteristic softwareRevision;
 		private BluetoothGattCharacteristic rowerData;
-
 		private BluetoothGattCharacteristic controlPoint;
 
 		GattConnection(String address) {
@@ -346,16 +353,17 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		public synchronized void open() {
+
 			BluetoothManager manager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
 
 			adapter = manager.getAdapter();
 
 			try {
 				BluetoothDevice device = adapter.getRemoteDevice(address);
+
 				Log.d(Coxswain.TAG, "bluetooth rower connecting " + address);
 				connected = device.connectGatt(context, false, this);
 
-				handler.removeCallbacks(this);
 				handler.postDelayed(this, CONNECT_TIMEOUT_MILLIS);
 			} catch (IllegalArgumentException invalid) {
 				select();
@@ -396,136 +404,180 @@ public class BluetoothRower extends Rower {
 
 		public synchronized void close() {
 			if (connected != null) {
+				connected.disconnect();
 				connected.close();
 				connected = null;
-			}
 
-			rowerData = null;
-			controlPoint = null;
+				rowerData = null;
+			}
 
 			adapter = null;
 		}
 
 		public void reset() {
-			if (controlPoint != null) {
-				if (BlueUtils.write(connected, controlPoint, 0x01) == false) {
-					Log.d(Coxswain.TAG, "bluetooth no rower data reset");
-				}
+			if (connected != null && controlPoint != null) {
+				write(connected, controlPoint, OP_CODE_RESET);
 			}
 		}
 
 		@Override
-		public synchronized void onServicesDiscovered(BluetoothGatt gatt, int status) {
+		public synchronized void onServicesDiscovered(final BluetoothGatt gatt, int status) {
 			if (connected == null) {
 				return;
 			}
 
-			BluetoothGattService service = gatt.getService(BlueUtils.SERVICE_FITNESS_MACHINE);
-			if (service == null) {
-				Log.d(Coxswain.TAG, "bluetooth no fitness machine");
+			rowerData = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_ROWER_DATA);
+			if (rowerData == null) {
+				Log.d(Coxswain.TAG, "bluetooth no rower data");
 			} else {
-				// the comm module hangs up as soon as something is written to the control point :/
-				//controlPoint = service.getCharacteristic(BlueUtils.CHARACTERISTIC_CONTROL_POINT);
-				if (controlPoint == null) {
-					Log.d(Coxswain.TAG, "bluetooth no control point");
-				} else {
-					if (BlueUtils.write(connected, controlPoint, 0x00) == false) {
-						Log.d(Coxswain.TAG, "bluetooth no rower data request control");
-					}
-				}
+				enableNotification(gatt, rowerData);
+			}
 
-				rowerData = service.getCharacteristic(BlueUtils.CHARACTERISTIC_ROWER_DATA);
-				if (rowerData == null) {
-					Log.d(Coxswain.TAG, "bluetooth no rower data");
-				} else {
-					if (BlueUtils.enableNotification(gatt, rowerData)) {
-						handler.post(new Runnable() {
-							@Override
-							public void run() {
-								callback.onConnected();
-							}
-						});
-						return;
+			softwareRevision = get(gatt, SERVICE_DEVICE_INFORMATION, CHARACTERISTIC_SOFTWARE_REVISION);
+			if (softwareRevision == null) {
+				Log.d(Coxswain.TAG, "bluetooth no software revision");
+			} else {
+				read(connected, softwareRevision);
+			}
+
+			if (rowerData == null)  {
+				toast(context.getString(R.string.bluetooth_rower_not_found, gatt.getDevice().getAddress()));
+				select();
+			} else {
+				handler.post(new Runnable() {
+					@Override
+					public void run() {
+						callback.onConnected();
 					}
-					Log.d(Coxswain.TAG, "bluetooth no rower data notification");
+				});
+			}
+		}
+
+		@Override
+		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+			if (softwareRevision != null && characteristic.getUuid().equals(softwareRevision.getUuid())) {
+				String version = softwareRevision.getStringValue(0);
+				Log.d(Coxswain.TAG, String.format("bluetooth rower software revision %s", version));
+
+				String minVersion = "4.2";
+				if (version.compareTo(minVersion) < 0) {
+					// old firmware rejects re-bonding of a previously bonded device,
+					// so do not write to the control point, as this triggeres a bond
+					toast(context.getString(R.string.bluetooth_rower_software_revision, version, minVersion));
+				} else {
+					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);
+					if (controlPoint == null) {
+						Log.d(Coxswain.TAG, "bluetooth no control point");
+					} else {
+						enableIndication(connected, controlPoint);
+						write(connected, controlPoint, OP_CODE_REQUEST_CONTROL);
+
+						if (resetting == true) {
+							reset();
+						}
+					}
 				}
 			}
 
-			rowerData = null;
-			toast(context.getString(R.string.bluetooth_rower_not_found, gatt.getDevice().getAddress()));
-
-			select();
+			super.onCharacteristicRead(gatt, characteristic, status);
 		}
 
 		@Override
 		public synchronized void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-			if (connected == null) {
+			if (rowerData == null) {
 				return;
 			}
 
-			Fields fields = new Fields(characteristic, Fields.UINT16);
+			if (controlPoint != null && characteristic.getUuid().equals(controlPoint.getUuid())) {
+				Log.d(Coxswain.TAG, "bluetooth rower indication control-point");
 
-			if (fields.flag(0) == false) { // more data
-				setStrokeRate(fields.get(Fields.UINT8) / 2); // stroke rate 0.5
-				setStrokes(fields.get(Fields.UINT16)); // stroke count
-			}
-			if (fields.flag(1)) {
-				fields.get(Fields.UINT8); // average stroke rate
-			}
-			if (fields.flag(2)) {
-				setDistance(fields.get(Fields.UINT16) +
-						(fields.get(Fields.UINT8) << 16)); // total distance
-			}
-			if (fields.flag(3)) {
-				setSpeed(500 *100 / fields.get(Fields.UINT16)); // instantaneous pace
-			}
-			if (fields.flag(4)) {
-				fields.get(Fields.UINT16); // average pace
-			}
-			if (fields.flag(5)) {
-				setPower(fields.get(Fields.SINT16)); // instantaneous power
-			}
-			if (fields.flag(6)) {
-				fields.get(Fields.SINT16); // average power
-			}
-			if (fields.flag(7)) {
-				fields.get(Fields.SINT16); // resistance level
-			}
-			if (fields.flag(8)) { // expended energy
-				setEnergy(fields.get(Fields.UINT16)); // total energy
-				fields.get(Fields.UINT16); // energy per hour
-				fields.get(Fields.UINT8); // energy per minute
-			}
-			if (fields.flag(9)) {
-				int heartRate = fields.get(Fields.UINT8); // heart rate
-				if (heartRate > 0) {
-					setPulse(heartRate);
+				if (BuildConfig.DEBUG) {
+					toast("control-point changed " + ByteUtils.toHex(characteristic.getValue()));
 				}
-			}
-			if (fields.flag(10)) {
-				fields.get(Fields.UINT8); // metabolic equivalent 0.1
-			}
-			if (fields.flag(11)) {
-				int elapsedTime = fields.get(Fields.UINT16); // elapsed time
+			} else if (rowerData != null && characteristic.getUuid().equals(rowerData.getUuid())) {
+				keepAlive.onNotification();
+
 				int duration = getDuration();
-				int delta = Math.abs(elapsedTime - duration);
-				//  erroneous  values are sent on minute boundaries, so ignore these deltas
-				if (delta >= 58 && delta <= 60) {
-					// 359 ... 300 ... 360
-					// 599 ... 659 ... 600
-					// 478 ... 420 ... 479
-					Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
-				} else {
-					setDuration(elapsedTime);
+				int distance = getDistance();
+				int strokes = getStrokes();
+				int energy = getEnergy();
+
+				Fields fields = new Fields(characteristic, Fields.UINT16);
+				try {
+					if (fields.flag(0) == false) { // more data
+						setStrokeRate(fields.get(Fields.UINT8) / 2); // stroke rate 0.5
+						strokes = fields.get(Fields.UINT16); // stroke count
+					}
+					if (fields.flag(1)) {
+						fields.get(Fields.UINT8); // average stroke rate
+					}
+					if (fields.flag(2)) {
+						distance = (fields.get(Fields.UINT16) +
+								(fields.get(Fields.UINT8) << 16)); // total distance
+					}
+					if (fields.flag(3)) {
+						setSpeed(500 * 100 / fields.get(Fields.UINT16)); // instantaneous pace
+					}
+					if (fields.flag(4)) {
+						fields.get(Fields.UINT16); // average pace
+					}
+					if (fields.flag(5)) {
+						setPower(fields.get(Fields.SINT16)); // instantaneous power
+					}
+					if (fields.flag(6)) {
+						fields.get(Fields.SINT16); // average power
+					}
+					if (fields.flag(7)) {
+						fields.get(Fields.SINT16); // resistance level
+					}
+					if (fields.flag(8)) { // expended energy
+						energy = fields.get(Fields.UINT16); // total energy
+						fields.get(Fields.UINT16); // energy per hour
+						fields.get(Fields.UINT8); // energy per minute
+					}
+					if (fields.flag(9)) {
+						int heartRate = fields.get(Fields.UINT8); // heart rate
+						if (heartRate > 0) {
+							setPulse(heartRate);
+						}
+					}
+					if (fields.flag(10)) {
+						fields.get(Fields.UINT8); // metabolic equivalent 0.1
+					}
+					if (fields.flag(11)) {
+						int elapsedTime = fields.get(Fields.UINT16); // elapsed time
+						//  erroneous  values are sent on minute and hour boundaries,
+						//  so ignore these deltas
+						int delta = Math.abs(elapsedTime - duration);
+						if (delta >= 58 && delta <= 62) {
+							Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
+							if (BuildConfig.DEBUG) {
+								toast(String.format("!! Time error %s !!",  delta));
+							}
+						} else {
+							duration = elapsedTime;
+						}
+					}
+					if (fields.flag(12)) {
+						fields.get(Fields.UINT16); // remaining time
+					}
+				} catch (NullPointerException ex) {
+					// rarely flags and fields do not match up
+					Log.d(Coxswain.TAG, "bluetooth rower field mismatch");
 				}
-			}
-			if (fields.flag(12)) {
-				fields.get(Fields.UINT16); // remaining time
-			}
 
-			keepAlive.onNotification();
-
-			notifyMeasurement();
+				if (resetting) {
+					if (distance + duration + energy + strokes == 0) {
+						resetting = false;
+					}
+				} else {
+					setDistance(distance);
+					setDuration(duration);
+					setStrokes(strokes);
+					setEnergy(energy);
+				}
+				notifyMeasurement();
+			}
 		}
 
 		/**
@@ -534,7 +586,7 @@ public class BluetoothRower extends Rower {
 		@Override
 		public void run() {
 			if (connected != null && rowerData == null) {
-				toast(context.getString(R.string.bluetooth_heart_failed, connected.getDevice().getAddress()));
+				toast(context.getString(R.string.bluetooth_rower_failed, connected.getDevice().getAddress()));
 
 				select();
 			}
@@ -563,14 +615,15 @@ public class BluetoothRower extends Rower {
 			@Override
 			public void run() {
 				if (rowerData != null) {
+
 					Log.d(Coxswain.TAG, "bluetooth rower notifications time-out");
 
 					if (BuildConfig.DEBUG) {
-						toast(context.getString(R.string.bluetooth_rower_notification_timeout));
+						toast("!! Notification timeout !!");
 					}
 
 					// re-enable notification
-					BlueUtils.enableNotification(connected, rowerData);
+					enableNotification(connected, rowerData);
 				}
 			}
 		}

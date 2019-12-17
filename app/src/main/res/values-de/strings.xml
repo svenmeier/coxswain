@@ -155,7 +155,7 @@
     <string name="bluetooth_rower_no_location">Bluetooth erfordert aktivierte Standortdienste</string>
     <string name="bluetooth_rower_failed">Bluetooth Verbindung mit %s gescheitert</string>
     <string name="bluetooth_rower_not_found">Bluetooth kein Ruderer auf %s gefunden </string>
-    <string name="bluetooth_rower_notification_timeout">Bluetooth Benachrichtigungen Time-out</string>
+    <string name="bluetooth_rower_software_revision">Bluetooth S4 Firmware ist %s, bitte auf %s aktualisieren</string>
     <string name="bluetooth_rower_disconnected">Bluetooth Verbindung zu %s verloren</string>
 
     <string name="preference_training_title">Training</string>

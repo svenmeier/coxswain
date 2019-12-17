@@ -4,10 +4,6 @@ import android.annotation.TargetApi;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.os.Build;
 
-import java.util.Calendar;
-
-import svenmeier.coxswain.bluetooth.BlueUtils;
-
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class Fields {
 

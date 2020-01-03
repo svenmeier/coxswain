@@ -10,11 +10,9 @@ Coxswain helps you organize your rowing: Connect your Android device to your Wat
 - export your workout to Google Fit (experimental)
 - read heart rate from your Waterrower, Android sensor or a connected Bluetooth LE/Ant+ device
 
-You'll need
-
-- a USB On-The-Go (OTG) capable Android device
-- a USB-OTG adapter (USB-A/female to USB-micro/male or USB-C/male depending on your Android device)
-- Waterrower with S4
+Your Waterrower S4 can be connected to your Android device
+- either via USB-OTG adapter (USB-A-female to USB-micro/USB-C resp.), requires On-The-Go (OTG) support on your device
+- or Bluetooth, requires the Waterrower S4 Bluetooth Comm Module 
 
 Sideload from https://github.com/svenmeier/coxswain/releases/latest or install from Google Play:
 

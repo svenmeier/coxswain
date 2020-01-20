@@ -209,7 +209,9 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x08A, NumberField.TRIPLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                measurement.setEnergy(value / 1000);
+                if (resetting == false) {
+                    measurement.setEnergy(value / 1000);
+                }
             }
         });
 

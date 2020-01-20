@@ -142,6 +142,7 @@ public class SnapshotsActivity extends AbstractActivity {
             }
 
             chartView.setData(new LineData((dataSets)));
+            chartView.invalidate();
         }
 
         private LineDataSet createDataSet(int size, int label, int color) {
@@ -166,8 +167,8 @@ public class SnapshotsActivity extends AbstractActivity {
         @Override
         public String getFormattedValue(float value) {
 
-            int minutes = Math.round(value / 60);
-            int seconds = Math.round(value % 60);
+            int minutes = (int)(value / 60);
+            int seconds = (int)(value % 60);
 
             return String.format("%d:%02d", minutes, seconds);
         }

@@ -1,3 +1,6 @@
+6.9
+  - fixed measurement of durations longer than 60 minutes
+
 6.8
   - reset rower via bluetooth
   - fixed values of snapshot axis

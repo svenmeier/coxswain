@@ -462,8 +462,10 @@ public class BluetoothRower extends Rower {
 				String minVersion = "4.2";
 				if (version.compareTo(minVersion) < 0) {
 					// old firmware rejects re-bonding of a previously bonded device,
-					// so do not write to the control point, as this triggeres a bond
-					toast(context.getString(R.string.bluetooth_rower_software_revision, version, minVersion));
+					// so do not write to the control point, as this triggers a bond
+					if (BuildConfig.DEBUG) {
+						toast(String.format("!! Firmware %s outdated !!",  version));
+					}
 				} else {
 					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);
 					if (controlPoint == null) {
@@ -546,10 +548,14 @@ public class BluetoothRower extends Rower {
 					}
 					if (fields.flag(11)) {
 						int elapsedTime = fields.get(Fields.UINT16); // elapsed time
-						//  erroneous  values are sent on minute and hour boundaries,
-						//  so ignore these deltas
-						int delta = Math.abs(elapsedTime - duration);
-						if (delta >= 58 && delta <= 62) {
+						if (duration != elapsedTime) {
+							Log.i(Coxswain.TAG, String.format("bluetooth rower elapsed time %s, was %s", elapsedTime, duration));
+						}
+
+						//  erroneous values are sent on last second of each minute
+						boolean lastSecondOfMinute = (duration % 60 == 59);
+						int delta = elapsedTime - duration;
+						if (lastSecondOfMinute && (delta < -10 || delta > 10)) {
 							Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
 							if (BuildConfig.DEBUG) {
 								toast(String.format("!! Time error %s !!",  delta));

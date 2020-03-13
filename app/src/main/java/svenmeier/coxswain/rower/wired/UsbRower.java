@@ -32,6 +32,8 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.rower.FileTrace;
+import svenmeier.coxswain.rower.NullTrace;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 import svenmeier.coxswain.rower.wired.usb.UsbTransfer;
@@ -53,8 +55,6 @@ public class UsbRower extends Rower implements Runnable {
 
     private BroadcastReceiver receiver;
 
-    private ITrace trace;
-
     public UsbRower(Context context, UsbDevice device, Callback callback) {
         super(context, callback);
         
@@ -71,10 +71,6 @@ public class UsbRower extends Rower implements Runnable {
         if (connection != null) {
             return;
         }
-
-        initTrace();
-
-        trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
 
         if (initConnection() == false) {
 			callback.onDisconnected();
@@ -120,12 +116,12 @@ public class UsbRower extends Rower implements Runnable {
 
     @Override
     public void close() {
+        super.close();
+
     	if (receiver != null) {
 			context.unregisterReceiver(receiver);
 			receiver = null;
 		}
-
-        closeTrace();
 
         this.transfer = null;
 
@@ -150,27 +146,6 @@ public class UsbRower extends Rower implements Runnable {
             protocol.transfer(this);
 
             notifyMeasurement();
-        }
-    }
-
-    private void initTrace() {
-        if (Preference.getBoolean(context, R.string.preference_hardware_trace).get()) {
-            try {
-                trace = new FileTrace(context);
-
-                return;
-            } catch (Exception e) {
-                Log.e(Coxswain.TAG, "cannot open trace", e);
-            }
-        }
-
-        trace = new NullTrace();
-    }
-
-    private void closeTrace() {
-        if (trace != null) {
-            trace.close();
-            trace = null;
         }
     }
 

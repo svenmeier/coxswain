@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.ITrace;
 import svenmeier.coxswain.rower.wired.usb.Consumer;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 

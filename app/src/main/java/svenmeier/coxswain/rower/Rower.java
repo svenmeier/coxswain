@@ -17,9 +17,12 @@ package svenmeier.coxswain.rower;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.BuildConfig;
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.gym.Measurement;
 
@@ -44,6 +47,8 @@ public abstract class Rower extends Measurement {
 
     private Adjuster energyAdjuster = new Adjuster();
 
+    protected ITrace trace = new NullTrace();
+
     protected Rower(Context context, Callback callback) {
         this.context = context;
         this.callback = callback;
@@ -55,6 +60,15 @@ public abstract class Rower extends Measurement {
         if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
             speedAdjuster = new SpeedAdjuster();
         }
+
+        if (Preference.getBoolean(context, R.string.preference_hardware_trace).get()) {
+            try {
+                trace = new FileTrace(context);
+            } catch (Exception e) {
+                Log.e(Coxswain.TAG, "cannot open trace", e);
+            }
+        }
+        trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
     }
 
     public abstract String getName();
@@ -93,7 +107,12 @@ public abstract class Rower extends Measurement {
     /**
      * Close the rower.
      */
-    public abstract void close();
+    public void close() {
+        if (trace != null) {
+            trace.close();
+            trace = new NullTrace();
+        }
+    }
 
     public interface Callback {
         void onConnected();

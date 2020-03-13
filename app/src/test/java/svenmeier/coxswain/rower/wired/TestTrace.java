@@ -1,5 +1,7 @@
 package svenmeier.coxswain.rower.wired;
 
+import svenmeier.coxswain.rower.ITrace;
+
 import static org.junit.Assert.assertEquals;
 
 /**

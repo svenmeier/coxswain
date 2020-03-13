@@ -93,6 +93,8 @@ public class BluetoothRower extends Rower {
 	
 	@Override
 	public void close() {
+		super.close();
+
 		while (connections.isEmpty() == false) {
 			pop();
 		}
@@ -361,7 +363,7 @@ public class BluetoothRower extends Rower {
 			try {
 				BluetoothDevice device = adapter.getRemoteDevice(address);
 
-				Log.d(Coxswain.TAG, "bluetooth rower connecting " + address);
+				trace.onOutput(String.format("connecting %s", address));
 				connected = device.connectGatt(context, false, this);
 
 				handler.postDelayed(this, CONNECT_TIMEOUT_MILLIS);
@@ -379,13 +381,14 @@ public class BluetoothRower extends Rower {
 			String address = gatt.getDevice().getAddress();
 
 			if (newState == BluetoothProfile.STATE_CONNECTED) {
-				Log.d(Coxswain.TAG, "bluetooth rower connected " + address);
+				trace.onInput(String.format("rower connected %s", address));
 
 				connected = gatt;
+				trace.onInput("discovering services");
 				connected.discoverServices();
 			} else if (newState == BluetoothProfile.STATE_DISCONNECTED ) {
 				if (connected != null && connected.getDevice().getAddress().equals(address)) {
-					Log.d(Coxswain.TAG, "bluetooth rower disconnected " + address);
+					trace.onInput(String.format("rower disconnected %s", address));
 
 					if (adapter.isEnabled()) {
 						toast(context.getString(R.string.bluetooth_rower_disconnected, address));
@@ -416,6 +419,7 @@ public class BluetoothRower extends Rower {
 
 		public void reset() {
 			if (connected != null && controlPoint != null) {
+				trace.onOutput("control-point resetting");
 				write(connected, controlPoint, OP_CODE_RESET);
 			}
 		}
@@ -426,17 +430,21 @@ public class BluetoothRower extends Rower {
 				return;
 			}
 
+			trace.onInput("services discovered");
+
 			rowerData = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_ROWER_DATA);
 			if (rowerData == null) {
-				Log.d(Coxswain.TAG, "bluetooth no rower data");
+				trace.comment("no rower-data");
 			} else {
+				trace.onOutput("rower-data enable notification");
 				enableNotification(gatt, rowerData);
 			}
 
 			softwareRevision = get(gatt, SERVICE_DEVICE_INFORMATION, CHARACTERISTIC_SOFTWARE_REVISION);
 			if (softwareRevision == null) {
-				Log.d(Coxswain.TAG, "bluetooth no software revision");
+				trace.comment("no software-revision");
 			} else {
+				trace.onOutput("reading software-revision");
 				read(connected, softwareRevision);
 			}
 
@@ -457,21 +465,21 @@ public class BluetoothRower extends Rower {
 		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 			if (softwareRevision != null && characteristic.getUuid().equals(softwareRevision.getUuid())) {
 				String version = softwareRevision.getStringValue(0);
-				Log.d(Coxswain.TAG, String.format("bluetooth rower software revision %s", version));
+				trace.onInput(String.format("software-revision %s", version));
 
 				String minVersion = "4.2";
 				if (version.compareTo(minVersion) < 0) {
 					// old firmware rejects re-bonding of a previously bonded device,
 					// so do not write to the control point, as this triggers a bond
-					if (BuildConfig.DEBUG) {
-						toast(String.format("!! Firmware %s outdated !!",  version));
-					}
 				} else {
 					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);
 					if (controlPoint == null) {
-						Log.d(Coxswain.TAG, "bluetooth no control point");
+						trace.comment("no control-point");
 					} else {
+						trace.onOutput(String.format("control-point enabling indication"));
 						enableIndication(connected, controlPoint);
+
+						trace.onOutput(String.format("control-point requesting control"));
 						write(connected, controlPoint, OP_CODE_REQUEST_CONTROL);
 
 						if (resetting == true) {
@@ -491,12 +499,10 @@ public class BluetoothRower extends Rower {
 			}
 
 			if (controlPoint != null && characteristic.getUuid().equals(controlPoint.getUuid())) {
-				Log.d(Coxswain.TAG, "bluetooth rower indication control-point");
-
-				if (BuildConfig.DEBUG) {
-					toast("control-point changed " + ByteUtils.toHex(characteristic.getValue()));
-				}
+				trace.onInput(String.format("control-point changed %s", ByteUtils.toHex(characteristic.getValue())));
 			} else if (rowerData != null && characteristic.getUuid().equals(rowerData.getUuid())) {
+				trace.onInput(String.format("rower-data changed %s", ByteUtils.toHex(characteristic.getValue())));
+
 				keepAlive.onNotification();
 
 				int duration = getDuration();
@@ -548,18 +554,15 @@ public class BluetoothRower extends Rower {
 					}
 					if (fields.flag(11)) {
 						int elapsedTime = fields.get(Fields.UINT16); // elapsed time
-						if (duration != elapsedTime) {
-							Log.i(Coxswain.TAG, String.format("bluetooth rower elapsed time %s, was %s", elapsedTime, duration));
+						if (elapsedTime != duration) {
+							trace.comment(String.format("elapsed time %s", elapsedTime));
 						}
 
 						//  erroneous values are sent on last second of each minute
 						boolean lastSecondOfMinute = (duration % 60 == 59);
 						int delta = elapsedTime - duration;
 						if (lastSecondOfMinute && (delta < -10 || delta > 10)) {
-							Log.d(Coxswain.TAG, String.format("bluetooth rower erroneous elapsed time %s, duration is %s", elapsedTime, duration));
-							if (BuildConfig.DEBUG) {
-								toast(String.format("!! Time error %s !!",  delta));
-							}
+							trace.comment(String.format("elapsed time erroneous %s, duration is %s", elapsedTime, duration));
 						} else {
 							duration = elapsedTime;
 						}
@@ -569,11 +572,12 @@ public class BluetoothRower extends Rower {
 					}
 				} catch (NullPointerException ex) {
 					// rarely flags and fields do not match up
-					Log.d(Coxswain.TAG, "bluetooth rower field mismatch");
+					trace.comment("field mismatch");
 				}
 
 				if (resetting) {
 					if (distance + duration + energy + strokes == 0) {
+						trace.comment("resetted");
 						resetting = false;
 					}
 				} else {
@@ -592,6 +596,8 @@ public class BluetoothRower extends Rower {
 		@Override
 		public void run() {
 			if (connected != null && rowerData == null) {
+				trace.comment("connection timeout");
+
 				toast(context.getString(R.string.bluetooth_rower_failed, connected.getDevice().getAddress()));
 
 				select();
@@ -621,14 +627,8 @@ public class BluetoothRower extends Rower {
 			@Override
 			public void run() {
 				if (rowerData != null) {
-
-					Log.d(Coxswain.TAG, "bluetooth rower notifications time-out");
-
-					if (BuildConfig.DEBUG) {
-						toast("!! Notification timeout !!");
-					}
-
 					// re-enable notification
+					trace.comment("rower-data reenable notification");
 					enableNotification(connected, rowerData);
 				}
 			}

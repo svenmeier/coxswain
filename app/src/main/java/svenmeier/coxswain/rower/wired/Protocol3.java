@@ -16,6 +16,7 @@
 package svenmeier.coxswain.rower.wired;
 
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.ITrace;
 import svenmeier.coxswain.rower.wired.usb.Consumer;
 import svenmeier.coxswain.rower.wired.usb.ITransfer;
 import svenmeier.coxswain.util.ByteUtils;

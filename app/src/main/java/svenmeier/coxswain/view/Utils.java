@@ -18,12 +18,9 @@ package svenmeier.coxswain.view;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
 
-import java.util.List;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by sven on 19.08.15.

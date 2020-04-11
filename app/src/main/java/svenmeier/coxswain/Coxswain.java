@@ -2,7 +2,8 @@ package svenmeier.coxswain;
 
 import android.app.Application;
 import android.os.Build;
-import android.support.v7.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 /**
  */

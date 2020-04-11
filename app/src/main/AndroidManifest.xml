@@ -141,14 +141,16 @@
         </service>
         <service
             android:name=".CompactService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/> <!-- needed for API 24+ for content observers registered by Propoid -->
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <!-- needed for API 24+ for content observers registered by Propoid -->
         <provider
             android:name=".GymContentProvider"
             android:authorities="svenmeier.coxswain.gym"
             android:enabled="true"
-            android:exported="false"/> <!-- needed for API 24+ for sharing file uri by exports -->
+            android:exported="false"/>
+        <!-- needed for API 24+ for sharing file uri by exports -->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="svenmeier.coxswain.files"
             android:exported="false"
             android:grantUriPermissions="true">

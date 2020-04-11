@@ -26,8 +26,9 @@ import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;

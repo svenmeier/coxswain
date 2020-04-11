@@ -18,7 +18,7 @@ package svenmeier.coxswain;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 import android.util.Log;
 
 import java.util.ArrayList;

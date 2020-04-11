@@ -19,9 +19,10 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.WorkerThread;
 
 import java.util.ArrayDeque;
 

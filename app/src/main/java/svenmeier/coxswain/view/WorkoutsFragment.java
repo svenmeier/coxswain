@@ -17,11 +17,6 @@ package svenmeier.coxswain.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -35,6 +30,13 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
+
 import propoid.core.Property;
 import propoid.db.Order;
 import propoid.ui.list.GenericRecyclerAdapter;
@@ -43,7 +45,6 @@ import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
-import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.rower.Distance;
 import svenmeier.coxswain.rower.Energy;
@@ -85,7 +86,7 @@ public class WorkoutsFragment extends Fragment {
             adapter.restartLoader(0, this);
 
             if (text != null) {
-                Snackbar.make(getView(), text, Toast.LENGTH_SHORT)
+                Snackbar.make(getView(), text, Snackbar.LENGTH_SHORT)
                         .setAction(R.string.action_sort_ascending, new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {

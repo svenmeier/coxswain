@@ -17,13 +17,11 @@ package svenmeier.coxswain;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 import android.text.format.DateUtils;
-import android.util.TypedValue;
 import android.view.MenuItem;
+
+import androidx.core.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;

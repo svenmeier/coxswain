@@ -1,17 +1,15 @@
 package svenmeier.coxswain.view.preference;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 
-import svenmeier.coxswain.R;
+import androidx.preference.Preference;
 
 /**
  * An specialization that substitutes the current text into the summary (as ListPreference does it
  * too).
  */
-public class EditTextPreference extends android.support.v7.preference.EditTextPreference {
+public class EditTextPreference extends androidx.preference.EditTextPreference {
 
 	public EditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);

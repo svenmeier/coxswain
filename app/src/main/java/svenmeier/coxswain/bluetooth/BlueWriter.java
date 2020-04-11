@@ -7,8 +7,9 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.os.Build;
-import android.support.annotation.CallSuper;
 import android.util.Log;
+
+import androidx.annotation.CallSuper;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

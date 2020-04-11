@@ -7,9 +7,10 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Process;
-import android.support.annotation.UiThread;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.UiThread;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -32,7 +32,7 @@
                 />
         </FrameLayout>
 
-        <android.support.v7.widget.GridLayout
+        <androidx.gridlayout.widget.GridLayout
             android:id="@+id/workout_grid"
             android:layout_width="0dp"
             android:layout_weight="8"

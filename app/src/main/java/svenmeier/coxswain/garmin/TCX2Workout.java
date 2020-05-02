@@ -147,6 +147,7 @@ public class TCX2Workout {
 		if (navigator.descent("Extensions")) {
 			if (navigator.descent("TPX")) {
 				snapshot.speed.set(Math.round(Float.parseFloat(navigator.getText("Speed")) * 100));
+				snapshot.power.set(Integer.parseInt(navigator.getText("Watts")));
 				navigator.ascent();
 			}
 			navigator.ascent();

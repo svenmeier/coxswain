@@ -49,6 +49,7 @@ public class TCX2WorkoutTest {
 		assertEquals(25, (int)snapshot.strokeRate.get());
 		assertEquals(2, (int)snapshot.distance.get());
 		assertEquals(0, (int)snapshot.strokes.get()); // trackpoints do not have steps
+		assertEquals(0, (int)snapshot.power.get());
 
 		snapshot = snapshots.get(1);
 		assertEquals(4_51, (int)snapshot.speed.get());
@@ -56,6 +57,7 @@ public class TCX2WorkoutTest {
 		assertEquals(26, (int)snapshot.strokeRate.get());
 		assertEquals(4, (int)snapshot.distance.get());
 		assertEquals(0, (int)snapshot.strokes.get()); // trackpoints do not have steps
+		assertEquals(1, (int)snapshot.power.get());
 
 		snapshot = snapshots.get(2);
 		assertEquals(4_52, (int)snapshot.speed.get());
@@ -63,6 +65,7 @@ public class TCX2WorkoutTest {
 		assertEquals(27, (int)snapshot.strokeRate.get());
 		assertEquals(6, (int)snapshot.distance.get());
 		assertEquals(0, (int)snapshot.strokes.get()); // trackpoints do not have steps
+		assertEquals(2, (int)snapshot.power.get());
 
 		assertEquals("Test Program", to.getProgramName());
 	}

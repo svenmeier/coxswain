@@ -24,6 +24,7 @@
             <Extensions>
               <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
                 <Speed>4.5</Speed>
+                <Watts>0</Watts>
               </TPX>
             </Extensions>
           </Trackpoint>
@@ -41,6 +42,7 @@
             <Extensions>
               <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
                 <Speed>4.51</Speed>
+                <Watts>1</Watts>
               </TPX>
             </Extensions>
           </Trackpoint>
@@ -58,6 +60,7 @@
             <Extensions>
               <TPX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2">
                 <Speed>4.52</Speed>
+                <Watts>2</Watts>
               </TPX>
             </Extensions>
           </Trackpoint>

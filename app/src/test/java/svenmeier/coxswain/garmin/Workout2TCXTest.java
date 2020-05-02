@@ -68,6 +68,7 @@ public class Workout2TCXTest {
 		snapshot.strokeRate.set(25);
 		snapshot.distance.set(2);
 		snapshot.strokes.set(0);
+		snapshot.power.set(0);
 		snapshots.add(snapshot);
 
 		snapshot = new Snapshot();
@@ -76,6 +77,7 @@ public class Workout2TCXTest {
 		snapshot.strokeRate.set(26);
 		snapshot.distance.set(4);
 		snapshot.strokes.set(1);
+		snapshot.power.set(1);
 		snapshots.add(snapshot);
 
 		snapshot = new Snapshot();
@@ -84,6 +86,7 @@ public class Workout2TCXTest {
 		snapshot.strokeRate.set(27);
 		snapshot.distance.set(6);
 		snapshot.strokes.set(2);
+		snapshot.power.set(2);
 		snapshots.add(snapshot);
 
 		StringWriter writer = new StringWriter();

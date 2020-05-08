@@ -10,7 +10,7 @@ import com.google.android.gms.fitness.data.Session;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +23,7 @@ import svenmeier.coxswain.gym.Workout;
  */
 public class Workout2Fit {
 
-	private static final int MAX_DATAPOINTS = 1000;
+	public static final int MAX_DATAPOINTS = 1000;
 
 	private SimpleDateFormat dateFormat;
 
@@ -47,50 +47,19 @@ public class Workout2Fit {
 				.build();
 	}
 
-	public Iterable<DataSet> dataSets(final Workout workout, final List<Snapshot> snapshots) {
-		return new Iterable<DataSet>() {
-			@Override
-			public Iterator<DataSet> iterator() {
-				return new Iterator<DataSet>() {
-					private List<Mapper> mappers = new ArrayList<>();
+	public Collection<Mapper> mappers() {
+		List<Mapper> mappers = new ArrayList<>();
 
-					{
-						mappers.add(new AggregateCaloriesExpended());
-					    mappers.add(new AggregateDistanceDelta());
+		mappers.add(new AggregateCaloriesExpended());
+		mappers.add(new AggregateDistanceDelta());
+		mappers.add(new Speed());
+		mappers.add(new HeartRateBpm());
+		mappers.add(new Power());
 
-						int to = snapshots.size();
-					    while (to > 0) {
-							int from = to - Math.min(to, MAX_DATAPOINTS);
-
-							mappers.add(new Speed(from, to));
-							mappers.add(new HeartRateBpm(from, to));
-
-							to = from;
-						}
-					}
-
-					@Override
-					public boolean hasNext() {
-						return mappers.isEmpty() == false;
-					}
-
-					@Override
-					public DataSet next() {
-						Mapper mapper = mappers.remove(mappers.size() - 1);
-
-						return mapper.dataSet(workout, snapshots);
-					}
-
-					@Override
-					public void remove() {
-						throw new UnsupportedOperationException();
-					}
-				};
-			}
-		};
+		return mappers;
 	}
 
-	private abstract class Mapper {
+	public abstract class Mapper {
 
 		public DataSet dataSet(Workout workout, List<Snapshot> snapshots) {
 			DataSource dataSource = new DataSource.Builder()
@@ -99,99 +68,103 @@ public class Workout2Fit {
 					.setAppPackageName(BuildConfig.APPLICATION_ID)
 					.build();
 
-			DataSet dataSet = DataSet.create(dataSource);
+			DataSet.Builder dataSet = DataSet.builder(dataSource);
 
-			map(dataSet, workout, snapshots);
+			map(dataSource, dataSet, workout, snapshots);
 
-			return dataSet;
+			return dataSet.build();
 		}
 
-		protected abstract DataType type();
+		public abstract DataType type();
 
-		protected abstract void map(DataSet dataSet, Workout workout, List<Snapshot> snapshots);
+		protected abstract void map(DataSource dataSource, DataSet.Builder dataSet, Workout workout, List<Snapshot> snapshots);
 	}
 
 	private abstract class AbstractSnapshotMapper extends Mapper {
 
-		private final int from;
-		private final int to;
-
-		public AbstractSnapshotMapper(int from, int to) {
-			this.from = from;
-			this.to = to;
-		}
-
 		@Override
-		protected void map(DataSet dataSet, Workout workout, List<Snapshot> snapshots) {
-			for (int index = from; index < to; index++) {
+		protected void map(DataSource dataSource, DataSet.Builder dataSet, Workout workout, List<Snapshot> snapshots) {
+
+			int size = snapshots.size();
+			for (int i = 0; i < Math.min(size, MAX_DATAPOINTS); i++) {
+				int index;
+				if (size < MAX_DATAPOINTS) {
+					index = i;
+				} else {
+					index = (size * i / MAX_DATAPOINTS);
+				}
 				Snapshot snapshot = snapshots.get(index);
 
-				DataPoint point = dataSet.createDataPoint();
-				point.setTimestamp(timestamp(workout, index), TimeUnit.MILLISECONDS);
-				map(snapshot, point);
-				dataSet.add(point);
+				DataPoint.Builder pointr = DataPoint.builder(dataSource);
+				pointr.setTimestamp(timestamp(workout, index), TimeUnit.MILLISECONDS);
+				map(snapshot, pointr);
+				dataSet.add(pointr.build());
 			}
 		}
 
-		protected abstract void map(Snapshot snapshot, DataPoint point);
+		protected abstract void map(Snapshot snapshot, DataPoint.Builder point);
 	}
 
 	private class Speed extends AbstractSnapshotMapper {
-		public Speed(int from, int to) {
-			super(from, to);
-		}
-
 		@Override
 		public DataType type() {
 			return DataType.TYPE_SPEED;
 		}
 
 		@Override
-		public void map(Snapshot snapshot, DataPoint point) {
-			point.getValue(Field.FIELD_SPEED).setFloat(snapshot.speed.get() / 100f);
+		public void map(Snapshot snapshot, DataPoint.Builder point) {
+			point.setField(Field.FIELD_SPEED, (float)snapshot.speed.get() / 100f);
 		}
 	}
 
 	private class HeartRateBpm extends AbstractSnapshotMapper {
-		public HeartRateBpm(int from, int to) {
-			super(from, to);
-		}
-
 		@Override
 		public DataType type() {
 			return DataType.TYPE_HEART_RATE_BPM;
 		}
 
 		@Override
-		public void map(Snapshot snapshot, DataPoint point) {
-			point.getValue(Field.FIELD_BPM).setFloat(snapshot.pulse.get());
+		public void map(Snapshot snapshot, DataPoint.Builder point) {
+			point.setField(Field.FIELD_BPM, (float)snapshot.pulse.get());
+		}
+	}
+
+	private class Power extends AbstractSnapshotMapper {
+		@Override
+		public DataType type() {
+			return DataType.TYPE_POWER_SAMPLE;
+		}
+
+		@Override
+		public void map(Snapshot snapshot, DataPoint.Builder point) {
+			point.setField(Field.FIELD_WATTS, (float)snapshot.power.get());
 		}
 	}
 
 	private abstract class AbstractWorkoutMapper extends Mapper {
 
 		@Override
-		protected void map(DataSet dataSet, Workout workout, List<Snapshot> snapshots) {
-			DataPoint point = dataSet.createDataPoint();
+		protected void map(DataSource dataSource, DataSet.Builder dataSet, Workout workout, List<Snapshot> snapshots) {
+			DataPoint.Builder point = DataPoint.builder(dataSource);
 			point.setTimeInterval(timestamp(workout, 0), timestamp(workout, workout.duration.get()), TimeUnit.MILLISECONDS);
 			map(workout, point);
-			dataSet.add(point);
+			dataSet.add(point.build());
 		}
 
-		public abstract void map(Workout workout, DataPoint point);
+		public abstract void map(Workout workout, DataPoint.Builder point);
 	}
 
 	private class AggregateDistanceDelta extends AbstractWorkoutMapper {
 
 		@Override
 		public DataType type() {
-			// DataType.TYPE_DISTANCE_CUMULATIVE does not show up in Fit
+			// aggregated over time interval
 			return DataType.AGGREGATE_DISTANCE_DELTA;
 		}
 
 		@Override
-		public void map(Workout workout, DataPoint point) {
-			point.getValue(Field.FIELD_DISTANCE).setFloat(workout.distance.get());
+		public void map(Workout workout, DataPoint.Builder point) {
+			point.setField(Field.FIELD_DISTANCE, (float)workout.distance.get());
 		}
 	}
 
@@ -199,15 +172,13 @@ public class Workout2Fit {
 
 		@Override
 		public DataType type() {
-			// DataType.TYPE_CALORIES_EXPENDED does not show up in Fit
+			// aggregated over time interval
 			return DataType.AGGREGATE_CALORIES_EXPENDED;
 		}
 
 		@Override
-		public void map(Workout workout, DataPoint point) {
-			int temp = workout.energy.get();
-
-			point.getValue(Field.FIELD_CALORIES).setFloat(temp);
+		public void map(Workout workout, DataPoint.Builder point) {
+			point.setField(Field.FIELD_CALORIES, (float)workout.energy.get());
 		}
 	}
 }

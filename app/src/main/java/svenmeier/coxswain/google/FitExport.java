@@ -9,16 +9,29 @@ import android.os.Process;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessOptions;
+import com.google.android.gms.fitness.HistoryClient;
+import com.google.android.gms.fitness.SessionsClient;
 import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,38 +78,30 @@ public class FitExport extends Export<Workout> {
 		});
 	}
 
-	private class Connection implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, Runnable {
-
-		private final GoogleApiClient client;
+	private class Connection implements Runnable, OnCompleteListener<Void>, OnFailureListener, OnSuccessListener<Void> {
 
 		private final int REQUEST_CODE = 1;
 
+		private final Workout2Fit workout2Fit;
+
+		private final GoogleSignInAccount account;
+
 		public Connection() {
-			client = new GoogleApiClient.Builder(context)
-					.addApi(Fitness.SESSIONS_API)
-					.addApi(Fitness.HISTORY_API)
-					.addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-					.addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
-					.addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
-					.addConnectionCallbacks(this)
-					.addOnConnectionFailedListener(this)
-					.build();
+			workout2Fit = new Workout2Fit();
 
-			client.connect();
-		}
+			account = GoogleSignIn.getLastSignedInAccount(context);
 
-		@Override
-		public void onConnectionFailed(ConnectionResult result) {
-			if (result.hasResolution() && context instanceof Activity) {
-				try {
-					result.startResolutionForResult((Activity) context, REQUEST_CODE);
-					return;
-				} catch (IntentSender.SendIntentException e) {
-					Log.e(Coxswain.TAG, "start resolution failed", e);
-				}
+			FitnessOptions.Builder builder = FitnessOptions.builder();
+			for (Workout2Fit.Mapper mapper : workout2Fit.mappers()) {
+				builder.addDataType(mapper.type(), FitnessOptions.ACCESS_WRITE);
 			}
 
-			toast(context.getString(R.string.googlefit_export_failed));
+			FitnessOptions fitnessOptions = builder.build();
+			if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
+				GoogleSignIn.requestPermissions((Activity)context, REQUEST_CODE, account, fitnessOptions);
+			} else {
+				new Thread(this).start();
+			}
 		}
 
 		/**
@@ -104,19 +109,7 @@ public class FitExport extends Export<Workout> {
 		 */
 		public void onResult(int requestCode, int resultCode) {
 			if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-				if (client.isConnecting() == false && client.isConnected() == false) {
-					client.connect();
-				}
 			}
-		}
-
-		@Override
-		public void onConnected(Bundle bundle) {
-			new Thread(this).start();
-		}
-
-		@Override
-		public void onConnectionSuspended(int i) {
 		}
 
 		@Override
@@ -125,42 +118,45 @@ public class FitExport extends Export<Workout> {
 			Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
 			List<Snapshot> snapshots = gym.getSnapshots(workout).list();
+
 			try {
-				Workout2Fit workout2Fit = new Workout2Fit();
 
-				Status status;
-				String rejected = null;
-
-				Session session = workout2Fit.session(workout);
-				SessionInsertRequest insertSession = new SessionInsertRequest.Builder()
-						.setSession(session)
-						.build();
-				status = Fitness.SessionsApi.insertSession(client, insertSession).await(1, TimeUnit.MINUTES);
-				if (status.isSuccess() == false) {
-					Log.e(Coxswain.TAG, "insert session rejected " + status);
-					rejected = "SESSION";
-				} else {
-					for (DataSet dataSet : workout2Fit.dataSets(workout, snapshots)) {
-						status = Fitness.HistoryApi.insertData(client, dataSet).await(1, TimeUnit.MINUTES);
-						if (status.isSuccess() == false) {
-							Log.e(Coxswain.TAG, "insert dataset rejected " + status);
-							rejected = dataSet.getDataType().getName();
-						}
-					}
+				SessionInsertRequest.Builder builder = new SessionInsertRequest.Builder()
+						.setSession(workout2Fit.session(workout));
+				for (Workout2Fit.Mapper mapper : workout2Fit.mappers()) {
+					builder.addDataSet(mapper.dataSet(workout, snapshots));
 				}
 
-				if (rejected == null) {
-					toast(context.getString(R.string.googlefit_export_finished));
-				} else {
-					toast(context.getString(R.string.googlefit_export_rejected, rejected));
-				}
+				SessionInsertRequest request = builder.build();
+
+				Fitness.getSessionsClient(context, account)
+						.insertSession(request)
+						.addOnFailureListener(this)
+						.addOnSuccessListener(this)
+						.addOnCompleteListener(this);
 			} catch (Exception ex) {
+				Log.e(Coxswain.TAG, "googlefit failed",  ex);
+
 				toast(context.getString(R.string.googlefit_export_failed));
 			} finally {
 				snapshots.clear();
-
-				client.disconnect();
 			}
+		}
+
+		@Override
+		public void onFailure(@NonNull Exception ex) {
+			Log.e(Coxswain.TAG, "googlefit failed",  ex);
+
+			toast(context.getString(R.string.googlefit_export_failed));
+		}
+
+		@Override
+		public void onSuccess(Void aVoid) {
+			toast(context.getString(R.string.googlefit_export_finished));
+		}
+
+		@Override
+		public void onComplete(@NonNull Task<Void> task) {
 		}
 	}
 }

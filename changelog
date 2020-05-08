@@ -1,3 +1,6 @@
+7.1
+  - reimplemented Google Fit access
+
 7.0
   - write trace for bluetooth rower
   - fixed invalid reading via bluetooth at 60 minutes

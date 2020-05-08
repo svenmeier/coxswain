@@ -45,6 +45,7 @@ dependencies {
     implementation "com.google.android.material:material:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
     implementation "com.google.android.gms:play-services-fitness:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     testImplementation 'junit:junit:4.12'
     testImplementation('org.robolectric:robolectric:3.4.2') {

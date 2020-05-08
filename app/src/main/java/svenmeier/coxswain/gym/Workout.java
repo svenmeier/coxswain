@@ -44,7 +44,7 @@ public class Workout extends Propoid {
     public final Property<Integer> strokes = property();
 
     /**
-     * Calories
+     * kilocalories
      */
     public final Property<Integer> energy = property();
 

@@ -126,7 +126,6 @@
     <string name="googlefit_export_starting">Exportiere nach Google Fit</string>
     <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
     <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>
-    <string name="googlefit_export_rejected">Export nach Google Fit hat %s abgewiesen</string>
 
     <string name="sensors_heart_rejected">Kein Zugriff auf Puls-Sensor</string>
     <string name="sensors_heart_not_found">Kein Puls-Sensor gefunden</string>

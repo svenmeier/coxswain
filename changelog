@@ -1,5 +1,6 @@
 7.1
   - reimplemented Google Fit access
+  - read power in tcx import
 
 7.0
   - write trace for bluetooth rower

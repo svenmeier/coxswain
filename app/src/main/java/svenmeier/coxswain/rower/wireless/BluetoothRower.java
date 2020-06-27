@@ -17,14 +17,10 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 
 import propoid.util.content.Preference;
-import svenmeier.coxswain.BuildConfig;
-import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.bluetooth.BlueWriter;
 import svenmeier.coxswain.bluetooth.BluetoothActivity;
@@ -54,6 +50,8 @@ public class BluetoothRower extends Rower {
 	private ArrayDeque<Connection> connections = new ArrayDeque<>();
 
 	private boolean resetting = false;
+
+	private int elapsedTime;
 
 	public BluetoothRower(Context context, Callback callback) {
 		super(context, callback);
@@ -553,19 +551,7 @@ public class BluetoothRower extends Rower {
 						fields.get(Fields.UINT8); // metabolic equivalent 0.1
 					}
 					if (fields.flag(11)) {
-						int elapsedTime = fields.get(Fields.UINT16); // elapsed time
-						if (elapsedTime != duration) {
-							trace.comment(String.format("elapsed time %s", elapsedTime));
-						}
-
-						//  erroneous values are sent on last second of each minute
-						boolean lastSecondOfMinute = (duration % 60 == 59);
-						int delta = elapsedTime - duration;
-						if (lastSecondOfMinute && (delta < -10 || delta > 10)) {
-							trace.comment(String.format("elapsed time erroneous %s, duration is %s", elapsedTime, duration));
-						} else {
-							duration = elapsedTime;
-						}
+						duration += durationDelta(fields.get(Fields.UINT16)); // elapsed time
 					}
 					if (fields.flag(12)) {
 						fields.get(Fields.UINT16); // remaining time
@@ -633,5 +619,39 @@ public class BluetoothRower extends Rower {
 				}
 			}
 		}
+	}
+
+	/**
+	 * The ComModule sends erroneous elapsed time values on minute boundaries:
+	 * <ul>
+	 *     <li>revisions 4.x jumps forward and back a minute but recovers shortly after</li>
+	 *     <li>revisions 1.x jumps back a minute and never recovers</li>
+	 * </ul>
+	 * Note: Since negative deltas are always ignored, a reset of the rower
+	 * can not be detected by means of a zero duration - distance and stroke count will have
+	 * to suffer for that.
+	 */
+	private int durationDelta(int elapsedTime) {
+		if (elapsedTime == this.elapsedTime) {
+			// no change
+			return 0;
+		}
+
+		int delta = elapsedTime - this.elapsedTime;
+		this.elapsedTime = elapsedTime;
+		trace.comment(String.format("elapsed time %+d = %d", delta, elapsedTime));
+
+		if (delta < 0) {
+			// ignore error
+			return 0;
+		}
+
+		if (delta > 5) {
+			// limit error
+			return 1;
+		}
+
+		// correct
+		return delta;
 	}
 }

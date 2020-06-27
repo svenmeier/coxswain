@@ -1,3 +1,6 @@
+7.2
+  - fixed premature ending of workout with 1.x revision of ComModule
+
 7.1
   - reimplemented Google Fit access
   - read power in tcx import

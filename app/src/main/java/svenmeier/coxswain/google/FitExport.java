@@ -98,7 +98,11 @@ public class FitExport extends Export<Workout> {
 
 			FitnessOptions fitnessOptions = builder.build();
 			if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
-				GoogleSignIn.requestPermissions((Activity)context, REQUEST_CODE, account, fitnessOptions);
+				if (context instanceof Activity) {
+					GoogleSignIn.requestPermissions((Activity)context, REQUEST_CODE, account, fitnessOptions);
+				} else {
+					toast(context.getString(R.string.googlefit_export_permissions_manual));
+				}
 			} else {
 				new Thread(this).start();
 			}

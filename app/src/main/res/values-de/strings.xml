@@ -123,6 +123,7 @@
 
     <string name="googlefit_failed">Google Fit ist nicht verfügbar</string>
     <string name="googlefit_export">Google Fit</string>
+    <string name="googlefit_export_permissions_manual">Erlaubnis erforderlich, bitte starte den Export manuell</string>
     <string name="googlefit_export_starting">Exportiere nach Google Fit</string>
     <string name="googlefit_export_finished">Exportiert nach Google Fit</string>
     <string name="googlefit_export_failed">Export nach Google Fit gescheitert</string>

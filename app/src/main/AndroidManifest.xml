@@ -18,15 +18,20 @@
         android:required="false"/> <!-- notifications -->
     <uses-permission android:name="android.permission.VIBRATE"/> <!-- service -->
     <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE"/> <!-- location & bluetooth -->
+        android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- location & bluetooth -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/> <!-- export TCX -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- export TCX -->
     <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- bluetooth heart rate -->
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- bluetooth heart rate -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/> <!-- sensor heart rate -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <!-- sensor heart rate -->
     <uses-permission
-        android:name="android.permission.BODY_SENSORS"/> <!-- export Calendar for >23 only -->
+        android:name="android.permission.BODY_SENSORS"/>
+    <!-- export Calendar for >23 only -->
     <uses-permission-sdk-23 android:name="android.permission.READ_CALENDAR"/>
     <uses-permission-sdk-23 android:name="android.permission.WRITE_CALENDAR"/>
 
@@ -137,7 +142,9 @@
 
         <service
             android:name=".GymService"
-            android:enabled="true">
+            android:enabled="true"
+            android:foregroundServiceType="location"
+            >
         </service>
         <service
             android:name=".CompactService"

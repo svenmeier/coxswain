@@ -144,7 +144,8 @@
     <string name="bluetooth_heart_failed">Bluetooth Verbindung mit %s gescheitert</string>
     <string name="bluetooth_heart_not_found">Bluetooth kein Puls auf %s gefunden </string>
     <string name="bluetooth_heart_connected">Bluetooth lese Puls von %s</string>
-    <string name="bluetooth_heart_disconnected">Bluetooth Verbindung zu %s verloren</string>
+    <string name="bluetooth_heart_disconnected">Bluetooth Puls Verbindung zu %s verloren</string>
+    <string name="bluetooth_heart_battery_level">Bluetooth Puls Batteriestand &lt; %d%%</string>
 
     <string name="bluetooth_choose">Wähle %s</string>
     <string name="bluetooth_choose_filtered">nur %s</string>
@@ -155,7 +156,8 @@
     <string name="bluetooth_rower_no_location">Bluetooth erfordert aktivierte Standortdienste</string>
     <string name="bluetooth_rower_failed">Bluetooth Verbindung mit %s gescheitert</string>
     <string name="bluetooth_rower_not_found">Bluetooth kein Ruderer auf %s gefunden </string>
-    <string name="bluetooth_rower_disconnected">Bluetooth Verbindung zu %s verloren</string>
+    <string name="bluetooth_rower_disconnected">Bluetooth Ruderer Verbindung zu %s verloren</string>
+    <string name="bluetooth_rower_battery_level">Bluetooth Ruderer Batteriestand &lt; %d%%</string>
 
     <string name="preference_training_title">Training</string>
 

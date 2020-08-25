@@ -30,7 +30,10 @@ public class BlueWriter extends BluetoothGattCallback {
 	public static final UUID CHARACTERISTIC_ROWER_DATA = uuid(0x2AD1);
 	public static final UUID CHARACTERISTIC_CONTROL_POINT = uuid(0x2AD9);
 
-	public static final UUID CLIENT_CHARACTERISTIC_DESCIPRTOR = uuid(0x2902);
+	public static final UUID SERVICE_BATTERY = uuid(0x180F);
+	public static final UUID CHARACTERISTIC_BATTERY_LEVEL = uuid(0x2A19);
+
+	public static final UUID CLIENT_CHARACTERISTIC_DESCRIPTOR = uuid(0x2902);
 
 	private Queue<Request> requests = new ArrayDeque<>();
 
@@ -102,7 +105,7 @@ public class BlueWriter extends BluetoothGattCallback {
 			public void request() {
 				gatt.setCharacteristicNotification(characteristic, true);
 
-				BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
+				BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCRIPTOR);
 				if (descriptor != null) {
 					descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
 					if (gatt.writeDescriptor(descriptor) == false) {
@@ -120,7 +123,7 @@ public class BlueWriter extends BluetoothGattCallback {
 			public void request() {
 				gatt.setCharacteristicNotification(characteristic, true);
 
-				BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCIPRTOR);
+				BluetoothGattDescriptor descriptor = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_DESCRIPTOR);
 				if (descriptor != null) {
 					descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
 					if (gatt.writeDescriptor(descriptor) == false) {

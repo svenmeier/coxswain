@@ -2,6 +2,8 @@ package svenmeier.coxswain.rower.wireless;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -17,10 +19,13 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.util.ArrayDeque;
+import java.util.UUID;
 
 import propoid.util.content.Preference;
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.bluetooth.BlueWriter;
 import svenmeier.coxswain.bluetooth.BluetoothActivity;
@@ -38,8 +43,10 @@ public class BluetoothRower extends Rower {
 	 */
 	private static final int NOTIFICATIONS_TIMEOUT = 2000;
 
-	private static byte OP_CODE_REQUEST_CONTROL = 0x00;
-	private static byte OP_CODE_RESET = 0x01;
+	private static final int BATTERY_LEVEL_NOTIFICATION_THRESHOLD = 25;
+
+	private static final byte OP_CODE_REQUEST_CONTROL = 0x00;
+	private static final byte OP_CODE_RESET = 0x01;
 
 	private final Context context;
 
@@ -336,6 +343,12 @@ public class BluetoothRower extends Rower {
 		private BluetoothGattCharacteristic softwareRevision;
 		private BluetoothGattCharacteristic rowerData;
 		private BluetoothGattCharacteristic controlPoint;
+		private BluetoothGattCharacteristic batteryLevel;
+		/**
+		 * CommModules without support for battery level send proprietary notifications
+		 * when on low battery level once a minute instead
+		 */
+		private BluetoothGattCharacteristic lowBattery;
 
 		GattConnection(String address) {
 			this.address = address;
@@ -346,8 +359,8 @@ public class BluetoothRower extends Rower {
 
 			handler.removeCallbacks(this);
 
-			pop();
-			pop();
+			pop(); // this
+			pop(); // previous selection
 			push(new SelectionConnection());
 		}
 
@@ -446,6 +459,22 @@ public class BluetoothRower extends Rower {
 				read(connected, softwareRevision);
 			}
 
+			batteryLevel = get(gatt, SERVICE_BATTERY, CHARACTERISTIC_BATTERY_LEVEL);
+			if (batteryLevel == null) {
+				trace.comment("no battery-level");
+			} else {
+				trace.onOutput("reading battery-level");
+				read(connected, batteryLevel);
+			}
+
+			lowBattery = get(gatt, UUID.fromString("00001001-C042-66BA-1335-90118F542C77"), UUID.fromString("8ec92002-f315-4f60-9fb8-838830daea50"));
+			if (lowBattery == null) {
+				trace.comment("no low-battery");
+			} else {
+				trace.onOutput("low-battery enable notification");
+				enableNotification(gatt, lowBattery);
+			}
+
 			if (rowerData == null)  {
 				toast(context.getString(R.string.bluetooth_rower_not_found, gatt.getDevice().getAddress()));
 				select();
@@ -463,7 +492,7 @@ public class BluetoothRower extends Rower {
 		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 			if (softwareRevision != null && characteristic.getUuid().equals(softwareRevision.getUuid())) {
 				String version = softwareRevision.getStringValue(0);
-				trace.onInput(String.format("software-revision %s", version));
+				trace.onInput(String.format("software-revision %s read", version));
 
 				String minVersion = "4.2";
 				if (version.compareTo(minVersion) < 0) {
@@ -485,6 +514,12 @@ public class BluetoothRower extends Rower {
 						}
 					}
 				}
+			} else if (batteryLevel != null && characteristic.getUuid().equals(batteryLevel.getUuid())) {
+				int level = batteryLevel.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+
+				trace.onInput(String.format("battery level %s read", level));
+
+				onBatteryLevel(level);
 			}
 
 			super.onCharacteristicRead(gatt, characteristic, status);
@@ -498,6 +533,14 @@ public class BluetoothRower extends Rower {
 
 			if (controlPoint != null && characteristic.getUuid().equals(controlPoint.getUuid())) {
 				trace.onInput(String.format("control-point changed %s", ByteUtils.toHex(characteristic.getValue())));
+			} else if (lowBattery != null && characteristic.getUuid().equals(lowBattery.getUuid())) {
+				trace.onInput(String.format("low-battery changed"));
+
+				// level is not known
+				onBatteryLevel(10);
+
+				// prevent further notifications
+				lowBattery = null;
 			} else if (rowerData != null && characteristic.getUuid().equals(rowerData.getUuid())) {
 				trace.onInput(String.format("rower-data changed %s", ByteUtils.toHex(characteristic.getValue())));
 
@@ -653,5 +696,20 @@ public class BluetoothRower extends Rower {
 
 		// correct
 		return delta;
+	}
+
+	private void onBatteryLevel(int level) {
+		if (level <= BATTERY_LEVEL_NOTIFICATION_THRESHOLD) {
+			NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+			Notification.Builder builder = new Notification.Builder(context)
+					.setContentText(context.getString(R.string.bluetooth_rower_battery_level, level));
+
+			Coxswain.initNotification(context, builder, "Hardware");
+
+			notificationManager.notify(R.string.bluetooth_rower_battery_level, builder.build());
+		} else {
+			Log.i(Coxswain.TAG, "bluetooth rower battery level " + level);
+		}
 	}
 }

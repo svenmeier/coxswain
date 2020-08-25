@@ -16,7 +16,6 @@
 package svenmeier.coxswain;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -49,6 +48,8 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
     public static final String CONNECTOR_MOCK = "CONNECTOR_MOCK";
 
     public static final String CONNECTOR_NONE = "CONNECTOR_NONE";
+
+    private static final int NOTIFICATION_ID = 1;
 
     private Gym gym;
 
@@ -208,40 +209,23 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
         private int progress = -1;
 
-        NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        private NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         private Notification.Builder builder;
 
         public Foreground() {
             builder = new Notification.Builder(GymService.this)
-                    .setSmallIcon(R.drawable.notification)
-                    .setContentTitle(getString(R.string.app_name))
                     .setOngoing(true)
-                    .setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setPriority(Notification.PRIORITY_DEFAULT);
+                    .setContentText(getString(R.string.gym_notification_connecting, rower.getName()))
+                    .setOnlyAlertOnce(false);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String id = "gym";
-                NotificationChannel channel = new NotificationChannel(id,
-                            "Gym", NotificationManager.IMPORTANCE_DEFAULT);
-                channel.enableVibration(true);
-                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                notificationManager.createNotificationChannel(channel);
-
-                builder.setChannelId(id);
-            }
+            Coxswain.initNotification(GymService.this, builder, "Gym");
 
             PendingIntent intent = PendingIntent.getService(getApplicationContext(), 0,
                     createIntent(getApplicationContext(), CONNECTOR_NONE), PendingIntent.FLAG_UPDATE_CURRENT);
             builder.addAction(0, getString(R.string.gym_notification_disconnect),intent);
 
-            builder.setContentText(getString(R.string.gym_notification_connecting, rower.getName()));
-            builder.setOnlyAlertOnce(false);
-            
-            startForeground(1, builder.build());
+            startForeground(NOTIFICATION_ID, builder.build());
         }
 
         public void connected() {
@@ -257,7 +241,8 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
             builder.setContentText(text);
             builder.setProgress(0, 0, false);
             builder.setOnlyAlertOnce(true);
-            notificationManager.notify(1, builder.build());
+
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
 
             this.text = text;
             this.progress = -1;
@@ -283,7 +268,8 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
             builder.setContentText(text);
             builder.setProgress(100, progress, false);
             builder.setOnlyAlertOnce(text.equals(this.text));
-            notificationManager.notify(1, builder.build());
+
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
 
             this.text = text;
             this.progress = progress;

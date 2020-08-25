@@ -1,3 +1,6 @@
+7.3
+  - notify on low battery of bluetooth devices
+
 7.2
   - fixed premature ending of workout with 1.x revision of ComModule
 

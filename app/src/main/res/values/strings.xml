@@ -147,7 +147,8 @@
     <string name="bluetooth_heart_failed">Bluetooth connection to %s failed</string>
     <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
     <string name="bluetooth_heart_connected">Bluetooth reading heart rate from %s</string>
-    <string name="bluetooth_heart_disconnected">Bluetooth connection lost to %s</string>
+    <string name="bluetooth_heart_disconnected">Bluetooth heart connection lost to %s</string>
+    <string name="bluetooth_heart_battery_level">Bluetooth heart battery level &lt; %d%%</string>
 
     <string name="bluetooth_choose">Choose %s</string>
     <string name="bluetooth_choose_filtered">%s only</string>
@@ -158,7 +159,8 @@
     <string name="bluetooth_rower_no_location">Bluetooth requires enabled location services</string>
     <string name="bluetooth_rower_failed">Bluetooth connection to %s failed</string>
     <string name="bluetooth_rower_not_found">Bluetooth no rower found on %s</string>
-    <string name="bluetooth_rower_disconnected">Bluetooth connection lost to %s</string>
+    <string name="bluetooth_rower_disconnected">Bluetooth rower connection lost to %s</string>
+    <string name="bluetooth_rower_battery_level">Bluetooth rower battery level &lt; %d%%</string>
 
     <string name="preference_training_title">Training</string>
 

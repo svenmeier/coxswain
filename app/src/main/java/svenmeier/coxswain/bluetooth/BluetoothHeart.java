@@ -2,12 +2,12 @@ package svenmeier.coxswain.bluetooth;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.WorkerThread;
 
 import java.util.ArrayDeque;
+import java.util.Random;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Coxswain;
@@ -39,6 +40,8 @@ import svenmeier.coxswain.util.PermissionBlock;
 public class BluetoothHeart extends Heart {
 
 	private static final int CONNECT_TIMEOUT_MILLIS = 10000;
+
+	private static final int BATTERY_LEVEL_NOTIFICATION_THRESHOLD = 25;
 
 	private Handler handler = new Handler();
 
@@ -307,6 +310,7 @@ public class BluetoothHeart extends Heart {
 		private BluetoothGatt connected;
 
 		private BluetoothGattCharacteristic heartRateMeasurement;
+		private BluetoothGattCharacteristic batteryLevel;
 
 		private GattConnection(String address) {
 			this.address = address;
@@ -393,6 +397,13 @@ public class BluetoothHeart extends Heart {
 				enableNotification(gatt, heartRateMeasurement);
 			}
 
+			batteryLevel = get(gatt, SERVICE_BATTERY, CHARACTERISTIC_BATTERY_LEVEL);
+			if (batteryLevel == null) {
+				Log.d(Coxswain.TAG, "bluetooth no battery level");
+			} else {
+				read(connected, batteryLevel);
+			}
+
 			if (heartRateMeasurement == null) {
 				toast(context.getString(R.string.bluetooth_heart_not_found, gatt.getDevice().getAddress()));
 
@@ -422,6 +433,17 @@ public class BluetoothHeart extends Heart {
 			}
 		}
 
+		@Override
+		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+			if (batteryLevel != null && characteristic.getUuid().equals(batteryLevel.getUuid())) {
+				int level = batteryLevel.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+
+				onBatteryLevel(level);
+			}
+
+			super.onCharacteristicRead(gatt, characteristic, status);
+		}
+
 		/**
 		 * @see BluetoothHeart#CONNECT_TIMEOUT_MILLIS
 		 */
@@ -432,6 +454,21 @@ public class BluetoothHeart extends Heart {
 
 				select();
 			}
+		}
+	}
+
+	private void onBatteryLevel(int level) {
+		if (level <= BATTERY_LEVEL_NOTIFICATION_THRESHOLD) {
+			NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+			Notification.Builder builder = new Notification.Builder(context)
+					.setContentText(context.getString(R.string.bluetooth_heart_battery_level, level));
+
+			Coxswain.initNotification(context, builder, "Hardware");
+
+			notificationManager.notify(R.string.bluetooth_heart_battery_level, builder.build());
+		} else {
+			Log.i(Coxswain.TAG, "bluetooth heart battery level " + level);
 		}
 	}
 }

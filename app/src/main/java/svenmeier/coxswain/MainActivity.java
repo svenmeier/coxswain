@@ -18,6 +18,7 @@ package svenmeier.coxswain;
 import android.content.Intent;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -180,6 +181,8 @@ public class MainActivity extends AbstractActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
         checkUsbDevice(intent);
 
         new ImportIntention(this).onIntent(intent);
@@ -190,6 +193,7 @@ public class MainActivity extends AbstractActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMPORT && data != null) {
             // data intent does not have an action
@@ -220,6 +224,11 @@ public class MainActivity extends AbstractActivity {
 
         if (id == R.id.action_mock) {
             GymService.start(this, GymService.CONNECTOR_MOCK);
+
+            return true;
+        } else if (id == R.id.action_help) {
+            Intent browser = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.help_url)));
+            startActivity(browser);
 
             return true;
         } else if (id == R.id.action_bluetooth) {

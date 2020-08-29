@@ -1,4 +1,5 @@
 <resources>
+    <string name="action_help">Hilfe</string>
     <string name="action_mock">Mock</string>
     <string name="action_bluetooth">Verbinde über Bluetooth</string>
     <string name="action_evaluate">Bewerten</string>

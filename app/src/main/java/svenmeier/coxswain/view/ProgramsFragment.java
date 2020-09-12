@@ -30,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import propoid.db.Order;
 import propoid.ui.list.GenericRecyclerAdapter;
 import propoid.ui.list.MatchRecyclerAdapter;
 import svenmeier.coxswain.Gym;
@@ -78,6 +79,8 @@ public class ProgramsFragment extends Fragment {
 
         public ProgramsAdapter() {
             super(R.layout.layout_programs_item, gym.getPrograms());
+
+            setOrder(Order.ascending(getMatch().getPrototype().name));
         }
 
         @Override

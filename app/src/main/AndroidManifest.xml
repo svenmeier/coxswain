@@ -41,7 +41,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LightTheme"
-        tools:replace="allowBackup">
+        tools:replace="allowBackup"
+        android:requestLegacyExternalStorage="true"
+        >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

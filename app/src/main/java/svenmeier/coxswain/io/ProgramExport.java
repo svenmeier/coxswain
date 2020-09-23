@@ -115,7 +115,7 @@ public class ProgramExport extends Export<Program> {
 		}
 
 		private File write() throws IOException {
-			File dir = Environment.getExternalStoragePublicDirectory(Coxswain.TAG);
+			File dir = Coxswain.getExternalFilesDir(context);
 			dir.mkdirs();
 			dir.setReadable(true, false);
 

@@ -127,7 +127,7 @@ public class TcxExport extends Export<Workout> {
 		}
 
 		private File write(Match<Snapshot> snapshots) throws IOException {
-			File dir = Environment.getExternalStoragePublicDirectory(Coxswain.TAG);
+			File dir = Coxswain.getExternalFilesDir(context);
 			dir.mkdirs();
 			dir.setReadable(true, false);
 
@@ -152,7 +152,7 @@ public class TcxExport extends Export<Workout> {
 		if (Preference.getBoolean(context, R.string.preference_export_track).get()) {
 			InputStream input;
 			try {
-				input = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Coxswain.TAG), "course.tcx"));
+				input = new FileInputStream(new File(Coxswain.getExternalFilesDir(context), "course.tcx"));
 			} catch (Exception ex) {
 				input = context.getResources().openRawResource(R.raw.course);
 			}

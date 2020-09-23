@@ -58,7 +58,7 @@ class GymLocator implements Locator {
 	}
 
 	private File external() {
-		return new File(Environment.getExternalStoragePublicDirectory(Coxswain.TAG), NAME);
+		return new File(Coxswain.getExternalFilesDir(context), NAME);
 	}
 
 	private SQLiteDatabase open(File file) {

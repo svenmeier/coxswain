@@ -34,7 +34,7 @@ public class FileTrace implements ITrace {
     private final BufferedWriter writer;
 
     public FileTrace(Context context) throws IOException {
-        File dir = Environment.getExternalStoragePublicDirectory(Coxswain.TAG);
+        File dir = Coxswain.getExternalFilesDir(context);
         dir.mkdirs();
         dir.setReadable(true, false);
 

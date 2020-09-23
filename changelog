@@ -1,3 +1,6 @@
+7.4
+  - fixed file access on Android Q
+
 7.3
   - notify on low battery of bluetooth devices
   - sort programs by name

@@ -52,7 +52,7 @@ import svenmeier.coxswain.rower.Energy;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 
-public class WorkoutsFragment extends Fragment {
+public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
     private Gym gym;
 
@@ -68,7 +68,16 @@ public class WorkoutsFragment extends Fragment {
 
         gym = Gym.instance(context);
 
+        gym.addListener(this);
+
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onDetach() {
+        gym.removeListener(this);
+
+        super.onDetach();
     }
 
     @Override
@@ -120,6 +129,19 @@ public class WorkoutsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         adapter.initLoader(0, this);
+    }
+
+    @Override
+    public void changed(Object scope) {
+        if (scope == null) {
+            if (adapter != null) {
+                adapter.destroy(0, this);
+            }
+
+            // must reset adapter to take into account current program
+            workoutsView.setAdapter(adapter = new WorkoutsAdapter());
+            adapter.initLoader(0, this);
+        }
     }
 
     private class WorkoutsAdapter extends MatchRecyclerAdapter<Workout> {

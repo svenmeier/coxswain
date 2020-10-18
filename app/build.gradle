@@ -39,7 +39,7 @@ ext {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('aars/antpluginlib_3-8-0.aar')
     implementation "androidx.gridlayout:gridlayout:$supportLibraryVersion"
     implementation "androidx.legacy:legacy-support-v13:$supportLibraryVersion"
     implementation "androidx.legacy:legacy-preference-v14:$supportLibraryVersion"

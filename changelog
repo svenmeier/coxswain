@@ -1,3 +1,7 @@
+7.5
+  - updated ANT+ library for Android 10
+  - filter workouts for selected program
+  
 7.4
   - fixed file access on Android Q
 

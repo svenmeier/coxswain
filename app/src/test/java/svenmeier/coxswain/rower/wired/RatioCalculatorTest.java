@@ -18,46 +18,46 @@ public class RatioCalculatorTest {
 		RatioCalculator calculator = new RatioCalculator();
 
 		long now = 100000;
-		calculator.recovering(measurement, now);
-		calculator.recovering(measurement, now + 200);
+		calculator.strokeEnd(measurement, now);
+		calculator.strokeEnd(measurement, now + 200);
 
 		now += 1000;
-		calculator.pulling(measurement, now);
-		calculator.pulling(measurement, now + 200);
+		calculator.strokeStart(measurement, now);
+		calculator.strokeStart(measurement, now + 200);
 
 		now += 1000;
-		calculator.recovering(measurement, now);
-		calculator.recovering(measurement, now + 200);
+		calculator.strokeEnd(measurement, now);
+		calculator.strokeEnd(measurement, now + 200);
 
 		assertEquals(8, measurement.getStrokeRatio());
 
 		now += 2000;
-		calculator.pulling(measurement, now);
-		calculator.pulling(measurement, now + 200);
+		calculator.strokeStart(measurement, now);
+		calculator.strokeStart(measurement, now + 200);
 
 		now += 1000;
-		calculator.recovering(measurement, now);
-		calculator.recovering(measurement, now + 200);
+		calculator.strokeEnd(measurement, now);
+		calculator.strokeEnd(measurement, now + 200);
 
 		assertEquals(16, measurement.getStrokeRatio());
 
 		now += 1500;
-		calculator.pulling(measurement, now);
-		calculator.pulling(measurement, now + 200);
+		calculator.strokeStart(measurement, now);
+		calculator.strokeStart(measurement, now + 200);
 
 		now += 1000;
-		calculator.recovering(measurement, now);
-		calculator.recovering(measurement, now + 500);
+		calculator.strokeEnd(measurement, now);
+		calculator.strokeEnd(measurement, now + 500);
 
 		assertEquals(12, measurement.getStrokeRatio());
 
 		now += 500;
-		calculator.pulling(measurement, now);
-		calculator.pulling(measurement, now + 200);
+		calculator.strokeStart(measurement, now);
+		calculator.strokeStart(measurement, now + 200);
 
 		now += 1000;
-		calculator.recovering(measurement, now);
-		calculator.recovering(measurement, now + 200);
+		calculator.strokeEnd(measurement, now);
+		calculator.strokeEnd(measurement, now + 200);
 
 		assertEquals(4, measurement.getStrokeRatio());
 	}

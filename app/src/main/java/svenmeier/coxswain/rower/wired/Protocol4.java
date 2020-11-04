@@ -16,7 +16,6 @@
 package svenmeier.coxswain.rower.wired;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import svenmeier.coxswain.gym.Measurement;
@@ -36,17 +35,23 @@ public class Protocol4 implements IProtocol {
 
     private List<Field> fields = new ArrayList<>();
 
-    private RatioCalculator ratioCalculator = new RatioCalculator();
+    private RatioCalculator ratioCalculator;
+
+    private PowerCalculator powerCalculator;
 
     private int cycle = 0;
 
     private long throttle = DEFAULT_THROTTLE;
 
-    private long lastTransfer = 0;
-
     private String version = VERSION_UNKOWN;
 
     private boolean resetting;
+
+    private long lastTransfer = 0;
+
+    private long lastPing = 0;
+
+    private long lastDuration = 0;
 
     public Protocol4(ITransfer transfer, ITrace aTrace) {
         this.transfer = transfer;
@@ -56,6 +61,9 @@ public class Protocol4 implements IProtocol {
 
         this.trace = aTrace;
         aTrace.comment("protocol 4");
+
+        this.ratioCalculator = new RatioCalculator();
+        this.powerCalculator = new PowerCalculator(trace);
 
         fields.add(new Field("USB", "_WR_") {
 
@@ -104,6 +112,7 @@ public class Protocol4 implements IProtocol {
         fields.add(new Field(null, "PING") {
             @Override
             protected void onInput(String message, Measurement measurement) {
+                lastPing = System.currentTimeMillis();
             }
         });
 
@@ -116,14 +125,15 @@ public class Protocol4 implements IProtocol {
         fields.add(new Field(null, "SS") {
             @Override
             protected void onInput(String message, Measurement measurement) {
-                ratioCalculator.pulling(measurement, System.currentTimeMillis());
+                ratioCalculator.strokeStart(measurement, System.currentTimeMillis());
+                powerCalculator.strokeStart(measurement, System.currentTimeMillis());
             }
         });
 
         fields.add(new Field(null, "SE") {
             @Override
             protected void onInput(String message, Measurement measurement) {
-                ratioCalculator.recovering(measurement, System.currentTimeMillis());
+                ratioCalculator.strokeEnd(measurement, System.currentTimeMillis());
             }
         });
 
@@ -148,6 +158,10 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x14A, NumberField.DOUBLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
+                if (isIdleNotPaused(value)) {
+                    value = 0;
+                }
+
                 measurement.setSpeed(value);
             }
         });
@@ -155,6 +169,10 @@ public class Protocol4 implements IProtocol {
         fields.add(new NumberField(0x1A9, NumberField.SINGLE_BYTE) {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
+                if (isIdleNotPaused(value)) {
+                    value = 0;
+                }
+
                 measurement.setStrokeRate(value);
             }
         });
@@ -170,39 +188,12 @@ public class Protocol4 implements IProtocol {
         });
 
         fields.add(new NumberField(0x088, NumberField.DOUBLE_BYTE) {
-
-            private List<Integer> sequence = new LinkedList<>();
-
-            private int strokePower;
-
             @Override
             protected void onUpdate(int value, Measurement measurement) {
-                if (value == 0) {
-                    // stroke has finished
-                    if (strokePower != 0) {
-                        sequence.add(strokePower);
-                        if (sequence.size() > 6) {
-                            // not more than six
-                            sequence.remove(0);
-                        }
-
-                        int sum = 0;
-                        for (int i = 0; i < sequence.size(); i++) {
-                            sum += sequence.get(i);
-                        }
-
-                        int meanPower = sum / sequence.size();
-                        measurement.setPower(meanPower);
-                        trace.comment("power mean of " + sequence + " + is " + meanPower);
-                    }
-                    strokePower = 0;
+                if (isIdleNotPaused(value)) {
+                    measurement.setPower(0);
                 } else {
-                    // waterrower might report different values during single stroke
-                    if (strokePower == 0) {
-                        strokePower = value;
-                    } else {
-                        strokePower = (strokePower + value) / 2;
-                    }
+                    powerCalculator.power(value);
                 }
             }
         });
@@ -245,11 +236,28 @@ public class Protocol4 implements IProtocol {
 
             @Override
             protected void onUpdate(int value, Measurement measurement) {
+                if (value != measurement.getDuration()) {
+                    lastDuration = System.currentTimeMillis();
+                }
+
                 if (resetting == false) {
                     measurement.setDuration(value);
                 }
             }
         });
+    }
+
+    /**
+     * When the rower is idle (i.e. no rudder movement) and not paused - used to clear
+     * values as the S4 does it too.
+     */
+    private boolean isIdleNotPaused(int value) {
+        long now = System.currentTimeMillis();
+
+        boolean idle = (now - lastPing) < 2000;
+        boolean paused = (now - lastDuration) > 2000;
+
+        return idle && !paused;
     }
 
     public void setThrottle(long throttle) {

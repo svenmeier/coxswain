@@ -42,7 +42,7 @@ public class RatioCalculator {
         recoverDuration = 0;
     }
 
-    public void pulling(Measurement measurement, long now) {
+    public void strokeStart(Measurement measurement, long now) {
         if (pulling == false) {
             pulling = true;
 
@@ -51,7 +51,7 @@ public class RatioCalculator {
         }
     }
 
-    public void recovering(Measurement measurement, long now) {
+    public void strokeEnd(Measurement measurement, long now) {
         if (pulling) {
             pulling = false;
 

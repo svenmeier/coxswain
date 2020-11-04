@@ -87,7 +87,7 @@ public class Protocol3 implements IProtocol {
                 case (byte) 0xFC:
                     measurement.setStrokes(measurement.getStrokes() + 1);
 
-                    ratioCalculator.recovering(measurement, System.currentTimeMillis());
+                    ratioCalculator.strokeEnd(measurement, System.currentTimeMillis());
 
                     trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;
@@ -102,7 +102,7 @@ public class Protocol3 implements IProtocol {
                     }
                     consumer.next();
 
-                    ratioCalculator.pulling(measurement, System.currentTimeMillis());
+                    ratioCalculator.strokeStart(measurement, System.currentTimeMillis());
 
                     trace.onInput(ByteUtils.toHex(consumer.consumed()));
                     continue;

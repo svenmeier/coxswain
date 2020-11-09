@@ -1,3 +1,7 @@
+7.6
+  - let speed, strokerate and power drop to 0 when idle
+  - improved power calculation
+
 7.5
   - updated ANT+ library for Android 10
   - filter workouts for selected program

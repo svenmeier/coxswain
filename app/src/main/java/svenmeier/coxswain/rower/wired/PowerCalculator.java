@@ -32,7 +32,14 @@ public class PowerCalculator {
         this.trace = trace;
     }
 
-    public void power(int power) {
+    public void clear(Measurement measurement) {
+        maxPower = 0;
+        powerHistory.clear();
+
+        measurement.setPower(0);
+    }
+
+    public void power(Measurement measurement, int power) {
         // waterrower might report different values during single stroke
         maxPower = Math.max(maxPower, power);
     }

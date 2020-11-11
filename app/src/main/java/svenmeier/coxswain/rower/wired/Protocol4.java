@@ -191,9 +191,9 @@ public class Protocol4 implements IProtocol {
             @Override
             protected void onUpdate(int value, Measurement measurement) {
                 if (isIdleNotPaused(value)) {
-                    measurement.setPower(0);
+                    powerCalculator.clear(measurement);
                 } else {
-                    powerCalculator.power(value);
+                    powerCalculator.power(measurement, value);
                 }
             }
         });

@@ -323,7 +323,13 @@
 
     <string name="preference_hardware_trace" translatable="false">preference_hardware_trace</string>
     <string name="preference_hardware_trace_title">Trace</string>
-    <string name="preference_hardware_trace_summary">Write protocol trace</string>
+    <string name="preference_hardware_trace_summary">Write rower trace</string>
+
+    <string name="preference_hardware_log" translatable="false">preference_hardware_log</string>
+    <string name="preference_hardware_log_title">Log</string>
+    <string name="preference_hardware_log_summary">Export application log</string>
+    <string name="preference_hardware_log_finished">Exported application log</string>
+    <string name="preference_hardware_log_failed">Export of application log failed</string>
 
     <string name="preference_devices" translatable="false">preference_devices</string>
     <string name="preference_devices_title">Devices</string>

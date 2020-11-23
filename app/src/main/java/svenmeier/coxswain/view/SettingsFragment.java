@@ -18,16 +18,22 @@ package svenmeier.coxswain.view;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Gym;
 import svenmeier.coxswain.R;
 import svenmeier.coxswain.util.PermissionBlock;
@@ -90,6 +96,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         });
 
+        Preference log = findPreference(getString(R.string.preference_hardware_log));
+        log.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new PermissionBlock(getActivity()) {
+                    @Override
+                    protected void onPermissionsApproved() {
+                        exportLog();
+                    }
+                }.acquirePermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                return true;
+            }
+        });
+
         Preference devices = findPreference(getString(R.string.preference_devices));
         devices.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -101,6 +121,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+    }
+
+    public static final String LOG_FILE = "waterrower.log";
+
+    private void exportLog() {
+        int toast;
+
+        try {
+            File dir = Coxswain.getExternalFilesDir(getContext());
+            dir.mkdirs();
+            dir.setReadable(true, false);
+
+            File file = new File(dir, LOG_FILE);
+
+            Runtime.getRuntime().exec(new String[]{"logcat", "-f", file.getAbsolutePath()});
+
+            toast = R.string.preference_hardware_log_finished;
+        } catch (IOException e) {
+            Log.e(Coxswain.TAG, "expor log failed", e);
+            toast = R.string.preference_hardware_log_failed;
+        }
+
+        Toast.makeText(getContext(), toast, Toast.LENGTH_LONG).show();
     }
 
     @Override

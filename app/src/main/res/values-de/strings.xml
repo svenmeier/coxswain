@@ -253,7 +253,12 @@
     <string name="preference_hardware_legacy_summary">Verwende S3 Protokoll (experimentell)</string>
 
     <string name="preference_hardware_trace_title">Trace</string>
-    <string name="preference_hardware_trace_summary">Protokoll mitschreiben</string>
+    <string name="preference_hardware_trace_summary">Ruder-Protokoll mitschreiben</string>
+
+    <string name="preference_hardware_log_title">Log</string>
+    <string name="preference_hardware_log_summary">Anwendungs-Log exportieren</string>
+    <string name="preference_hardware_log_finished">Anwendungs-Log exportiert</string>
+    <string name="preference_hardware_log_failed">Export des Anwendungs-Logs gescheitert</string>
 
     <string name="preference_devices_title">Geräte</string>
     <string name="preference_devices_summary">Liste aller verbundenen USB Geräte</string>

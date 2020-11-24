@@ -123,7 +123,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
-    public static final String LOG_FILE = "waterrower.log";
+    public static final String LOG_FILE = "coxswain.log";
 
     private void exportLog() {
         int toast;

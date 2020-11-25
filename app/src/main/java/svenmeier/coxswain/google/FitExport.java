@@ -2,8 +2,6 @@ package svenmeier.coxswain.google;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.IntentSender;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
 import android.util.Log;
@@ -13,27 +11,17 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
-import com.google.android.gms.fitness.HistoryClient;
-import com.google.android.gms.fitness.SessionsClient;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionInsertRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.Gym;
@@ -86,25 +74,30 @@ public class FitExport extends Export<Workout> {
 
 		private final GoogleSignInAccount account;
 
+		private final FitnessOptions options;
+
 		public Connection() {
 			workout2Fit = new Workout2Fit();
-
-			account = GoogleSignIn.getLastSignedInAccount(context);
 
 			FitnessOptions.Builder builder = FitnessOptions.builder();
 			for (Workout2Fit.Mapper mapper : workout2Fit.mappers()) {
 				builder.addDataType(mapper.type(), FitnessOptions.ACCESS_WRITE);
 			}
+			options = builder.build();
+			account = GoogleSignIn.getLastSignedInAccount(context);
 
-			FitnessOptions fitnessOptions = builder.build();
-			if (!GoogleSignIn.hasPermissions(account, fitnessOptions)) {
-				if (context instanceof Activity) {
-					GoogleSignIn.requestPermissions((Activity)context, REQUEST_CODE, account, fitnessOptions);
-				} else {
-					toast(context.getString(R.string.googlefit_export_permissions_manual));
-				}
-			} else {
+			if (GoogleSignIn.hasPermissions(account, options)) {
 				new Thread(this).start();
+			} else {
+				permissionRequired();
+			}
+		}
+
+		private void permissionRequired() {
+			if (context instanceof Activity) {
+				GoogleSignIn.requestPermissions((Activity)context, REQUEST_CODE, account, options);
+			} else {
+				toast(context.getString(R.string.googlefit_export_permissions_manual));
 			}
 		}
 
@@ -152,6 +145,11 @@ public class FitExport extends Export<Workout> {
 			Log.e(Coxswain.TAG, "googlefit failed",  ex);
 
 			toast(context.getString(R.string.googlefit_export_failed));
+
+			if (ex instanceof ApiException && ((ApiException)ex).getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
+				// hasPermissions() might return true but a sign-in is still required :(
+				permissionRequired();
+			}
 		}
 
 		@Override

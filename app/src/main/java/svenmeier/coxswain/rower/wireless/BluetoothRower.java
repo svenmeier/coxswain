@@ -375,7 +375,12 @@ public class BluetoothRower extends Rower {
 				BluetoothDevice device = adapter.getRemoteDevice(address);
 
 				trace.onOutput(String.format("connecting %s", address));
-				connected = device.connectGatt(context, false, this);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					// newer API has been reported to improve connectivity
+					connected = device.connectGatt(context, false, this, BluetoothDevice.TRANSPORT_LE);
+				} else {
+					connected = device.connectGatt(context, false, this);
+				}
 
 				handler.postDelayed(this, CONNECT_TIMEOUT_MILLIS);
 			} catch (IllegalArgumentException invalid) {

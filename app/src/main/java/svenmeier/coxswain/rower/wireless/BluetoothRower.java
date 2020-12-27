@@ -530,6 +530,20 @@ public class BluetoothRower extends Rower {
 			super.onCharacteristicRead(gatt, characteristic, status);
 		}
 
+		private static final int MORE_DATA = 0;
+		private static final int AVERAGE_STROKE_RATE = 1;
+		private static final int TOTAL_DISTANCE = 2;
+		private static final int INSTANTANEOUS_PACE = 3;
+		private static final int AVERAGE_PACE = 4;
+		private static final int INSTANTANEOUS_POWER = 5;
+		private static final int AVERAGE_POWER = 6;
+		private static final int RESISTANCE_LEVEL = 7;
+		private static final int EXPANDED_ENERGY = 8;
+		private static final int HEART_RATE = 9;
+		private static final int METABOLIC_EQUIVALENT = 10;
+		private static final int ELAPSED_TIME = 11;
+		private static final int REMAINING_TIME = 12;
+
 		@Override
 		public synchronized void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 			if (rowerData == null) {
@@ -558,53 +572,59 @@ public class BluetoothRower extends Rower {
 
 				Fields fields = new Fields(characteristic, Fields.UINT16);
 				try {
-					if (fields.flag(0) == false) { // more data
-						setStrokeRate(fields.get(Fields.UINT8) / 2); // stroke rate 0.5
-						strokes = fields.get(Fields.UINT16); // stroke count
+					if (fields.flag(MORE_DATA) == false) {
+						setStrokeRate(fields.get(Fields.UINT8) / 2);
+
+						strokes = fields.get(Fields.UINT16);
 					}
-					if (fields.flag(1)) {
-						fields.get(Fields.UINT8); // average stroke rate
+					if (fields.flag(AVERAGE_STROKE_RATE)) {
+						fields.get(Fields.UINT8);
 					}
-					if (fields.flag(2)) {
-						distance = (fields.get(Fields.UINT16) +
-								(fields.get(Fields.UINT8) << 16)); // total distance
+					if (fields.flag(TOTAL_DISTANCE)) {
+						distance = fields.get(Fields.UINT16) +
+								(fields.get(Fields.UINT8) << 16);
 					}
-					if (fields.flag(3)) {
-						setSpeed(500 * 100 / fields.get(Fields.UINT16)); // instantaneous pace
+					if (fields.flag(INSTANTANEOUS_PACE)) {
+						int instantaneousPace = fields.get(Fields.UINT16);
+						if (instantaneousPace == 0) {
+							setSpeed(0);
+						} else {
+							setSpeed(500 * 100 / instantaneousPace);
+						}
 					}
-					if (fields.flag(4)) {
-						fields.get(Fields.UINT16); // average pace
+					if (fields.flag(AVERAGE_PACE)) {
+						fields.skip(Fields.UINT16);
 					}
-					if (fields.flag(5)) {
-						setPower(fields.get(Fields.SINT16)); // instantaneous power
+					if (fields.flag(INSTANTANEOUS_POWER)) {
+						setPower(fields.get(Fields.SINT16));
 					}
-					if (fields.flag(6)) {
-						fields.get(Fields.SINT16); // average power
+					if (fields.flag(AVERAGE_POWER)) {
+						fields.skip(Fields.SINT16);
 					}
-					if (fields.flag(7)) {
-						fields.get(Fields.SINT16); // resistance level
+					if (fields.flag(RESISTANCE_LEVEL)) {
+						fields.skip(Fields.SINT16);
 					}
-					if (fields.flag(8)) { // expended energy
-						energy = fields.get(Fields.UINT16); // total energy
-						fields.get(Fields.UINT16); // energy per hour
-						fields.get(Fields.UINT8); // energy per minute
+					if (fields.flag(EXPANDED_ENERGY)) {
+						energy = fields.get(Fields.UINT16); // total
+						fields.skip(Fields.UINT16); // per hour
+						fields.skip(Fields.UINT8); // per minute
 					}
-					if (fields.flag(9)) {
-						int heartRate = fields.get(Fields.UINT8); // heart rate
+					if (fields.flag(HEART_RATE)) {
+						int heartRate = fields.get(Fields.UINT8);
 						if (heartRate > 0) {
 							setPulse(heartRate);
 						}
 					}
-					if (fields.flag(10)) {
-						fields.get(Fields.UINT8); // metabolic equivalent 0.1
+					if (fields.flag(METABOLIC_EQUIVALENT)) {
+						fields.skip(Fields.UINT8);
 					}
-					if (fields.flag(11)) {
-						duration += durationDelta(fields.get(Fields.UINT16)); // elapsed time
+					if (fields.flag(ELAPSED_TIME)) {
+						duration += durationDelta(fields.get(Fields.UINT16));
 					}
-					if (fields.flag(12)) {
-						fields.get(Fields.UINT16); // remaining time
+					if (fields.flag(REMAINING_TIME)) {
+						fields.get(Fields.UINT16);
 					}
-				} catch (NullPointerException ex) {
+				} catch (Exception ex) {
 					// rarely flags and fields do not match up
 					trace.comment("field mismatch");
 				}

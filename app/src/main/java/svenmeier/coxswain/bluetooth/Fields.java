@@ -31,11 +31,30 @@ public class Fields {
 		return (flag & (1 << bit)) != 0;
 	}
 
+	public void skip(int format) {
+		offset += size(format);
+	}
+
 	public int get(int format) {
 		int value = characteristic.getIntValue(format, offset);
 
-		offset += format & 0xf;
+		offset += size(format);
 
 		return value;
+	}
+
+	private int size(int format) {
+		return format & 0xf;
+	}
+
+	public int[] remaining(int format) {
+		int count = (characteristic.getValue().length - offset) / size(format);
+
+		int[] values = new int[count];
+		for (int c = 0; c < count; c++) {
+			values[c] = get(format);
+		}
+
+		return values;
 	}
 }

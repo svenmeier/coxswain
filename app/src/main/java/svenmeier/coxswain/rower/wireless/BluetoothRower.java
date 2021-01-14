@@ -58,7 +58,7 @@ public class BluetoothRower extends Rower {
 
 	private boolean resetting = false;
 
-	private int elapsedTime;
+	private int previousElapsedTime;
 
 	public BluetoothRower(Context context, Callback callback) {
 		super(context, callback);
@@ -619,7 +619,12 @@ public class BluetoothRower extends Rower {
 						fields.skip(Fields.UINT8);
 					}
 					if (fields.flag(ELAPSED_TIME)) {
-						duration += durationDelta(fields.get(Fields.UINT16));
+						int elapsedTime = fields.get(Fields.UINT16);
+						if (resetting) {
+							duration = elapsedTime;
+						} else {
+							duration += durationDelta(elapsedTime);
+						}
 					}
 					if (fields.flag(REMAINING_TIME)) {
 						fields.get(Fields.UINT16);
@@ -700,13 +705,13 @@ public class BluetoothRower extends Rower {
 	 * to suffer for that.
 	 */
 	private int durationDelta(int elapsedTime) {
-		if (elapsedTime == this.elapsedTime) {
+		if (elapsedTime == this.previousElapsedTime) {
 			// no change
 			return 0;
 		}
 
-		int delta = elapsedTime - this.elapsedTime;
-		this.elapsedTime = elapsedTime;
+		int delta = elapsedTime - this.previousElapsedTime;
+		this.previousElapsedTime = elapsedTime;
 		trace.comment(String.format("elapsed time %+d = %d", delta, elapsedTime));
 
 		if (delta < 0) {

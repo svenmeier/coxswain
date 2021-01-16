@@ -162,6 +162,7 @@
     <string name="bluetooth_rower_not_found">Bluetooth no rower found on %s</string>
     <string name="bluetooth_rower_disconnected">Bluetooth rower connection lost to %s</string>
     <string name="bluetooth_rower_battery_level">Bluetooth rower battery level &lt; %d%%</string>
+    <string name="bluetooth_rower_reset_timeout">Please reset your rower</string>
 
     <string name="preference_training_title">Training</string>
 

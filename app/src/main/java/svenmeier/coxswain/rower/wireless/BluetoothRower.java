@@ -38,6 +38,8 @@ public class BluetoothRower extends Rower {
 
 	private static final int CONNECT_TIMEOUT_MILLIS = 10000;
 
+	private static final int RESET_TIMEOUT_MILLIS = 3000;
+
 	/**
 	 * Timeout after which we re-enable notifications.
 	 */
@@ -118,6 +120,10 @@ public class BluetoothRower extends Rower {
 
 	private void pop() {
 		this.connections.pop().close();
+	}
+
+	private boolean isCurrent(Connection connection) {
+		return this.connections.peek() == connection;
 	}
 
 	private interface Connection {
@@ -201,7 +207,7 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (connections.peek() == this && isEnabled()) {
+			if (isCurrent(this) && isEnabled()) {
 				proceed();
 			}
 		}
@@ -253,7 +259,7 @@ public class BluetoothRower extends Rower {
 		public void onReceive(Context context, Intent intent) {
 			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
 			if (state == BluetoothAdapter.STATE_ON) {
-				if (connections.peek() == this) {
+				if (isCurrent( this)) {
 					proceed();
 				}
 			} else if (state == BluetoothAdapter.STATE_OFF) {
@@ -296,7 +302,7 @@ public class BluetoothRower extends Rower {
 
 		@Override
 		public final void onReceive(Context context, Intent intent) {
-			if (connections.peek() == this) {
+			if (isCurrent( this)) {
 				String address = intent.getStringExtra(BluetoothActivity.DEVICE_ADDRESS);
 
 				if (address == null) {
@@ -330,9 +336,13 @@ public class BluetoothRower extends Rower {
 	}
 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-	private class GattConnection extends BlueWriter implements Connection, Runnable {
+	private class GattConnection extends BlueWriter implements Connection {
 
 		private final String address;
+
+		private ConnectionTimeout connectionTimeout = new ConnectionTimeout();
+
+		private ResetTimeout resetTimeout = new ResetTimeout();
 
 		private KeepAlive keepAlive = new KeepAlive();
 
@@ -357,7 +367,7 @@ public class BluetoothRower extends Rower {
 		private void select() {
 			devicePreference.set(null);
 
-			handler.removeCallbacks(this);
+			handler.removeCallbacks(connectionTimeout);
 
 			pop(); // this
 			pop(); // previous selection
@@ -382,7 +392,7 @@ public class BluetoothRower extends Rower {
 					connected = device.connectGatt(context, false, this);
 				}
 
-				handler.postDelayed(this, CONNECT_TIMEOUT_MILLIS);
+				handler.postDelayed(connectionTimeout, CONNECT_TIMEOUT_MILLIS);
 			} catch (IllegalArgumentException invalid) {
 				select();
 			}
@@ -437,6 +447,9 @@ public class BluetoothRower extends Rower {
 			if (connected != null && controlPoint != null) {
 				trace.onOutput("control-point resetting");
 				write(connected, controlPoint, OP_CODE_RESET);
+
+				handler.removeCallbacks(resetTimeout);
+				handler.postDelayed(resetTimeout, RESET_TIMEOUT_MILLIS);
 			}
 		}
 
@@ -652,14 +665,27 @@ public class BluetoothRower extends Rower {
 		/**
 		 * @see BluetoothRower#CONNECT_TIMEOUT_MILLIS
 		 */
-		@Override
-		public void run() {
-			if (connected != null && rowerData == null) {
-				trace.comment("connection timeout");
+		private class ConnectionTimeout implements Runnable {
+			@Override
+			public void run() {
+				if (isCurrent( GattConnection.this) && rowerData == null) {
+					trace.comment("connection timeout");
 
-				toast(context.getString(R.string.bluetooth_rower_failed, connected.getDevice().getAddress()));
+					toast(context.getString(R.string.bluetooth_rower_failed, connected.getDevice().getAddress()));
 
-				select();
+					select();
+				}
+			}
+		}
+
+		private class ResetTimeout implements Runnable {
+			@Override
+			public void run() {
+				if (isCurrent(GattConnection.this) && resetting == true) {
+					trace.comment("reset timeout");
+
+					toast(context.getString(R.string.bluetooth_rower_reset_timeout));
+				}
 			}
 		}
 
@@ -685,7 +711,7 @@ public class BluetoothRower extends Rower {
 			 */
 			@Override
 			public void run() {
-				if (rowerData != null) {
+				if (isCurrent(GattConnection.this) && rowerData != null) {
 					// re-enable notification
 					trace.comment("rower-data reenable notification");
 					enableNotification(connected, rowerData);

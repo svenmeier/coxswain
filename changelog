@@ -1,5 +1,6 @@
 8.2
   - improved reset detection
+  - show toast when rower could not be reset
 
 8.1
   - use new gatt api where available

@@ -159,6 +159,7 @@
     <string name="bluetooth_rower_not_found">Bluetooth kein Ruderer auf %s gefunden </string>
     <string name="bluetooth_rower_disconnected">Bluetooth Ruderer Verbindung zu %s verloren</string>
     <string name="bluetooth_rower_battery_level">Bluetooth Ruderer Batteriestand &lt; %d%%</string>
+    <string name="bluetooth_rower_reset_timeout">Bitte den Ruderer zurücksetzen</string>
 
     <string name="preference_training_title">Training</string>
 

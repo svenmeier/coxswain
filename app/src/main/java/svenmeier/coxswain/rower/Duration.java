@@ -1,4 +1,4 @@
-/*
+	/*
  * Copyright 2015 Sven Meier
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.gym;
+package svenmeier.coxswain.rower;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
 
-/**
- * Created by sven on 07.07.15.
+import propoid.util.content.Preference;
+import svenmeier.coxswain.R;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+    /**
  */
-public enum Difficulty {
-    NONE, REST, EASY, MEDIUM, HARD, PEAK;
+public class Duration {
 
-    public Difficulty increase() {
-        Difficulty[] values = values();
+    private int seconds;
 
-        int next = ordinal() + 1;
-        if (next == 6) {
-            // never NONE
-            next = 1;
-        }
+    public String formatted() {
+        return String.format("%d:%02d:%02d", SECONDS.toHours(seconds), SECONDS.toMinutes(seconds) % 60, seconds % 60);
+    }
 
-        return values[next];
+    public static Duration seconds(Context context, int seconds) {
+        Duration duration = new Duration();
+
+        duration.seconds = seconds;
+
+        return duration;
     }
 }

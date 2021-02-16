@@ -391,7 +391,7 @@ public class Gym {
 
             // limit snapshots so this does not take forever
             for (seconds = Math.min(seconds, 10); seconds > 0; seconds--) {
-                Snapshot snapshot = new Snapshot(measurement);
+                Snapshot snapshot = new Snapshot(progress.segment, measurement);
                 snapshot.workout.set(current);
                 repository.insert(snapshot);
             }
@@ -546,7 +546,7 @@ public class Gym {
             } else if (segment.speed.get() > 0) {
                 limit = String.format(context.getString(R.string.speed_metersPerSecond), segment.speed.get() / 100f);
             } else if (segment.pulse.get() > 0){
-                 limit = String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get());
+                limit = String.format(context.getString(R.string.pulse_beatsPerMinute), segment.pulse.get());
             } else if (segment.power.get() > 0){
                 limit = String.format(context.getString(R.string.power_watts), segment.power.get());
             }

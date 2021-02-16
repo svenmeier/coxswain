@@ -25,6 +25,8 @@ public class Snapshot extends Propoid {
 
     public final Property<Workout> workout = property();
 
+    public final Property<Difficulty> difficulty = property();
+
     /**
      * meters
      */
@@ -60,6 +62,7 @@ public class Snapshot extends Propoid {
     public final Property<Integer> power = property();
 
     public Snapshot() {
+        difficulty.set(Difficulty.NONE);
         distance.set(0);
         strokes.set(0);
         speed.set(0);
@@ -70,7 +73,8 @@ public class Snapshot extends Propoid {
         power.set(0);
     }
 
-    public Snapshot(Measurement measurement) {
+    public Snapshot(Segment segment, Measurement measurement) {
+        difficulty.set(segment == null ? Difficulty.NONE : segment.difficulty.get());
         distance.set(measurement.getDistance());
         strokes.set(measurement.getStrokes());
         energy.set(measurement.getEnergy());

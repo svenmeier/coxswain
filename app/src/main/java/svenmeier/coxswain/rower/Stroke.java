@@ -13,26 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package svenmeier.coxswain.gym;
+package svenmeier.coxswain.rower;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+
+import propoid.util.content.Preference;
+import svenmeier.coxswain.R;
 
 /**
- * Created by sven on 07.07.15.
  */
-public enum Difficulty {
-    NONE, REST, EASY, MEDIUM, HARD, PEAK;
+public class Stroke {
 
-    public Difficulty increase() {
-        Difficulty[] values = values();
+    private Context context;
 
-        int next = ordinal() + 1;
-        if (next == 6) {
-            // never NONE
-            next = 1;
-        }
+    private int count;
 
-        return values[next];
+    public String formatted() {
+        return String.format(context.getString(R.string.strokes_count), count);
+    }
+
+    public static Stroke count(Context context, int count) {
+        Stroke stroke = new Stroke();
+
+        stroke.context = context;
+        stroke.count = count;
+
+        return stroke;
     }
 }

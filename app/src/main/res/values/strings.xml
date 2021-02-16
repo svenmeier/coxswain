@@ -54,6 +54,7 @@
     <string name="strokeRate_strokesPerMinute">%d strokes per minute</string>
     <string name="strokeRate_label">Strokerate</string>
     <string name="strokeRate_pattern">-00</string>
+    <string name="average_strokeRate_label">⌀ Strokerate</string>
     <string name="pulse_beatsPerMinute_abbr">%d bpm</string>
     <string name="pulse_beatsPerMinute">%d beats per minute</string>
     <string name="pulse_label">Pulse</string>
@@ -62,10 +63,12 @@
     <string name="speed_metersPerSecond">%.1f meters per second</string>
     <string name="speed_label">Speed</string>
     <string name="speed_pattern">-0.00</string>
+    <string name="average_speed_label">⌀ Speed</string>
     <string name="power_watts_abbr">%d W</string>
     <string name="power_watts">%d watts</string>
     <string name="power_label">Power</string>
     <string name="power_pattern">-000</string>
+    <string name="average_power_label">⌀ Power</string>
     <string name="strokeRatio_label">Strokeratio</string>
     <string name="strokeRatio_pattern">1:0.0</string>
     <string name="time_label">Time</string>
@@ -98,6 +101,8 @@
 
     <string name="workout_binding_decrease">Remove</string>
     <string name="workout_binding_increase">Add</string>
+
+    <string name="snapshots_show_rests">include rest segments</string>
 
     <string name="import_chooser">Please install a file manager</string>
     <string name="import_unknown">Unknown import format</string>
@@ -248,6 +253,12 @@
     <string name="preference_audio_ringtone_hard_title">Hard segment</string>
     <string name="preference_audio_ringtone_hard_summary">%s</string>
 
+    <string name="preference_audio_ringtone_peak" translatable="false">
+        preference_audio_ringtone_peek
+    </string>
+    <string name="preference_audio_ringtone_peak_title">Peak segment</string>
+    <string name="preference_audio_ringtone_peak_summary">%s</string>
+
     <string name="preference_audio_ringtone_finish" translatable="false">
         preference_audio_ringtone_finish
     </string>
@@ -343,6 +354,8 @@
 
     <string name="preference_bluetooth_heart_device" translatable="false">preference_bluetooth_heart_device</string>
     <string name="preference_bluetooth_rower_device" translatable="false">preference_bluetooth_rower_device</string>
+
+    <string name="preference_snapshots_show_rests" translatable="false">preference_snapshots_show_rests</string>
 
     <string name="help_url" translatable="false">https://github.com/svenmeier/coxswain/wiki/User-Guide</string>
 </resources>

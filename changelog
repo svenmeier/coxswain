@@ -1,3 +1,8 @@
+8.3
+  - two additional difficulties for segments
+  - show/hide snapshots with rest difficulty
+  - added workout information table
+
 8.2
   - improved reset detection
   - show toast when rower could not be reset

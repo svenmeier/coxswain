@@ -4,13 +4,92 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
 >
-
     <include layout="@layout/layout_appbar" />
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="0,2"
+        android:shrinkColumns="0,2"
+        >
+        <TableRow>
+            <TextView
+                android:text="@string/strokes_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_strokes"
+                android:text="0"
+                style="@style/TableCell"/>
+            <TextView
+                android:text="@string/average_speed_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_average_speed"
+                android:text="0"
+                style="@style/TableCell"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/energy_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_energy"
+                android:text="0"
+                style="@style/TableCell"/>
+            <TextView
+                android:text="@string/average_split_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_average_split"
+                android:text="0"
+                style="@style/TableCell"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/distance_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_distance"
+                android:text="0"
+                style="@style/TableCell"/>
+            <TextView
+                android:text="@string/average_power_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_average_power"
+                android:text="0"
+                style="@style/TableCell"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="@string/duration_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_duration"
+                android:text="0"
+                style="@style/TableCell"/>
+            <TextView
+                android:text="@string/average_strokeRate_label"
+                style="@style/TableCell"/>
+            <EditText
+                android:id="@+id/snapshots_average_strokerate"
+                android:text="0"
+                style="@style/TableCell"/>
+        </TableRow>
+        <TableRow>
+            <CheckBox
+                android:id="@+id/snapshots_show_rests"
+                android:text="@string/snapshots_show_rests"
+                android:layout_span="4"
+                style="@style/TableCell"/>
+        </TableRow>
+    </TableLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:layout_margin="10dp"
     />
 </LinearLayout>

@@ -10,4 +10,7 @@
     <color name="chart3">#ffffa0be</color>
     <color name="chart4">#ffffcc7e</color>
 
+    <color name="chart_rest_show">#338EA8ED</color>
+    <color name="chart_rest_hide">#668EA8ED</color>
+
 </resources>

@@ -173,6 +173,9 @@ public class BindingView extends LinearLayout {
             case SPEED:
                 limit(measurement.getSpeed(), limitSpeed);
                 break;
+            case AVERAGE_SPEED:
+                limit((int)(measurement.getDistance() * 1f / measurement.getDuration()), 0);
+                break;
             case PULSE:
                 limit(measurement.getPulse(), limitPulse);
                 break;
@@ -189,7 +192,7 @@ public class BindingView extends LinearLayout {
                 split(100f / measurement.getSpeed());
                 break;
             case AVERAGE_SPLIT:
-                split(measurement.getDuration() * 1f / measurement.getDistance());
+                split(1f * measurement.getDuration() / measurement.getDistance());
                 break;
             case DELTA_DISTANCE:
                 delta(paceBoat.getDistanceDelta(measurement), false);

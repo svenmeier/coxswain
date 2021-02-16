@@ -84,4 +84,14 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">#16909090</item>
     </style>
+
+    <style name="TableCell">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:editable">false</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

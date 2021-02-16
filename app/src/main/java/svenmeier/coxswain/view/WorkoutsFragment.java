@@ -47,7 +47,9 @@ import svenmeier.coxswain.SnapshotsActivity;
 import svenmeier.coxswain.WorkoutActivity;
 import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.rower.Distance;
+import svenmeier.coxswain.rower.Duration;
 import svenmeier.coxswain.rower.Energy;
+import svenmeier.coxswain.rower.Stroke;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -263,9 +265,9 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
             nameView.setText(item.programName("-"));
 
 			String counts = TextUtils.join(", ", new String[]{
-                    asHoursMinutesSeconds(item.duration.get()),
+                    Duration.seconds(getActivity(), item.duration.get()).formatted(),
                     Distance.m(getActivity(), item.distance.get()).formatted(),
-                    String.format(getString(R.string.strokes_count), item.strokes.get()),
+                    Stroke.count(getActivity(), item.strokes.get()).formatted(),
                     Energy.kcal(getActivity(), item.energy.get()).formatted()
             });
             countsView.setText(counts);
@@ -275,9 +277,5 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
         public void onClick(View v) {
             startActivity(SnapshotsActivity.createIntent(getActivity(), item));
         }
-    }
-
-    private static String asHoursMinutesSeconds(int seconds) {
-        return String.format("%d:%02d:%02d", SECONDS.toHours(seconds), SECONDS.toMinutes(seconds) % 60, seconds % 60);
     }
 }

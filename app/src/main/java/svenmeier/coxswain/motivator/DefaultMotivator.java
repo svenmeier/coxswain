@@ -182,6 +182,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
         private Preference<String> ringtoneEasyPreference = Preference.getString(context, R.string.preference_audio_ringtone_easy);
         private Preference<String> ringtoneMediumPreference = Preference.getString(context, R.string.preference_audio_ringtone_medium);
         private Preference<String> ringtoneHardPreference = Preference.getString(context, R.string.preference_audio_ringtone_hard);
+        private Preference<String> ringtonePeakPreference = Preference.getString(context, R.string.preference_audio_ringtone_peak);
 
         private Preference<Boolean> speakSegmentPreference = Preference.getBoolean(context, R.string.preference_audio_speak_segment);
 
@@ -191,6 +192,7 @@ public class DefaultMotivator implements Motivator, TextToSpeech.OnInitListener,
                 addRingtone(ringtoneEasyPreference, key(Difficulty.EASY));
                 addRingtone(ringtoneMediumPreference, key(Difficulty.MEDIUM));
                 addRingtone(ringtoneHardPreference, key(Difficulty.HARD));
+                addRingtone(ringtoneHardPreference, key(Difficulty.PEAK));
             }
         }
 

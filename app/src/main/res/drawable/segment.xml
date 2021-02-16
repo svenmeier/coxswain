@@ -10,6 +10,16 @@
     <item android:maxLevel="1">
         <shape>
             <stroke
+                android:color="#8EA8ED"
+                android:width="1dp"
+                />
+            <solid android:color="#A6B9ED"
+                />
+        </shape>
+    </item>
+    <item android:maxLevel="2">
+        <shape>
+            <stroke
                 android:color="#FFBBEE00"
                 android:width="1dp"
                 />
@@ -17,7 +27,7 @@
                 />
         </shape>
     </item>
-    <item android:maxLevel="2">
+    <item android:maxLevel="3">
         <shape>
             <stroke
                 android:color="#FFEEEE00"
@@ -27,13 +37,23 @@
                 />
         </shape>
     </item>
-    <item android:maxLevel="3">
+    <item android:maxLevel="4">
         <shape>
             <stroke
                 android:color="#FFEEBB00"
                 android:width="1dp"
                 />
             <solid android:color="#FFFFCC00"
+                />
+        </shape>
+    </item>
+    <item android:maxLevel="5">
+        <shape>
+            <stroke
+                android:color="#FF5900"
+                android:width="1dp"
+                />
+            <solid android:color="#FF7429"
                 />
         </shape>
     </item>

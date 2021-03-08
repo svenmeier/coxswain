@@ -222,7 +222,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.action_delete:
-                                    DeleteDialogFragment.create(item).show(getFragmentManager(), "delete");
+                                    DeleteDialogFragment.create(item).show(getParentFragmentManager(), "delete");
 
                                     return true;
                                 case R.id.action_evaluate:
@@ -232,7 +232,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
                                     return true;
                                 case R.id.action_export:
-                                    ExportWorkoutDialogFragment.create(item).show(getFragmentManager(), "export");
+                                    ExportWorkoutDialogFragment.create(item).show(getParentFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_repeat:

@@ -351,7 +351,7 @@ public class Gym {
         if (program != null) {
             // program is selected
 
-            if (measurement.hasTarget()) {
+            if (measurement.anyTargetValue()) {
                 // delay workout creation
 
                 event = analyse(measurement);

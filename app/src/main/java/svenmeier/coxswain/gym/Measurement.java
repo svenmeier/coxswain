@@ -88,7 +88,7 @@ public class Measurement {
         strokeRatio = 0;
     }
 
-    public boolean hasTarget() {
+    public boolean anyTargetValue() {
         return distance + duration + strokes + energy > 0;
     }
 

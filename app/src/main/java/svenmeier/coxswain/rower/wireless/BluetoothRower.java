@@ -77,18 +77,6 @@ public class BluetoothRower extends Rower {
 		}
 	}
 
-	@Override
-	public void reset() {
-		resetting = true;
-
-		Connection last = connections.peek();
-		if (last instanceof GattConnection) {
-			((GattConnection) last).reset();
-		}
-
-		super.reset();
-	}
-
 	private void fireDisconnected() {
 		handler.post(new Runnable() {
 			@Override
@@ -124,6 +112,31 @@ public class BluetoothRower extends Rower {
 
 	private boolean isCurrent(Connection connection) {
 		return this.connections.peek() == connection;
+	}
+
+	@Override
+	public void reset() {
+		super.reset();
+
+		resetting = true;
+		super.setDistance(1);
+		super.setDuration(1);
+		super.setStrokes(1);
+		super.setEnergy(1);
+
+		Connection last = connections.peek();
+		if (last instanceof GattConnection) {
+			((GattConnection) last).reset();
+		}
+	}
+
+	private boolean noTargetValue() {
+		return !super.anyTargetValue();
+	}
+
+	@Override
+	public boolean anyTargetValue() {
+		return resetting ? false : super.anyTargetValue();
 	}
 
 	private interface Connection {
@@ -351,6 +364,7 @@ public class BluetoothRower extends Rower {
 		private BluetoothGatt connected;
 
 		private BluetoothGattCharacteristic softwareRevision;
+		private BluetoothGattCharacteristic manufacturerName;
 		private BluetoothGattCharacteristic rowerData;
 		private BluetoothGattCharacteristic controlPoint;
 		private BluetoothGattCharacteristic batteryLevel;
@@ -359,6 +373,9 @@ public class BluetoothRower extends Rower {
 		 * when on low battery level once a minute instead
 		 */
 		private BluetoothGattCharacteristic lowBattery;
+
+		private String rowerManufacturer;
+		private String rowerVersion;
 
 		GattConnection(String address) {
 			this.address = address;
@@ -447,10 +464,10 @@ public class BluetoothRower extends Rower {
 			if (connected != null && controlPoint != null) {
 				trace.onOutput("control-point resetting");
 				write(connected, controlPoint, OP_CODE_RESET);
-
-				handler.removeCallbacks(resetTimeout);
-				handler.postDelayed(resetTimeout, RESET_TIMEOUT_MILLIS);
 			}
+
+			handler.removeCallbacks(resetTimeout);
+			handler.postDelayed(resetTimeout, RESET_TIMEOUT_MILLIS);
 		}
 
 		@Override
@@ -475,6 +492,15 @@ public class BluetoothRower extends Rower {
 			} else {
 				trace.onOutput("reading software-revision");
 				read(connected, softwareRevision);
+			}
+
+			manufacturerName = get(gatt, SERVICE_DEVICE_INFORMATION, CHARACTERISTIC_MANUFACTURER_NAME);
+			if (manufacturerName == null) {
+				trace.comment("no manufacturer-name");
+				rowerManufacturer = "default"; // use default if not be available
+			} else {
+				trace.onOutput("reading manufacturer-name");
+				read(connected, manufacturerName);
 			}
 
 			batteryLevel = get(gatt, SERVICE_BATTERY, CHARACTERISTIC_BATTERY_LEVEL);
@@ -506,32 +532,19 @@ public class BluetoothRower extends Rower {
 			}
 		}
 
+
 		@Override
 		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 			if (softwareRevision != null && characteristic.getUuid().equals(softwareRevision.getUuid())) {
-				String version = softwareRevision.getStringValue(0);
-				trace.onInput(String.format("software-revision %s read", version));
+				rowerVersion = softwareRevision.getStringValue(0);
+				trace.onInput(String.format("software-revision %s read", rowerVersion));
 
-				String minVersion = "4.2";
-				if (version.compareTo(minVersion) < 0) {
-					// old firmware rejects re-bonding of a previously bonded device,
-					// so do not write to the control point, as this triggers a bond
-				} else {
-					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);
-					if (controlPoint == null) {
-						trace.comment("no control-point");
-					} else {
-						trace.onOutput(String.format("control-point enabling indication"));
-						enableIndication(connected, controlPoint);
+				checkControlPoint(gatt);
+			} else if (manufacturerName != null && characteristic.getUuid().equals(manufacturerName.getUuid())) {
+				rowerManufacturer = manufacturerName.getStringValue(0);
+				trace.onInput(String.format("manufacturer-name %s read", rowerManufacturer));
 
-						trace.onOutput(String.format("control-point requesting control"));
-						write(connected, controlPoint, OP_CODE_REQUEST_CONTROL);
-
-						if (resetting == true) {
-							reset();
-						}
-					}
-				}
+				checkControlPoint(gatt);
 			} else if (batteryLevel != null && characteristic.getUuid().equals(batteryLevel.getUuid())) {
 				int level = batteryLevel.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
 
@@ -541,6 +554,28 @@ public class BluetoothRower extends Rower {
 			}
 
 			super.onCharacteristicRead(gatt, characteristic, status);
+		}
+
+		private void checkControlPoint(BluetoothGatt gatt) {
+			if (rowerManufacturer != null && rowerVersion  != null) {
+				if ("WaterRower".equals(rowerManufacturer) && rowerVersion.compareTo("4.2") < 0) {
+					// old firmware rejects re-bonding of a previously bonded device,
+					// so do not write to the control point, as this triggers a bond
+					trace.comment(String.format("skipping control-point due to version %s", rowerVersion));
+				} else {
+					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);
+					if (controlPoint == null) {
+						trace.comment("no control-point");
+					} else {
+						trace.onOutput("control-point requesting control");
+						write(connected, controlPoint, OP_CODE_REQUEST_CONTROL);
+					}
+
+					if (resetting == true) {
+						reset();
+					}
+				}
+			}
 		}
 
 		private static final int MORE_DATA = 0;
@@ -563,10 +598,8 @@ public class BluetoothRower extends Rower {
 				return;
 			}
 
-			if (controlPoint != null && characteristic.getUuid().equals(controlPoint.getUuid())) {
-				trace.onInput(String.format("control-point changed %s", ByteUtils.toHex(characteristic.getValue())));
-			} else if (lowBattery != null && characteristic.getUuid().equals(lowBattery.getUuid())) {
-				trace.onInput(String.format("low-battery changed"));
+			if (lowBattery != null && characteristic.getUuid().equals(lowBattery.getUuid())) {
+				trace.onInput("low-battery changed");
 
 				// level is not known
 				onBatteryLevel(10);
@@ -578,86 +611,87 @@ public class BluetoothRower extends Rower {
 
 				keepAlive.onNotification();
 
-				int duration = getDuration();
-				int distance = getDistance();
-				int strokes = getStrokes();
-				int energy = getEnergy();
-
 				Fields fields = new Fields(characteristic, Fields.UINT16);
 				try {
-					if (fields.flag(MORE_DATA) == false) {
-						setStrokeRate(fields.get(Fields.UINT8) / 2);
+					if (fields.isNotSet(MORE_DATA)) {
+						int strokeRate = fields.get(Fields.UINT8) / 2;
+						trace.comment(String.format("strokeRate %d", strokeRate));
+						setStrokeRate(strokeRate);
 
-						strokes = fields.get(Fields.UINT16);
+						int strokes = fields.get(Fields.UINT16);
+						trace.comment(String.format("strokes %d", strokes));
+						setStrokes(strokes);
 					}
-					if (fields.flag(AVERAGE_STROKE_RATE)) {
+					if (fields.isSet(AVERAGE_STROKE_RATE)) {
 						fields.get(Fields.UINT8);
 					}
-					if (fields.flag(TOTAL_DISTANCE)) {
-						distance = fields.get(Fields.UINT16) +
+					if (fields.isSet(TOTAL_DISTANCE)) {
+						int totalDistance = fields.get(Fields.UINT16) +
 								(fields.get(Fields.UINT8) << 16);
+						trace.comment(String.format("totalDistance %d", totalDistance));
+						setDistance(totalDistance);
 					}
-					if (fields.flag(INSTANTANEOUS_PACE)) {
+					if (fields.isSet(INSTANTANEOUS_PACE)) {
 						int instantaneousPace = fields.get(Fields.UINT16);
+						trace.comment(String.format("instantaneousPace %d", instantaneousPace));
 						if (instantaneousPace == 0) {
 							setSpeed(0);
 						} else {
 							setSpeed(500 * 100 / instantaneousPace);
 						}
 					}
-					if (fields.flag(AVERAGE_PACE)) {
+					if (fields.isSet(AVERAGE_PACE)) {
 						fields.skip(Fields.UINT16);
 					}
-					if (fields.flag(INSTANTANEOUS_POWER)) {
-						setPower(fields.get(Fields.SINT16));
+					if (fields.isSet(INSTANTANEOUS_POWER)) {
+						int instantaneousPower = fields.get(Fields.SINT16);
+						trace.comment(String.format("instantaneousPower %d", instantaneousPower));
+						setPower(instantaneousPower);
 					}
-					if (fields.flag(AVERAGE_POWER)) {
+					if (fields.isSet(AVERAGE_POWER)) {
 						fields.skip(Fields.SINT16);
 					}
-					if (fields.flag(RESISTANCE_LEVEL)) {
+					if (fields.isSet(RESISTANCE_LEVEL)) {
 						fields.skip(Fields.SINT16);
 					}
-					if (fields.flag(EXPANDED_ENERGY)) {
-						energy = fields.get(Fields.UINT16); // total
+					if (fields.isSet(EXPANDED_ENERGY)) {
+						int energy = fields.get(Fields.UINT16); // total
+						trace.comment(String.format("energy %d", energy));
+						setEnergy(energy);
 						fields.skip(Fields.UINT16); // per hour
 						fields.skip(Fields.UINT8); // per minute
 					}
-					if (fields.flag(HEART_RATE)) {
+					if (fields.isSet(HEART_RATE)) {
 						int heartRate = fields.get(Fields.UINT8);
+						trace.comment(String.format("heartRate %d", heartRate));
 						if (heartRate > 0) {
 							setPulse(heartRate);
 						}
 					}
-					if (fields.flag(METABOLIC_EQUIVALENT)) {
+					if (fields.isSet(METABOLIC_EQUIVALENT)) {
 						fields.skip(Fields.UINT8);
 					}
-					if (fields.flag(ELAPSED_TIME)) {
+					if (fields.isSet(ELAPSED_TIME)) {
 						int elapsedTime = fields.get(Fields.UINT16);
-						if (resetting) {
-							duration = elapsedTime;
-						} else {
-							duration += durationDelta(elapsedTime);
+						int duration = elapsedTime;
+						if (!resetting) {
+							duration = getDuration() + durationDelta(elapsedTime);
 						}
+						trace.comment(String.format("elapsedTime %d (%d)", elapsedTime, duration));
+						setDuration(duration);
 					}
-					if (fields.flag(REMAINING_TIME)) {
+					if (fields.isSet(REMAINING_TIME)) {
 						fields.get(Fields.UINT16);
 					}
 				} catch (Exception ex) {
-					// rarely flags and fields do not match up
-					trace.comment("field mismatch");
+					trace.comment(String.format("field mismatch at ", fields.offset()));
 				}
 
-				if (resetting) {
-					if (distance + duration + energy + strokes == 0) {
-						trace.comment("resetted");
-						resetting = false;
-					}
-				} else {
-					setDistance(distance);
-					setDuration(duration);
-					setStrokes(strokes);
-					setEnergy(energy);
+				if (resetting && noTargetValue()) {
+					trace.comment("reset");
+					resetting = false;
 				}
+
 				notifyMeasurement();
 			}
 		}
@@ -726,9 +760,6 @@ public class BluetoothRower extends Rower {
 	 *     <li>revisions 4.x jumps forward and back a minute but recovers shortly after</li>
 	 *     <li>revisions 1.x jumps back a minute and never recovers</li>
 	 * </ul>
-	 * Note: Since negative deltas are always ignored, a reset of the rower
-	 * can not be detected by means of a zero duration - distance and stroke count will have
-	 * to suffer for that.
 	 */
 	private int durationDelta(int elapsedTime) {
 		if (elapsedTime == this.previousElapsedTime) {
@@ -738,7 +769,6 @@ public class BluetoothRower extends Rower {
 
 		int delta = elapsedTime - this.previousElapsedTime;
 		this.previousElapsedTime = elapsedTime;
-		trace.comment(String.format("elapsed time %+d = %d", delta, elapsedTime));
 
 		if (delta < 0) {
 			// ignore error

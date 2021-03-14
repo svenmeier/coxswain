@@ -27,8 +27,16 @@ public class Fields {
 		flag = get(flagSize);
 	}
 
-	public boolean flag(int bit) {
+	public boolean isSet(int bit) {
 		return (flag & (1 << bit)) != 0;
+	}
+
+	public boolean isNotSet(int bit) {
+		return (flag & (1 << bit)) == 0;
+	}
+
+	public int offset() {
+		return offset;
 	}
 
 	public void skip(int format) {

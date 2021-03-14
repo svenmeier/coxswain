@@ -64,7 +64,9 @@ public class FileTrace implements ITrace {
 
     private void trace(char prefix, CharSequence message) {
         try {
+            writer.append(Long.toString(System.currentTimeMillis()));
             writer.append(prefix);
+            writer.append(' ');
             writer.append(message);
             writer.append('\n');
             writer.flush();

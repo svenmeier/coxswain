@@ -25,6 +25,7 @@ public class BlueWriter extends BluetoothGattCallback {
 
 	public static final UUID SERVICE_DEVICE_INFORMATION = uuid(0x180A);
 	public static final UUID CHARACTERISTIC_SOFTWARE_REVISION = uuid(0x2A28);
+	public static final UUID CHARACTERISTIC_MANUFACTURER_NAME = uuid(0x2A29);
 
 	public static final UUID SERVICE_FITNESS_MACHINE = uuid(0x1826);
 	public static final UUID CHARACTERISTIC_ROWER_DATA = uuid(0x2AD1);

@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.annotation.WorkerThread;
 
 import java.util.ArrayDeque;
-import java.util.Random;
 
 import propoid.util.content.Preference;
 import svenmeier.coxswain.Coxswain;
@@ -423,7 +422,7 @@ public class BluetoothHeart extends Heart {
 			if (characteristic.getUuid().equals(heartRateMeasurement.getUuid())) {
 				int heartRate;
 				Fields fields = new Fields(characteristic, Fields.UINT8);
-				if (fields.flag(0)) {
+				if (fields.isSet(0)) {
 					heartRate = fields.get(Fields.UINT16);
 				} else {
 					heartRate = fields.get(Fields.UINT8);

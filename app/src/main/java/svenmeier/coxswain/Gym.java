@@ -391,7 +391,7 @@ public class Gym {
 
             // limit snapshots so this does not take forever
             for (seconds = Math.min(seconds, 10); seconds > 0; seconds--) {
-                Snapshot snapshot = new Snapshot(progress.segment, measurement);
+                Snapshot snapshot = new Snapshot(progress == null ? Difficulty.NONE : progress.segment.difficulty.get(), measurement);
                 snapshot.workout.set(current);
                 repository.insert(snapshot);
             }

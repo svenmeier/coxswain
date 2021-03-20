@@ -73,8 +73,8 @@ public class Snapshot extends Propoid {
         power.set(0);
     }
 
-    public Snapshot(Segment segment, Measurement measurement) {
-        difficulty.set(segment == null ? Difficulty.NONE : segment.difficulty.get());
+    public Snapshot(Difficulty aDifficulty, Measurement measurement) {
+        difficulty.set(aDifficulty);
         distance.set(measurement.getDistance());
         strokes.set(measurement.getStrokes());
         energy.set(measurement.getEnergy());

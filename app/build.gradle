@@ -35,7 +35,8 @@ android {
 
 ext {
     supportLibraryVersion = '1.0.0'
-    playServicesVersion = '19.0.0'
+    playFitServicesVersion = '20.0.0'
+    playAuthServicesVersion = '19.0.0'
 }
 
 dependencies {
@@ -45,8 +46,8 @@ dependencies {
     implementation "androidx.legacy:legacy-preference-v14:$supportLibraryVersion"
     implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
-    implementation "com.google.android.gms:play-services-fitness:$playServicesVersion"
-    implementation "com.google.android.gms:play-services-auth:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-fitness:$playFitServicesVersion"
+    implementation "com.google.android.gms:play-services-auth:$playAuthServicesVersion"
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     testImplementation 'junit:junit:4.13'
     testImplementation('org.robolectric:robolectric:4.3.1') {

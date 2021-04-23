@@ -33,13 +33,11 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import propoid.db.LookupException;
 import propoid.db.Order;
 import propoid.db.Reference;
 import propoid.ui.list.MatchLookup;
@@ -53,6 +51,7 @@ import svenmeier.coxswain.rower.Energy;
 import svenmeier.coxswain.rower.Stroke;
 import svenmeier.coxswain.util.ChartUtils;
 import svenmeier.coxswain.view.charts.LimitArea;
+import svenmeier.coxswain.view.charts.TimeValueFormatter;
 import svenmeier.coxswain.view.charts.XAxisRenderer2;
 
 
@@ -257,14 +256,11 @@ public class SnapshotsActivity extends AbstractActivity implements CompoundButto
         return intent;
     }
 
-    private class TimeValueFormatter extends ValueFormatter {
-        @Override
-        public String getFormattedValue(float value) {
+    public static Intent createIntent(Context context, Reference<Workout> workout) {
+        Intent intent = new Intent(context, SnapshotsActivity.class);
 
-            int minutes = (int)(value / 60);
-            int seconds = (int)(value % 60);
+        intent.setData(workout.toUri());
 
-            return String.format("%d:%02d", minutes, seconds);
-        }
+        return intent;
     }
 }

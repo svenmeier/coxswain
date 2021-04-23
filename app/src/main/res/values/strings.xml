@@ -195,9 +195,13 @@
     <string name="preference_split_distance_title">Split</string>
     <string name="preference_split_distance_summary">Time per %s meters</string>
 
-    <string name="preference_open_end" translatable="false">preference_open_end</string>
-    <string name="preference_open_end_title">Open end</string>
-    <string name="preference_open_end_summary">Continue training after program has ended</string>
+    <string name="preference_end_workout" translatable="false">preference_end_workout</string>
+    <string name="preference_end_workout_title">End workout</string>
+    <string name="preference_end_workout_summary">End workout after program complete</string>
+
+    <string name="preference_end_workout_result" translatable="false">preference_end_workout_result</string>
+    <string name="preference_end_workout_result_title">Show results</string>
+    <string name="preference_end_workout_result_summary">Show results after program complete</string>
 
     <string name="preference_display_title">Display</string>
 

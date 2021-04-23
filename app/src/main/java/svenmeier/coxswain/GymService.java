@@ -55,7 +55,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
 
     private Handler handler = new Handler();
 
-    private Preference<Boolean> openEnd;
+    private Preference<Boolean> endWorkout;
 
     private Foreground foreground;
 
@@ -71,7 +71,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
     public void onCreate() {
         gym = Gym.instance(this);
 
-        openEnd = Preference.getBoolean(this, R.string.preference_open_end);
+        endWorkout = Preference.getBoolean(this, R.string.preference_end_workout);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         if (event == Event.REJECTED) {
             Toast.makeText(this, R.string.rowing_measurement_rejected, Toast.LENGTH_LONG).show();
             gym.deselect();
-        } else if (event == Event.PROGRAM_FINISHED && openEnd.get() == false) {
+        } else if (event == Event.PROGRAM_FINISHED && endWorkout.get() == true) {
             Toast.makeText(this, R.string.rowing_program_finished, Toast.LENGTH_LONG).show();
             gym.deselect();
         } else if (program != null){

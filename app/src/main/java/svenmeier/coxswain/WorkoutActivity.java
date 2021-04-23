@@ -32,11 +32,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import propoid.db.Reference;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
+import svenmeier.coxswain.gym.Workout;
 import svenmeier.coxswain.view.BindingDialogFragment;
 import svenmeier.coxswain.view.BindingView;
 import svenmeier.coxswain.view.LevelView;
@@ -75,6 +77,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 					View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 
 	private Gym gym;
+
+	private Reference<Workout> workout;
 
 	private BindingView.PaceBoat paceBoat;
 
@@ -137,8 +141,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		}
 	}
 
-	private void writeToGrid(List<ValueBinding> binding) {
-		if (binding == null || binding.isEmpty()) {
+	private void writeToGrid(List<ValueBinding> binding) {		if (binding == null || binding.isEmpty()) {
 			throw new IllegalArgumentException("binding must not be empty");
 		}
 
@@ -250,13 +253,23 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	@Override
 	public void changed(Object scope) {
 		if (gym.program == null) {
-			finish();
-			return;
+			if (!isFinishing()) {
+				if (workout != null && Preference.getBoolean(this, R.string.preference_end_workout_result).get()) {
+					startActivity(SnapshotsActivity.createIntent(this, workout));
+				}
+
+				finish();
+			}
 		}
 
 		if (Measurement.class.isInstance(scope)) {
 			updateBindings((Measurement)scope);
 			updateLevel();
+		}
+
+		Workout workout = gym.current;
+		if (workout != null) {
+			this.workout = new Reference<>(workout);
 		}
 	}
 

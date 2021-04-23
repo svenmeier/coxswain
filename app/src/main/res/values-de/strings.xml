@@ -186,8 +186,11 @@
     <string name="preference_split_distance_title">Split</string>
     <string name="preference_split_distance_summary">Zeit pro %s Meter</string>
 
-    <string name="preference_open_end_title">Offenes Ende</string>
-    <string name="preference_open_end_summary">Training nach Beendigung des Programms weiterführen</string>
+    <string name="preference_end_workout_title">Training beenden</string>
+    <string name="preference_end_workout_summary">Training beenden wenn Programm komplett ist</string>
+
+    <string name="preference_end_workout_result_title">Ergebnisse anzeigen</string>
+    <string name="preference_end_workout_result_summary">Ergebnisse anzeigen wenn Programm komplett ist</string>
 
     <string name="preference_display_title">Anzeige</string>
 

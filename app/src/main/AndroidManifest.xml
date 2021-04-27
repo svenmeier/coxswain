@@ -112,7 +112,8 @@
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
             android:resizeableActivity="true"
-            android:supportsPictureInPicture="true">
+            android:supportsPictureInPicture="true"
+            android:taskAffinity=".WorkoutActivity">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

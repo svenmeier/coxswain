@@ -255,7 +255,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		if (gym.program == null) {
 			if (!isFinishing()) {
 				if (workout != null && Preference.getBoolean(this, R.string.preference_end_workout_result).get()) {
-					startActivity(SnapshotsActivity.createIntent(this, workout));
+					Intent intent = SnapshotsActivity.createIntent(this, workout);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intent);
 				}
 
 				finish();

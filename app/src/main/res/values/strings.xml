@@ -40,6 +40,7 @@
     <string name="distance_label">Distance</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d minutes</string>
+    <string name="duration_seconds">%d seconds</string>
     <string name="duration_label">Duration</string>
     <string name="duration_pattern">00:60</string>
     <string name="strokes_count">%,d strokes</string>

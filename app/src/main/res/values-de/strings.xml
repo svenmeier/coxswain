@@ -37,6 +37,7 @@
     <string name="distance_label">Distanz</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d Minuten</string>
+    <string name="duration_seconds">%d Sekunden</string>
     <string name="duration_label">Dauer</string>
     <string name="duration_pattern">00:60</string>
     <string name="strokes_count">%,d Züge</string>

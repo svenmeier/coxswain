@@ -532,8 +532,15 @@ public class Gym {
                 target = String.format(context.getString(R.string.strokes_count), segment.strokes.get());
             } else if (segment.energy.get() > 0) {
                 target = String.format(context.getString(R.string.energy_kilocalories), segment.energy.get());
-            } else if (segment.duration.get() > 0) {
-                target = String.format(context.getString(R.string.duration_minutes), Math.round(segment.duration.get() / 60f));
+            } else {
+                int seconds = segment.duration.get();
+                if (seconds > 0) {
+                    if (seconds < 60) {
+                        target = String.format(context.getString(R.string.duration_seconds), seconds);
+                    } else {
+                        target = String.format(context.getString(R.string.duration_minutes), Math.round(seconds / 60f));
+                    }
+                }
             }
             return target;
         }

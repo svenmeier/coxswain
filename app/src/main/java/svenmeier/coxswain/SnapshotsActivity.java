@@ -255,12 +255,4 @@ public class SnapshotsActivity extends AbstractActivity implements CompoundButto
 
         return intent;
     }
-
-    public static Intent createIntent(Context context, Reference<Workout> workout) {
-        Intent intent = new Intent(context, SnapshotsActivity.class);
-
-        intent.setData(workout.toUri());
-
-        return intent;
-    }
 }

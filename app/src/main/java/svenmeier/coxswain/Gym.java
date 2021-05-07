@@ -98,8 +98,11 @@ public class Gym {
             @Override
             public void onChanged() {
                 repository.close();
-
                 repository.open();
+
+                measurement = new Measurement();
+                current = null;
+                progress = null;
 
                 fireChanged(null);
             }
@@ -372,6 +375,8 @@ public class Gym {
             mergeWorkout(current);
 
             progress = new Progress(program.getSegment(0), new Measurement());
+
+            fireChanged(current);
 
             event = Event.PROGRAM_START;
         }

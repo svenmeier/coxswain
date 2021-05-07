@@ -32,10 +32,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import propoid.db.Reference;
 import propoid.ui.list.MatchLookup;
 import propoid.util.content.Preference;
 import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.gym.Program;
 import svenmeier.coxswain.gym.Segment;
 import svenmeier.coxswain.gym.Snapshot;
 import svenmeier.coxswain.gym.Workout;
@@ -78,7 +78,7 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 
 	private Gym gym;
 
-	private Reference<Workout> workout;
+	private Runnable finisher = new Finish();
 
 	private BindingView.PaceBoat paceBoat;
 
@@ -231,7 +231,8 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		super.onStart();
 
 		gym.addListener(this);
-		changed(null);
+
+		checkShowResults(gym.current);
 	}
 
 	@Override
@@ -251,27 +252,25 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	}
 
 	@Override
-	public void changed(Object scope) {
-		if (gym.program == null) {
-			if (!isFinishing()) {
-				if (workout != null && Preference.getBoolean(this, R.string.preference_end_workout_result).get()) {
-					Intent intent = SnapshotsActivity.createIntent(this, workout);
-					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(intent);
-				}
-
-				finish();
+	public void changed(final Object scope) {
+		if (null == scope) {
+			if (gym.program == null) {
+				finisher.run();
+				finisher = new Noop();
+			}
+		} else if (Workout.class.isInstance(scope)) {
+			checkShowResults((Workout)scope);
+		} else if (Measurement.class.isInstance(scope)) {
+			updateBindings((Measurement)scope);
+			if (gym.program != null) {
+				updateLevel();
 			}
 		}
+	}
 
-		if (Measurement.class.isInstance(scope)) {
-			updateBindings((Measurement)scope);
-			updateLevel();
-		}
-
-		Workout workout = gym.current;
-		if (workout != null) {
-			this.workout = new Reference<>(workout);
+	private void checkShowResults(Workout workout) {
+		if (workout != null && Preference.getBoolean(this, R.string.preference_end_workout_result).get()) {
+			finisher = new ResultsAndFinish(workout);
 		}
 	}
 
@@ -290,8 +289,9 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 	private void updateLevel() {
 		float value = 0f;
 		float total = 0f;
+		Program program = gym.program;
 		Gym.Progress progress = gym.progress;
-		for (Segment segment : gym.program.segments.get()) {
+		for (Segment segment : program.segments.get()) {
 			float segmentValue = segment.asDuration();
 
 			if (progress != null && progress.segment == segment) {
@@ -457,6 +457,39 @@ public class WorkoutActivity extends AbstractActivity implements View.OnSystemUi
 		@Override
 		public int getDurationDelta(Measurement measurement) {
 			return 0;
+		}
+	}
+
+	private class Finish implements Runnable {
+		@Override
+		public void run() {
+			finish();
+		}
+	}
+
+	private class Noop implements  Runnable {
+		@Override
+		public void run() {
+		}
+	}
+
+	private class ResultsAndFinish implements Runnable {
+		private final Workout workout;
+
+		private ResultsAndFinish(Workout workout) {
+			this.workout = workout;
+		}
+
+		@Override
+		public void run() {
+			Intent intent = SnapshotsActivity.createIntent(WorkoutActivity.this, workout);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) {
+				// required to leave pip
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			}
+			startActivity(intent);
+
+			finish();
 		}
 	}
 }

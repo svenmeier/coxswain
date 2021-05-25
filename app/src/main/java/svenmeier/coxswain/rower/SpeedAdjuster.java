@@ -22,16 +22,47 @@ import svenmeier.coxswain.gym.Measurement;
  */
 public class SpeedAdjuster extends Adjuster {
 
-	/**
-     * Speed dependent on power.
-     *
-     * @param measurement measurement to adjust
-     */
+    private int cms;
+
+    public SpeedAdjuster(Measurement measurement) {
+        super(measurement);
+    }
+
     @Override
-    public int adjust(Measurement measurement, int speed) {
+    public void reset() {
+        super.reset();
+
+        cms = 0;
+    }
+
+    @Override
+    public void setSpeed(int untrustedSpeed) {
         // magic formula see:
         // http://www.concept2.com/indoor-rowers/training/calculators/watts-calculator
-        float mps = 0.709492f * (float) Math.pow(measurement.getPower(), 1d / 3d);
-        return Math.round(mps * 100);
+        float mps = 0.709492f * (float) Math.pow(getPower(), 1d / 3d);
+
+        super.setSpeed(Math.round(mps * 100));
+    }
+
+    @Override
+    public void setDistance(int untrustedDistance) {
+        if (untrustedDistance == 0) {
+            super.setDistance(0);
+        }
+    }
+
+    @Override
+    public void setDuration(int newDuration) {
+        int oldDuration = super.getDuration();
+
+        super.setDuration(newDuration);
+
+        if (newDuration > oldDuration) {
+            int delta = newDuration - oldDuration;
+
+            cms += delta * getSpeed();
+
+            super.setDistance(cms / 100);
+        }
     }
 }

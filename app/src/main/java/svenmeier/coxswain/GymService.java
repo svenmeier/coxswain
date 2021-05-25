@@ -148,7 +148,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         if (gym.program != this.program) {
             this.program = gym.program;
 
-            rower.reset();
+            rower.getMeasurement().reset();
 
             foreground.changed();
         }
@@ -160,13 +160,13 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
             return;
         }
 
-        this.heart = Heart.create(GymService.this, rower, this);
+        this.heart = Heart.create(GymService.this, rower.getMeasurement(), this);
 
         foreground.connected();
 
         this.program = gym.program;
         if (this.program != null) {
-            rower.reset();
+            rower.getMeasurement().reset();
 
             foreground.changed();
         }
@@ -179,7 +179,7 @@ public class GymService extends Service implements Gym.Listener, Rower.Callback,
         }
 
         Event event = gym.onMeasured(measurement);
-        motivator.onEvent(event, rower, gym.progress);
+        motivator.onEvent(event, rower.getMeasurement(), gym.progress);
 
         if (event == Event.REJECTED) {
             Toast.makeText(this, R.string.rowing_measurement_rejected, Toast.LENGTH_LONG).show();

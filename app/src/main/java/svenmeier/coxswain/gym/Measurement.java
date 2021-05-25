@@ -63,15 +63,15 @@ public class Measurement {
     }
 
     public Measurement(Measurement measurement) {
-        this.duration = measurement.duration;
-        this.distance = measurement.distance;
-        this.strokes = measurement.strokes;
-        this.energy = measurement.energy;
-        this.speed = measurement.speed;
-        this.pulse = measurement.pulse;
-        this.strokeRate = measurement.strokeRate;
-        this.power = measurement.power;
-        this.strokeRatio = measurement.strokeRatio;
+        this.duration = measurement.getDuration();
+        this.distance = measurement.getDistance();
+        this.strokes = measurement.getStrokes();
+        this.energy = measurement.getEnergy();
+        this.speed = measurement.getSpeed();
+        this.pulse = measurement.getPulse();
+        this.strokeRate = measurement.getStrokeRate();
+        this.power = measurement.getPower();
+        this.strokeRatio = measurement.getStrokeRatio();
     }
 
     public void reset() {

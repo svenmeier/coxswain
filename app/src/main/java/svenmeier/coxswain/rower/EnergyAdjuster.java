@@ -36,14 +36,18 @@ public class EnergyAdjuster extends Adjuster {
 
     private int weight;
 
+    private Measurement measurement;
+
 	/**
      * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust.
      */
-    public EnergyAdjuster() {
-        this(DEFAULT_WEIGHT);
+    public EnergyAdjuster(Measurement measurement) {
+        this(measurement, DEFAULT_WEIGHT);
     }
 
-    public EnergyAdjuster(int weight) {
+    public EnergyAdjuster(Measurement measurement, int weight) {
+        super(measurement);
+
         if (weight < WEIGHT_MIN) {
             weight = WEIGHT_MIN;
         }
@@ -55,21 +59,15 @@ public class EnergyAdjuster extends Adjuster {
         this.weight = weight;
     }
 
-	/**
-     * Energy dependent on weight.
-     *
-     * @param measurement measurement to adjust
-     */
-	@Override
-    public int adjust(Measurement measurement, int energy) {
-
+    @Override
+    public void setEnergy(int energy) {
 	    if (measurement.getDistance() == 0) {
             // leave unadjusted
-	        return energy;
+	        super.setEnergy(energy);
+        } else {
+            double adjusted = ((double)energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
+
+            super.setEnergy(Math.max(0, (int)adjusted));
         }
-
-        double adjusted = ((double)energy) - S4_CALORIES_FOR_WEIGHT + (CALORIES_FACTOR * (weight * KG_TO_POUNDS));
-
-        return Math.max(0, (int)adjusted);
     }
 }

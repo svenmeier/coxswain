@@ -20,14 +20,111 @@ import svenmeier.coxswain.gym.Measurement;
 /**
  * Calculator.
  */
-public class Adjuster {
+public class Adjuster extends Measurement {
 
-	/**
-     * Adjust
-     *
-     * @param value
-     */
-    public int adjust(Measurement measurement, int value) {
-        return value;
+    private final Measurement measurement;
+
+    public Adjuster(Measurement measurement) {
+        this.measurement = measurement;
+    }
+
+    @Override
+    public void reset() {
+        measurement.reset();
+    }
+
+    @Override
+    public boolean anyTargetValue() {
+        return measurement.anyTargetValue();
+    }
+
+    @Override
+    public int getDuration() {
+        return measurement.getDuration();
+    }
+
+    @Override
+    public void setDuration(int duration) {
+        measurement.setDuration(duration);
+    }
+
+    @Override
+    public int getDistance() {
+        return measurement.getDistance();
+    }
+
+    @Override
+    public void setDistance(int distance) {
+        measurement.setDistance(distance);
+    }
+
+    @Override
+    public int getStrokes() {
+        return measurement.getStrokes();
+    }
+
+    @Override
+    public void setStrokes(int strokes) {
+        measurement.setStrokes(strokes);
+    }
+
+    @Override
+    public int getEnergy() {
+        return measurement.getEnergy();
+    }
+
+    @Override
+    public void setEnergy(int energy) {
+        measurement.setEnergy(energy);
+    }
+
+    @Override
+    public int getSpeed() {
+        return measurement.getSpeed();
+    }
+
+    @Override
+    public void setSpeed(int speed) {
+        measurement.setSpeed(speed);
+    }
+
+    @Override
+    public int getPulse() {
+        return measurement.getPulse();
+    }
+
+    @Override
+    public void setPulse(int pulse) {
+        measurement.setPulse(pulse);
+    }
+
+    @Override
+    public int getStrokeRate() {
+        return measurement.getStrokeRate();
+    }
+
+    @Override
+    public void setStrokeRate(int strokeRate) {
+        measurement.setStrokeRate(strokeRate);
+    }
+
+    @Override
+    public int getPower() {
+        return measurement.getPower();
+    }
+
+    @Override
+    public void setPower(int power) {
+        measurement.setPower(power);
+    }
+
+    @Override
+    public int getStrokeRatio() {
+        return measurement.getStrokeRatio();
+    }
+
+    @Override
+    public void setStrokeRatio(int strokeRatio) {
+        measurement.setStrokeRatio(strokeRatio);
     }
 }

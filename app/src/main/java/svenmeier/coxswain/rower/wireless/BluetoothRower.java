@@ -30,6 +30,8 @@ import svenmeier.coxswain.R;
 import svenmeier.coxswain.bluetooth.BlueWriter;
 import svenmeier.coxswain.bluetooth.BluetoothActivity;
 import svenmeier.coxswain.bluetooth.Fields;
+import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.Adjuster;
 import svenmeier.coxswain.rower.Rower;
 import svenmeier.coxswain.util.ByteUtils;
 import svenmeier.coxswain.util.PermissionBlock;
@@ -68,6 +70,11 @@ public class BluetoothRower extends Rower {
 		this.context = context;
 
 		devicePreference = Preference.getString(context, R.string.preference_bluetooth_rower_device);
+	}
+
+	@Override
+	protected Measurement createMeasurement() {
+		return new Resetter(super.createMeasurement());
 	}
 
 	@Override
@@ -112,31 +119,6 @@ public class BluetoothRower extends Rower {
 
 	private boolean isCurrent(Connection connection) {
 		return this.connections.peek() == connection;
-	}
-
-	@Override
-	public void reset() {
-		super.reset();
-
-		resetting = true;
-		super.setDistance(1);
-		super.setDuration(1);
-		super.setStrokes(1);
-		super.setEnergy(1);
-
-		Connection last = connections.peek();
-		if (last instanceof GattConnection) {
-			((GattConnection) last).reset();
-		}
-	}
-
-	private boolean noTargetValue() {
-		return !super.anyTargetValue();
-	}
-
-	@Override
-	public boolean anyTargetValue() {
-		return resetting ? false : super.anyTargetValue();
 	}
 
 	private interface Connection {
@@ -616,11 +598,11 @@ public class BluetoothRower extends Rower {
 					if (fields.isNotSet(MORE_DATA)) {
 						int strokeRate = fields.get(Fields.UINT8) / 2;
 						trace.comment(String.format("strokeRate %d", strokeRate));
-						setStrokeRate(strokeRate);
+						measurement.setStrokeRate(strokeRate);
 
 						int strokes = fields.get(Fields.UINT16);
 						trace.comment(String.format("strokes %d", strokes));
-						setStrokes(strokes);
+						measurement.setStrokes(strokes);
 					}
 					if (fields.isSet(AVERAGE_STROKE_RATE)) {
 						fields.get(Fields.UINT8);
@@ -629,15 +611,15 @@ public class BluetoothRower extends Rower {
 						int totalDistance = fields.get(Fields.UINT16) +
 								(fields.get(Fields.UINT8) << 16);
 						trace.comment(String.format("totalDistance %d", totalDistance));
-						setDistance(totalDistance);
+						measurement.setDistance(totalDistance);
 					}
 					if (fields.isSet(INSTANTANEOUS_PACE)) {
 						int instantaneousPace = fields.get(Fields.UINT16);
 						trace.comment(String.format("instantaneousPace %d", instantaneousPace));
 						if (instantaneousPace == 0) {
-							setSpeed(0);
+							measurement.setSpeed(0);
 						} else {
-							setSpeed(500 * 100 / instantaneousPace);
+							measurement.setSpeed(500 * 100 / instantaneousPace);
 						}
 					}
 					if (fields.isSet(AVERAGE_PACE)) {
@@ -646,7 +628,7 @@ public class BluetoothRower extends Rower {
 					if (fields.isSet(INSTANTANEOUS_POWER)) {
 						int instantaneousPower = fields.get(Fields.SINT16);
 						trace.comment(String.format("instantaneousPower %d", instantaneousPower));
-						setPower(instantaneousPower);
+						measurement.setPower(instantaneousPower);
 					}
 					if (fields.isSet(AVERAGE_POWER)) {
 						fields.skip(Fields.SINT16);
@@ -657,7 +639,7 @@ public class BluetoothRower extends Rower {
 					if (fields.isSet(EXPANDED_ENERGY)) {
 						int energy = fields.get(Fields.UINT16); // total
 						trace.comment(String.format("energy %d", energy));
-						setEnergy(energy);
+						measurement.setEnergy(energy);
 						fields.skip(Fields.UINT16); // per hour
 						fields.skip(Fields.UINT8); // per minute
 					}
@@ -665,7 +647,7 @@ public class BluetoothRower extends Rower {
 						int heartRate = fields.get(Fields.UINT8);
 						trace.comment(String.format("heartRate %d", heartRate));
 						if (heartRate > 0) {
-							setPulse(heartRate);
+							measurement.setPulse(heartRate);
 						}
 					}
 					if (fields.isSet(METABOLIC_EQUIVALENT)) {
@@ -675,10 +657,10 @@ public class BluetoothRower extends Rower {
 						int elapsedTime = fields.get(Fields.UINT16);
 						int duration = elapsedTime;
 						if (!resetting) {
-							duration = getDuration() + durationDelta(elapsedTime);
+							duration = measurement.getDuration() + durationDelta(elapsedTime);
 						}
 						trace.comment(String.format("elapsedTime %d (%d)", elapsedTime, duration));
-						setDuration(duration);
+						measurement.setDuration(duration);
 					}
 					if (fields.isSet(REMAINING_TIME)) {
 						fields.get(Fields.UINT16);
@@ -687,7 +669,9 @@ public class BluetoothRower extends Rower {
 					trace.comment(String.format("field mismatch at ", fields.offset()));
 				}
 
-				if (resetting && noTargetValue()) {
+				if (resetting &&
+						(measurement.getDuration() + measurement.getDistance() +
+								measurement.getStrokes() + measurement.getEnergy() == 0)) {
 					trace.comment("reset");
 					resetting = false;
 				}
@@ -797,5 +781,34 @@ public class BluetoothRower extends Rower {
 		} else {
 			Log.i(Coxswain.TAG, "bluetooth rower battery level " + level);
 		}
+	}
+
+	private class Resetter extends Adjuster {
+
+		public Resetter(Measurement measurement) {
+			super(measurement);
+		}
+
+		@Override
+		public void reset() {
+			super.reset();
+
+			resetting = true;
+			super.setDistance(1);
+			super.setDuration(1);
+			super.setStrokes(1);
+			super.setEnergy(1);
+
+			Connection last = connections.peek();
+			if (last instanceof GattConnection) {
+				((GattConnection) last).reset();
+			}
+		}
+
+		@Override
+		public boolean anyTargetValue() {
+			return resetting ? false : super.anyTargetValue();
+		}
+
 	}
 }

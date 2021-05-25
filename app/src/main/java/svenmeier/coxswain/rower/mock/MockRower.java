@@ -18,6 +18,7 @@ package svenmeier.coxswain.rower.mock;
 import android.content.Context;
 import android.os.Handler;
 
+import svenmeier.coxswain.gym.Measurement;
 import svenmeier.coxswain.rower.Rower;
 
 /**
@@ -82,6 +83,11 @@ public class MockRower extends Rower {
         super(context, callback);
     }
 
+    @Override
+    protected Measurement createMeasurement() {
+        return new Resetter(super.createMeasurement());
+    }
+
     private void delay(Runnable runnable, int delay) {
         if (delayed != null) {
             handler.removeCallbacks(delayed);
@@ -96,7 +102,7 @@ public class MockRower extends Rower {
 
     @Override
     public void open() {
-        reset();
+        measurement.reset();
 
         delay(new Connected(), CONNECTION_DELAY);
     }
@@ -106,19 +112,6 @@ public class MockRower extends Rower {
         return "Mockrower";
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-
-        startAt = 0;
-        
-        speedTemp = 2.5 + Math.random();
-        strokesTemp = 0;
-        energyTemp = 0;
-
-        delay(new Start(), START_DELAY);
-    }
-
     private void row() {
         long now = System.currentTimeMillis();
 
@@ -126,27 +119,46 @@ public class MockRower extends Rower {
             startAt = now;
         }
 
-        setDuration((int)(now - startAt) / 1000);
+        measurement.setDuration((int)(now - startAt) / 1000);
 
-        setDistance((int)((now - startAt) * speedTemp) / 1000);
+        measurement.setDistance((int)((now - startAt) * speedTemp) / 1000);
 
         strokesTemp += 0.04;
-        setStrokes((int) strokesTemp);
+        measurement.setStrokes((int) strokesTemp);
 
         energyTemp += 0.015;
-        setEnergy((int) energyTemp);
+        measurement.setEnergy((int) energyTemp);
 
-        setSpeed((int)(speedTemp * 100));
+        measurement.setSpeed((int)(speedTemp * 100));
 
-        setStrokeRate((int)(26 +  (Math.random() * 3)));
+        measurement.setStrokeRate((int)(26 +  (Math.random() * 3)));
 
-        setStrokeRatio((int)(10 +  (Math.random() * 5)));
+        measurement.setStrokeRatio((int)(10 +  (Math.random() * 5)));
 
-        setPulse((int)(80 +  (Math.random() * 10)));
+        measurement.setPulse((int)(80 +  (Math.random() * 10)));
     }
 
     @Override
     public void close() {
         delay(null, 0);
+    }
+
+    private class Resetter extends Measurement {
+        public Resetter(Measurement measurement) {
+            super(measurement);
+        }
+
+        @Override
+        public void reset() {
+            super.reset();
+
+            startAt = 0;
+
+            speedTemp = 2.5 + Math.random();
+            strokesTemp = 0;
+            energyTemp = 0;
+
+            delay(new Start(), START_DELAY);
+        }
     }
 }

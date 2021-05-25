@@ -28,24 +28,22 @@ import svenmeier.coxswain.gym.Measurement;
 
 /**
  */
-public abstract class Rower extends Measurement {
+public abstract class Rower {
 
     private final Handler handler = new Handler();
 
     private final Context context;
 
+    protected final Measurement measurement;
+
     private final Runnable onMeasurement = new Runnable() {
         @Override
         public void run() {
-            callback.onMeasurement(Rower.this);
+            callback.onMeasurement(measurement);
         }
     };
 
     protected final Callback callback;
-
-    private Adjuster speedAdjuster = new Adjuster();
-
-    private Adjuster energyAdjuster = new Adjuster();
 
     protected ITrace trace = new NullTrace();
 
@@ -53,13 +51,7 @@ public abstract class Rower extends Measurement {
         this.context = context;
         this.callback = callback;
 
-        if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
-            energyAdjuster = new EnergyAdjuster(Preference.getInt(context, R.string.preference_weight).fallback(90).get());
-        }
-
-        if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
-            speedAdjuster = new SpeedAdjuster();
-        }
+        this.measurement = createMeasurement();
 
         if (Preference.getBoolean(context, R.string.preference_hardware_trace).get()) {
             try {
@@ -71,6 +63,20 @@ public abstract class Rower extends Measurement {
         trace.comment(String.format("coxswain %s (%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
     }
 
+    protected Measurement createMeasurement() {
+        Measurement measurement = new Measurement();
+
+        if (Preference.getBoolean(context, R.string.preference_adjust_speed).get()) {
+            measurement = new SpeedAdjuster(measurement);
+        }
+
+        if (Preference.getBoolean(context, R.string.preference_adjust_energy).get()) {
+            measurement = new EnergyAdjuster(measurement, Preference.getInt(context, R.string.preference_weight).fallback(90).get());
+        }
+
+        return measurement;
+    }
+
     public abstract String getName();
 
     /**
@@ -78,14 +84,8 @@ public abstract class Rower extends Measurement {
      */
     public abstract void open();
 
-    @Override
-    public void setEnergy(int energy) {
-        super.setEnergy(energyAdjuster.adjust(this, energy));
-    }
-
-    @Override
-    public void setSpeed(int speed) {
-        super.setSpeed(speedAdjuster.adjust(this, speed));
+    public Measurement getMeasurement() {
+        return measurement;
     }
 
     protected void toast(final String text) {

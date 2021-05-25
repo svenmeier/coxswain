@@ -32,6 +32,8 @@ import propoid.util.content.Preference;
 import svenmeier.coxswain.BuildConfig;
 import svenmeier.coxswain.Coxswain;
 import svenmeier.coxswain.R;
+import svenmeier.coxswain.gym.Measurement;
+import svenmeier.coxswain.rower.Adjuster;
 import svenmeier.coxswain.rower.FileTrace;
 import svenmeier.coxswain.rower.NullTrace;
 import svenmeier.coxswain.rower.Rower;
@@ -64,6 +66,11 @@ public class UsbRower extends Rower implements Runnable {
             throw new IllegalArgumentException("device");
         }
         this.device = device;
+    }
+
+    @Override
+    protected Measurement createMeasurement() {
+        return new Resetter(super.createMeasurement());
     }
 
     @Override
@@ -132,18 +139,11 @@ public class UsbRower extends Rower implements Runnable {
     }
 
     @Override
-    public void reset() {
-        super.reset();
-
-        protocol.reset();
-    }
-
-    @Override
     public void run() {
 		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
         while (connection != null) {
-            protocol.transfer(this);
+            protocol.transfer(measurement);
 
             notifyMeasurement();
         }
@@ -195,5 +195,19 @@ public class UsbRower extends Rower implements Runnable {
         this.connection.close();
         this.connection = null;
         return false;
+    }
+
+    private class Resetter extends Adjuster {
+
+        public Resetter(Measurement measurement) {
+            super(measurement);
+        }
+
+        @Override
+        public void reset() {
+            super.reset();
+
+            protocol.reset();
+        }
     }
 }

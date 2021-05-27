@@ -84,9 +84,9 @@ public class FitExport extends Export<Workout> {
 				builder.addDataType(mapper.type(), FitnessOptions.ACCESS_WRITE);
 			}
 			options = builder.build();
-			account = GoogleSignIn.getLastSignedInAccount(context);
+			account = GoogleSignIn.getAccountForExtension(context, options);
 
-			if (GoogleSignIn.hasPermissions(account, options)) {
+			if (account != null && GoogleSignIn.hasPermissions(account, options)) {
 				new Thread(this).start();
 			} else {
 				permissionRequired();

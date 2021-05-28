@@ -1,38 +1,39 @@
 <resources>
     <string name="app_name" translatable="false">Coxswain</string>
-
+    
     <string name="action_mock">Mock</string>
-    <string name="action_help">Help</string>
-    <string name="action_bluetooth">Connect via Bluetooth</string>
-    <string name="action_evaluate">Evaluate</string>
+    <string name="action_help">Aide</string>
+    <string name="action_bluetooth">Connexion via Bluetooth</string>
+    <string name="action_evaluate">Evaluer</string>
     <string name="action_export">Export</string>
     <string name="action_import">Import</string>
-    <string name="action_bind">Bind</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_sort">Sort</string>
-    <string name="action_sort_ascending">ascending</string>
+    <string name="action_bind">Lier</string>
+    <string name="action_settings">Réglages</string>
+    <string name="action_sort">Trier</string>
+    <string name="action_sort_ascending">Montant</string>
     <string name="action_ok">OK</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_duplicate">Duplicate</string>
-    <string name="action_select">Select</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_delete_confirm_title">Deletion?</string>
-    <string name="action_delete_confirm_message">Deletion can not be reverted!</string>
-    <string name="action_delete_confirm">Delete now</string>
-    <string name="action_repeat">Repeat</string>
+    <string name="action_edit">Editer</string>
+    <string name="action_duplicate">Dupliquer</string>
+    <string name="action_select">Sélectionner</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_delete_confirm_title">Suppression?</string>
+    <string name="action_delete_confirm_message">La suppression est irréversible!</string>
+    <string name="action_delete_confirm">Supprimer maintenant</string>
+    <string name="action_repeat">Répéter</string>
     <string name="action_challenge">Challenge</string>
-    <string name="action_new">New</string>
-    <string name="action_day">Day</string>
-    <string name="action_week">Week</string>
-    <string name="action_month">Month</string>
+    <string name="action_new">Nouveau</string>
+    <string name="action_day">Jour</string>
+    <string name="action_week">Semaine</string>
+    <string name="action_month">Mois</string>
 
-    <string name="gym_notification_connecting">Connecting to %s …</string>
-    <string name="gym_notification_connected">Connected to %s</string>
-    <string name="gym_notification_disconnect">Cancel</string>
-    <string name="gym_ready">ready</string>
-    <string name="gym_repository_extern_failed">Cannot load repository from external location
+    <string name="gym_notification_connecting">Connection à %s …</string>
+    <string name="gym_notification_connected">Connecté à %s</string>
+    <string name="gym_notification_disconnect">Annuler</string>
+    <string name="gym_ready">prêt</string>
+    <string name="gym_repository_extern_failed">Impossible de charger le référentiel à partir d'un emplacement externe
     </string>
 
+    
     <string name="distance_miles">%,d mi</string>
     <string name="distance_yards">%,d yd</string>
     <string name="distance_feets">%,d ft</string>

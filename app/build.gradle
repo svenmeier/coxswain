@@ -9,12 +9,12 @@ if (project.hasProperty("coxswain-private") && new File(project.property("coxswa
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "svenmeier.coxswain"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
 
         versionCode Integer.parseInt(project.property("coxswain-versionCode"))
         versionName project.property("coxswain-versionName")

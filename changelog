@@ -1,5 +1,9 @@
 8.5
   - show results after workout end
+  - possible fix for export to Google Fit
+  - speak seconds
+  - adjust distance when adjusting speed
+  - French translation
 
 8.4
   - fixed open end to continue rowing

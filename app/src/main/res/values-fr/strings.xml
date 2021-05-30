@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false">Coxswain</string>
-    
-    <string name="action_mock">Mock</string>
     <string name="action_help">Aide</string>
+    <string name="action_mock">Mock</string>
     <string name="action_bluetooth">Connexion via Bluetooth</string>
     <string name="action_evaluate">Evaluer</string>
     <string name="action_export">Export</string>
@@ -20,7 +18,7 @@
     <string name="action_delete_confirm_message">La suppression est irréversible!</string>
     <string name="action_delete_confirm">Supprimer maintenant</string>
     <string name="action_repeat">Répéter</string>
-    <string name="action_challenge">Challenge</string>
+    <string name="action_challenge">Défi</string>
     <string name="action_new">Nouveau</string>
     <string name="action_day">Jour</string>
     <string name="action_week">Semaine</string>
@@ -30,10 +28,8 @@
     <string name="gym_notification_connected">Connecté à %s</string>
     <string name="gym_notification_disconnect">Annuler</string>
     <string name="gym_ready">prêt</string>
-    <string name="gym_repository_extern_failed">Impossible de charger le référentiel à partir d'un emplacement externe
-    </string>
+    <string name="gym_repository_extern_failed">Impossible de charger le référentiel à partir d\'un emplacement externe</string>
 
-    
     <string name="distance_miles">%,d mi</string>
     <string name="distance_yards">%,d yd</string>
     <string name="distance_feets">%,d ft</string>
@@ -41,327 +37,245 @@
     <string name="distance_label">Distance</string>
     <string name="distance_pattern">00000</string>
     <string name="duration_minutes">%d minutes</string>
-    <string name="duration_seconds">%d seconds</string>
-    <string name="duration_label">Duration</string>
+    <string name="duration_seconds">%d secondes</string>
+    <string name="duration_label">Durée</string>
     <string name="duration_pattern">00:60</string>
-    <string name="strokes_count">%,d strokes</string>
-    <string name="strokes_label">Strokes</string>
+    <string name="strokes_count">%,d coups</string>
+    <string name="strokes_label">Coups</string>
     <string name="strokes_pattern">0000</string>
     <string name="energy_kilocalories">%,d kcal</string>
     <string name="energy_watthours">%,d Wh</string>
     <string name="energy_kilojoules">%,d kJ</string>
-    <string name="energy_label">Energy</string>
+    <string name="energy_label">Énergie</string>
     <string name="energy_pattern">0000</string>
-    <string name="strokeRate_strokesPerMinute_abbr">%d spm</string>
-    <string name="strokeRate_strokesPerMinute">%d strokes per minute</string>
-    <string name="strokeRate_label">Strokerate</string>
+    <string name="strokeRate_strokesPerMinute_abbr">%d cpm</string>
+    <string name="strokeRate_strokesPerMinute">%d coups par minute</string>
+    <string name="strokeRate_label">Cadence</string>
     <string name="strokeRate_pattern">-00</string>
-    <string name="average_strokeRate_label">⌀ Strokerate</string>
+    <string name="average_strokeRate_label">⌀ Cadence</string>
     <string name="pulse_beatsPerMinute_abbr">%d bpm</string>
-    <string name="pulse_beatsPerMinute">%d beats per minute</string>
-    <string name="pulse_label">Pulse</string>
+    <string name="pulse_beatsPerMinute">%d battements par minute</string>
+    <string name="pulse_label">Pouls</string>
     <string name="pulse_pattern">-000</string>
     <string name="speed_metersPerSecond_abbr">%.1f m/s</string>
-    <string name="speed_metersPerSecond">%.1f meters per second</string>
-    <string name="speed_label">Speed</string>
-    <string name="speed_pattern">-0.00</string>
-    <string name="average_speed_label">⌀ Speed</string>
+    <string name="speed_metersPerSecond">%.1f mètres par seconde</string>
+    <string name="speed_label">Vitesse</string>
+    <string name="speed_pattern">-0,00</string>
+    <string name="average_speed_label">⌀ Vitesse</string>
     <string name="power_watts_abbr">%d W</string>
     <string name="power_watts">%d watts</string>
-    <string name="power_label">Power</string>
+    <string name="power_label">Puissance</string>
     <string name="power_pattern">-000</string>
-    <string name="average_power_label">⌀ Power</string>
-    <string name="strokeRatio_label">Strokeratio</string>
-    <string name="strokeRatio_pattern">1:0.0</string>
-    <string name="time_label">Time</string>
+    <string name="average_power_label">⌀ Puissance</string>
+    <string name="strokeRatio_label">Cadence</string>
+    <string name="strokeRatio_pattern">1:0,0</string>
+    <string name="time_label">Temps</string>
     <string name="time_pattern">00:60</string>
-    <string name="split_label">Split</string>
+    <string name="split_label">Fractionné</string>
     <string name="split_pattern">60:60</string>
-    <string name="average_split_label">⌀ Split</string>
+    <string name="average_split_label">⌀ Fractionné</string>
     <string name="average_split_pattern">60:60</string>
-    <string name="delta_duration_label">Δ Duration</string>
+    <string name="delta_duration_label">Δ Durée</string>
     <string name="delta_duration_pattern">-60:60</string>
     <string name="delta_distance_label">Δ Distance</string>
     <string name="delta_distance_pattern">-0000</string>
-    <string name="none_label">None</string>
+    <string name="none_label">Vide</string>
     <string name="none_pattern"/>
 
-    <string name="sort_start">Sorting by start</string>
-    <string name="sort_duration">Sorting by duration</string>
-    <string name="sort_distance">Sorting by distance</string>
-    <string name="sort_energy">Sorting by energy</string>
+    <string name="sort_start">Trier par date</string>
+    <string name="sort_duration">Trier par durée</string>
+    <string name="sort_distance">Trier par distance</string>
+    <string name="sort_energy">Trier par dépense énergétique</string>
 
-    <string name="programs">Program</string>
-    <string name="workouts">Workout</string>
+    <string name="programs">Programme</string>
+    <string name="workouts">Entraînement</string>
     <string name="performance">Performance</string>
 
-    <string name="program_name_new">New program</string>
+    <string name="program_name_new">Nouveau programme</string>
     <string name="program_name_segments">Segments</string>
 
-    <string name="rowing_measurement_rejected">Rower was reset</string>
-    <string name="rowing_program_finished">Program finished</string>
+    <string name="rowing_measurement_rejected">Rower a été réinitialisé</string>
+    <string name="rowing_program_finished">Programme terminé</string>
 
-    <string name="workout_binding_decrease">Remove</string>
-    <string name="workout_binding_increase">Add</string>
+    <string name="workout_binding_decrease">Enlever</string>
+    <string name="workout_binding_increase">Ajouter</string>
 
-    <string name="snapshots_show_rests">include rest segments</string>
+    <string name="snapshots_show_rests">Inclure des segments de repos</string>
 
-    <string name="import_chooser">Please install a file manager</string>
-    <string name="import_unknown">Unknown import format</string>
+    <string name="import_chooser">Installer SVP un gestionnaire de fichiers</string>
+    <string name="import_unknown">Format d\'import inconnu</string>
 
-    <string name="calendar_export">Calendar</string>
-    <string name="calendar_export_failed">Exporting workout failed</string>
-    <string name="calendar_export_finished">Event inserted into calendar</string>
+    <string name="calendar_export">Calendrier</string>
+    <string name="calendar_export_failed">L\'exportation à échoué</string>
+    <string name="calendar_export_finished">Evènement inséré dans le calendrier</string>
 
-    <string name="program_export">File</string>
-    <string name="program_export_share">Share …</string>
-    <string name="program_export_starting">Exporting to file</string>
-    <string name="program_export_finished">Program exported to %s</string>
-    <string name="program_export_failed">Exporting program failed</string>
-    <string name="program_import_starting">Importing program</string>
-    <string name="program_import_finished">Program imported</string>
-    <string name="program_import_failed">Importing program failed</string>
+    <string name="program_export">Fichier</string>
+    <string name="program_export_share">Partager …</string>
+    <string name="program_export_starting">Exporter un fichier</string>
+    <string name="program_export_finished">Programme exporté vers %s</string>
+    <string name="program_export_failed">L\'exportation à échoué</string>
+    <string name="program_import_starting">Importation de programme</string>
+    <string name="program_import_finished">Programme importé</string>
+    <string name="program_import_failed">L\'importation du programme a échoué</string>
 
     <string name="garmin_export">TCX</string>
-    <string name="garmin_export_share">Share TCX …</string>
-    <string name="garmin_export_starting">Exporting workout</string>
-    <string name="garmin_export_finished">Exported to %s</string>
-    <string name="garmin_export_track_course_unavailable">Course is erroneous.</string>
-    <string name="garmin_export_failed">Exporting workout failed</string>
-    <string name="garmin_import_starting">Importing workout</string>
-    <string name="garmin_import_finished">Workout imported</string>
-    <string name="garmin_import_failed">Import of workout failed</string>
+    <string name="garmin_export_share">Partager TCX …</string>
+    <string name="garmin_export_starting">Exportation du programme</string>
+    <string name="garmin_export_finished">Exporter vers %s</string>
+    <string name="garmin_export_track_course_unavailable">Parcours incorrect.</string>
+    <string name="garmin_export_failed">L\'exportation à échoué</string>
+    <string name="garmin_import_starting">Importation de programme</string>
+    <string name="garmin_import_finished">Programme importé</string>
+    <string name="garmin_import_failed">L\'importation du programme a échoué</string>
 
-    <string name="googlefit_failed">Google Fit not available</string>
+    <string name="googlefit_failed">Google Fit non disponible</string>
     <string name="googlefit_export">Google Fit</string>
-    <string name="googlefit_export_permissions_manual">Permission required, please start export manually</string>
-    <string name="googlefit_export_starting">Exporting to Google Fit</string>
-    <string name="googlefit_export_finished">Exported to Google Fit</string>
-    <string name="googlefit_export_failed">Export to Google Fit failed</string>
+    <string name="googlefit_export_permissions_manual">Permission demandée, exporter SVP manuellement</string>
+    <string name="googlefit_export_starting">Export vers Google Fit</string>
+    <string name="googlefit_export_finished">Exporté vers Google Fit</string>
+    <string name="googlefit_export_failed">L\'exportation vers Google Fit a échoué</string>
 
-    <string name="sensors_heart_rejected">No access to heart rate sensor</string>
-    <string name="sensors_heart_not_found">No Heart rate sensor found</string>
-    <string name="sensors_heart_reading">Reading heart rate sensor</string>
+    <string name="sensors_heart_rejected">Pas d\'accès au capteur cardiaque</string>
+    <string name="sensors_heart_not_found">Capteur cardiaque non trouvé</string>
+    <string name="sensors_heart_reading">Lit les données du capteur cardiaque</string>
 
-    <string name="ant_heart_dependency_not_installed">Ant+ is not available</string>
-    <string name="ant_heart_searching">Searching for heart rate via Ant+ …</string>
-    <string name="ant_heart_not_found">No heart rate found via Ant+</string>
-    <string name="ant_heart_reading">Reading heart rate via Ant+</string>
+    <string name="ant_heart_dependency_not_installed">Ant+ non disponible</string>
+    <string name="ant_heart_searching">Recherche du capteur cardiaque via Ant+ …</string>
+    <string name="ant_heart_not_found">Capteur cardiaque non trouvé par Ant+</string>
+    <string name="ant_heart_reading">Lit les données du capteur cardiaque par Ant+</string>
 
-    <string name="bluetooth_heart">Heart rate sensor</string>
-    <string name="bluetooth_heart_no_bluetooth">Bluetooth not available</string>
-    <string name="bluetooth_heart_no_location">Bluetooth requires enabled location services</string>
-    <string name="bluetooth_heart_connecting">Bluetooth connecting to %s</string>
-    <string name="bluetooth_heart_failed">Bluetooth connection to %s failed</string>
-    <string name="bluetooth_heart_not_found">Bluetooth no heart rate found on %s</string>
-    <string name="bluetooth_heart_connected">Bluetooth reading heart rate from %s</string>
-    <string name="bluetooth_heart_disconnected">Bluetooth heart connection lost to %s</string>
-    <string name="bluetooth_heart_battery_level">Bluetooth heart battery level &lt; %d%%</string>
+    <string name="bluetooth_heart">Capteur cardiaque</string>
+    <string name="bluetooth_heart_no_bluetooth">Bluetooth non disponible</string>
+    <string name="bluetooth_heart_no_location">Bluetooth nécessite que le service de localisation soit activé</string>
+    <string name="bluetooth_heart_connecting">Bluetooth se connecte à %s</string>
+    <string name="bluetooth_heart_failed">Bluetooth : la connexion à %s a échoué</string>
+    <string name="bluetooth_heart_not_found">Bluetooth : pas de capteur cardiaque détecté sur %s</string>
+    <string name="bluetooth_heart_connected">Bluetooth : lit les données cardiologiques de %s</string>
+    <string name="bluetooth_heart_disconnected">Bluetooth a perdu la connexion au capteur cardiaque de %s</string>
+    <string name="bluetooth_heart_battery_level">Bluetooth le niveau de batterie du capteur &lt; %d%%</string>
 
-    <string name="bluetooth_choose">Choose %s</string>
-    <string name="bluetooth_choose_filtered">%s only</string>
-    <string name="bluetooth_choose_remember">remember selection</string>
+    <string name="bluetooth_choose">Sélectionner %s</string>
+    <string name="bluetooth_choose_filtered">%s seulement</string>
+    <string name="bluetooth_choose_remember">Se souvenir de la sélection</string>
 
-    <string name="bluetooth_rower">Rower</string>
-    <string name="bluetooth_rower_no_bluetooth">Bluetooth not available</string>
-    <string name="bluetooth_rower_no_location">Bluetooth requires enabled location services</string>
-    <string name="bluetooth_rower_failed">Bluetooth connection to %s failed</string>
-    <string name="bluetooth_rower_not_found">Bluetooth no rower found on %s</string>
-    <string name="bluetooth_rower_disconnected">Bluetooth rower connection lost to %s</string>
-    <string name="bluetooth_rower_battery_level">Bluetooth rower battery level &lt; %d%%</string>
-    <string name="bluetooth_rower_reset_timeout">Please reset your rower</string>
+    <string name="bluetooth_rower">Rameur</string>
+    <string name="bluetooth_rower_no_bluetooth">Bluetooth non disponible</string>
+    <string name="bluetooth_rower_no_location">Bluetooth nécessite que le service de localisation soit activé</string>
+    <string name="bluetooth_rower_failed">Bluetooth : la connexion à %s a échoué</string>
+    <string name="bluetooth_rower_not_found">Bluetooth : pas de rameur détecté sur %s</string>
+    <string name="bluetooth_rower_disconnected">Bluetooth : connexion avec le rameur perdue %s</string>
+    <string name="bluetooth_rower_battery_level">Bluetooth : le niveau de batterie du &lt; %d%%</string>
+    <string name="bluetooth_rower_reset_timeout">Réinitialisez votre rameur SVP</string>
 
-    <string name="preference_training_title">Training</string>
+    <string name="preference_training_title">Entrainement</string>
 
-    <string name="preference_adjust_energy" translatable="false">preference_adjust_energy</string>
-    <string name="preference_adjust_energy_title">Adjust energy</string>
-    <string name="preference_adjust_energy_summary">Adjust energy to body weight</string>
+    <string name="preference_adjust_energy_title">Régler la dépense énergétique</string>
+    <string name="preference_adjust_energy_summary">Régler la dépense énergétique à votre poids</string>
 
-    <string name="preference_weight" translatable="false">preference_weight</string>
-    <string name="preference_weight_title">Body weight</string>
-    <string name="preference_weight_summary">Adjust for %s kg body weight</string>
+    <string name="preference_weight_title">Votre poids</string>
+    <string name="preference_weight_summary">Ajusté à %s kg</string>
 
-    <string name="preference_adjust_speed" translatable="false">preference_adjust_speed</string>
-    <string name="preference_adjust_speed_title">Adjust speed</string>
-    <string name="preference_adjust_speed_summary">Calculate speed from power</string>
+    <string name="preference_adjust_speed_title">Régler la vitesse</string>
+    <string name="preference_adjust_speed_summary">Régler la vitesse en fonction de la puissance</string>
 
-    <string name="preference_energy_unit" translatable="false">preference_energy_unit</string>
-    <string name="preference_energy_unit_title">Energy</string>
-    <string name="preference_energy_unit_summary">Energy unit %s</string>
+    <string name="preference_energy_unit_title">Dépense énergétique</string>
+    <string name="preference_energy_unit_summary">Unité de dépense énergétique %s</string>
 
-    <string name="preference_distance_unit" translatable="false">preference_distance_unit</string>
     <string name="preference_distance_unit_title">Distance</string>
-    <string name="preference_distance_unit_summary">Distance unit %s</string>
+    <string name="preference_distance_unit_summary">Unité de distance %s</string>
 
-    <string name="preference_split_distance" translatable="false">preference_split_distance</string>
     <string name="preference_split_distance_title">Split</string>
-    <string name="preference_split_distance_summary">Time per %s meters</string>
+    <string name="preference_split_distance_summary">Temps par %s mètres</string>
 
-    <string name="preference_end_workout" translatable="false">preference_end_workout</string>
-    <string name="preference_end_workout_title">End workout</string>
-    <string name="preference_end_workout_summary">End workout after program complete</string>
+    <string name="preference_end_workout_title">Fin du programme</string>
+    <string name="preference_end_workout_summary">Arrêter l\'entrainement à la fin du programme</string>
 
-    <string name="preference_end_workout_result" translatable="false">preference_end_workout_result</string>
-    <string name="preference_end_workout_result_title">Show results</string>
-    <string name="preference_end_workout_result_summary">Show results after program complete</string>
+    <string name="preference_end_workout_result_title">Montrer les résultats</string>
+    <string name="preference_end_workout_result_summary">Montre les résultats à la fin du programme</string>
 
     <string name="preference_display_title">Display</string>
 
-    <string name="preference_theme_dark" translatable="false">preference_theme_dark</string>
-    <string name="preference_theme_dark_title">Dark theme</string>
-    <string name="preference_theme_dark_summary">Use a dark theme</string>
+    <string name="preference_theme_dark_title">Thème sombre</string>
+    <string name="preference_theme_dark_summary">Utiliser le thème sombre</string>
 
-    <string name="preference_picture_in_picture" translatable="false">
-        preference_picture_in_picture
-    </string>
-    <string name="preference_picture_in_picture_title">Picture-in-picture</string>
-    <string name="preference_picture_in_picture_summary">Show workout as picture-in-picture</string>
+    <string name="preference_picture_in_picture_title">Image dans l\'image</string>
+    <string name="preference_picture_in_picture_summary">Montrer le programme comme image dans image</string>
 
-    <string name="preference_numbers_arabic" translatable="false">preference_numbers_arabic</string>
-    <string name="preference_numbers_arabic_title">Numbers</string>
-    <string name="preference_numbers_arabic_summary">Use Arabic numbers</string>
+    <string name="preference_numbers_arabic_title">Chiffres</string>
+    <string name="preference_numbers_arabic_summary">Utiliser chiffres arabes</string>
 
-    <string name="preference_workout_bindings_reset" translatable="false">
-        preference_bindings_reset
-    </string>
-    <string name="preference_workout_bindings_reset_title">Reset bindings</string>
-    <string name="preference_workout_bindings_reset_summary">Reset workout bindings to defaults
-    </string>
-    <string name="preference_workout_binding" translatable="false">preference_workout_binding
-    </string>
-    <string name="preference_workout_binding_pace" translatable="false">
-        preference_workout_binding_pace
-    </string>
+    <string name="preference_workout_bindings_reset_title">Réinitialiser l\'affichage</string>
+    <string name="preference_workout_bindings_reset_summary">Réinitialiser l\'affichage du programme</string>
 
     <string name="preference_audio_title">Audio</string>
-    <string name="preference_audio_none">None</string>
+    <string name="preference_audio_none">Vide</string>
 
-    <string name="preference_audio_ringtones" translatable="false">preference_audio_ringtones
-    </string>
-    <string name="preference_audio_ringtones_title">Sounds</string>
-    <string name="preference_audio_ringtones_summary">Play sounds for segments</string>
+    <string name="preference_audio_ringtones_title">Sons</string>
+    <string name="preference_audio_ringtones_summary">Parler des objectifs du programme</string>
 
-    <string name="preference_audio_ringtone_easy" translatable="false">
-        preference_audio_ringtone_easy
-    </string>
-    <string name="preference_audio_ringtone_easy_title">Easy segment</string>
+    <string name="preference_audio_ringtone_easy_title">Segment facile</string>
     <string name="preference_audio_ringtone_easy_summary">%s</string>
 
-    <string name="preference_audio_ringtone_medium" translatable="false">
-        preference_audio_ringtone_medium
-    </string>
-    <string name="preference_audio_ringtone_medium_title">Medium segment</string>
+    <string name="preference_audio_ringtone_medium_title">Segment moyen</string>
     <string name="preference_audio_ringtone_medium_summary">%s</string>
 
-    <string name="preference_audio_ringtone_hard" translatable="false">
-        preference_audio_ringtone_hard
-    </string>
-    <string name="preference_audio_ringtone_hard_title">Hard segment</string>
+    <string name="preference_audio_ringtone_hard_title">Segment difficile</string>
     <string name="preference_audio_ringtone_hard_summary">%s</string>
 
-    <string name="preference_audio_ringtone_peak" translatable="false">
-        preference_audio_ringtone_peek
-    </string>
-    <string name="preference_audio_ringtone_peak_title">Peak segment</string>
+    <string name="preference_audio_ringtone_peak_title">Segment de pointe</string>
     <string name="preference_audio_ringtone_peak_summary">%s</string>
 
-    <string name="preference_audio_ringtone_finish" translatable="false">
-        preference_audio_ringtone_finish
-    </string>
-    <string name="preference_audio_ringtone_finish_title">Program finished</string>
+    <string name="preference_audio_ringtone_finish_title">Fin du programme</string>
     <string name="preference_audio_ringtone_finish_summary">%s</string>
 
-    <string name="preference_audio_speak_segment" translatable="false">
-        preference_audio_speak_segment
-    </string>
-    <string name="preference_audio_speak_segment_title">Segment instructions</string>
-    <string name="preference_audio_speak_segment_summary">Speak instructions for segments</string>
+    <string name="preference_audio_speak_segment_title">Directives du fractionné</string>
+    <string name="preference_audio_speak_segment_summary">Explique les directives pour fractionné</string>
 
-    <string name="preference_audio_speak_limit" translatable="false">preference_audio_speak_limit
-    </string>
-    <string name="preference_audio_speak_limit_title">Segment limit</string>
-    <string name="preference_audio_speak_limit_summary">Repeat segment limit when not fulfilled
-    </string>
+    <string name="preference_audio_speak_limit_title">Fin du segment</string>
+    <string name="preference_audio_speak_limit_summary">Répéter la limite de segment lorsqu\'elle n\'est pas remplie</string>
 
     <string name="preference_data_title">Data</string>
 
-    <string name="preference_data_external" translatable="false">preference_data_external</string>
-    <string name="preference_data_external_copy" translatable="false">
-        preference_data_external_copy
-    </string>
-    <string name="preference_data_external_title">Storage location</string>
-    <string name="preference_data_external_summary">Store data in external location</string>
+    <string name="preference_data_external_title">Emplacement de stockage</string>
+    <string name="preference_data_external_summary">Stocker les données dans un emplacement externe</string>
 
-    <string name="preference_compact" translatable="false">preference_compact</string>
-    <string name="preference_compact_title">Compact workouts</string>
-    <string name="preference_compact_summary">Compact workouts after %s days</string>
+    <string name="preference_compact_title">Compacter les données</string>
+    <string name="preference_compact_summary">Compacter les données après %s jours</string>
 
-    <string name="preference_export_auto" translatable="false">preference_integration_export_auto</string>
-    <string name="preference_export_last" translatable="false">preference_integration_export_last</string>
     <string name="preference_export_auto_title">Export</string>
-    <string name="preference_export_auto_summary">Export each workout automatically</string>
-    <string name="preference_export_auto_reminder">First export a workout to determine automatic
-        exports
-    </string>
+    <string name="preference_export_auto_summary">Exporter chaque enregistrement automatiquement</string>
+    <string name="preference_export_auto_reminder">Exporter d\'abord un enregistrement pour valider l\'export automatique</string>
 
-    <string name="preference_export_tcx_share_package" translatable="false">preference_export_tcx_share_package</string>
-
-    <string name="preference_export_track" translatable="false">preference_export_track</string>
-    <string name="preference_export_track_title">Export with locations</string>
-    <string name="preference_export_track_summary">You can use your custom course, by storing it in
-        /coxswain/course.tcx
-    </string>
+    <string name="preference_export_track_title">Exporter avec données d\'emplacement</string>
+    <string name="preference_export_track_summary">Utiliser vos données d\'emplacement en créant le fichier /coxswain/course.tcx</string>
 
     <string name="preference_integration_title">Integration</string>
 
-    <string name="preference_integration_intent" translatable="false">
-        preference_integration_intent
-    </string>
-    <string name="preference_integration_intent_title">Intent</string>
-    <string name="preference_integration_intent_summary">Open intent on program start</string>
+    <string name="preference_integration_intent_title">Données externes</string>
+    <string name="preference_integration_intent_summary">Ouvrir une url ou un fichier au démarrage</string>
 
-    <string name="preference_integration_intent_uri" translatable="false">
-        preference_integration_intent_uri
-    </string>
     <string name="preference_integration_intent_uri_title">URI</string>
     <string name="preference_integration_intent_uri_summary">%s</string>
 
-    <string name="preference_hardware_title">Hardware</string>
+    <string name="preference_hardware_title">Matériel</string>
 
-    <string name="preference_hardware_heart_sensor" translatable="false">
-        preference_hardware_heart_sensor
-    </string>
-    <string name="preference_hardware_heart_sensor_title">Sensors</string>
-    <string name="preference_hardware_heart_sensor_summary">Read heart rate from %s</string>
+    <string name="preference_hardware_heart_sensor_title">Capteurs</string>
+    <string name="preference_hardware_heart_sensor_summary">Lire la fréquence cardiaque de %s</string>
 
-    <string name="preference_hardware_legacy" translatable="false">preference_hardware_legacy
-    </string>
     <string name="preference_hardware_legacy_title">S3</string>
-    <string name="preference_hardware_legacy_summary">Use S3 protocol (experimental)</string>
+    <string name="preference_hardware_legacy_summary">Utiliser le protocole S3 (experimental)</string>
 
-    <string name="preference_hardware_trace" translatable="false">preference_hardware_trace</string>
-    <string name="preference_hardware_trace_title">Trace</string>
-    <string name="preference_hardware_trace_summary">Write rower trace</string>
+    <string name="preference_hardware_trace_title">Fichier log</string>
+    <string name="preference_hardware_trace_summary">Ecrit les logs de l\'application</string>
 
-    <string name="preference_hardware_log" translatable="false">preference_hardware_log</string>
-    <string name="preference_hardware_log_title">Log</string>
-    <string name="preference_hardware_log_summary">Export application log</string>
-    <string name="preference_hardware_log_finished">Exported application log</string>
-    <string name="preference_hardware_log_failed">Export of application log failed</string>
+    <string name="preference_hardware_log_title">Journal</string>
+    <string name="preference_hardware_log_summary">Export journal de l\'application</string>
+    <string name="preference_hardware_log_finished">Journal de l\'application exporté</string>
+    <string name="preference_hardware_log_failed">L\'export du journal de l\'application a échoué</string>
 
-    <string name="preference_devices" translatable="false">preference_devices</string>
-    <string name="preference_devices_title">Devices</string>
-    <string name="preference_devices_summary">List all connected USB devices</string>
+    <string name="preference_devices_title">Equipements</string>
+    <string name="preference_devices_summary">Liste des équipements connectés en USB</string>
 
-    <string name="preference_devices_none_title">No devices</string>
-    <string name="preference_devices_none_summary">No USB devices are connected</string>
-
-    <string name="preference_performance_unit" translatable="false">preference_performance_unit</string>
-
-    <string name="preference_bluetooth_heart_device" translatable="false">preference_bluetooth_heart_device</string>
-    <string name="preference_bluetooth_rower_device" translatable="false">preference_bluetooth_rower_device</string>
-
-    <string name="preference_snapshots_show_rests" translatable="false">preference_snapshots_show_rests</string>
-
-    <string name="help_url" translatable="false">https://github.com/svenmeier/coxswain/wiki/User-Guide</string>
+    <string name="preference_devices_none_title">Pas d\'équipement</string>
+    <string name="preference_devices_none_summary">Pas d\'équipement connecté en USB</string>
 </resources>

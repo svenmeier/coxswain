@@ -1,4 +1,7 @@
-8.5
+8.7
+ - fixed energy adjustment
+
+8.6
   - show results after workout end
   - possible fix for export to Google Fit
   - speak seconds

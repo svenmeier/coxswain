@@ -36,8 +36,6 @@ public class EnergyAdjuster extends Adjuster {
 
     private int weight;
 
-    private Measurement measurement;
-
 	/**
      * Calculate with {@link #DEFAULT_WEIGHT}, i.e. don't adjust.
      */
@@ -61,7 +59,7 @@ public class EnergyAdjuster extends Adjuster {
 
     @Override
     public void setEnergy(int energy) {
-	    if (measurement.getDistance() == 0) {
+	    if (getDistance() == 0) {
             // leave unadjusted
 	        super.setEnergy(energy);
         } else {

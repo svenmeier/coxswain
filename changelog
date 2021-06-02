@@ -1,5 +1,6 @@
-8.7
+8.8
  - fixed energy adjustment
+ - fixed external storage on Android 11
 
 8.6
   - show results after workout end

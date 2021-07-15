@@ -29,7 +29,7 @@ public class TargetDialogFragment extends AbstractValueFragment {
         addTab(new Tab() {
             @Override
             public int getCount() {
-                return 59 + 2;
+                return 2 + 60;
             }
 
             @Override

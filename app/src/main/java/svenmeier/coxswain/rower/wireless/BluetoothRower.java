@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.UUID;
 
 import propoid.util.content.Preference;
@@ -540,9 +541,9 @@ public class BluetoothRower extends Rower {
 
 		private void checkControlPoint(BluetoothGatt gatt) {
 			if (rowerManufacturer != null && rowerVersion  != null) {
-				if ("WaterRower".equals(rowerManufacturer) && rowerVersion.compareTo("4.2") < 0) {
-					// old firmware rejects re-bonding of a previously bonded device,
-					// so do not write to the control point, as this triggers a bond
+				if ("WaterRower".equals(rowerManufacturer) && Arrays.asList("4.0", "4.1").contains(rowerVersion)) {
+					// old 4.x firmware rejects re-bonding of a previously bonded device,
+					// so do not write to the control point, as this triggers an unwanted bond
 					trace.comment(String.format("skipping control-point due to version %s", rowerVersion));
 				} else {
 					controlPoint = get(gatt, SERVICE_FITNESS_MACHINE, CHARACTERISTIC_CONTROL_POINT);

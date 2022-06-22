@@ -28,7 +28,7 @@ public class SegmentsData implements SegmentsView.Data {
 
     @Override
     public int length() {
-        return program.getSegmentsCount();
+        return program == null ? 0 : program.getSegmentsCount();
     }
 
     @Override

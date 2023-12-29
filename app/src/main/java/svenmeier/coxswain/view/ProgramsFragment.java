@@ -130,7 +130,7 @@ public class ProgramsFragment extends Fragment {
                                     startActivity(ProgramActivity.createIntent(getActivity(), item));
                                     return true;
                                 case R.id.action_export:
-                                    ExportProgramDialogFragment.create(item).show(getParentFragmentManager(), "export");
+                                    ExportProgramDialogFragment.create(item).show(getActivity().getSupportFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_duplicate:
@@ -140,7 +140,7 @@ public class ProgramsFragment extends Fragment {
 
                                     return true;
                                 case R.id.action_delete:
-                                    DeleteDialogFragment.create(item).show(getParentFragmentManager(), "delete");
+                                    DeleteDialogFragment.create(item).show(getActivity().getSupportFragmentManager(), "delete");
 
                                     return true;
                                 default:

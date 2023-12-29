@@ -224,7 +224,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             switch (menuItem.getItemId()) {
                                 case R.id.action_delete:
-                                    DeleteDialogFragment.create(item).show(getParentFragmentManager(), "delete");
+                                    DeleteDialogFragment.create(item).show(getActivity().getSupportFragmentManager(), "delete");
 
                                     return true;
                                 case R.id.action_evaluate:
@@ -234,7 +234,7 @@ public class WorkoutsFragment extends Fragment implements Gym.Listener {
 
                                     return true;
                                 case R.id.action_export:
-                                    ExportWorkoutDialogFragment.create(item).show(getParentFragmentManager(), "export");
+                                    ExportWorkoutDialogFragment.create(item).show(getActivity().getSupportFragmentManager(), "export");
 
                                     return true;
                                 case R.id.action_repeat:

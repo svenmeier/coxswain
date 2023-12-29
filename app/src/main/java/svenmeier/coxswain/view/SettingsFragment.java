@@ -114,7 +114,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         devices.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.settings_fragment, new DevicesFragment());
                 transaction.addToBackStack(null);
                 transaction.commit();
